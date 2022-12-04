@@ -1,4 +1,4 @@
-package CreepTenuous.Files.CreateDirectory;
+package CreepTenuous.Directory.BuilderDirectory;
 
 public enum Directory {
     SEPARATOR("/");

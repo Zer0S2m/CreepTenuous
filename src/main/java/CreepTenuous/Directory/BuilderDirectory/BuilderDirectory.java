@@ -1,4 +1,4 @@
-package CreepTenuous.Files.CreateDirectory;
+package CreepTenuous.Directory.BuilderDirectory;
 
 public class BuilderDirectory {
     private final String[] arrPartsDirectory;
@@ -17,5 +17,9 @@ public class BuilderDirectory {
 
     public String getDirectory() {
         return buildDirectory();
+    }
+
+    public final String[] getArrPartsDirectory() {
+        return arrPartsDirectory;
     }
 }

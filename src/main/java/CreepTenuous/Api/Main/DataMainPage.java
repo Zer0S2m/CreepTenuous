@@ -3,8 +3,10 @@ package CreepTenuous.Api.Main;
 public class DataMainPage {
     private final String readyDirectory;
     private final Integer levelDirectory;
+    private final String[] partsDirectory;
 
-    public DataMainPage(String readyDirectory, Integer levelDirectory) {
+    public DataMainPage(String[] partsDirectory, String readyDirectory, Integer levelDirectory) {
+        this.partsDirectory = partsDirectory;
         this.readyDirectory = readyDirectory;
         this.levelDirectory = levelDirectory;
     }
@@ -15,5 +17,9 @@ public class DataMainPage {
 
     public Integer getLevelDirectory() {
         return levelDirectory;
+    }
+
+    public String[] getPartsDirectory() {
+        return partsDirectory;
     }
 }
