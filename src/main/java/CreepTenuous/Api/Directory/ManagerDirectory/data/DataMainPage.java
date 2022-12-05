@@ -1,4 +1,4 @@
-package CreepTenuous.Api.Directory.MainPage.data;
+package CreepTenuous.Api.Directory.ManagerDirectory.data;
 
 public class DataMainPage {
     private final String readyDirectory;
