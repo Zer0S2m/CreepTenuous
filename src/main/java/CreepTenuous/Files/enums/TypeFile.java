@@ -1,4 +1,4 @@
-package CreepTenuous.Files.CreateFile;
+package CreepTenuous.Files.enums;
 
 public enum TypeFile {
     TXT(1),
