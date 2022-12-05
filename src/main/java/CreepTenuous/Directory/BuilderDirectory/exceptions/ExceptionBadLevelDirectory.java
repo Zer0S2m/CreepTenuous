@@ -1,4 +1,4 @@
-package CreepTenuous.Directory.BuilderDirectory;
+package CreepTenuous.Directory.BuilderDirectory.exceptions;
 
 import org.springframework.http.HttpStatus;
 

@@ -1,16 +1,23 @@
-package CreepTenuous.Directory.BuilderDirectory.services;
+package CreepTenuous.Directory.BuilderDirectory.services.impl;
 
-import CreepTenuous.Api.Directory.ManagerDirectory.data.DataMainPage;
+import CreepTenuous.Api.Directory.ManagerDirectory.data.DataManagerDirectory;
 import CreepTenuous.Directory.BuilderDirectory.enums.Directory;
 import CreepTenuous.Api.enums.EDirectory;
+import CreepTenuous.Directory.BuilderDirectory.services.IBuilderDirectory;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 
 @Service("builder-ready-directory")
 public class BuilderDirectory implements IBuilderDirectory {
     private String[] arrPartsDirectory;
     private Integer level;
+
+    @Autowired
+    private CollectDirectory collectDirectory;
 
     private String buildDirectory() {
         StringBuilder rawDirectory = new StringBuilder();
@@ -31,7 +38,9 @@ public class BuilderDirectory implements IBuilderDirectory {
     }
 
     @Override
-    public DataMainPage build(String[] arrPartsDirectory, Integer level) throws HttpMessageNotReadableException {
+    public DataManagerDirectory build(String[] arrPartsDirectory, Integer level)
+            throws HttpMessageNotReadableException, IOException
+    {
         this.arrPartsDirectory = arrPartsDirectory;
         this.level = level;
 
@@ -39,10 +48,13 @@ public class BuilderDirectory implements IBuilderDirectory {
             throw new HttpMessageNotReadableException(EDirectory.NOT_VALID_LEVEL.get());
         }
 
-        return new DataMainPage(
+        String directory = getDirectory();
+
+        return new DataManagerDirectory(
                 getArrPartsDirectory(),
-                getDirectory(),
-                this.level
+                directory,
+                this.level,
+                collectDirectory.collect(directory)
         );
     }
 }

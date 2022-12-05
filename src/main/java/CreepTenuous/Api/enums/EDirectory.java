@@ -2,7 +2,7 @@ package CreepTenuous.Api.enums;
 
 public enum EDirectory {
     NOT_VALID_LEVEL("Не верно указан уровень вложенности."),
-    NOT_VALID_DIRECTORY("Директории не существует.");
+    NOT_FOUND_DIRECTORY("Директории не существует.");
 
     private final String msg;
 
