@@ -10,6 +10,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service("builder-ready-directory")
 public class BuilderDirectory implements IBuilderDirectory {
@@ -18,6 +19,9 @@ public class BuilderDirectory implements IBuilderDirectory {
 
     @Autowired
     private CollectDirectory collectDirectory;
+
+    @Autowired
+    private BuilderDataFile builderDataFile;
 
     private String buildDirectory() {
         StringBuilder rawDirectory = new StringBuilder();
@@ -49,12 +53,13 @@ public class BuilderDirectory implements IBuilderDirectory {
         }
 
         String directory = getDirectory();
+        List<Object> paths = builderDataFile.build(collectDirectory.collect(directory));
 
         return new DataManagerDirectory(
                 getArrPartsDirectory(),
                 directory,
                 this.level,
-                collectDirectory.collect(directory)
+                paths
         );
     }
 }

@@ -8,5 +8,6 @@ import java.io.IOException;
 public interface IBuilderDirectory {
     String getDirectory();
     String[] getArrPartsDirectory();
-    DataManagerDirectory build(String[] arrPartsDirectory, Integer level) throws IOException, HttpMessageNotReadableException;
+    DataManagerDirectory build(String[] arrPartsDirectory, Integer level)
+            throws IOException, HttpMessageNotReadableException;
 }

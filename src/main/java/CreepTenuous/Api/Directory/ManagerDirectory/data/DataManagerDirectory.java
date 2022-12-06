@@ -1,19 +1,19 @@
 package CreepTenuous.Api.Directory.ManagerDirectory.data;
 
-import java.nio.file.Path;
 import java.util.List;
+
 
 public class DataManagerDirectory {
     private final String readyDirectory;
     private final Integer levelDirectory;
     private final String[] partsDirectory;
-    private final List<Path> paths;
+    private final List<Object> paths;
 
     public DataManagerDirectory(
             String[] partsDirectory,
             String readyDirectory,
             Integer levelDirectory,
-            List<Path> paths
+            List<Object> paths
     ) {
         this.partsDirectory = partsDirectory;
         this.readyDirectory = readyDirectory;
@@ -33,5 +33,5 @@ public class DataManagerDirectory {
         return partsDirectory;
     }
 
-    public List<Path> getPaths() { return paths; }
+    public List<Object> getPaths() { return paths; }
 }
