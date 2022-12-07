@@ -1,6 +1,6 @@
 package CreepTenuous.Directory.BuilderDirectory.services.impl;
 
-import CreepTenuous.Api.enums.EDirectory;
+import CreepTenuous.Directory.BuilderDirectory.enums.Directory;
 import CreepTenuous.Directory.BuilderDirectory.services.ICollectDirectory;
 
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class CollectDirectory implements ICollectDirectory {
                 return Files.walk(_path, 1);
             } catch (IOException e) {
                 try {
-                    throw new NoSuchFileException(EDirectory.NOT_FOUND_DIRECTORY.get());
+                    throw new NoSuchFileException(Directory.NOT_FOUND_DIRECTORY.get());
                 } catch (NoSuchFileException ex) {
                     throw new RuntimeException(ex);
                 }

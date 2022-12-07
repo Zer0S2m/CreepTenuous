@@ -1,15 +1,17 @@
 package CreepTenuous.Directory.BuilderDirectory.enums;
 
 public enum Directory {
-    SEPARATOR("/");
+    SEPARATOR("/"),
+    NOT_VALID_LEVEL("Не верно указан уровень вложенности."),
+    NOT_FOUND_DIRECTORY("Директории не существует.");
 
-    private final String sep;
+    private final String msg;
 
-    Directory(String sep) {
-        this.sep = sep;
+    Directory(String msg) {
+        this.msg = msg;
     }
 
     public String get() {
-        return sep;
+        return msg;
     }
 }

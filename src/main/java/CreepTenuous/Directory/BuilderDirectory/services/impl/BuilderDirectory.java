@@ -2,7 +2,6 @@ package CreepTenuous.Directory.BuilderDirectory.services.impl;
 
 import CreepTenuous.Api.Directory.ManagerDirectory.data.DataManagerDirectory;
 import CreepTenuous.Directory.BuilderDirectory.enums.Directory;
-import CreepTenuous.Api.enums.EDirectory;
 import CreepTenuous.Directory.BuilderDirectory.services.IBuilderDirectory;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,7 @@ public class BuilderDirectory implements IBuilderDirectory {
         this.level = level;
 
         if (level != arrPartsDirectory.length) {
-            throw new HttpMessageNotReadableException(EDirectory.NOT_VALID_LEVEL.get());
+            throw new HttpMessageNotReadableException(Directory.NOT_VALID_LEVEL.get());
         }
 
         String directory = getDirectory();
