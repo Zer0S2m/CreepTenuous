@@ -3,7 +3,7 @@ package CreepTenuous.Api.Directory.ManagerDirectory;
 import CreepTenuous.Api.Directory.ManagerDirectory.data.DataManagerDirectory;
 import CreepTenuous.Directory.BuilderDirectory.services.impl.BuilderDirectory;
 import CreepTenuous.Directory.BuilderDirectory.exceptions.ExceptionBadLevelDirectory;
-import CreepTenuous.Directory.BuilderDirectory.exceptions.ExceptionNotDirectory;
+import CreepTenuous.Directory.check.CheckIsExistsDirectory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,11 +11,10 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.nio.file.NoSuchFileException;
 
 @RestController
 @RequestMapping("/directory")
-public class ManagerDirectory {
+public class ManagerDirectory implements CheckIsExistsDirectory {
     @Autowired
     private BuilderDirectory builderDirectory;
 
@@ -32,11 +31,5 @@ public class ManagerDirectory {
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ExceptionBadLevelDirectory handleExceptionBadLevel(HttpMessageNotReadableException error) {
         return new ExceptionBadLevelDirectory(error.getMessage());
-    }
-
-    @ExceptionHandler(NoSuchFileException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ExceptionNotDirectory handleExceptionNotDirectory(NoSuchFileException error) {
-        return new ExceptionNotDirectory(error.getMessage());
     }
 }

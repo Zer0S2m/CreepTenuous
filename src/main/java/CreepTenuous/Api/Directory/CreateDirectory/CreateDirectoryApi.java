@@ -1,9 +1,9 @@
 package CreepTenuous.Api.Directory.CreateDirectory;
 
-import CreepTenuous.Directory.BuilderDirectory.exceptions.ExceptionNotDirectory;
 import CreepTenuous.Directory.CreateDirectory.exceptions.ExceptionDirectoryExists;
 import CreepTenuous.Directory.CreateDirectory.services.impl.CreateDirectory;
 import CreepTenuous.Api.Directory.CreateDirectory.forms.FormCreateDirectoryApi;
+import CreepTenuous.Directory.check.CheckIsExistsDirectory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import java.nio.file.NoSuchFileException;
 
 @RestController
 @RequestMapping("/directory")
-public class CreateDirectoryApi {
+public class CreateDirectoryApi implements CheckIsExistsDirectory {
     @Autowired
     private CreateDirectory createDirectory;
 
@@ -27,12 +27,6 @@ public class CreateDirectoryApi {
                 directoryForm.getParents(),
                 directoryForm.getName()
         );
-    }
-
-    @ExceptionHandler(NoSuchFileException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ExceptionNotDirectory handleExceptionNotDirectory(NoSuchFileException error) {
-        return new ExceptionNotDirectory(error.getMessage());
     }
 
     @ExceptionHandler(FileAlreadyExistsException.class)
