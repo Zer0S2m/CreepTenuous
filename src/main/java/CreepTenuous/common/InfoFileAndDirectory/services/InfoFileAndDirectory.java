@@ -4,7 +4,7 @@ import CreepTenuous.Api.common.InfoFileAndDirectory.data.DataInfoAndDirectoryApi
 import CreepTenuous.Directory.BuilderDirectory.enums.Directory;
 import CreepTenuous.common.InfoFileAndDirectory.IInfoFileAndDirectory;
 
-import CreepTenuous.utils.BuildDirectoryPath;
+import CreepTenuous.Directory.utils.build.BuildDirectoryPath;
 import org.springframework.stereotype.Service;
 
 import java.io.File;

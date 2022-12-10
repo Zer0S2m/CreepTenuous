@@ -1,7 +1,7 @@
 package CreepTenuous.Api.common.InfoFileAndDirectory;
 
 import CreepTenuous.Api.common.InfoFileAndDirectory.data.DataInfoAndDirectoryApi;
-import CreepTenuous.Directory.check.CheckIsExistsDirectory;
+import CreepTenuous.Directory.utils.check.CheckIsExistsDirectoryApi;
 import CreepTenuous.common.InfoFileAndDirectory.services.InfoFileAndDirectory;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import java.nio.file.NoSuchFileException;
 
 @RestController
 @RequestMapping("/info-file-directory")
-public class InfoFileAndDirectoryApi implements CheckIsExistsDirectory {
+public class InfoFileAndDirectoryApi implements CheckIsExistsDirectoryApi {
     @Autowired
     private InfoFileAndDirectory collectInfo;
 

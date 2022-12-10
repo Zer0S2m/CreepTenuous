@@ -8,12 +8,4 @@ import java.nio.file.Path;
 
 public interface IDeleteDirectory {
     void delete(String[] parents, String name) throws NoSuchFileException;
-
-    default void checkDirectory(
-            Path path
-    ) throws NoSuchFileException {
-        if (!Files.exists(path)) {
-            throw new NoSuchFileException(Directory.NOT_FOUND_DIRECTORY.get());
-        }
-    }
 }

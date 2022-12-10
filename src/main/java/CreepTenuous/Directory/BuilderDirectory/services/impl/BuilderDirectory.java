@@ -3,7 +3,7 @@ package CreepTenuous.Directory.BuilderDirectory.services.impl;
 import CreepTenuous.Api.Directory.ManagerDirectory.data.DataManagerDirectory;
 import CreepTenuous.Directory.BuilderDirectory.enums.Directory;
 import CreepTenuous.Directory.BuilderDirectory.services.IBuilderDirectory;
-import CreepTenuous.utils.BuildDirectoryPath;
+import CreepTenuous.Directory.utils.build.BuildDirectoryPath;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.HttpMessageNotReadableException;

@@ -3,7 +3,8 @@ package CreepTenuous.Directory.DeleteDirectory.services.impl;
 import CreepTenuous.Directory.BuilderDirectory.enums.Directory;
 import CreepTenuous.Directory.DeleteDirectory.services.IDeleteDirectory;
 
-import CreepTenuous.utils.BuildDirectoryPath;
+import CreepTenuous.Directory.utils.check.CheckIsExistsDirectoryService;
+import CreepTenuous.Directory.utils.build.BuildDirectoryPath;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -12,7 +13,7 @@ import java.nio.file.Paths;
 import java.nio.file.Path;
 
 @Service("delete-directory")
-public class DeleteDirectory implements IDeleteDirectory {
+public class DeleteDirectory implements IDeleteDirectory, CheckIsExistsDirectoryService {
     public void delete(
             String[] parents,
             String name

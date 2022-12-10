@@ -3,7 +3,7 @@ package CreepTenuous.Api.Directory.CreateDirectory;
 import CreepTenuous.Directory.CreateDirectory.exceptions.ExceptionDirectoryExists;
 import CreepTenuous.Directory.CreateDirectory.services.impl.CreateDirectory;
 import CreepTenuous.Api.Directory.CreateDirectory.forms.FormCreateDirectoryApi;
-import CreepTenuous.Directory.check.CheckIsExistsDirectory;
+import CreepTenuous.Directory.utils.check.CheckIsExistsDirectoryApi;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import java.nio.file.NoSuchFileException;
 
 @RestController
 @RequestMapping("/directory")
-public class CreateDirectoryApi implements CheckIsExistsDirectory {
+public class CreateDirectoryApi implements CheckIsExistsDirectoryApi {
     @Autowired
     private CreateDirectory createDirectory;
 

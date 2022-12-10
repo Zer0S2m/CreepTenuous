@@ -1,4 +1,4 @@
-package CreepTenuous.utils;
+package CreepTenuous.Directory.utils.build;
 
 import CreepTenuous.Directory.BuilderDirectory.enums.Directory;
 
