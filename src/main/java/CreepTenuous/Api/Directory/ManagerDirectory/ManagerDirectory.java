@@ -1,6 +1,7 @@
 package CreepTenuous.Api.Directory.ManagerDirectory;
 
 import CreepTenuous.Api.Directory.ManagerDirectory.data.DataManagerDirectory;
+import CreepTenuous.Api.core.version.v1.V1APIController;
 import CreepTenuous.Directory.BuilderDirectory.services.impl.BuilderDirectory;
 import CreepTenuous.Directory.BuilderDirectory.exceptions.ExceptionBadLevelDirectory;
 import CreepTenuous.Directory.utils.check.CheckIsExistsDirectoryApi;
@@ -12,13 +13,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-@RestController
-@RequestMapping("/directory")
+@V1APIController
 public class ManagerDirectory implements CheckIsExistsDirectoryApi {
     @Autowired
     private BuilderDirectory builderDirectory;
 
-    @GetMapping("")
+    @GetMapping("/directory")
     @ResponseStatus(code = HttpStatus.OK)
     public DataManagerDirectory main(
             @RequestParam(value = "level", defaultValue = "1") Integer level,

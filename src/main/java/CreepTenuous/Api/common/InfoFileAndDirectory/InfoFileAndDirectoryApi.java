@@ -1,6 +1,7 @@
 package CreepTenuous.Api.common.InfoFileAndDirectory;
 
 import CreepTenuous.Api.common.InfoFileAndDirectory.data.DataInfoAndDirectoryApi;
+import CreepTenuous.Api.core.version.v1.V1APIController;
 import CreepTenuous.Directory.utils.check.CheckIsExistsDirectoryApi;
 import CreepTenuous.common.InfoFileAndDirectory.services.InfoFileAndDirectory;
 
@@ -10,13 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.NoSuchFileException;
 
-@RestController
-@RequestMapping("/info-file-directory")
+@V1APIController
 public class InfoFileAndDirectoryApi implements CheckIsExistsDirectoryApi {
     @Autowired
     private InfoFileAndDirectory collectInfo;
 
-    @GetMapping("")
+    @GetMapping("/info-file-directory")
     @ResponseStatus(code = HttpStatus.OK)
     public DataInfoAndDirectoryApi getInfo(
             @RequestParam(value = "parents", defaultValue = "[]") String[] parents

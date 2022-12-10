@@ -1,5 +1,6 @@
 package CreepTenuous.Api.Directory.CreateDirectory;
 
+import CreepTenuous.Api.core.version.v1.V1APIController;
 import CreepTenuous.Directory.CreateDirectory.exceptions.ExceptionDirectoryExists;
 import CreepTenuous.Directory.CreateDirectory.services.impl.CreateDirectory;
 import CreepTenuous.Api.Directory.CreateDirectory.forms.FormCreateDirectoryApi;
@@ -12,13 +13,12 @@ import org.springframework.http.HttpStatus;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.NoSuchFileException;
 
-@RestController
-@RequestMapping("/directory")
+@V1APIController
 public class CreateDirectoryApi implements CheckIsExistsDirectoryApi {
     @Autowired
     private CreateDirectory createDirectory;
 
-    @PostMapping("/create")
+    @PostMapping("/directory/create")
     @ResponseStatus(code = HttpStatus.CREATED)
     public final void createDirectory(
             @RequestBody FormCreateDirectoryApi directoryForm
