@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import org.springframework.stereotype.Service;
 
+import java.net.URLConnection;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,16 @@ public class BuilderDataFile implements IBuilderDataFile {
         obj.put("fileName", path.getFileName().toString());
         obj.put("isFile", isFile);
         obj.put("isDirectory", isDirectory);
+
+        if (isFile) {
+            String typeFile = URLConnection.guessContentTypeFromName(path.toString());
+            if (typeFile == null) {
+                obj.put("typeFile", false);
+            } else {
+                obj.put("typeFile", typeFile);
+            }
+        }
+
         readyFiles.put(obj);
     }
 }
