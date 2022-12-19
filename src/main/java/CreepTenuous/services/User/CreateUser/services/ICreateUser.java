@@ -1,5 +1,7 @@
 package CreepTenuous.services.User.CreateUser.services;
 
+import CreepTenuous.services.User.models.User;
+
 public interface ICreateUser {
-    void create();
+    Long create(User user);
 }
