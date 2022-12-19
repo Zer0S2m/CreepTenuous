@@ -24,7 +24,7 @@ public class User implements Serializable {
     @Column(name = "login", nullable = false)
     private String login;
 
-    @JsonIgnore
+    @JsonProperty
     @Basic
     @Column(name = "email")
     private String email;
