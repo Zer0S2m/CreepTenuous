@@ -1,7 +1,6 @@
 package CreepTenuous.services.directory.builderDirectory.services.impl;
 
 import CreepTenuous.api.controllers.directory.managerDirectory.data.DataManagerDirectory;
-import CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
 import CreepTenuous.services.directory.builderDirectory.enums.Directory;
 import CreepTenuous.services.directory.builderDirectory.services.IBuilderDirectory;
 import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
@@ -25,13 +24,11 @@ public class BuilderDirectory implements IBuilderDirectory {
     private BuilderDataFile builderDataFile;
 
     @Autowired
-    private CollectRootPath collectRootPath;
+    private BuildDirectoryPath buildDirectoryPath;
 
     @Override
     public final String getDirectory() {
-        String rawPath = BuildDirectoryPath.build(this.arrPartsDirectory);
-        System.out.println(collectRootPath.collect(rawPath));
-        return collectRootPath.collect(rawPath);
+        return buildDirectoryPath.build(this.arrPartsDirectory);
     }
 
     @Override

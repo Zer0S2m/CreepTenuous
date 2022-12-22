@@ -3,8 +3,9 @@ package CreepTenuous.services.common.infoFileAndDirectory.services;
 import CreepTenuous.api.controllers.common.infoFileAndDirectory.data.DataInfoAndDirectoryApi;
 import CreepTenuous.services.directory.builderDirectory.enums.Directory;
 import CreepTenuous.services.common.infoFileAndDirectory.IInfoFileAndDirectory;
-
 import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -19,8 +20,11 @@ import java.util.stream.Stream;
 
 @Service("get-info-file-and-directory")
 public class InfoFileAndDirectory implements IInfoFileAndDirectory {
+    @Autowired
+    private BuildDirectoryPath buildDirectoryPath;
+
     public DataInfoAndDirectoryApi collect(List<String> parents) throws NoSuchFileException {
-        String path = BuildDirectoryPath.build(parents);
+        String path = buildDirectoryPath.build(parents);
         File file = new File(path);
         long size;
         if (file.isFile()) {
