@@ -11,11 +11,12 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Service("create-directory")
 public class CreateDirectory implements ICreateDirectory {
     public void create(
-            String[] parents,
+            List<String> parents,
             String name
     ) throws NoSuchFileException, FileAlreadyExistsException {
         Path path = Paths.get(BuildDirectoryPath.build(parents));

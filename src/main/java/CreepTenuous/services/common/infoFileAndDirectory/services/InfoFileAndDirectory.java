@@ -14,11 +14,12 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Service("get-info-file-and-directory")
 public class InfoFileAndDirectory implements IInfoFileAndDirectory {
-    public DataInfoAndDirectoryApi collect(String[] parents) throws NoSuchFileException {
+    public DataInfoAndDirectoryApi collect(List<String> parents) throws NoSuchFileException {
         String path = BuildDirectoryPath.build(parents);
         File file = new File(path);
         long size;

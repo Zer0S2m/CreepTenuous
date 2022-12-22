@@ -1,15 +1,17 @@
 package CreepTenuous.api.controllers.directory.createDirectory.forms;
 
+import java.util.List;
+
 public class FormCreateDirectoryApi {
-    private final String[] parents;
+    private final List<String> parents;
     private final String name;
 
-    public FormCreateDirectoryApi(String[] parents, String name) {
+    public FormCreateDirectoryApi(List<String> parents, String name) {
         this.parents = parents;
         this.name = name;
     }
 
-    public final String[] getParents() {
+    public final List<String> getParents() {
         return this.parents;
     }
 

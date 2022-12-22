@@ -1,15 +1,17 @@
 package CreepTenuous.api.controllers.directory.deleteDirectory.forms;
 
+import java.util.List;
+
 public class FormDeleteDirectoryApi {
-    private final String[] parents;
+    private final List<String> parents;
     private final String name;
 
-    public FormDeleteDirectoryApi(String[] parents, String name) {
+    public FormDeleteDirectoryApi(List<String> parents, String name) {
         this.parents = parents;
         this.name = name;
     }
 
-    public final String[] getParents() {
+    public final List<String> getParents() {
         return this.parents;
     }
 

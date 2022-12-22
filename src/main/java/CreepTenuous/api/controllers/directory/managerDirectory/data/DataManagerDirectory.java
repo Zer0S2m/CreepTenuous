@@ -6,11 +6,11 @@ import java.util.List;
 public class DataManagerDirectory {
     private final String readyDirectory;
     private final Integer levelDirectory;
-    private final String[] partsDirectory;
+    private final List<String> partsDirectory;
     private final List<Object> paths;
 
     public DataManagerDirectory(
-            String[] partsDirectory,
+            List<String> partsDirectory,
             String readyDirectory,
             Integer levelDirectory,
             List<Object> paths
@@ -29,7 +29,7 @@ public class DataManagerDirectory {
         return levelDirectory;
     }
 
-    public String[] getPartsDirectory() {
+    public List<String> getPartsDirectory() {
         return partsDirectory;
     }
 

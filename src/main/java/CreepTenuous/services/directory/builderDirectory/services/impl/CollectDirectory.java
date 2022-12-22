@@ -17,9 +17,10 @@ import java.util.function.Supplier;
 
 @Service("collect-directory")
 public class CollectDirectory implements ICollectDirectory {
+
     @Override
     public ArrayList<List<Path>> collect(String path) throws IOException {
-        Path _path = Paths.get("/" + path);
+        Path _path = Paths.get(path);
         Supplier<Stream<Path>> stream = () -> {
             try {
                 return Files.walk(_path, 1);

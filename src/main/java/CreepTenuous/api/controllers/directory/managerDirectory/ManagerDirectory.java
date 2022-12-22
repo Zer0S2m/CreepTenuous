@@ -12,6 +12,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @V1APIController
 public class ManagerDirectory implements CheckIsExistsDirectoryApi {
@@ -21,8 +22,8 @@ public class ManagerDirectory implements CheckIsExistsDirectoryApi {
     @GetMapping("/directory")
     @ResponseStatus(code = HttpStatus.OK)
     public DataManagerDirectory main(
-            @RequestParam(value = "level", defaultValue = "1") Integer level,
-            @RequestParam(value = "parents", defaultValue = "[]") String[] parents
+            @RequestParam(value = "level", defaultValue = "0") Integer level,
+            @RequestParam(value = "parents", defaultValue = "") List<String> parents
     ) throws IOException {
         return builderDirectory.build(parents, level);
     }

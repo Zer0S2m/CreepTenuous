@@ -3,9 +3,10 @@ package CreepTenuous.services.directory.createDirectory.services;
 import CreepTenuous.services.directory.builderDirectory.enums.Directory;
 
 import java.nio.file.*;
+import java.util.List;
 
 public interface ICreateDirectory {
-    void create(String[] parents, String name) throws NoSuchFileException, FileAlreadyExistsException;
+    void create(List<String> parents, String name) throws NoSuchFileException, FileAlreadyExistsException;
 
     default void checkDirectory(
             Path path,

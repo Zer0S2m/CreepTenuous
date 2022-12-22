@@ -9,14 +9,15 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Service("copy-directory")
 public class CopyDirectory implements ICopyDirectory, CheckIsExistsDirectoryService {
     @Override
     public void copy(
-            String[] parents,
-            String[] toParents,
+            List<String> parents,
+            List<String> toParents,
             String nameDirectory
     ) throws IOException {
         Path currentPath = Paths.get(BuildDirectoryPath.build(parents) + Directory.SEPARATOR.get(), nameDirectory);

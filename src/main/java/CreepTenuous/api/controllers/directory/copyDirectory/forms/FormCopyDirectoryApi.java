@@ -1,21 +1,23 @@
 package CreepTenuous.api.controllers.directory.copyDirectory.forms;
 
-public class FormCopyDirectoryApi {
-    private final String[] parents;
-    private final String nameDirectory;
-    private final String[] toParents;
+import java.util.List;
 
-    public FormCopyDirectoryApi(String[] parents, String nameDirectory, String[] toParents) {
+public class FormCopyDirectoryApi {
+    private final List<String> parents;
+    private final String nameDirectory;
+    private final List<String> toParents;
+
+    public FormCopyDirectoryApi(List<String> parents, String nameDirectory, List<String> toParents) {
         this.parents = parents;
         this.nameDirectory = nameDirectory;
         this.toParents = toParents;
     }
 
-    public String[] getParents() {
+    public List<String> getParents() {
         return this.parents;
     }
 
-    public String[] getToParents() {
+    public List<String> getToParents() {
         return this.toParents;
     }
 

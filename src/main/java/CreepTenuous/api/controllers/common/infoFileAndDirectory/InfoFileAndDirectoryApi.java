@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.NoSuchFileException;
+import java.util.List;
 
 @V1APIController
 public class InfoFileAndDirectoryApi implements CheckIsExistsDirectoryApi {
@@ -19,7 +20,7 @@ public class InfoFileAndDirectoryApi implements CheckIsExistsDirectoryApi {
     @GetMapping("/info-file-directory")
     @ResponseStatus(code = HttpStatus.OK)
     public DataInfoAndDirectoryApi getInfo(
-            @RequestParam(value = "parents", defaultValue = "[]") String[] parents
+            @RequestParam(value = "parents") List<String> parents
     ) throws NoSuchFileException {
         return collectInfo.collect(parents);
     }

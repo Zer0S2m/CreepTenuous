@@ -12,12 +12,13 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Service("move-directory")
 public class MoveDirectory implements IMoveDirectory, CheckIsExistsDirectoryService {
     public void move(
-            String[] parents,
-            String[] toParents,
+            List<String> parents,
+            List<String> toParents,
             String nameDirectory
     ) throws IOException {
         Path currentPath = Paths.get(
@@ -28,10 +29,9 @@ public class MoveDirectory implements IMoveDirectory, CheckIsExistsDirectoryServ
         checkDirectory(currentPath);
         checkDirectory(newPath);
 
-        ArrayList<String> createdNewArr = new ArrayList<String>(Arrays.asList(toParents));
-        createdNewArr.add(nameDirectory);
+        toParents.add(nameDirectory);
         Path createdNewPath = Paths.get(
-                BuildDirectoryPath.build(createdNewArr.toArray(new String[0]))
+                BuildDirectoryPath.build(toParents)
         );
 
         File newDirectory = createdNewPath.toFile();

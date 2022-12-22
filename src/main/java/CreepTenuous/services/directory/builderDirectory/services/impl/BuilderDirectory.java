@@ -1,6 +1,7 @@
 package CreepTenuous.services.directory.builderDirectory.services.impl;
 
 import CreepTenuous.api.controllers.directory.managerDirectory.data.DataManagerDirectory;
+import CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
 import CreepTenuous.services.directory.builderDirectory.enums.Directory;
 import CreepTenuous.services.directory.builderDirectory.services.IBuilderDirectory;
 import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Service("builder-ready-directory")
 public class BuilderDirectory implements IBuilderDirectory {
-    private String[] arrPartsDirectory;
+    private List<String> arrPartsDirectory;
     private Integer level;
 
     @Autowired
@@ -23,24 +24,29 @@ public class BuilderDirectory implements IBuilderDirectory {
     @Autowired
     private BuilderDataFile builderDataFile;
 
+    @Autowired
+    private CollectRootPath collectRootPath;
+
     @Override
     public final String getDirectory() {
-        return BuildDirectoryPath.build(this.arrPartsDirectory);
+        String rawPath = BuildDirectoryPath.build(this.arrPartsDirectory);
+        System.out.println(collectRootPath.collect(rawPath));
+        return collectRootPath.collect(rawPath);
     }
 
     @Override
-    public final String[] getArrPartsDirectory() {
+    public final List<String> getArrPartsDirectory() {
         return this.arrPartsDirectory;
     }
 
     @Override
-    public DataManagerDirectory build(String[] arrPartsDirectory, Integer level)
+    public DataManagerDirectory build(List<String> arrPartsDirectory, Integer level)
             throws HttpMessageNotReadableException, IOException
     {
         this.arrPartsDirectory = arrPartsDirectory;
         this.level = level;
 
-        if (level != arrPartsDirectory.length) {
+        if (level != arrPartsDirectory.toArray().length) {
             throw new HttpMessageNotReadableException(Directory.NOT_VALID_LEVEL.get());
         }
 
