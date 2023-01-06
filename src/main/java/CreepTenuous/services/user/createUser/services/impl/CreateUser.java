@@ -16,6 +16,7 @@ public class CreateUser implements ICreateUser {
     @Autowired
     private UserRepository userRepository;
 
+    @Override
     public Long create(User user) throws UserAlreadyExistException {
         Optional<String> email = Optional.ofNullable(user.getEmail());
 

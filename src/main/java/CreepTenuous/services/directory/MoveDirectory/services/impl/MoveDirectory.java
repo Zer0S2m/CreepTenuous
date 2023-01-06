@@ -2,7 +2,6 @@ package CreepTenuous.services.directory.MoveDirectory.services.impl;
 
 import CreepTenuous.services.directory.builderDirectory.enums.Directory;
 import CreepTenuous.services.directory.MoveDirectory.services.IMoveDirectory;
-import CreepTenuous.services.directory.utils.check.CheckIsExistsDirectoryService;
 import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +13,11 @@ import java.nio.file.*;
 import java.util.List;
 
 @Service("move-directory")
-public class MoveDirectory implements IMoveDirectory, CheckIsExistsDirectoryService {
+public class MoveDirectory implements IMoveDirectory {
     @Autowired
     private BuildDirectoryPath buildDirectoryPath;
 
+    @Override
     public void move(
             List<String> parents,
             List<String> toParents,
@@ -27,9 +27,6 @@ public class MoveDirectory implements IMoveDirectory, CheckIsExistsDirectoryServ
                 buildDirectoryPath.build(parents) + Directory.SEPARATOR.get() + nameDirectory
         );
         Path newPath = Paths.get(buildDirectoryPath.build(toParents));
-
-        checkDirectory(currentPath);
-        checkDirectory(newPath);
 
         toParents.add(nameDirectory);
         Path createdNewPath = Paths.get(

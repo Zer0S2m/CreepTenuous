@@ -10,6 +10,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.List;
 
 @Service("builder-ready-directory")
@@ -27,7 +28,7 @@ public class BuilderDirectory implements IBuilderDirectory {
     private BuildDirectoryPath buildDirectoryPath;
 
     @Override
-    public final String getDirectory() {
+    public final String getDirectory() throws NoSuchFileException {
         return buildDirectoryPath.build(this.arrPartsDirectory);
     }
 

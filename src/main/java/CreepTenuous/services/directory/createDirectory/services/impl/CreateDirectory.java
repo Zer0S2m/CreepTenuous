@@ -19,6 +19,7 @@ public class CreateDirectory implements ICreateDirectory {
     @Autowired
     private BuildDirectoryPath buildDirectoryPath;
 
+    @Override
     public void create(
             List<String> parents,
             String name
@@ -26,7 +27,7 @@ public class CreateDirectory implements ICreateDirectory {
         Path path = Paths.get(buildDirectoryPath.build(parents));
         Path pathNewDirectory = Paths.get(path + Directory.SEPARATOR.get() + name);
 
-        checkDirectory(path, pathNewDirectory);
+        checkDirectory(pathNewDirectory);
 
         File newDirectory = new File(pathNewDirectory.toString());
         boolean isCreated = newDirectory.mkdir();

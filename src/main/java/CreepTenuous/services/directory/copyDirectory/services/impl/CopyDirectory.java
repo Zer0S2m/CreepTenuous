@@ -25,10 +25,9 @@ public class CopyDirectory implements ICopyDirectory, CheckIsExistsDirectoryServ
             String nameDirectory
     ) throws IOException {
         Path currentPath = Paths.get(buildDirectoryPath.build(parents) + Directory.SEPARATOR.get(), nameDirectory);
-        Path newPath = Paths.get(buildDirectoryPath.build(toParents));
-
         checkDirectory(currentPath);
-        checkDirectory(newPath);
+
+        Path newPath = Paths.get(buildDirectoryPath.build(toParents));
 
         try (Stream<Path> stream = Files.walk(currentPath)) {
             stream.forEach(target -> {

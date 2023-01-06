@@ -1,6 +1,5 @@
 package CreepTenuous.services.files.createFile.service.impl;
 
-import CreepTenuous.services.directory.builderDirectory.enums.Directory;
 import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
 
 import CreepTenuous.services.files.createFile.exceptions.NotFoundTypeFileException;
@@ -25,12 +24,7 @@ public class CreateFile implements ICreateFile {
             Integer typeFile
     ) throws NotFoundTypeFileException, IOException {
         checkTypeFile(typeFile);
-
         Path path = Paths.get(buildDirectoryPath.build(parents));
-        if (!Files.exists(path)) {
-            throw new NoSuchFileException(Directory.NOT_FOUND_DIRECTORY.get());
-        }
-
         conductor(path, nameFile, typeFile);
     }
 }

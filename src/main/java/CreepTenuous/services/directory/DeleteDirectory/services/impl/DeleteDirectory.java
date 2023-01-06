@@ -2,8 +2,8 @@ package CreepTenuous.services.directory.DeleteDirectory.services.impl;
 
 import CreepTenuous.services.directory.builderDirectory.enums.Directory;
 import CreepTenuous.services.directory.DeleteDirectory.services.IDeleteDirectory;
-import CreepTenuous.services.directory.utils.check.CheckIsExistsDirectoryService;
 import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
+import CreepTenuous.services.directory.utils.check.CheckIsExistsDirectoryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,15 +19,15 @@ public class DeleteDirectory implements IDeleteDirectory, CheckIsExistsDirectory
     @Autowired
     private BuildDirectoryPath buildDirectoryPath;
 
+    @Override
     public void delete(
             List<String> parents,
             String name
     ) throws NoSuchFileException {
         Path path = Paths.get(buildDirectoryPath.build(parents) + Directory.SEPARATOR.get() + name);
-
         checkDirectory(path);
 
-        File removedDirectory = new File(path.toString());
+        File removedDirectory = path.toFile();
         boolean isDeletedDirectory = removedDirectory.delete();
     }
 }

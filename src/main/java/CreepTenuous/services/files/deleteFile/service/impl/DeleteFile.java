@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -24,11 +23,8 @@ public class DeleteFile implements IDeleteFile {
     @Override
     public void delete(String nameFile, List<String> parents) throws IOException, NoSuchFileExistsException {
         Path path = Paths.get(buildDirectoryPath.build(parents));
-        if (!Files.exists(path)) {
-            throw new NoSuchFileException(Directory.NOT_FOUND_DIRECTORY.get());
-        }
 
-        Path pathFile = Paths.get(path.toString() + Directory.SEPARATOR.get() + nameFile);
+        Path pathFile = Paths.get(path + Directory.SEPARATOR.get() + nameFile);
         if (!Files.exists(pathFile)) {
             throw new NoSuchFileExistsException(ExceptionFile.FILE_NOT_EXISTS.get());
         }
