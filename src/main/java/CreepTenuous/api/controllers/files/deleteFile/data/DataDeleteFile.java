@@ -1,11 +1,21 @@
 package CreepTenuous.api.controllers.files.deleteFile.data;
 
-public class DataDeleteFile {
-    private final Integer typeFile;
-    private final String titleFile;
+import java.util.List;
 
-    public DataDeleteFile(Integer typeFile, String titleFile) {
-        this.typeFile = typeFile;
-        this.titleFile = titleFile;
+public class DataDeleteFile {
+    private final String nameFile;
+    private final List<String> parents;
+
+    public DataDeleteFile(String nameFile, List<String> parents) {
+        this.nameFile = nameFile;
+        this.parents = parents;
+    }
+
+    public String getNameFile() {
+        return this.nameFile;
+    }
+
+    public List<String> getParents() {
+        return this.parents;
     }
 }
