@@ -4,7 +4,7 @@ import CreepTenuous.services.directory.builderDirectory.enums.Directory;
 import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
 import CreepTenuous.services.files.deleteFile.service.IDeleteFile;
 import CreepTenuous.services.files.enums.ExceptionFile;
-import CreepTenuous.services.files.deleteFile.exceptions.NoSuchFileExistsException;
+import CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

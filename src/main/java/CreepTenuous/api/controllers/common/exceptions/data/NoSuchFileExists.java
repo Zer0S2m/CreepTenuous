@@ -1,4 +1,4 @@
-package CreepTenuous.services.files.deleteFile.exceptions.data;
+package CreepTenuous.api.controllers.common.exceptions.data;
 
 import org.springframework.http.HttpStatus;
 
