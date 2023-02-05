@@ -5,7 +5,7 @@ import CreepTenuous.api.controllers.files.download.data.DataDownloadFile;
 import CreepTenuous.api.core.version.v1.V1APIController;
 import CreepTenuous.services.directory.utils.check.CheckIsExistsDirectoryApi;
 import CreepTenuous.services.files.download.containers.ContainerDownloadFile3;
-import CreepTenuous.services.files.download.service.impl.DownloadFile;
+import CreepTenuous.services.files.download.services.impl.DownloadFile;
 import CreepTenuous.services.files.utils.check.CheckIsExistsFileApi;
 
 import org.springframework.beans.factory.annotation.Autowired;

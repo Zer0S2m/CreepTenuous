@@ -4,7 +4,7 @@ import CreepTenuous.api.controllers.files.delete.data.DataDeleteFile;
 import CreepTenuous.api.core.version.v1.V1APIController;
 import CreepTenuous.services.directory.utils.check.CheckIsExistsDirectoryApi;
 import CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
-import CreepTenuous.services.files.delete.service.impl.DeleteFile;
+import CreepTenuous.services.files.delete.services.impl.DeleteFile;
 import CreepTenuous.services.files.utils.check.CheckIsExistsFileApi;
 
 import org.springframework.beans.factory.annotation.Autowired;

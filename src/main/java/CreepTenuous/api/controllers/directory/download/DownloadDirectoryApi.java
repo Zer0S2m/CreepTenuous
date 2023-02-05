@@ -2,7 +2,7 @@ package CreepTenuous.api.controllers.directory.download;
 
 import CreepTenuous.api.controllers.directory.download.data.DataDownloadDirectory;
 import CreepTenuous.api.core.version.v1.V1APIController;
-import CreepTenuous.services.directory.download.impl.DownloadDirectory;
+import CreepTenuous.services.directory.download.services.impl.DownloadDirectory;
 import CreepTenuous.services.directory.utils.check.CheckIsExistsDirectoryApi;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,7 +3,7 @@ package CreepTenuous.api.controllers.files.upload;
 import CreepTenuous.api.controllers.files.upload.response.ResponseUploadFile;
 import CreepTenuous.api.core.version.v1.V1APIController;
 import CreepTenuous.services.directory.utils.check.CheckIsExistsDirectoryApi;
-import CreepTenuous.services.files.upload.service.impl.UploadFile;
+import CreepTenuous.services.files.upload.services.impl.UploadFile;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.codec.multipart.FilePart;

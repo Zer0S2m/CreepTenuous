@@ -1,9 +1,9 @@
-package CreepTenuous.services.files.download.service.impl;
+package CreepTenuous.services.files.download.services.impl;
 
 import CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
 import CreepTenuous.services.directory.builder.enums.Directory;
 import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
-import CreepTenuous.services.files.download.service.IDownloadFile;
+import CreepTenuous.services.files.download.services.IDownloadFile;
 import CreepTenuous.services.files.download.containers.ContainerDownloadFile3;
 import CreepTenuous.services.files.utils.check.CheckIsExistsFileService;
 

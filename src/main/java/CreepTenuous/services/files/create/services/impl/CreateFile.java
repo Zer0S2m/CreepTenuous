@@ -1,9 +1,9 @@
-package CreepTenuous.services.files.create.service.impl;
+package CreepTenuous.services.files.create.services.impl;
 
 import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
 
 import CreepTenuous.services.files.create.exceptions.NotFoundTypeFileException;
-import CreepTenuous.services.files.create.service.ICreateFile;
+import CreepTenuous.services.files.create.services.ICreateFile;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

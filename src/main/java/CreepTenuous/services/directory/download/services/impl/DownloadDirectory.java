@@ -1,8 +1,8 @@
-package CreepTenuous.services.directory.download.impl;
+package CreepTenuous.services.directory.download.services.impl;
 
 import CreepTenuous.services.directory.builder.enums.Directory;
-import CreepTenuous.services.directory.download.IDownloadDirectory;
-import CreepTenuous.services.directory.download.ICollectZipDirectory;
+import CreepTenuous.services.directory.download.services.IDownloadDirectory;
+import CreepTenuous.services.directory.download.services.ICollectZipDirectory;
 import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
 import CreepTenuous.services.directory.utils.check.CheckIsExistsDirectoryService;
 

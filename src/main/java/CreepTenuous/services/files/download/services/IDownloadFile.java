@@ -1,4 +1,4 @@
-package CreepTenuous.services.files.download.service;
+package CreepTenuous.services.files.download.services;
 
 import CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
 import CreepTenuous.services.files.download.containers.ContainerDownloadFile3;

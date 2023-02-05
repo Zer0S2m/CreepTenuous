@@ -1,8 +1,8 @@
-package CreepTenuous.services.files.delete.service.impl;
+package CreepTenuous.services.files.delete.services.impl;
 
 import CreepTenuous.services.directory.builder.enums.Directory;
 import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
-import CreepTenuous.services.files.delete.service.IDeleteFile;
+import CreepTenuous.services.files.delete.services.IDeleteFile;
 import CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
 import CreepTenuous.services.files.utils.check.CheckIsExistsFileService;
 

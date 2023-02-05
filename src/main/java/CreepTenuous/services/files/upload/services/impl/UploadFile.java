@@ -1,9 +1,9 @@
-package CreepTenuous.services.files.upload.service.impl;
+package CreepTenuous.services.files.upload.services.impl;
 
 import CreepTenuous.api.controllers.files.upload.response.ResponseUploadFile;
 import CreepTenuous.services.directory.builder.enums.Directory;
 import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
-import CreepTenuous.services.files.upload.service.IUploadFile;
+import CreepTenuous.services.files.upload.services.IUploadFile;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.codec.multipart.FilePart;

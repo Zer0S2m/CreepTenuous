@@ -7,6 +7,7 @@ public enum Directory {
     DIRECTORY_EXISTS("Директория уже существует."),
     TYPE_APPLICATION_ZIP("application/zip"),
     EXTENSION_FILE_ZIP(".zip"),
+    THREAD_NAME_UNPACKING_DIRECTORY("unpacking-directory-zip"),
     BYTES_COLLECT_ZIP(4096);
 
     private final String msg;

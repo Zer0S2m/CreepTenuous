@@ -1,4 +1,4 @@
-package CreepTenuous.services.directory.download;
+package CreepTenuous.services.directory.download.services;
 
 import CreepTenuous.services.directory.builder.enums.Directory;
 

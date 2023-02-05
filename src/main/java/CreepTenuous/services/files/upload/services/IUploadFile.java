@@ -1,4 +1,4 @@
-package CreepTenuous.services.files.upload.service;
+package CreepTenuous.services.files.upload.services;
 
 import CreepTenuous.api.controllers.files.upload.response.ResponseUploadFile;
 

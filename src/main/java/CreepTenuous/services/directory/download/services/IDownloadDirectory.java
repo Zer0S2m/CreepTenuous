@@ -1,4 +1,4 @@
-package CreepTenuous.services.directory.download;
+package CreepTenuous.services.directory.download.services;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;

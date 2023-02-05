@@ -1,4 +1,4 @@
-package CreepTenuous.services.files.delete.service;
+package CreepTenuous.services.files.delete.services;
 
 import CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
 
