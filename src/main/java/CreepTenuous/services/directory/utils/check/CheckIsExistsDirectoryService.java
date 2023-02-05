@@ -1,6 +1,6 @@
 package CreepTenuous.services.directory.utils.check;
 
-import CreepTenuous.services.directory.builderDirectory.enums.Directory;
+import CreepTenuous.services.directory.builder.enums.Directory;
 
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;

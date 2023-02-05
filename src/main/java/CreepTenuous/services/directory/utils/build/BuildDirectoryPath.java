@@ -1,7 +1,7 @@
 package CreepTenuous.services.directory.utils.build;
 
 import CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
-import CreepTenuous.services.directory.builderDirectory.enums.Directory;
+import CreepTenuous.services.directory.builder.enums.Directory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package CreepTenuous.services.common.infoFileAndDirectory.services;
 
 import CreepTenuous.api.controllers.common.infoFileAndDirectory.data.DataInfoAndDirectoryApi;
-import CreepTenuous.services.directory.builderDirectory.enums.Directory;
+import CreepTenuous.services.directory.builder.enums.Directory;
 import CreepTenuous.services.common.infoFileAndDirectory.IInfoFileAndDirectory;
 import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
 

@@ -1,6 +1,6 @@
 package CreepTenuous.services.directory.utils.check;
 
-import CreepTenuous.services.directory.builderDirectory.exceptions.ExceptionNotDirectory;
+import CreepTenuous.services.directory.builder.exceptions.ExceptionNotDirectory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
