@@ -1,7 +1,7 @@
 package CreepTenuous.services.files.downloadFile.service;
 
 import CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
-import CreepTenuous.services.files.downloadFile.service.containers.ContainerDownloadFile3;
+import CreepTenuous.services.files.downloadFile.containers.ContainerDownloadFile3;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;

@@ -1,4 +1,4 @@
-package CreepTenuous.services.files.downloadFile.service.containers;
+package CreepTenuous.services.files.downloadFile.containers;
 
 public class ContainerDownloadFile3<ByteContent, StringDataFile> {
     private final ByteContent byteContent;

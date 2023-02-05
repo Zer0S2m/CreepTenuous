@@ -4,8 +4,8 @@ import CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
 import CreepTenuous.services.directory.builderDirectory.enums.Directory;
 import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
 import CreepTenuous.services.files.downloadFile.service.IDownloadFile;
-import CreepTenuous.services.files.downloadFile.service.containers.ContainerDownloadFile3;
-import CreepTenuous.services.files.enums.ExceptionFile;
+import CreepTenuous.services.files.downloadFile.containers.ContainerDownloadFile3;
+import CreepTenuous.services.files.utils.check.CheckIsExistsFileService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -21,7 +21,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @Service("download-file")
-public class DownloadFile implements IDownloadFile {
+public class DownloadFile implements IDownloadFile, CheckIsExistsFileService {
     @Autowired
     private BuildDirectoryPath buildDirectoryPath;
     private final ConfigurableMimeFileTypeMap fileTypeMap = new ConfigurableMimeFileTypeMap();
@@ -31,12 +31,10 @@ public class DownloadFile implements IDownloadFile {
             List<String> parents,
             String filename
     ) throws IOException, NoSuchFileExistsException {
-        Path path = Paths.get(buildDirectoryPath.build(parents));
-        Path pathFile = Paths.get(path + Directory.SEPARATOR.get() + filename);
-
-        if (!Files.exists(pathFile)) {
-            throw new NoSuchFileExistsException(ExceptionFile.FILE_NOT_EXISTS.get());
-        }
+        Path pathFile = Paths.get(
+                Paths.get(buildDirectoryPath.build(parents)) + Directory.SEPARATOR.get() + filename
+        );
+        checkFile(pathFile);
 
         return new ContainerDownloadFile3<>(
                 new ByteArrayResource(Files.readAllBytes(pathFile)),
@@ -53,8 +51,8 @@ public class DownloadFile implements IDownloadFile {
         headers.add(HttpHeaders.PRAGMA, "no-cache");
         headers.add(HttpHeaders.EXPIRES, "0");
         headers.add(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition
-                .attachment().
-                filename(data.getFilename())
+                .attachment()
+                .filename(data.getFilename())
                 .build()
                 .toString()
         );

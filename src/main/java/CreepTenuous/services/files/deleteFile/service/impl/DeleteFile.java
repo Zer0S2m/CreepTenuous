@@ -3,8 +3,8 @@ package CreepTenuous.services.files.deleteFile.service.impl;
 import CreepTenuous.services.directory.builderDirectory.enums.Directory;
 import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
 import CreepTenuous.services.files.deleteFile.service.IDeleteFile;
-import CreepTenuous.services.files.enums.ExceptionFile;
 import CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
+import CreepTenuous.services.files.utils.check.CheckIsExistsFileService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,18 +16,16 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @Service("delete-file")
-public class DeleteFile implements IDeleteFile {
+public class DeleteFile implements IDeleteFile, CheckIsExistsFileService {
     @Autowired
     private BuildDirectoryPath buildDirectoryPath;
 
     @Override
     public void delete(String nameFile, List<String> parents) throws IOException, NoSuchFileExistsException {
-        Path path = Paths.get(buildDirectoryPath.build(parents));
-
-        Path pathFile = Paths.get(path + Directory.SEPARATOR.get() + nameFile);
-        if (!Files.exists(pathFile)) {
-            throw new NoSuchFileExistsException(ExceptionFile.FILE_NOT_EXISTS.get());
-        }
+        Path pathFile = Paths.get(
+                Paths.get(buildDirectoryPath.build(parents)) + Directory.SEPARATOR.get() + nameFile
+        );
+        checkFile(pathFile);
 
         Files.delete(pathFile);
     }
