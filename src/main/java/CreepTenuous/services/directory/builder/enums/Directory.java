@@ -8,7 +8,8 @@ public enum Directory {
     TYPE_APPLICATION_ZIP("application/zip"),
     EXTENSION_FILE_ZIP(".zip"),
     THREAD_NAME_UNPACKING_DIRECTORY("unpacking-directory-zip"),
-    BYTES_COLLECT_ZIP(4096);
+    BYTES_COLLECT_ZIP(4096),
+    BYTES_UNPACKING_ZIP(4096);
 
     private final String msg;
     private final Integer msgInt;
