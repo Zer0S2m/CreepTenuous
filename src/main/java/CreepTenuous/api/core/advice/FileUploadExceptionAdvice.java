@@ -1,6 +1,6 @@
-package CreepTenuous.api.controllers.advice;
+package CreepTenuous.api.core.advice;
 
-import CreepTenuous.api.controllers.advice.messages.FileUploadMaxSize;
+import CreepTenuous.api.core.advice.messages.FileUploadMaxSize;
 import CreepTenuous.services.files.enums.ExceptionFile;
 
 import org.springframework.web.multipart.MaxUploadSizeExceededException;

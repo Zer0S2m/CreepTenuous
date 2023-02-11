@@ -1,4 +1,4 @@
-package CreepTenuous.api.controllers.advice.messages;
+package CreepTenuous.api.core.advice.messages;
 
 import org.springframework.http.HttpStatus;
 
