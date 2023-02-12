@@ -1,6 +1,6 @@
 package CreepTenuous.services.user.create.services.impl;
 
-import CreepTenuous.services.user.create.enums.UserAlready;
+import CreepTenuous.services.user.enums.UserAlready;
 import CreepTenuous.services.user.create.services.ICreateUser;
 import CreepTenuous.services.user.exceptions.UserAlreadyExistException;
 import CreepTenuous.models.User;

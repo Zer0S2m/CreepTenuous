@@ -1,4 +1,4 @@
-package CreepTenuous.services.user.create.enums;
+package CreepTenuous.services.user.enums;
 
 public enum UserAlready {
     USER_EMAIL_EXISTS("email"),

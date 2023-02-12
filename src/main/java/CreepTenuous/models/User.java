@@ -1,17 +1,27 @@
 package CreepTenuous.models;
 
+import CreepTenuous.services.user.enums.UserRole;
 import CreepTenuous.services.user.generatePassword.services.impl.GeneratePassword;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
+@Data
 @Entity
 @Table(name = "\"user\"")
-public class User implements Serializable {
+public class User implements UserDetails {
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
     @Id
     @Column(name = "id")
     @SequenceGenerator(name = "UserSequence", sequenceName = "user_id_seq", allocationSize = 1)
@@ -78,8 +88,18 @@ public class User implements Serializable {
         this.email = email;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return getLogin();
     }
 
     public void setPassword(String password) {
@@ -101,5 +121,25 @@ public class User implements Serializable {
 
     public void setDateOfBrith(Date dateOfBrith) {
         this.dateOfBrith = dateOfBrith;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
