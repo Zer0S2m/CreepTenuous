@@ -16,7 +16,7 @@ public class GeneratePassword implements IGeneratePassword {
 
     @Override
     public final String generation(String password) {
-        return this.generate.hash(2, 15*1024, 1, password.toCharArray());
+        return this.generate.hash(2, 15 * 1024, 1, password.toCharArray());
     }
 
     @Override

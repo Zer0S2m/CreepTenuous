@@ -1,6 +1,6 @@
 package CreepTenuous.services.directory.upload.threads;
 
-import CreepTenuous.services.directory.builder.enums.Directory;
+import CreepTenuous.services.directory.manager.enums.Directory;
 
 import java.io.*;
 import java.nio.file.Path;

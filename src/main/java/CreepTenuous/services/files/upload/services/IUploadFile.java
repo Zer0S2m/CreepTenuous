@@ -1,6 +1,6 @@
 package CreepTenuous.services.files.upload.services;
 
-import CreepTenuous.api.controllers.files.upload.response.ResponseUploadFile;
+import CreepTenuous.api.controllers.files.upload.http.ResponseUploadFile;
 
 import org.springframework.http.codec.multipart.FilePart;
 import reactor.core.publisher.Flux;

@@ -1,7 +1,6 @@
 package CreepTenuous.services.files.create.services.impl;
 
-import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
-
+import CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
 import CreepTenuous.services.files.create.exceptions.NotFoundTypeFileException;
 import CreepTenuous.services.files.create.services.ICreateFile;
 
@@ -14,8 +13,12 @@ import java.util.List;
 
 @Service("create-file")
 public class CreateFile implements ICreateFile {
+    private final BuildDirectoryPath buildDirectoryPath;
+
     @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    public CreateFile(BuildDirectoryPath buildDirectoryPath) {
+        this.buildDirectoryPath = buildDirectoryPath;
+    }
 
     @Override
     public void create(

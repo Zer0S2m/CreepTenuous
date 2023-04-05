@@ -1,6 +1,6 @@
 package CreepTenuous.api.core.advice;
 
-import CreepTenuous.api.core.advice.messages.FileUploadMaxSize;
+import CreepTenuous.api.core.advice.exceptions.messages.FileUploadMaxSizeMsg;
 import CreepTenuous.services.files.enums.ExceptionFile;
 
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class FileUploadExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    protected ResponseEntity<FileUploadMaxSize> handleMaxSizeException(MaxUploadSizeExceededException e) {
+    protected ResponseEntity<FileUploadMaxSizeMsg> handleMaxSizeException(MaxUploadSizeExceededException e) {
         return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
-                new FileUploadMaxSize(ExceptionFile.FILE_LARGE.get())
+                new FileUploadMaxSizeMsg(ExceptionFile.FILE_LARGE.get())
         );
     }
 }

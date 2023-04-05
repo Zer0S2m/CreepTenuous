@@ -1,6 +1,6 @@
 package CreepTenuous.services.directory.download.services;
 
-import CreepTenuous.services.directory.builder.enums.Directory;
+import CreepTenuous.services.directory.manager.enums.Directory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,12 +43,14 @@ public interface ICollectZipDirectory {
 
             File[] children = newFileZip.listFiles();
 
-            for (File childFile : children) {
-                collectZipFile(
-                        childFile,
-                        filenameZip + Directory.SEPARATOR.get() + childFile.getName(),
-                        fosZip
-                );
+            if (children != null) {
+                for (File childFile : children) {
+                    collectZipFile(
+                            childFile,
+                            filenameZip + Directory.SEPARATOR.get() + childFile.getName(),
+                            fosZip
+                    );
+                }
             }
             return;
         }
@@ -62,6 +64,6 @@ public interface ICollectZipDirectory {
             while ((length = fisZip.read(bytes)) >= 0) {
                 fosZip.write(bytes, 0, length);
             }
-        };
+        }
     }
 }

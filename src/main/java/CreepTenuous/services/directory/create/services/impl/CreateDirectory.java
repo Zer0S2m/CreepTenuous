@@ -1,8 +1,8 @@
 package CreepTenuous.services.directory.create.services.impl;
 
-import CreepTenuous.services.directory.builder.enums.Directory;
+import CreepTenuous.services.directory.manager.enums.Directory;
 import CreepTenuous.services.directory.create.services.ICreateDirectory;
-import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
+import CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,8 +16,12 @@ import java.util.List;
 
 @Service("create-directory")
 public class CreateDirectory implements ICreateDirectory {
+    private final BuildDirectoryPath buildDirectoryPath;
+
     @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    public CreateDirectory(BuildDirectoryPath buildDirectoryPath) {
+        this.buildDirectoryPath = buildDirectoryPath;
+    }
 
     @Override
     public void create(
@@ -30,6 +34,6 @@ public class CreateDirectory implements ICreateDirectory {
         checkDirectory(pathNewDirectory);
 
         File newDirectory = new File(pathNewDirectory.toString());
-        boolean isCreated = newDirectory.mkdir();
+        newDirectory.mkdir();
     }
 }

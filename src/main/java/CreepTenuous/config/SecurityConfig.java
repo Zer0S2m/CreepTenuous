@@ -1,48 +1,65 @@
 package CreepTenuous.config;
 
-import CreepTenuous.services.user.security.jwt.filters.JwtFilter;
+import CreepTenuous.repositories.UserRepository;
+import CreepTenuous.providers.jwt.filters.JwtFilter;
+import CreepTenuous.providers.jwt.JwtProvider;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration
+@AllArgsConstructor
 @EnableWebSecurity
-@EnableMethodSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
-    private final JwtFilter jwtFilter;
-    private final AuthenticationProvider authenticationProvider;
+    private final JwtProvider jwtProvider;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain springWebFilterChain(HttpSecurity http) throws Exception {
         return http
-                .authorizeHttpRequests(auth -> auth
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(
+                        c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .exceptionHandling(
+                        c -> c.authenticationEntryPoint(
+                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
+                        )
+                )
+                .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
                                 "/api/v1/auth/login",
-                                "/api/v1/auth/token"
-                        )
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated()
+                                "/api/v1/auth/token",
+                                "/api/v1/auth/refresh",
+                                "/api/v1/user/create"
+                        ).permitAll()
+                        .anyRequest().authenticated()
                 )
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        // https://stackoverflow.com/a/74521360/65681
-                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
-                )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .authenticationProvider(authenticationProvider)
+                .addFilterAfter(new JwtFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    @Bean
+    UserDetailsService customUserDetailsService(final UserRepository users) {
+        return users::findByLogin;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration
+    ) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 }

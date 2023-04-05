@@ -1,9 +1,9 @@
 package CreepTenuous.services.directory.delete.services.impl;
 
-import CreepTenuous.services.directory.builder.enums.Directory;
+import CreepTenuous.services.directory.manager.enums.Directory;
 import CreepTenuous.services.directory.delete.services.IDeleteDirectory;
-import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
-import CreepTenuous.services.directory.utils.check.CheckIsExistsDirectoryService;
+import CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,8 +16,12 @@ import java.util.List;
 
 @Service("delete-directory")
 public class DeleteDirectory implements IDeleteDirectory, CheckIsExistsDirectoryService {
+    private final BuildDirectoryPath buildDirectoryPath;
+
     @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    public DeleteDirectory(BuildDirectoryPath buildDirectoryPath) {
+        this.buildDirectoryPath = buildDirectoryPath;
+    }
 
     @Override
     public void delete(
@@ -28,6 +32,6 @@ public class DeleteDirectory implements IDeleteDirectory, CheckIsExistsDirectory
         checkDirectory(path);
 
         File removedDirectory = path.toFile();
-        boolean isDeletedDirectory = removedDirectory.delete();
+        removedDirectory.delete();
     }
 }

@@ -1,11 +1,11 @@
 package CreepTenuous.services.directory.upload.services.impl;
 
-import CreepTenuous.api.controllers.directory.upload.response.ResponseUploadDirectory;
-import CreepTenuous.services.directory.builder.enums.Directory;
+import CreepTenuous.api.controllers.directory.upload.http.ResponseUploadDirectory;
+import CreepTenuous.services.directory.manager.enums.Directory;
 import CreepTenuous.services.directory.upload.containers.ContainerUploadFile;
 import CreepTenuous.services.directory.upload.services.IUploadDirectory;
 import CreepTenuous.services.directory.upload.services.IUnpackingDirectory;
-import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
+import CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,13 +15,16 @@ import reactor.core.publisher.Mono;
 
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 @Service("upload-service")
 public class UploadDirectory implements IUploadDirectory, IUnpackingDirectory {
+    private final BuildDirectoryPath buildDirectoryPath;
+
     @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    public UploadDirectory(BuildDirectoryPath buildDirectoryPath) {
+        this.buildDirectoryPath = buildDirectoryPath;
+    }
 
     public Mono<ResponseUploadDirectory> upload(
             List<String> parents,

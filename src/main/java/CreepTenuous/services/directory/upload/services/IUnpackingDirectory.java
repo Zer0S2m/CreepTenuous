@@ -1,6 +1,6 @@
 package CreepTenuous.services.directory.upload.services;
 
-import CreepTenuous.services.directory.builder.enums.Directory;
+import CreepTenuous.services.directory.manager.enums.Directory;
 import CreepTenuous.services.directory.upload.containers.ContainerUploadFile;
 import CreepTenuous.services.directory.upload.threads.ThreadUnpackingDirectory;
 

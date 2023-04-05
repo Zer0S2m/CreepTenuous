@@ -1,8 +1,8 @@
 package CreepTenuous.services.files.upload.services.impl;
 
-import CreepTenuous.api.controllers.files.upload.response.ResponseUploadFile;
-import CreepTenuous.services.directory.builder.enums.Directory;
-import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
+import CreepTenuous.api.controllers.files.upload.http.ResponseUploadFile;
+import CreepTenuous.services.directory.manager.enums.Directory;
+import CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
 import CreepTenuous.services.files.upload.services.IUploadFile;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,12 @@ import java.util.List;
 
 @Service("upload-file")
 public class UploadFile implements IUploadFile {
+    private final BuildDirectoryPath buildDirectoryPath;
+
     @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    public UploadFile(BuildDirectoryPath buildDirectoryPath) {
+        this.buildDirectoryPath = buildDirectoryPath;
+    }
 
     @Override
     public Mono<ResponseUploadFile> upload(

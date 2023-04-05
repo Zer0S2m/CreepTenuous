@@ -1,11 +1,11 @@
 package CreepTenuous.services.files.download.services.impl;
 
 import CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
-import CreepTenuous.services.directory.builder.enums.Directory;
-import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
+import CreepTenuous.services.directory.manager.enums.Directory;
+import CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
 import CreepTenuous.services.files.download.services.IDownloadFile;
 import CreepTenuous.services.files.download.containers.ContainerDownloadFile3;
-import CreepTenuous.services.files.utils.check.CheckIsExistsFileService;
+import CreepTenuous.providers.build.os.services.CheckIsExistsFileService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -22,9 +22,13 @@ import java.util.List;
 
 @Service("download-file")
 public class DownloadFile implements IDownloadFile, CheckIsExistsFileService {
-    @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    private final BuildDirectoryPath buildDirectoryPath;
     private final ConfigurableMimeFileTypeMap fileTypeMap = new ConfigurableMimeFileTypeMap();
+
+    @Autowired
+    public DownloadFile(BuildDirectoryPath buildDirectoryPath) {
+        this.buildDirectoryPath = buildDirectoryPath;
+    }
 
     @Override
     public ContainerDownloadFile3<ByteArrayResource, String> download(
@@ -52,12 +56,12 @@ public class DownloadFile implements IDownloadFile, CheckIsExistsFileService {
         headers.add(HttpHeaders.EXPIRES, "0");
         headers.add(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition
                 .attachment()
-                .filename(data.getFilename())
+                .filename(data.filename())
                 .build()
                 .toString()
         );
-        headers.add(HttpHeaders.CONTENT_TYPE, data.getMimeType());
-        headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(data.getByteContent().contentLength()));
+        headers.add(HttpHeaders.CONTENT_TYPE, data.mimeType());
+        headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(data.byteContent().contentLength()));
 
         return headers;
     }

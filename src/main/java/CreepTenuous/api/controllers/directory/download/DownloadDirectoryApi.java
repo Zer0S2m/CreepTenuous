@@ -3,7 +3,7 @@ package CreepTenuous.api.controllers.directory.download;
 import CreepTenuous.api.controllers.directory.download.data.DataDownloadDirectory;
 import CreepTenuous.api.core.version.v1.V1APIController;
 import CreepTenuous.services.directory.download.services.impl.DownloadDirectory;
-import CreepTenuous.services.directory.utils.check.CheckIsExistsDirectoryApi;
+import CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -15,13 +15,17 @@ import java.io.IOException;
 
 @V1APIController
 public class DownloadDirectoryApi implements CheckIsExistsDirectoryApi {
+    private final DownloadDirectory downloadDirectory;
+
     @Autowired
-    private DownloadDirectory downloadDirectory;
+    public DownloadDirectoryApi(DownloadDirectory downloadDirectory) {
+        this.downloadDirectory = downloadDirectory;
+    }
 
     @GetMapping(path = "/directory/download")
     public final Mono<ResponseEntity<Resource>> download(
             final DataDownloadDirectory data
     ) throws IOException {
-        return downloadDirectory.download(data.getParents(), data.getDirectory());
+        return downloadDirectory.download(data.parents(), data.directory());
     }
 }

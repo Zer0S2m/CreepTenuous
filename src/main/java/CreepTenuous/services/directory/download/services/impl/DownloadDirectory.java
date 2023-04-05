@@ -1,10 +1,10 @@
 package CreepTenuous.services.directory.download.services.impl;
 
-import CreepTenuous.services.directory.builder.enums.Directory;
+import CreepTenuous.services.directory.manager.enums.Directory;
 import CreepTenuous.services.directory.download.services.IDownloadDirectory;
 import CreepTenuous.services.directory.download.services.ICollectZipDirectory;
-import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
-import CreepTenuous.services.directory.utils.check.CheckIsExistsDirectoryService;
+import CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -23,8 +23,12 @@ import java.nio.file.Path;
 
 @Service("download-directory")
 public class DownloadDirectory implements IDownloadDirectory, ICollectZipDirectory, CheckIsExistsDirectoryService {
+    private final BuildDirectoryPath buildDirectoryPath;
+
     @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    public DownloadDirectory(BuildDirectoryPath buildDirectoryPath) {
+        this.buildDirectoryPath = buildDirectoryPath;
+    }
 
     @Override
     public Mono<ResponseEntity<Resource>> download(

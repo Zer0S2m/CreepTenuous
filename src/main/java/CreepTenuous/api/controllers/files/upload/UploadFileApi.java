@@ -1,8 +1,8 @@
 package CreepTenuous.api.controllers.files.upload;
 
-import CreepTenuous.api.controllers.files.upload.response.ResponseUploadFile;
+import CreepTenuous.api.controllers.files.upload.http.ResponseUploadFile;
 import CreepTenuous.api.core.version.v1.V1APIController;
-import CreepTenuous.services.directory.utils.check.CheckIsExistsDirectoryApi;
+import CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 import CreepTenuous.services.files.upload.services.impl.UploadFile;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,12 @@ import java.util.List;
 
 @V1APIController
 public class UploadFileApi implements CheckIsExistsDirectoryApi {
+    private final UploadFile uploadFile;
+
     @Autowired
-    private UploadFile uploadFile;
+    public UploadFileApi(UploadFile uploadFile) {
+        this.uploadFile = uploadFile;
+    }
 
     @PostMapping(value = "/file/upload")
     public Mono<ResponseUploadFile> upload(

@@ -1,10 +1,10 @@
 package CreepTenuous.services.user.enums;
 
-//import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.GrantedAuthority;
 
-public enum UserRole  {
-    ADMIN("ADMIN"),
-    USER("USER");
+public enum UserRole implements GrantedAuthority {
+    ROLE_ADMIN("ROLE_ADMIN"),
+    ROLE_USER("ROLE_USER");
 
     private final String role;
 
@@ -12,7 +12,7 @@ public enum UserRole  {
         this.role = role;
     }
 
-//    @Override
+    @Override
     public String getAuthority() {
         return role;
     }

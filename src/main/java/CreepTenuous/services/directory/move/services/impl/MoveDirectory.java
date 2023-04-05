@@ -1,8 +1,8 @@
 package CreepTenuous.services.directory.move.services.impl;
 
-import CreepTenuous.services.directory.builder.enums.Directory;
+import CreepTenuous.services.directory.manager.enums.Directory;
 import CreepTenuous.services.directory.move.services.IMoveDirectory;
-import CreepTenuous.services.directory.utils.build.BuildDirectoryPath;
+import CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,8 +14,12 @@ import java.util.List;
 
 @Service("move-directory")
 public class MoveDirectory implements IMoveDirectory {
+    private final BuildDirectoryPath buildDirectoryPath;
+
     @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    public MoveDirectory(BuildDirectoryPath buildDirectoryPath) {
+        this.buildDirectoryPath = buildDirectoryPath;
+    }
 
     @Override
     public void move(
@@ -26,7 +30,7 @@ public class MoveDirectory implements IMoveDirectory {
         Path currentPath = Paths.get(
                 buildDirectoryPath.build(parents) + Directory.SEPARATOR.get() + nameDirectory
         );
-        Path newPath = Paths.get(buildDirectoryPath.build(toParents));
+        Paths.get(buildDirectoryPath.build(toParents));
 
         toParents.add(nameDirectory);
         Path createdNewPath = Paths.get(
@@ -35,7 +39,7 @@ public class MoveDirectory implements IMoveDirectory {
 
         File newDirectory = createdNewPath.toFile();
         if (!newDirectory.exists()) {
-            boolean isCreated = newDirectory.mkdir();
+            newDirectory.mkdir();
         }
 
         Files.move(currentPath, createdNewPath, StandardCopyOption.REPLACE_EXISTING);

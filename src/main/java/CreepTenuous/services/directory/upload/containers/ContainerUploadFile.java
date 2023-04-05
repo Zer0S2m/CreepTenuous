@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContainerUploadFile {
-    private List<Path> files;
+    private final List<Path> files;
 
     public ContainerUploadFile() {
         this.files = new ArrayList<>();
