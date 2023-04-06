@@ -36,7 +36,7 @@ public class AuthControllerApi {
     @PostMapping(value = "/auth/token")
     public JwtResponse access(
             final @RequestBody JwtRefreshTokenRequest request
-    ) throws UserNotFoundException {
+    ) throws UserNotFoundException, NoValidJwtRefreshTokenException {
         return jwtService.getAccessToken(request.refreshToken());
     }
 

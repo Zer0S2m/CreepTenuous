@@ -6,6 +6,9 @@ import CreepTenuous.providers.jwt.domain.JwtAuthentication;
 import CreepTenuous.providers.jwt.exceptions.NoValidJwtRefreshTokenException;
 import CreepTenuous.providers.jwt.http.JwtUserRequest;
 import CreepTenuous.providers.jwt.http.JwtResponse;
+import CreepTenuous.providers.redis.data.JwtRedisData;
+import CreepTenuous.providers.redis.models.JwtRedis;
+import CreepTenuous.providers.redis.services.imple.RedisService;
 import CreepTenuous.repositories.UserRepository;
 import CreepTenuous.services.user.enums.UserException;
 import CreepTenuous.services.user.exceptions.UserNotFoundException;
@@ -19,6 +22,9 @@ import lombok.NonNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+import java.util.Optional;
+
 @Service("jwt-service")
 @AllArgsConstructor
 public class JwtService implements IJwtService {
@@ -27,6 +33,8 @@ public class JwtService implements IJwtService {
     final private UserRepository userRepository;
 
     final private GeneratePassword generatePassword;
+
+    final private RedisService redisService;
 
     @Override
     public JwtResponse login(JwtUserRequest user) throws UserNotFoundException, UserNotValidPasswordException {
@@ -37,8 +45,17 @@ public class JwtService implements IJwtService {
         if (!generatePassword.verify(user.password(), currentUser.getPassword())) {
             throw new UserNotValidPasswordException(UserException.USER_NOT_VALID_PASSWORD.get());
         }
-        String accessToken = jwtProvider.generateAccessToken(user, currentUser.getRole());
-        String refreshToken = jwtProvider.generateRefreshToken(user);
+
+        final String accessToken = jwtProvider.generateAccessToken(user, currentUser.getRole());
+        final String refreshToken = jwtProvider.generateRefreshToken(user);
+
+        redisService.save(new JwtRedisData(
+                currentUser.getLogin(),
+                accessToken,
+                refreshToken
+        ));
+
+        redisService.deleteTokensByLogin(currentUser.getLogin());
 
         return new JwtResponse(
                 accessToken,
@@ -47,7 +64,9 @@ public class JwtService implements IJwtService {
     }
 
     @Override
-    public JwtResponse getAccessToken(@NonNull String refreshToken) throws UserNotFoundException {
+    public JwtResponse getAccessToken(
+            @NonNull String refreshToken
+    ) throws UserNotFoundException, NoValidJwtRefreshTokenException {
         if (jwtProvider.validateRefreshToken(refreshToken)) {
             final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
             final String login = claims.getSubject();
@@ -56,13 +75,24 @@ public class JwtService implements IJwtService {
                 throw new UserNotFoundException(UserException.USER_NOT_IS_EXISTS.get());
             }
 
-            return new JwtResponse(
-                    jwtProvider.generateAccessToken(
-                            new JwtUserRequest(user.getLogin(), null),
-                            user.getRole()
-                    ),
-                    null
+            Optional<JwtRedis> jwtRedis = redisService.getByLogin(login);
+            if (jwtRedis.isEmpty()) {
+                throw new NoValidJwtRefreshTokenException("No valid refresh token");
+            }
+            if (!Objects.equals(jwtRedis.get().getRefreshToken(), refreshToken)) {
+                throw new NoValidJwtRefreshTokenException("No valid refresh token");
+            }
+
+            final String newAccessToken = jwtProvider.generateAccessToken(
+                    new JwtUserRequest(user.getLogin(), null),
+                    user.getRole()
             );
+
+            redisService.updateAccessToken(new JwtRedisData(
+                    login, newAccessToken,null
+            ));
+
+            return new JwtResponse(newAccessToken, null);
         }
         return new JwtResponse(null, null);
     }
@@ -75,16 +105,31 @@ public class JwtService implements IJwtService {
             final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
             final String login = claims.getSubject();
             final User user = userRepository.findByLogin(login);
+
             if (user == null) {
                 throw new UserNotFoundException(UserException.USER_NOT_IS_EXISTS.get());
             }
+            Optional<JwtRedis> jwtRedis = redisService.getByLogin(login);
+            if (jwtRedis.isEmpty()) {
+                throw new NoValidJwtRefreshTokenException("No valid refresh token");
+            }
+            JwtRedis readyJwtRedis = jwtRedis.get();
+            if (!Objects.equals(readyJwtRedis.getRefreshToken(), refreshToken)) {
+                throw new NoValidJwtRefreshTokenException("No valid refresh token");
+            }
 
-            final JwtUserRequest jwtRequest = new JwtUserRequest(user.getLogin(), null);
+            final JwtUserRequest jwtRequest = new JwtUserRequest(login, null);
+            final String newRefreshToken = jwtProvider.generateRefreshToken(jwtRequest);
+            final String newAccessToken = jwtProvider.generateAccessToken(jwtRequest, user.getRole());
 
-            return new JwtResponse(
-                    jwtProvider.generateAccessToken(jwtRequest, user.getRole()),
-                    jwtProvider.generateRefreshToken(jwtRequest)
-            );
+            JwtRedisData newJwtRedisData = new JwtRedisData(login, newAccessToken, newRefreshToken);
+            if (Objects.equals(readyJwtRedis.getRefreshToken(), refreshToken)) {
+                redisService.updateTokens(newJwtRedisData);
+            } else {
+                redisService.save(newJwtRedisData);
+            }
+
+            return new JwtResponse(newAccessToken, newRefreshToken);
         }
         throw new NoValidJwtRefreshTokenException("No valid refresh token");
     }

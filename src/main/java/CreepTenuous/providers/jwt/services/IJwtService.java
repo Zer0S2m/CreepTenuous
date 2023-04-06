@@ -9,7 +9,7 @@ import CreepTenuous.services.user.exceptions.UserNotValidPasswordException;
 public interface IJwtService {
     JwtResponse login(JwtUserRequest user) throws UserNotFoundException, UserNotValidPasswordException;
 
-    JwtResponse getAccessToken(String refreshToken) throws UserNotFoundException;
+    JwtResponse getAccessToken(String refreshToken) throws UserNotFoundException, NoValidJwtRefreshTokenException;
 
     JwtResponse getRefreshToken(String refreshToken) throws NoValidJwtRefreshTokenException, UserNotFoundException;
 }
