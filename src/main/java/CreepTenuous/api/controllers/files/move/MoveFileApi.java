@@ -28,10 +28,18 @@ public class MoveFileApi implements CheckIsExistsDirectoryApi, CheckIsExistsFile
     public void createFile(
             final @RequestBody DataMoveFile file
     ) throws IOException {
-        serviceMoveFile.move(
-            file.nameFile(),
-            file.parents(),
-            file.toParents()
-        );
+        if (file.nameFile() != null) {
+            serviceMoveFile.move(
+                    file.nameFile(),
+                    file.parents(),
+                    file.toParents()
+            );
+        } else {
+            serviceMoveFile.move(
+                    file.nameFiles(),
+                    file.parents(),
+                    file.toParents()
+            );
+        }
     }
 }

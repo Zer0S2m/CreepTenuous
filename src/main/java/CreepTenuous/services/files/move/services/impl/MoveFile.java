@@ -32,6 +32,12 @@ public class MoveFile implements IMoveFile {
         move(currentPath, createdNewPath);
     }
 
+    public void move(List<String> nameFiles, List<String> parents, List<String> toParents) throws IOException {
+        for (String nameFile : nameFiles) {
+            move(nameFile, parents, toParents);
+        }
+    }
+
     public void move(Path source, Path target) throws IOException {
         Files.move(source, target, ATOMIC_MOVE, REPLACE_EXISTING);
     }
