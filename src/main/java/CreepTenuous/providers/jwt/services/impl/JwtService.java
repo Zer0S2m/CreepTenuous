@@ -46,6 +46,8 @@ public class JwtService implements IJwtService {
             throw new UserNotValidPasswordException(UserException.USER_NOT_VALID_PASSWORD.get());
         }
 
+        redisService.deleteTokensByLogin(currentUser.getLogin());
+
         final String accessToken = jwtProvider.generateAccessToken(user, currentUser.getRole());
         final String refreshToken = jwtProvider.generateRefreshToken(user);
 
@@ -54,8 +56,6 @@ public class JwtService implements IJwtService {
                 accessToken,
                 refreshToken
         ));
-
-        redisService.deleteTokensByLogin(currentUser.getLogin());
 
         return new JwtResponse(
                 accessToken,
