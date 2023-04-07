@@ -26,8 +26,8 @@ public class DeleteDirectoryApi implements CheckIsExistsDirectoryApi {
             final @RequestBody FormDeleteDirectoryApi directoryForm
     ) throws NoSuchFileException {
         deleteDirectory.delete(
-                directoryForm.getParents(),
-                directoryForm.getName()
+                directoryForm.parents(),
+                directoryForm.name()
         );
     }
 }

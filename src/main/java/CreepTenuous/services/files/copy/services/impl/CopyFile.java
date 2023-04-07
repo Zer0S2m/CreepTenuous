@@ -1,29 +1,31 @@
-package CreepTenuous.services.files.move.services.impl;
+package CreepTenuous.services.files.copy.services.impl;
 
 import CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
 import CreepTenuous.services.directory.manager.enums.Directory;
-import CreepTenuous.services.files.move.services.IMoveFile;
+import CreepTenuous.services.files.copy.services.ICopyFile;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
-import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-@Service("move-file")
-public class MoveFile implements IMoveFile {
+@Service("copy-file")
+public class CopyFile implements ICopyFile {
     private final BuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public MoveFile(BuildDirectoryPath buildDirectoryPath) {
+    public CopyFile(BuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 
-    public void move(String nameFile, List<String> parents, List<String> toParents) throws IOException {
+    @Override
+    public void copy(String nameFile, List<String> parents, List<String> toParents) throws IOException {
         Path currentPath = Paths.get(
                 Paths.get(buildDirectoryPath.build(parents)) + Directory.SEPARATOR.get() + nameFile
         );
@@ -31,16 +33,18 @@ public class MoveFile implements IMoveFile {
                 Paths.get(buildDirectoryPath.build(toParents)) + Directory.SEPARATOR.get() + nameFile
         );
 
-        move(currentPath, createdNewPath);
+        copy(currentPath, createdNewPath);
     }
 
-    public void move(List<String> nameFiles, List<String> parents, List<String> toParents) throws IOException {
-        for (String nameFile : nameFiles) {
-            move(nameFile, parents, toParents);
+    @Override
+    public void copy(List<String> nameFiles, List<String> parents, List<String> toParents) throws IOException {
+        for (String name : nameFiles) {
+            copy(name, parents, toParents);
         }
     }
 
-    public void move(Path source, Path target) throws IOException {
-        Files.move(source, target, ATOMIC_MOVE, REPLACE_EXISTING);
+    @Override
+    public void copy(Path source, Path target) throws IOException {
+        Files.copy(source, target, REPLACE_EXISTING);
     }
 }
