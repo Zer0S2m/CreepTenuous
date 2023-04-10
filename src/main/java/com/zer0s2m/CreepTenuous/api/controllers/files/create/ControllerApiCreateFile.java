@@ -8,6 +8,7 @@ import com.zer0s2m.CreepTenuous.services.files.create.exceptions.messages.FileAl
 import com.zer0s2m.CreepTenuous.services.files.create.exceptions.messages.NotFoundTypeFileMsg;
 import com.zer0s2m.CreepTenuous.services.files.create.services.impl.ServiceCreateFile;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class ControllerApiCreateFile implements CheckIsExistsDirectoryApi {
     @PostMapping("/file/create")
     @ResponseStatus(code = HttpStatus.CREATED)
     public void createFile(
-            final @RequestBody DataCreateFile file
+            final @Valid @RequestBody DataCreateFile file
     ) throws NotFoundTypeFileException, IOException {
         serviceCreateFile.create(
                 file.parents(),

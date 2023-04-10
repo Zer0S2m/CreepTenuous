@@ -144,4 +144,43 @@ public class ControllerApiCreateFileTests {
 
         logger.info("Is deleted file for tests: " + Files.deleteIfExists(testFile) + " (" + testFile + ")");
     }
+
+    @Test
+    public void createFile_fail_notValidNameFile() throws Exception {
+        this.mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/file/create")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(
+                                        new DataCreateFile(1, "", new ArrayList<>())
+                                ))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void createFile_fail_notValidTypeFile() throws Exception {
+        this.mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/file/create")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(
+                                        new DataCreateFile(null, "testFile", new ArrayList<>())
+                                ))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void createFile_fail_notValidParents() throws Exception {
+        this.mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/file/create")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(
+                                        new DataCreateFile(1, "testFile", null)
+                                ))
+                )
+                .andExpect(status().isBadRequest());
+    }
 }
