@@ -5,7 +5,6 @@ import com.zer0s2m.CreepTenuous.api.controllers.files.create.data.DataCreateFile
 import com.zer0s2m.CreepTenuous.components.RootPath;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
-import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.files.create.exceptions.NotFoundTypeFileException;
 import com.zer0s2m.CreepTenuous.services.files.create.services.impl.ServiceCreateFile;
 import com.zer0s2m.CreepTenuous.services.files.enums.TypeFile;
@@ -59,11 +58,9 @@ public class ServiceCreateFileTests {
     @Test
     public void createFileType1_success() throws NotFoundTypeFileException, IOException {
         final String nameFile = nameTestFile1 + "." + TypeFile.getExtension(RECORD_1.typeFile());
-        final Path pathTestFile = Paths.get(
-                buildDirectoryPath.build(RECORD_1.parents()) + Directory.SEPARATOR.get() + nameFile
+        final Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
+                nameFile, RECORD_1.parents(), logger, buildDirectoryPath
         );
-
-        logger.info("Create file for test: " + pathTestFile);
 
         service.create(
                 RECORD_1.parents(),
@@ -79,10 +76,9 @@ public class ServiceCreateFileTests {
     @Test
     public void createFileType2_success() throws NotFoundTypeFileException, IOException {
         final String nameFile = nameTestFile2 + "." + TypeFile.getExtension(RECORD_2.typeFile());
-        final Path pathTestFile = Paths.get(
-                buildDirectoryPath.build(RECORD_2.parents()) + Directory.SEPARATOR.get() + nameFile
+        final Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
+                nameFile, RECORD_2.parents(), logger, buildDirectoryPath
         );
-        logger.info("Create file for test: " + pathTestFile);
 
         service.create(
                 RECORD_2.parents(),
@@ -98,10 +94,9 @@ public class ServiceCreateFileTests {
     @Test
     public void createFileType3_success() throws NotFoundTypeFileException, IOException {
         final String nameFile = nameTestFile3 + "." + TypeFile.getExtension(RECORD_3.typeFile());
-        final Path pathTestFile = Paths.get(
-                buildDirectoryPath.build(RECORD_3.parents()) + Directory.SEPARATOR.get() + nameFile
+        final Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
+                nameFile, RECORD_3.parents(), logger, buildDirectoryPath
         );
-        logger.info("Create file for test: " + pathTestFile);
 
         service.create(
                 RECORD_3.parents(),
@@ -120,13 +115,11 @@ public class ServiceCreateFileTests {
                 INVALID_RECORD_FILE_EXISTS.nameFile()
                 + "."
                 + TypeFile.getExtension(INVALID_RECORD_FILE_EXISTS.typeFile());
-        final Path pathTestFile = Paths.get(
-                buildDirectoryPath.build(
-                        INVALID_RECORD_FILE_EXISTS.parents()
-                ) + Directory.SEPARATOR.get() + nameFile
+        final Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
+                nameFile, INVALID_RECORD_FILE_EXISTS.parents(), logger, buildDirectoryPath
         );
+
         final Path newPathTestFile = Files.createFile(pathTestFile);
-        logger.info("Create file for test: " + newPathTestFile);
 
         Assertions.assertThrows(
                 FileAlreadyExistsException.class,

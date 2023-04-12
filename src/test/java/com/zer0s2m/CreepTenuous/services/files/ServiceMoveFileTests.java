@@ -75,8 +75,8 @@ public class ServiceMoveFileTests {
 
     @Test
     public void moveOneFile_success() throws IOException {
-        Path pathTestFile = Paths.get(
-                buildDirectoryPath.build(RECORD_1.parents()) + Directory.SEPARATOR.get() + RECORD_1.nameFile()
+        Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
+                RECORD_1.nameFile(), RECORD_1.parents(), logger, buildDirectoryPath
         );
         Path pathTestFolder = Paths.get(
                 rootPath.getRootPath() + Directory.SEPARATOR.get() + RECORD_1.toParents().get(0)
@@ -88,11 +88,10 @@ public class ServiceMoveFileTests {
         Assertions.assertTrue(Files.exists(pathTestFile));
         Assertions.assertTrue(Files.exists(pathTestFolder));
 
-        logger.info("Create file for tests: " + pathTestFile);
         logger.info("Create folder for tests: " + pathTestFolder);
 
-        Path newPathTestFile = Paths.get(
-                buildDirectoryPath.build(RECORD_1.toParents()) + Directory.SEPARATOR.get() + RECORD_1.nameFile()
+        Path newPathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
+                RECORD_1.nameFile(), RECORD_1.toParents(), logger, buildDirectoryPath
         );
 
         service.move(pathTestFile, newPathTestFile);
@@ -106,15 +105,12 @@ public class ServiceMoveFileTests {
 
     @Test
     public void moveMoreOneFile_success() throws IOException {
-        Path pathTestFile1 = Paths.get(
-                buildDirectoryPath.build(RECORD_2.parents())
-                    + Directory.SEPARATOR.get()
-                    + Objects.requireNonNull(RECORD_2.nameFiles()).get(0)
+        List<String> nameFiles = Objects.requireNonNull(RECORD_2.nameFiles());
+        Path pathTestFile1 = UtilsActionForFiles.preparePreliminaryFiles(
+                nameFiles.get(0), RECORD_2.parents(), logger, buildDirectoryPath
         );
-        Path pathTestFile2 = Paths.get(
-                buildDirectoryPath.build(RECORD_2.parents())
-                        + Directory.SEPARATOR.get()
-                        + Objects.requireNonNull(RECORD_2.nameFiles()).get(1)
+        Path pathTestFile2 =UtilsActionForFiles.preparePreliminaryFiles(
+                nameFiles.get(1), RECORD_2.parents(), logger, buildDirectoryPath
         );
         Path pathTestFolder = Paths.get(
                 rootPath.getRootPath() + Directory.SEPARATOR.get() + RECORD_2.toParents().get(0)
@@ -124,26 +120,16 @@ public class ServiceMoveFileTests {
         Files.createFile(pathTestFile2);
         Files.createDirectory(pathTestFolder);
 
-        logger.info("Create file for tests: " + pathTestFile1);
-        logger.info("Create file for tests: " + pathTestFile2);
         logger.info("Create folder for tests: " + pathTestFolder);
 
-        Path newPathTestFile1 = Paths.get(
-                buildDirectoryPath.build(RECORD_2.toParents())
-                    + Directory.SEPARATOR.get()
-                    + Objects.requireNonNull(RECORD_2.nameFiles()).get(0)
+        Path newPathTestFile1 = UtilsActionForFiles.preparePreliminaryFiles(
+                nameFiles.get(0), RECORD_2.toParents(), logger, buildDirectoryPath
         );
-        Path newPathTestFile2 = Paths.get(
-                buildDirectoryPath.build(RECORD_2.toParents())
-                        + Directory.SEPARATOR.get()
-                        + Objects.requireNonNull(RECORD_2.nameFiles()).get(1)
+        Path newPathTestFile2 = UtilsActionForFiles.preparePreliminaryFiles(
+                nameFiles.get(1), RECORD_2.toParents(), logger, buildDirectoryPath
         );
 
-        service.move(
-                Objects.requireNonNull(RECORD_2.nameFiles()),
-                RECORD_2.parents(),
-                RECORD_2.toParents()
-        );
+        service.move(nameFiles, RECORD_2.parents(), RECORD_2.toParents());
 
         Assertions.assertFalse(Files.exists(pathTestFile1));
         Assertions.assertFalse(Files.exists(pathTestFile2));

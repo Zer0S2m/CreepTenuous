@@ -2,6 +2,7 @@ package com.zer0s2m.CreepTenuous.api.controllers;
 
 import com.zer0s2m.CreepTenuous.Helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.create.data.DataCreateFile;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.messages.ExceptionNotDirectoryMsg;
 import com.zer0s2m.CreepTenuous.services.files.create.exceptions.messages.FileAlreadyExistsMsg;
@@ -43,6 +44,9 @@ public class ControllerApiCreateFileTests {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private BuildDirectoryPath buildDirectoryPath;
+
     protected String nameTestFile1 = "testFile_1";
     protected String nameTestFile2 = "testFile_2";
     protected String nameTestFile3 = "testFile_3";
@@ -61,14 +65,10 @@ public class ControllerApiCreateFileTests {
     @Test
     public void createFile_success() throws Exception {
         for (DataCreateFile record : Arrays.asList(RECORD_1, RECORD_2, RECORD_3)) {
-            Path pathTestFile = Path.of(
-                    System.getenv("ROOT_PATH")
-                            + Directory.SEPARATOR.get()
-                            + record.nameFile()
-                            + "."
-                            + TypeFile.getExtension(record.typeFile())
+            Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(record.nameFile()
+                    + "."
+                    + TypeFile.getExtension(record.typeFile()), record.parents(), logger, buildDirectoryPath
             );
-            logger.info("Create file for tests: " + pathTestFile);
 
             this.mockMvc.perform(
                     MockMvcRequestBuilders.post("/api/v1/file/create")
@@ -102,10 +102,10 @@ public class ControllerApiCreateFileTests {
     @Test
     public void createFile_fail_invalidPathDirectory() throws Exception {
         this.mockMvc.perform(
-                        MockMvcRequestBuilders.post("/api/v1/file/create")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(INVALID_RECORD_PATH_DIRECTORY))
+                MockMvcRequestBuilders.post("/api/v1/file/create")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(INVALID_RECORD_PATH_DIRECTORY))
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(content().json(
@@ -117,22 +117,18 @@ public class ControllerApiCreateFileTests {
 
     @Test
     public void createFile_fail_fileIsExists() throws Exception {
-        Path testFile = Files.createFile(Path.of(
-                    System.getenv("ROOT_PATH")
-                        + Directory.SEPARATOR.get()
-                        + nameTestFile4
-                        + "."
-                        + TypeFile.TXT.getExtension()
-        ));
-        logger.info("Created file for test: " + testFile);
+        Path testFile = UtilsActionForFiles.preparePreliminaryFiles(
+                nameTestFile4 + "." + TypeFile.TXT.getExtension(), new ArrayList<>(), logger, buildDirectoryPath
+        );
+        Files.createFile(testFile);
 
         this.mockMvc.perform(
-                        MockMvcRequestBuilders.post("/api/v1/file/create")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(
-                                        new DataCreateFile(1, nameTestFile4, new ArrayList<>())
-                                ))
+                MockMvcRequestBuilders.post("/api/v1/file/create")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new DataCreateFile(1, nameTestFile4, new ArrayList<>())
+                        ))
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().json(
@@ -147,12 +143,12 @@ public class ControllerApiCreateFileTests {
     @Test
     public void createFile_fail_notValidNameFile() throws Exception {
         this.mockMvc.perform(
-                        MockMvcRequestBuilders.post("/api/v1/file/create")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(
-                                        new DataCreateFile(1, "", new ArrayList<>())
-                                ))
+                MockMvcRequestBuilders.post("/api/v1/file/create")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new DataCreateFile(1, "", new ArrayList<>())
+                        ))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -160,12 +156,12 @@ public class ControllerApiCreateFileTests {
     @Test
     public void createFile_fail_notValidTypeFile() throws Exception {
         this.mockMvc.perform(
-                        MockMvcRequestBuilders.post("/api/v1/file/create")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(
-                                        new DataCreateFile(null, "testFile", new ArrayList<>())
-                                ))
+                MockMvcRequestBuilders.post("/api/v1/file/create")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new DataCreateFile(null, "testFile", new ArrayList<>())
+                        ))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -173,12 +169,12 @@ public class ControllerApiCreateFileTests {
     @Test
     public void createFile_fail_notValidParents() throws Exception {
         this.mockMvc.perform(
-                        MockMvcRequestBuilders.post("/api/v1/file/create")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(
-                                        new DataCreateFile(1, "testFile", null)
-                                ))
+                MockMvcRequestBuilders.post("/api/v1/file/create")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new DataCreateFile(1, "testFile", null)
+                        ))
                 )
                 .andExpect(status().isBadRequest());
     }

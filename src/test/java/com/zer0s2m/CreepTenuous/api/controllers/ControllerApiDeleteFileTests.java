@@ -1,5 +1,6 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
+import com.zer0s2m.CreepTenuous.Helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.common.exceptions.messages.NoSuchFileExists;
 import com.zer0s2m.CreepTenuous.api.controllers.files.delete.data.DataDeleteFile;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
@@ -23,7 +24,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -59,17 +59,16 @@ public class ControllerApiDeleteFileTests {
     @Test
     public void deleteFile_success() throws Exception {
         for (DataDeleteFile record : Arrays.asList(RECORD_1, RECORD_2)) {
-            Path pathTestFile = Paths.get(
-                    buildDirectoryPath.build(record.parents()) + Directory.SEPARATOR.get() + record.nameFile()
+            Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
+                    record.nameFile(), record.parents(), logger, buildDirectoryPath
             );
             Files.createFile(pathTestFile);
-            logger.info("Create file for tests: " + pathTestFile);
 
             this.mockMvc.perform(
-                            MockMvcRequestBuilders.delete("/api/v1/file/delete")
-                                    .accept(MediaType.APPLICATION_JSON)
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(record))
+                    MockMvcRequestBuilders.delete("/api/v1/file/delete")
+                            .accept(MediaType.APPLICATION_JSON)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(record))
                     )
                     .andExpect(status().isNoContent());
             Assertions.assertFalse(Files.exists(pathTestFile));
@@ -83,10 +82,10 @@ public class ControllerApiDeleteFileTests {
     @Test
     public void deleteFile_file_invalidPathDirectory() throws Exception {
         this.mockMvc.perform(
-                        MockMvcRequestBuilders.delete("/api/v1/file/delete")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(INVALID_RECORD_PATH_DIRECTORY))
+                MockMvcRequestBuilders.delete("/api/v1/file/delete")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(INVALID_RECORD_PATH_DIRECTORY))
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(content().json(
@@ -99,10 +98,10 @@ public class ControllerApiDeleteFileTests {
     @Test
     public void deleteFile_file_notIsExists() throws Exception {
         this.mockMvc.perform(
-                        MockMvcRequestBuilders.delete("/api/v1/file/delete")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(INVALID_RECORD_NOT_EXISTS_FILE))
+                MockMvcRequestBuilders.delete("/api/v1/file/delete")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(INVALID_RECORD_NOT_EXISTS_FILE))
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(content().json(

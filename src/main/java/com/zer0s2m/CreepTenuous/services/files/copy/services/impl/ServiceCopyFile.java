@@ -16,11 +16,11 @@ import java.util.List;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Service("copy-file")
-public class CopyFile implements ICopyFile {
+public class ServiceCopyFile implements ICopyFile {
     private final BuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public CopyFile(BuildDirectoryPath buildDirectoryPath) {
+    public ServiceCopyFile(BuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 
