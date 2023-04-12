@@ -1,5 +1,6 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
+import com.zer0s2m.CreepTenuous.Helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.create.data.DataCreateFile;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.messages.ExceptionNotDirectoryMsg;
@@ -78,9 +79,7 @@ public class ControllerApiCreateFileTests {
                     .andExpect(status().isCreated());
             Assertions.assertTrue(Files.exists(pathTestFile));
 
-            logger.info(
-                    "Is deleted file for tests: " + Files.deleteIfExists(pathTestFile) + " (" + pathTestFile + ")"
-            );
+            UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile, logger);
         }
     }
 

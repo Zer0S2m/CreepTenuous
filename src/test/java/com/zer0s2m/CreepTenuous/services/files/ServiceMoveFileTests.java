@@ -1,5 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.files;
 
+import com.zer0s2m.CreepTenuous.Helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.move.data.DataMoveFile;
 import com.zer0s2m.CreepTenuous.components.RootPath;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
@@ -99,12 +100,8 @@ public class ServiceMoveFileTests {
         Assertions.assertFalse(Files.exists(pathTestFile));
         Assertions.assertTrue(Files.exists(newPathTestFile));
 
-        logger.info(
-                "Is deleted file for tests: " + Files.deleteIfExists(newPathTestFile) + " (" + newPathTestFile + ")"
-        );
-        logger.info(
-                "Is deleted folder for tests: " + Files.deleteIfExists(pathTestFolder) + " (" + pathTestFolder + ")"
-        );
+        UtilsActionForFiles.deleteFileAndWriteLog(newPathTestFile, logger);
+        UtilsActionForFiles.deleteFileAndWriteLog(pathTestFolder, logger);
     }
 
     @Test
@@ -153,15 +150,9 @@ public class ServiceMoveFileTests {
         Assertions.assertTrue(Files.exists(newPathTestFile1));
         Assertions.assertTrue(Files.exists(newPathTestFile2));
 
-        logger.info(
-                "Is deleted file for tests: " + Files.deleteIfExists(newPathTestFile1) + " (" + newPathTestFile1 + ")"
-        );
-        logger.info(
-                "Is deleted file for tests: " + Files.deleteIfExists(newPathTestFile2) + " (" + newPathTestFile2 + ")"
-        );
-        logger.info(
-                "Is deleted folder for tests: " + Files.deleteIfExists(pathTestFolder) + " (" + pathTestFolder + ")"
-        );
+        UtilsActionForFiles.deleteFileAndWriteLog(newPathTestFile1, logger);
+        UtilsActionForFiles.deleteFileAndWriteLog(newPathTestFile2, logger);
+        UtilsActionForFiles.deleteFileAndWriteLog(pathTestFolder, logger);
     }
 
     @Test

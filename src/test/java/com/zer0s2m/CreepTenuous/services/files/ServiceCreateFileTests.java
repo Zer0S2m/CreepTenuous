@@ -1,5 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.files;
 
+import com.zer0s2m.CreepTenuous.Helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.create.data.DataCreateFile;
 import com.zer0s2m.CreepTenuous.components.RootPath;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
@@ -71,9 +72,8 @@ public class ServiceCreateFileTests {
         );
 
         Assertions.assertTrue(Files.exists(pathTestFile));
-        logger.info("Is delete file for test " + "(" + pathTestFile + ") - " + Files.deleteIfExists(
-                pathTestFile
-        ));
+
+        UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile, logger);
     }
 
     @Test
@@ -91,9 +91,8 @@ public class ServiceCreateFileTests {
         );
 
         Assertions.assertTrue(Files.exists(pathTestFile));
-        logger.info("Is delete file for test " + "(" + pathTestFile + ") - " + Files.deleteIfExists(
-                pathTestFile
-        ));
+
+        UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile, logger);
     }
 
     @Test
@@ -111,9 +110,8 @@ public class ServiceCreateFileTests {
         );
 
         Assertions.assertTrue(Files.exists(pathTestFile));
-        logger.info("Is delete file for test " + "(" + pathTestFile + ") - " + Files.deleteIfExists(
-                pathTestFile
-        ));
+
+        UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile, logger);
     }
 
     @Test
@@ -140,9 +138,8 @@ public class ServiceCreateFileTests {
         );
 
         Assertions.assertTrue(Files.exists(newPathTestFile));
-        logger.info("Is delete file for test " + "(" + newPathTestFile + ") - " + Files.deleteIfExists(
-                pathTestFile
-        ));
+
+        UtilsActionForFiles.deleteFileAndWriteLog(newPathTestFile, logger);
     }
 
     @Test
