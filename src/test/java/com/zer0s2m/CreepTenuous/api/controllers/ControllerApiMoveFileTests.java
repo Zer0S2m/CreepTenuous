@@ -1,5 +1,6 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
+import com.zer0s2m.CreepTenuous.Helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.move.data.DataMoveFile;
 import com.zer0s2m.CreepTenuous.components.RootPath;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
@@ -92,12 +93,8 @@ public class ControllerApiMoveFileTests {
         Assertions.assertFalse(Files.exists(pathTestFile));
         Assertions.assertTrue(Files.exists(newPathTestFile));
 
-        logger.info(
-                "Is deleted file for tests: " + Files.deleteIfExists(newPathTestFile) + " (" + newPathTestFile + ")"
-        );
-        logger.info(
-                "Is deleted folder for tests: " + Files.deleteIfExists(pathTestFolder) + " (" + pathTestFolder + ")"
-        );
+        UtilsActionForFiles.deleteFileAndWriteLog(newPathTestFile, logger);
+        UtilsActionForFiles.deleteFileAndWriteLog(pathTestFolder, logger);
     }
 
     @Test
@@ -146,15 +143,9 @@ public class ControllerApiMoveFileTests {
         Assertions.assertTrue(Files.exists(newPathTestFile1));
         Assertions.assertTrue(Files.exists(newPathTestFile2));
 
-        logger.info(
-                "Is deleted file for tests: " + Files.deleteIfExists(newPathTestFile1) + " (" + newPathTestFile1 + ")"
-        );
-        logger.info(
-                "Is deleted file for tests: " + Files.deleteIfExists(newPathTestFile2) + " (" + newPathTestFile2 + ")"
-        );
-        logger.info(
-                "Is deleted folder for tests: " + Files.deleteIfExists(pathTestFolder) + " (" + pathTestFolder + ")"
-        );
+        UtilsActionForFiles.deleteFileAndWriteLog(newPathTestFile1, logger);
+        UtilsActionForFiles.deleteFileAndWriteLog(newPathTestFile2, logger);
+        UtilsActionForFiles.deleteFileAndWriteLog(pathTestFolder, logger);
     }
 
     @Test
@@ -204,5 +195,41 @@ public class ControllerApiMoveFileTests {
                         ))
                 )
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void deleteFile_fail_notValidParents() throws Exception {
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/file/move")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new DataMoveFile(
+                                        "file.txt",
+                                        null,
+                                        null,
+                                        new ArrayList<>()
+                                )
+                        ))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void deleteFile_fail_notValidToParents() throws Exception {
+        this.mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/file/move")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(
+                                        new DataMoveFile(
+                                                "file.txt",
+                                                null,
+                                                new ArrayList<>(),
+                                                null
+                                        )
+                                ))
+                )
+                .andExpect(status().isBadRequest());
     }
 }

@@ -115,12 +115,12 @@ public class ControllerApiDeleteFileTests {
     @Test
     public void deleteFile_fail_notValidNameFile() throws Exception {
         this.mockMvc.perform(
-                        MockMvcRequestBuilders.post("/api/v1/file/create")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(
-                                        new DataDeleteFile("", new ArrayList<>())
-                                ))
+                MockMvcRequestBuilders.delete("/api/v1/file/delete")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new DataDeleteFile("", new ArrayList<>())
+                        ))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -128,12 +128,12 @@ public class ControllerApiDeleteFileTests {
     @Test
     public void deleteFile_fail_notValidParents() throws Exception {
         this.mockMvc.perform(
-                        MockMvcRequestBuilders.post("/api/v1/file/create")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(
-                                        new DataDeleteFile("testFile", null)
-                                ))
+                MockMvcRequestBuilders.delete("/api/v1/file/delete")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new DataDeleteFile("testFile", null)
+                        ))
                 )
                 .andExpect(status().isBadRequest());
     }

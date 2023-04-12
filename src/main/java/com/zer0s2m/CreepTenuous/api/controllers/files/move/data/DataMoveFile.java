@@ -7,9 +7,14 @@ import java.util.List;
 
 public record DataMoveFile(
         String nameFile,
+
         List<String> nameFiles,
-        @NotNull List<String> parents,
-        @NotNull List<String> toParents
+
+        @NotNull(message = "Please provide path current directory (Not NULL)")
+        List<String> parents,
+
+        @NotNull(message = "Please provide path new directory (Not NULL)")
+        List<String> toParents
 ) {
     @Override
     public String nameFile() {

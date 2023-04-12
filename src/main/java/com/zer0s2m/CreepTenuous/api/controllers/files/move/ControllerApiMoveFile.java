@@ -6,6 +6,7 @@ import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirecto
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsFileApi;
 import com.zer0s2m.CreepTenuous.services.files.move.services.impl.ServiceMoveFile;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +28,7 @@ public class ControllerApiMoveFile implements CheckIsExistsDirectoryApi, CheckIs
     @PostMapping("/file/move")
     @ResponseStatus(code = HttpStatus.CREATED)
     public void createFile(
-            final @RequestBody DataMoveFile file
+            final @Valid @RequestBody DataMoveFile file
     ) throws IOException {
         if (file.nameFile() != null) {
             serviceMoveFile.move(
