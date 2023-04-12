@@ -15,11 +15,11 @@ import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Service("move-file")
-public class MoveFile implements IMoveFile {
+public class ServiceMoveFile implements IMoveFile {
     private final BuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public MoveFile(BuildDirectoryPath buildDirectoryPath) {
+    public ServiceMoveFile(BuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 

@@ -18,6 +18,9 @@ public record DataMoveFile(
 
     @Override
     public List<String> nameFiles() {
+        if (nameFiles == null) {
+            return null;
+        }
         List<String> readyNameFiles = new ArrayList<>();
         for (String name : nameFiles) {
             readyNameFiles.add(name.trim());

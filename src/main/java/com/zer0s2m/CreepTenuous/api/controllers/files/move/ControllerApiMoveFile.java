@@ -4,7 +4,7 @@ import com.zer0s2m.CreepTenuous.api.controllers.files.move.data.DataMoveFile;
 import com.zer0s2m.CreepTenuous.api.core.version.v1.V1APIController;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsFileApi;
-import com.zer0s2m.CreepTenuous.services.files.move.services.impl.MoveFile;
+import com.zer0s2m.CreepTenuous.services.files.move.services.impl.ServiceMoveFile;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,13 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @V1APIController
-public class MoveFileApi implements CheckIsExistsDirectoryApi, CheckIsExistsFileApi {
-    private final MoveFile serviceMoveFile;
+public class ControllerApiMoveFile implements CheckIsExistsDirectoryApi, CheckIsExistsFileApi {
+    private final ServiceMoveFile serviceMoveFile;
 
     @Autowired
-    public MoveFileApi(MoveFile serviceMoveFile) {
+    public ControllerApiMoveFile(ServiceMoveFile serviceMoveFile) {
         this.serviceMoveFile = serviceMoveFile;
     }
 
@@ -36,7 +37,7 @@ public class MoveFileApi implements CheckIsExistsDirectoryApi, CheckIsExistsFile
             );
         } else {
             serviceMoveFile.move(
-                    file.nameFiles(),
+                    Objects.requireNonNull(file.nameFiles()),
                     file.parents(),
                     file.toParents()
             );
