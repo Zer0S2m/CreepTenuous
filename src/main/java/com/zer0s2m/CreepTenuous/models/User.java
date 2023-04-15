@@ -5,7 +5,6 @@ import com.zer0s2m.CreepTenuous.services.user.generatePassword.services.impl.Gen
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,12 +14,12 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-@Data
 @Entity
 @Table(name = "\"user\"")
 public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
+    @JsonProperty
     private UserRole role;
 
     @Id
@@ -31,7 +30,7 @@ public class User implements UserDetails {
 
     @JsonProperty
     @Basic
-    @Column(name = "login", nullable = false)
+    @Column(name = "login", nullable = false, unique = true)
     private String login;
 
     @JsonProperty
@@ -61,6 +60,12 @@ public class User implements UserDetails {
         this.login = login;
         this.email = email;
         this.name = name;
+        this.setRole(UserRole.ROLE_USER);
+    }
+
+    public User(String login, String password, String email, String name, UserRole role) {
+        this(login, password, email, name);
+        this.setRole(role);
     }
 
     public User() {}
@@ -115,6 +120,14 @@ public class User implements UserDetails {
     public void setName(String name) {
         this.name = name;
 }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
 
     public Date getDateOfBrith() {
         return dateOfBrith;
