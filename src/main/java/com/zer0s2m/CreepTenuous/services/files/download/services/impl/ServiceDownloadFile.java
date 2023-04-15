@@ -21,12 +21,12 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @Service("download-file")
-public class DownloadFile implements IDownloadFile, CheckIsExistsFileService {
+public class ServiceDownloadFile implements IDownloadFile, CheckIsExistsFileService {
     private final BuildDirectoryPath buildDirectoryPath;
     private final ConfigurableMimeFileTypeMap fileTypeMap = new ConfigurableMimeFileTypeMap();
 
     @Autowired
-    public DownloadFile(BuildDirectoryPath buildDirectoryPath) {
+    public ServiceDownloadFile(BuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 
