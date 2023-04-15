@@ -8,6 +8,7 @@ import com.zer0s2m.CreepTenuous.services.files.download.containers.ContainerDown
 import com.zer0s2m.CreepTenuous.services.files.download.services.impl.ServiceDownloadFile;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsFileApi;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -27,7 +28,7 @@ public class ControllerApiDownloadFile implements CheckIsExistsDirectoryApi, Che
 
     @GetMapping(path = "/file/download")
     public ResponseEntity<Resource> download(
-            final DataDownloadFile data
+            final @Valid DataDownloadFile data
     ) throws IOException, NoSuchFileExistsException {
         final ContainerDownloadFile3<ByteArrayResource, String> dataFile = downloadFile.download(
                 data.parents(),

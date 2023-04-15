@@ -105,4 +105,26 @@ public class ControllerApiDownloadFileTests {
                         )
                 ));
     }
+
+    @Test
+    public void downloadFile_fail_notValidNameFile() throws Exception {
+        this.mockMvc.perform(
+                        MockMvcRequestBuilders.get("/api/v1/file/download")
+                                .queryParam("parents", "")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void downloadFile_fail_notValidParents() throws Exception {
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.get("/api/v1/file/download")
+                        .queryParam("filename", "testFile")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isBadRequest());
+    }
 }
