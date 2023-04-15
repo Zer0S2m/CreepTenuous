@@ -1,4 +1,4 @@
-package com.zer0s2m.CreepTenuous.Helpers;
+package com.zer0s2m.CreepTenuous.helpers;
 
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;

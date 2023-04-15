@@ -1,6 +1,6 @@
 package com.zer0s2m.CreepTenuous.api.validations;
 
-import com.zer0s2m.CreepTenuous.Helpers.BaseValidationDataApi;
+import com.zer0s2m.CreepTenuous.helpers.BaseValidationDataApi;
 import com.zer0s2m.CreepTenuous.api.controllers.files.delete.data.DataDeleteFile;
 
 import org.junit.jupiter.api.DisplayNameGeneration;

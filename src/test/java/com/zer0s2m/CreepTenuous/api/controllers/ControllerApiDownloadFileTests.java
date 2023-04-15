@@ -1,6 +1,6 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
-import com.zer0s2m.CreepTenuous.Helpers.UtilsActionForFiles;
+import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.common.exceptions.messages.NoSuchFileExists;
 import com.zer0s2m.CreepTenuous.components.RootPath;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;

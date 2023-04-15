@@ -1,4 +1,4 @@
-package com.zer0s2m.CreepTenuous.Helpers;
+package com.zer0s2m.CreepTenuous.helpers;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
