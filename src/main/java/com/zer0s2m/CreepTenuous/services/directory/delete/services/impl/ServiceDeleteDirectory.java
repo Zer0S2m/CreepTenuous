@@ -15,11 +15,11 @@ import java.nio.file.Path;
 import java.util.List;
 
 @Service("delete-directory")
-public class DeleteDirectory implements IDeleteDirectory, CheckIsExistsDirectoryService {
+public class ServiceDeleteDirectory implements IDeleteDirectory, CheckIsExistsDirectoryService {
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public DeleteDirectory(ServiceBuildDirectoryPath buildDirectoryPath) {
+    public ServiceDeleteDirectory(ServiceBuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 
