@@ -21,7 +21,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -49,8 +48,8 @@ public class ControllerApiDownloadFileTests {
 
     @Test
     public void downloadFile_success() throws Exception {
-        Path sourcePath = new File("src/main/resources/test/" + nameTestFile1).toPath();
-        Path targetPath = new File(rootPath.getRootPath() + Directory.SEPARATOR.get() + nameTestFile1).toPath();
+        Path sourcePath = Path.of("src/main/resources/test/", nameTestFile1);
+        Path targetPath = Path.of(rootPath.getRootPath(), nameTestFile1);
         Files.copy(sourcePath, targetPath);
 
         Assertions.assertTrue(Files.exists(targetPath));

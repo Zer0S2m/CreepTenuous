@@ -5,7 +5,6 @@ import com.zer0s2m.CreepTenuous.api.controllers.files.move.data.DataMoveFile;
 import com.zer0s2m.CreepTenuous.components.RootPath;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
-import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.files.move.services.impl.ServiceMoveFile;
 
 import org.apache.logging.log4j.LogManager;
@@ -79,7 +78,7 @@ public class ServiceMoveFileTests {
                 RECORD_1.nameFile(), RECORD_1.parents(), logger, buildDirectoryPath
         );
         Path pathTestFolder = Paths.get(
-                rootPath.getRootPath() + Directory.SEPARATOR.get() + RECORD_1.toParents().get(0)
+                rootPath.getRootPath(), RECORD_1.toParents().get(0)
         );
 
         Files.createFile(pathTestFile);
@@ -113,7 +112,7 @@ public class ServiceMoveFileTests {
                 nameFiles.get(1), RECORD_2.parents(), logger, buildDirectoryPath
         );
         Path pathTestFolder = Paths.get(
-                rootPath.getRootPath() + Directory.SEPARATOR.get() + RECORD_2.toParents().get(0)
+                rootPath.getRootPath(), RECORD_2.toParents().get(0)
         );
 
         Files.createFile(pathTestFile1);

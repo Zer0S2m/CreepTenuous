@@ -56,7 +56,7 @@ public class ServiceDeleteFileTests {
     @Test
     public void deleteFile_success() throws IOException, NoSuchFileExistsException {
         Path pathTestFile = Paths.get(
-                buildDirectoryPath.build(RECORD_1.parents()) + Directory.SEPARATOR.get() + RECORD_1.nameFile()
+                buildDirectoryPath.build(RECORD_1.parents()), RECORD_1.nameFile()
         );
         Files.createFile(pathTestFile);
         logger.info("Create file for tests: " + pathTestFile);
@@ -75,9 +75,8 @@ public class ServiceDeleteFileTests {
     @Test
     public void deleteFile_fail_fileNotIsExists() throws IOException {
         Path pathTestFile = Paths.get(
-                buildDirectoryPath.build(INVALID_RECORD_NOT_IS_EXISTS.parents())
-                    + Directory.SEPARATOR.get()
-                    + INVALID_RECORD_NOT_IS_EXISTS.nameFile()
+                buildDirectoryPath.build(INVALID_RECORD_NOT_IS_EXISTS.parents()),
+                INVALID_RECORD_NOT_IS_EXISTS.nameFile()
         );
 
         Assertions.assertFalse(Files.exists(pathTestFile));
@@ -93,8 +92,7 @@ public class ServiceDeleteFileTests {
         for (String part : INVALID_RECORD_INVALID_PATH_DIRECTORY.parents()) {
             rawDirectory.append(Directory.SEPARATOR.get()).append(part);
         }
-        String path = rootPath.getRootPath() + Directory.SEPARATOR.get() + rawDirectory;
-        Path pathTestFile = Path.of(path);
+        Path pathTestFile = Path.of(rootPath.getRootPath(), String.valueOf(rawDirectory));
 
         Assertions.assertFalse(Files.exists(pathTestFile));
         Assertions.assertThrows(

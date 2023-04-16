@@ -5,7 +5,6 @@ import com.zer0s2m.CreepTenuous.api.controllers.common.exceptions.NoSuchFileExis
 import com.zer0s2m.CreepTenuous.components.RootPath;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
-import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.files.download.containers.ContainerDownloadFile3;
 import com.zer0s2m.CreepTenuous.services.files.download.services.impl.ServiceDownloadFile;
 
@@ -22,7 +21,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -55,8 +53,8 @@ public class ServiceDownloadFileTests {
 
     @Test
     public void downloadFileAndCompareHeaders_success() throws IOException, NoSuchFileExistsException {
-        Path sourcePath = new File("src/main/resources/test/" + nameTestFile1).toPath();
-        Path targetPath = new File(rootPath.getRootPath() + Directory.SEPARATOR.get() + nameTestFile1).toPath();
+        Path sourcePath = Path.of("src/main/resources/test/", nameTestFile1);
+        Path targetPath = Path.of(rootPath.getRootPath(), nameTestFile1);
         Files.copy(sourcePath, targetPath);
 
         Assertions.assertTrue(Files.exists(targetPath));

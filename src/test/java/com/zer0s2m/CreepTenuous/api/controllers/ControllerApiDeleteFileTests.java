@@ -73,9 +73,7 @@ public class ControllerApiDeleteFileTests {
                     .andExpect(status().isNoContent());
             Assertions.assertFalse(Files.exists(pathTestFile));
 
-            logger.info(
-                    "Is deleted file for tests: " + Files.exists(pathTestFile) + " (" + pathTestFile + ")"
-            );
+            UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile, logger);
         }
     }
 

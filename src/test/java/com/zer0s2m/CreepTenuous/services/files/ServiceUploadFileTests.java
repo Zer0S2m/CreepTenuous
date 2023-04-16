@@ -46,7 +46,7 @@ public class ServiceUploadFileTests {
 
     @Test
     public void uploadOneFile_success() throws IOException {
-        File testFile = new File("src/main/resources/test/" + nameTestFile1);
+        File testFile = Path.of("src/main/resources/test/", nameTestFile1).toFile();
         InputStream targetStream = new FileInputStream(testFile);
 
         Path pathTestUploadFile = UtilsActionForFiles.preparePreliminaryFiles(
@@ -69,8 +69,8 @@ public class ServiceUploadFileTests {
 
     @Test
     public void uploadMoreOneFile_success() throws IOException {
-        File testFile1 = new File("src/main/resources/test/" + nameTestFile1);
-        File testFile2 = new File("src/main/resources/test/" + nameTestFile1);
+        File testFile1 = Path.of("src/main/resources/test/" + nameTestFile1).toFile();
+        File testFile2 = Path.of("src/main/resources/test/" + nameTestFile2).toFile();
         InputStream targetStream1 = new FileInputStream(testFile1);
         InputStream targetStream2 = new FileInputStream(testFile2);
 

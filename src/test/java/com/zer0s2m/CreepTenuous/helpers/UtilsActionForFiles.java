@@ -1,9 +1,7 @@
 package com.zer0s2m.CreepTenuous.helpers;
 
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
-import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 
-import io.jsonwebtoken.lang.Arrays;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
@@ -26,7 +24,7 @@ public interface UtilsActionForFiles {
             Logger logger,
             ServiceBuildDirectoryPath build
     ) throws NoSuchFileException {
-        Path pathTestFile = Paths.get(build.build(parents) + Directory.SEPARATOR.get() + nameFile);
+        Path pathTestFile = Paths.get(build.build(parents), nameFile);
         logger.info("Create resource for tests: " + pathTestFile);
         return pathTestFile;
     }
@@ -34,7 +32,6 @@ public interface UtilsActionForFiles {
     static void createDirectories(
             List<String> folders,
             ServiceBuildDirectoryPath build,
-            String rootPath,
             Logger logger
     ) throws NoSuchFileException {
         List<String> foldersNew = new ArrayList<>();

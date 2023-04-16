@@ -43,15 +43,9 @@ public class ServiceBuildDirectoryPathTests {
 
     @Test
     public void build_success() throws IOException {
-        UtilsActionForFiles.createDirectories(
-                DIRECTORIES_1, serviceBuildDirectoryPath, rootPath.getRootPath(), logger
-        );
-        UtilsActionForFiles.createDirectories(
-                DIRECTORIES_2, serviceBuildDirectoryPath, rootPath.getRootPath(), logger
-        );
-        UtilsActionForFiles.createDirectories(
-                DIRECTORIES_3, serviceBuildDirectoryPath, rootPath.getRootPath(), logger
-        );
+        UtilsActionForFiles.createDirectories(DIRECTORIES_1, serviceBuildDirectoryPath, logger);
+        UtilsActionForFiles.createDirectories(DIRECTORIES_2, serviceBuildDirectoryPath, logger);
+        UtilsActionForFiles.createDirectories(DIRECTORIES_3, serviceBuildDirectoryPath, logger);
 
         Path path1 = Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_1));
         Path path2 = Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_2));
