@@ -6,6 +6,7 @@ import com.zer0s2m.CreepTenuous.providers.jwt.exceptions.NoValidJwtRefreshTokenE
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtResponse;
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtUserRequest;
 import com.zer0s2m.CreepTenuous.providers.jwt.services.impl.JwtService;
+import com.zer0s2m.CreepTenuous.providers.redis.repositories.JwtRedisDataRepository;
 import com.zer0s2m.CreepTenuous.providers.redis.services.imple.RedisService;
 import com.zer0s2m.CreepTenuous.repositories.UserRepository;
 import com.zer0s2m.CreepTenuous.services.user.enums.UserRole;
@@ -33,6 +34,9 @@ public class JwtServiceTests {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private JwtRedisDataRepository jwtRedisDataRepository;
 
     @Autowired
     private JwtService jwtService;
@@ -74,6 +78,8 @@ public class JwtServiceTests {
 
         Assertions.assertTrue(jwtProvider.validateAccessToken(response.accessToken()));
         Assertions.assertTrue(jwtProvider.validateRefreshToken(response.refreshToken()));
+
+        jwtRedisDataRepository.deleteById(RECORD_USER.getLogin());
     }
 
     @Test
@@ -92,6 +98,8 @@ public class JwtServiceTests {
         JwtResponse responseAccessToken = jwtService.getAccessToken(response.refreshToken());
 
         Assertions.assertTrue(jwtProvider.validateAccessToken(responseAccessToken.accessToken()));
+
+        jwtRedisDataRepository.deleteById(RECORD_USER.getLogin());
     }
 
     @Test
@@ -111,6 +119,8 @@ public class JwtServiceTests {
 
         Assertions.assertTrue(jwtProvider.validateAccessToken(responseRefreshToken.accessToken()));
         Assertions.assertTrue(jwtProvider.validateRefreshToken(responseRefreshToken.refreshToken()));
+
+        jwtRedisDataRepository.deleteById(RECORD_USER.getLogin());
     }
 
     @Test
@@ -132,6 +142,8 @@ public class JwtServiceTests {
                 UserNotValidPasswordException.class,
                 () -> jwtService.login(INVALID_RECORD_USER_REQUEST_PASSWORD)
         );
+
+        jwtRedisDataRepository.deleteById(RECORD_USER.getLogin());
     }
 
     @Test
@@ -153,6 +165,8 @@ public class JwtServiceTests {
                 UserNotFoundException.class,
                 () -> jwtService.getAccessToken(responseInvalid.refreshToken())
         );
+
+        jwtRedisDataRepository.deleteById(INVALID_RECORD_USER_REQUEST.login());
     }
 
     @Test
@@ -175,6 +189,8 @@ public class JwtServiceTests {
                 NoValidJwtRefreshTokenException.class,
                 () -> jwtService.getAccessToken(refreshToken)
         );
+
+        jwtRedisDataRepository.deleteById(RECORD_USER.getLogin());
     }
 
     @Test
@@ -196,6 +212,8 @@ public class JwtServiceTests {
                 UserNotFoundException.class,
                 () -> jwtService.getRefreshToken(responseInvalid.refreshToken())
         );
+
+        jwtRedisDataRepository.deleteById(INVALID_RECORD_USER_REQUEST.login());
     }
 
     @Test
@@ -218,5 +236,7 @@ public class JwtServiceTests {
                 NoValidJwtRefreshTokenException.class,
                 () -> jwtService.getRefreshToken(refreshToken)
         );
+
+        jwtRedisDataRepository.deleteById(RECORD_USER.getLogin());
     }
 }

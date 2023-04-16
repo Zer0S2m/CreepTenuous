@@ -8,6 +8,7 @@ import com.zer0s2m.CreepTenuous.providers.jwt.exceptions.messages.UserNotValidPa
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtRefreshTokenRequest;
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtResponse;
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtUserRequest;
+import com.zer0s2m.CreepTenuous.providers.redis.repositories.JwtRedisDataRepository;
 import com.zer0s2m.CreepTenuous.repositories.UserRepository;
 import com.zer0s2m.CreepTenuous.services.user.enums.UserException;
 
@@ -45,6 +46,9 @@ public class ControllerApiAuthTests {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private JwtRedisDataRepository jwtRedisDataRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -89,6 +93,8 @@ public class ControllerApiAuthTests {
 
         Assertions.assertTrue(jwtProvider.validateAccessToken(accessToken));
         Assertions.assertTrue(jwtProvider.validateRefreshToken(refreshToken));
+
+        jwtRedisDataRepository.deleteById(RECORD_1.login());
     }
 
     @Test
@@ -158,6 +164,8 @@ public class ControllerApiAuthTests {
         logger.info("Get access token: " + accessToken);
 
         Assertions.assertTrue(jwtProvider.validateAccessToken(accessToken));
+
+        jwtRedisDataRepository.deleteById(RECORD_CREATE_USER.getLogin());
     }
 
     @Test
@@ -213,6 +221,8 @@ public class ControllerApiAuthTests {
 
         Assertions.assertTrue(jwtProvider.validateAccessToken(responseTokens.accessToken()));
         Assertions.assertTrue(jwtProvider.validateRefreshToken(responseTokens.refreshToken()));
+
+        jwtRedisDataRepository.deleteById(RECORD_CREATE_USER.getLogin());
     }
 
     public CollectionTokens<String, String> getTokens() throws Exception {
