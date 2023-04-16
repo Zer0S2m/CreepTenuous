@@ -44,4 +44,22 @@ public interface UtilsActionForFiles {
             foldersNew.add(folder);
         }
     }
+
+    static Path preparePreliminaryFilesForCopyDirectories(
+            ServiceBuildDirectoryPath build,
+            Logger logger,
+            List<String> directories,
+            String nameFile
+    ) throws IOException {
+        UtilsActionForFiles.createDirectories(directories, build, logger);
+
+        Path pathTestFile1 = UtilsActionForFiles.preparePreliminaryFiles(
+                nameFile,
+                directories,
+                logger,
+                build
+        );
+        Files.createFile(pathTestFile1);
+        return pathTestFile1;
+    }
 }

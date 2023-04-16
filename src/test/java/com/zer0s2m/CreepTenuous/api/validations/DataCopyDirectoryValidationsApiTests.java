@@ -1,6 +1,6 @@
 package com.zer0s2m.CreepTenuous.api.validations;
 
-import com.zer0s2m.CreepTenuous.api.controllers.directory.create.data.FormCreateDirectoryApi;
+import com.zer0s2m.CreepTenuous.api.controllers.directory.copy.data.FormCopyDirectoryApi;
 import com.zer0s2m.CreepTenuous.helpers.BaseValidationDataApi;
 
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -13,19 +13,27 @@ import java.util.ArrayList;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-public class DataCreateDirectoryApiValidationsTests extends BaseValidationDataApi<FormCreateDirectoryApi> {
+public class DataCopyDirectoryValidationsApiTests extends BaseValidationDataApi<FormCopyDirectoryApi> {
     @Test
     public void notValidParents_fail() {
-        FormCreateDirectoryApi invalidDataCreateDirectory = new FormCreateDirectoryApi(
-                null, "testFolder"
+        FormCopyDirectoryApi invalidDataCreateDirectory = new FormCopyDirectoryApi(
+                null, new ArrayList<>(), "testFolder"
+        );
+        setErrorInvalidData(getValidator(), invalidDataCreateDirectory);
+    }
+
+    @Test
+    public void notValidToParents_fail() {
+        FormCopyDirectoryApi invalidDataCreateDirectory = new FormCopyDirectoryApi(
+                new ArrayList<>(), null, "testFolder"
         );
         setErrorInvalidData(getValidator(), invalidDataCreateDirectory);
     }
 
     @Test
     public void notValidNameFile_fail() {
-        FormCreateDirectoryApi invalidDataCreateDirectory = new FormCreateDirectoryApi(
-                new ArrayList<>(), ""
+        FormCopyDirectoryApi invalidDataCreateDirectory = new FormCopyDirectoryApi(
+                new ArrayList<>(), new ArrayList<>(), null
         );
         setErrorInvalidData(getValidator(), invalidDataCreateDirectory);
     }

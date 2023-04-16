@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Service("copy-directory")
-public class CopyDirectory implements ICopyDirectory, CheckIsExistsDirectoryService {
+public class ServiceCopyDirectory implements ICopyDirectory, CheckIsExistsDirectoryService {
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public CopyDirectory(ServiceBuildDirectoryPath buildDirectoryPath) {
+    public ServiceCopyDirectory(ServiceBuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 

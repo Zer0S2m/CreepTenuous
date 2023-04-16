@@ -15,7 +15,7 @@ import java.util.ArrayList;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class DataDeleteDirectoryApiValidationsTests extends BaseValidationDataApi<FormDeleteDirectoryApi> {
     @Test
-    public void notValidTypeFile_fail() {
+    public void notValidParents_fail() {
         FormDeleteDirectoryApi invalidDataDeleteDirectory = new FormDeleteDirectoryApi(
                 null, "testFolder"
         );
