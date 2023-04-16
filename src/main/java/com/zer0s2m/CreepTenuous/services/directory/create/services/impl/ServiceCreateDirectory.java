@@ -15,11 +15,11 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @Service("create-directory")
-public class CreateDirectory implements ICreateDirectory {
+public class ServiceCreateDirectory implements ICreateDirectory {
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public CreateDirectory(ServiceBuildDirectoryPath buildDirectoryPath) {
+    public ServiceCreateDirectory(ServiceBuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 
