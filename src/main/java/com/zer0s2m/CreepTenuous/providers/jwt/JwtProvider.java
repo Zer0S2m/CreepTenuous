@@ -1,7 +1,6 @@
 package com.zer0s2m.CreepTenuous.providers.jwt;
 
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtUserRequest;
-
 import com.zer0s2m.CreepTenuous.services.user.enums.UserRole;
 
 import org.springframework.lang.NonNull;

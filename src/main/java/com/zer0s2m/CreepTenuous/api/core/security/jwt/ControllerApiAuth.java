@@ -12,37 +12,38 @@ import com.zer0s2m.CreepTenuous.services.user.exceptions.UserNotFoundException;
 import com.zer0s2m.CreepTenuous.services.user.exceptions.UserNotValidPasswordException;
 import com.zer0s2m.CreepTenuous.providers.jwt.services.impl.JwtService;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @V1APIController
 @CrossOrigin
-public class AuthControllerApi {
+public class ControllerApiAuth {
     private final JwtService jwtService;
 
     @Autowired
-    public AuthControllerApi(JwtService jwtService) {
+    public ControllerApiAuth(JwtService jwtService) {
         this.jwtService = jwtService;
     }
 
     @PostMapping(value = "/auth/login")
     public JwtResponse login(
-            final @RequestBody JwtUserRequest user
+            final @Valid @RequestBody JwtUserRequest user
     ) throws UserNotFoundException, UserNotValidPasswordException {
         return jwtService.login(user);
     }
 
     @PostMapping(value = "/auth/token")
     public JwtResponse access(
-            final @RequestBody JwtRefreshTokenRequest request
+            final @Valid @RequestBody JwtRefreshTokenRequest request
     ) throws UserNotFoundException, NoValidJwtRefreshTokenException {
         return jwtService.getAccessToken(request.refreshToken());
     }
 
     @PostMapping(value = "/auth/refresh")
     public JwtResponse refresh(
-            final @RequestBody JwtRefreshTokenRequest request
+            final @Valid @RequestBody JwtRefreshTokenRequest request
     ) throws NoValidJwtRefreshTokenException, UserNotFoundException {
         return jwtService.getRefreshToken(request.refreshToken());
     }
