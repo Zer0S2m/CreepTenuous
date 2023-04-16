@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.copy.data.DataCopyFile;
 import com.zer0s2m.CreepTenuous.components.RootPath;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 
 import org.apache.logging.log4j.LogManager;
@@ -45,7 +45,7 @@ public class ControllerApiCopyFileTests {
     private RootPath rootPath;
 
     @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    private ServiceBuildDirectoryPath buildDirectoryPath;
 
     private final String testFile1 = "testFile1.txt";
     private final String testFile2 = "testFile2.txt";

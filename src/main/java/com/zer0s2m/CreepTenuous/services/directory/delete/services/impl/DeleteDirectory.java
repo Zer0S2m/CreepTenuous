@@ -2,7 +2,7 @@ package com.zer0s2m.CreepTenuous.services.directory.delete.services.impl;
 
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.delete.services.IDeleteDirectory;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +16,10 @@ import java.util.List;
 
 @Service("delete-directory")
 public class DeleteDirectory implements IDeleteDirectory, CheckIsExistsDirectoryService {
-    private final BuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public DeleteDirectory(BuildDirectoryPath buildDirectoryPath) {
+    public DeleteDirectory(ServiceBuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 

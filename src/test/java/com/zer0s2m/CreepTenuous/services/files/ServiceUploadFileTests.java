@@ -2,7 +2,7 @@ package com.zer0s2m.CreepTenuous.services.files;
 
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.components.RootPath;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
 import com.zer0s2m.CreepTenuous.services.files.upload.services.impl.ServiceUploadFile;
 
@@ -27,7 +27,7 @@ import java.util.List;
 
 @SpringBootTest(classes = {
         ServiceUploadFile.class,
-        BuildDirectoryPath.class,
+        ServiceBuildDirectoryPath.class,
         CollectRootPath.class,
         RootPath.class,
 })
@@ -39,7 +39,7 @@ public class ServiceUploadFileTests {
     private ServiceUploadFile service;
 
     @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    private ServiceBuildDirectoryPath buildDirectoryPath;
 
     private final String nameTestFile1 = "test_image_1.jpeg";
     private final String nameTestFile2 = "test_image_2.jpeg";

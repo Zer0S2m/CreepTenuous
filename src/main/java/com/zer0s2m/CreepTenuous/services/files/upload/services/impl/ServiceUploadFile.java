@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.services.files.upload.services.impl;
 
 import com.zer0s2m.CreepTenuous.api.controllers.files.upload.http.ResponseUploadFile;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.files.upload.services.IUploadFile;
 
 import org.apache.logging.log4j.LogManager;
@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
 public class ServiceUploadFile implements IUploadFile {
     Logger logger = LogManager.getLogger(ServiceUploadFile.class);
 
-    private final BuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public ServiceUploadFile(BuildDirectoryPath buildDirectoryPath) {
+    public ServiceUploadFile(ServiceBuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 

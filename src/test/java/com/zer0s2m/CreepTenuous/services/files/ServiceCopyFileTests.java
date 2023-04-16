@@ -3,7 +3,7 @@ package com.zer0s2m.CreepTenuous.services.files;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.copy.data.DataCopyFile;
 import com.zer0s2m.CreepTenuous.components.RootPath;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.files.copy.services.impl.ServiceCopyFile;
@@ -29,7 +29,7 @@ import java.util.Objects;
 
 @SpringBootTest(classes = {
         ServiceCopyFile.class,
-        BuildDirectoryPath.class,
+        ServiceBuildDirectoryPath.class,
         CollectRootPath.class,
         RootPath.class,
 })
@@ -38,7 +38,7 @@ public class ServiceCopyFileTests {
     Logger logger = LogManager.getLogger(ServiceCopyFileTests.class);
 
     @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    private ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
     private RootPath rootPath;

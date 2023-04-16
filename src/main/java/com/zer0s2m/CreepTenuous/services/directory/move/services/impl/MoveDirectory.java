@@ -2,7 +2,7 @@ package com.zer0s2m.CreepTenuous.services.directory.move.services.impl;
 
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.move.services.IMoveDirectory;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,10 +14,10 @@ import java.util.List;
 
 @Service("move-directory")
 public class MoveDirectory implements IMoveDirectory {
-    private final BuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public MoveDirectory(BuildDirectoryPath buildDirectoryPath) {
+    public MoveDirectory(ServiceBuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 

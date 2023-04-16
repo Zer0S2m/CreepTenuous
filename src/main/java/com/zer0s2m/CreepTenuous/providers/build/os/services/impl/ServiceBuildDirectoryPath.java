@@ -10,11 +10,11 @@ import java.nio.file.NoSuchFileException;
 import java.util.List;
 
 @Service("build-directory-path")
-public class BuildDirectoryPath {
+public class ServiceBuildDirectoryPath {
     private final CollectRootPath collectRootPath;
 
     @Autowired
-    public BuildDirectoryPath(CollectRootPath collectRootPath) {
+    public ServiceBuildDirectoryPath(CollectRootPath collectRootPath) {
         this.collectRootPath = collectRootPath;
     }
 

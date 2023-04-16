@@ -2,7 +2,7 @@ package com.zer0s2m.CreepTenuous.services.directory.copy.services.impl;
 
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.copy.services.ICopyDirectory;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +15,10 @@ import java.util.stream.Stream;
 
 @Service("copy-directory")
 public class CopyDirectory implements ICopyDirectory, CheckIsExistsDirectoryService {
-    private final BuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public CopyDirectory(BuildDirectoryPath buildDirectoryPath) {
+    public CopyDirectory(ServiceBuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 

@@ -1,6 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.files.copy.services.impl;
 
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.files.copy.services.ICopyFile;
 
@@ -17,10 +17,10 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Service("copy-file")
 public class ServiceCopyFile implements ICopyFile {
-    private final BuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public ServiceCopyFile(BuildDirectoryPath buildDirectoryPath) {
+    public ServiceCopyFile(ServiceBuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 

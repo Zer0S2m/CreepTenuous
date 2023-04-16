@@ -2,7 +2,7 @@ package com.zer0s2m.CreepTenuous.api.controllers;
 
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.create.data.DataCreateFile;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.messages.ExceptionNotDirectoryMsg;
 import com.zer0s2m.CreepTenuous.services.files.create.exceptions.messages.FileAlreadyExistsMsg;
@@ -45,7 +45,7 @@ public class ControllerApiCreateFileTests {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    private ServiceBuildDirectoryPath buildDirectoryPath;
 
     protected String nameTestFile1 = "testFile_1";
     protected String nameTestFile2 = "testFile_2";

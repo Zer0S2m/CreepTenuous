@@ -3,7 +3,7 @@ package com.zer0s2m.CreepTenuous.api.controllers;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.move.data.DataMoveFile;
 import com.zer0s2m.CreepTenuous.components.RootPath;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +40,7 @@ public class ControllerApiMoveFileTests {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    private ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
     private RootPath rootPath;

@@ -3,7 +3,7 @@ package com.zer0s2m.CreepTenuous.services.directory.download.services.impl;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.download.services.IDownloadDirectory;
 import com.zer0s2m.CreepTenuous.services.directory.download.services.ICollectZipDirectory;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +23,10 @@ import java.nio.file.Path;
 
 @Service("download-directory")
 public class DownloadDirectory implements IDownloadDirectory, ICollectZipDirectory, CheckIsExistsDirectoryService {
-    private final BuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public DownloadDirectory(BuildDirectoryPath buildDirectoryPath) {
+    public DownloadDirectory(ServiceBuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 

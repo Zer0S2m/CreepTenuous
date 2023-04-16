@@ -5,7 +5,7 @@ import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.upload.containers.ContainerUploadFile;
 import com.zer0s2m.CreepTenuous.services.directory.upload.services.IUploadDirectory;
 import com.zer0s2m.CreepTenuous.services.directory.upload.services.IUnpackingDirectory;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +19,10 @@ import java.util.List;
 
 @Service("upload-service")
 public class UploadDirectory implements IUploadDirectory, IUnpackingDirectory {
-    private final BuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public UploadDirectory(BuildDirectoryPath buildDirectoryPath) {
+    public UploadDirectory(ServiceBuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 

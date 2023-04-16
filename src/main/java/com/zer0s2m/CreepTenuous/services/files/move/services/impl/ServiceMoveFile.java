@@ -1,6 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.files.move.services.impl;
 
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.files.move.services.IMoveFile;
 
@@ -16,10 +16,10 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Service("move-file")
 public class ServiceMoveFile implements IMoveFile {
-    private final BuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public ServiceMoveFile(BuildDirectoryPath buildDirectoryPath) {
+    public ServiceMoveFile(ServiceBuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 

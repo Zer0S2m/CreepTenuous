@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +34,7 @@ public class ControllerApiUploadFileTests {
     private MockMvc mockMvc;
 
     @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    private ServiceBuildDirectoryPath buildDirectoryPath;
 
     private final String nameTestFile1 = "test_image_1.jpeg";
     private final String nameTestFile2 = "test_image_2.jpeg";

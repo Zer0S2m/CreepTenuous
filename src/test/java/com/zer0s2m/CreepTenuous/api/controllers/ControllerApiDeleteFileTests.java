@@ -3,7 +3,7 @@ package com.zer0s2m.CreepTenuous.api.controllers;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.common.exceptions.messages.NoSuchFileExists;
 import com.zer0s2m.CreepTenuous.api.controllers.files.delete.data.DataDeleteFile;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.messages.ExceptionNotDirectoryMsg;
 import com.zer0s2m.CreepTenuous.services.files.enums.ExceptionFile;
@@ -43,7 +43,7 @@ public class ControllerApiDeleteFileTests {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    private ServiceBuildDirectoryPath buildDirectoryPath;
 
     private final String testFile1 = "testFile1.txt";
     private final String testFile2 = "testFile2.txt";

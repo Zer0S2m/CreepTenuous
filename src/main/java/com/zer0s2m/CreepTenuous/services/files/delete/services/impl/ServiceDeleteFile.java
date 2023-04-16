@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.services.files.delete.services.impl;
 
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.files.delete.services.IDeleteFile;
 import com.zer0s2m.CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsFileService;
@@ -17,10 +17,10 @@ import java.util.List;
 
 @Service("delete-file")
 public class ServiceDeleteFile implements IDeleteFile, CheckIsExistsFileService {
-    private final BuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public ServiceDeleteFile(BuildDirectoryPath buildDirectoryPath) {
+    public ServiceDeleteFile(ServiceBuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 

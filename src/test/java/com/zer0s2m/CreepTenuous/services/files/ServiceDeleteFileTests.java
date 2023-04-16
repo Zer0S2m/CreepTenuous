@@ -3,7 +3,7 @@ package com.zer0s2m.CreepTenuous.services.files;
 import com.zer0s2m.CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
 import com.zer0s2m.CreepTenuous.api.controllers.files.delete.data.DataDeleteFile;
 import com.zer0s2m.CreepTenuous.components.RootPath;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.files.delete.services.impl.ServiceDeleteFile;
@@ -27,7 +27,7 @@ import java.util.Arrays;
 
 @SpringBootTest(classes = {
         ServiceDeleteFile.class,
-        BuildDirectoryPath.class,
+        ServiceBuildDirectoryPath.class,
         CollectRootPath.class,
         RootPath.class,
 })
@@ -39,7 +39,7 @@ public class ServiceDeleteFileTests {
     private ServiceDeleteFile service;
 
     @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    private ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
     private RootPath rootPath;

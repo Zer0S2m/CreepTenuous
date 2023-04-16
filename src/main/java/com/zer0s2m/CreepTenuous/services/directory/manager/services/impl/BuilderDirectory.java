@@ -4,7 +4,7 @@ import com.zer0s2m.CreepTenuous.api.controllers.directory.manager.data.DataManag
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.NotValidLevelDirectoryException;
 import com.zer0s2m.CreepTenuous.services.directory.manager.services.IBuilderDirectory;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,13 +21,13 @@ public class BuilderDirectory implements IBuilderDirectory {
 
     private final BuilderDataFile builderDataFile;
 
-    private final BuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
     public BuilderDirectory(
             CollectDirectory collectDirectory, 
             BuilderDataFile builderDataFile, 
-            BuildDirectoryPath buildDirectoryPath
+            ServiceBuildDirectoryPath buildDirectoryPath
     ) {
         this.collectDirectory = collectDirectory;
         this.builderDataFile = builderDataFile;

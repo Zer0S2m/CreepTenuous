@@ -3,7 +3,7 @@ package com.zer0s2m.CreepTenuous.services.files;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.create.data.DataCreateFile;
 import com.zer0s2m.CreepTenuous.components.RootPath;
-import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.BuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
 import com.zer0s2m.CreepTenuous.services.files.create.exceptions.NotFoundTypeFileException;
 import com.zer0s2m.CreepTenuous.services.files.create.services.impl.ServiceCreateFile;
@@ -25,7 +25,7 @@ import java.util.Arrays;
 
 @SpringBootTest(classes = {
         ServiceCreateFile.class,
-        BuildDirectoryPath.class,
+        ServiceBuildDirectoryPath.class,
         CollectRootPath.class,
         RootPath.class,
 })
@@ -37,7 +37,7 @@ public class ServiceCreateFileTests {
     private ServiceCreateFile service;
 
     @Autowired
-    private BuildDirectoryPath buildDirectoryPath;
+    private ServiceBuildDirectoryPath buildDirectoryPath;
 
     private final String nameTestFile1 = "tesFile_1";
     private final String nameTestFile2 = "tesFile_2";
