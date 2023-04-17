@@ -17,7 +17,7 @@ public class DataCopyDirectoryValidationsApiTests extends BaseValidationDataApi<
     @Test
     public void notValidParents_fail() {
         FormCopyDirectoryApi invalidDataCreateDirectory = new FormCopyDirectoryApi(
-                null, new ArrayList<>(), "testFolder"
+                null, new ArrayList<>(), "testFolder", 1
         );
         setErrorInvalidData(getValidator(), invalidDataCreateDirectory);
     }
@@ -25,7 +25,7 @@ public class DataCopyDirectoryValidationsApiTests extends BaseValidationDataApi<
     @Test
     public void notValidToParents_fail() {
         FormCopyDirectoryApi invalidDataCreateDirectory = new FormCopyDirectoryApi(
-                new ArrayList<>(), null, "testFolder"
+                new ArrayList<>(), null, "testFolder", 1
         );
         setErrorInvalidData(getValidator(), invalidDataCreateDirectory);
     }
@@ -33,7 +33,15 @@ public class DataCopyDirectoryValidationsApiTests extends BaseValidationDataApi<
     @Test
     public void notValidNameFile_fail() {
         FormCopyDirectoryApi invalidDataCreateDirectory = new FormCopyDirectoryApi(
-                new ArrayList<>(), new ArrayList<>(), null
+                new ArrayList<>(), new ArrayList<>(), null, 1
+        );
+        setErrorInvalidData(getValidator(), invalidDataCreateDirectory);
+    }
+
+    @Test
+    public void notValidMethod_fail() {
+        FormCopyDirectoryApi invalidDataCreateDirectory = new FormCopyDirectoryApi(
+                new ArrayList<>(), new ArrayList<>(), "testFolder", null
         );
         setErrorInvalidData(getValidator(), invalidDataCreateDirectory);
     }

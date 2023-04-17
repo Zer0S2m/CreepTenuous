@@ -50,7 +50,7 @@ public class ControllerApiCopyDirectoryTests {
     List<String> DIRECTORIES_3 = List.of("test_folder3");
 
     @Test
-    public void copyDirectory_success() throws Exception {
+    public void copyDirectoryContent_success() throws Exception {
         UtilsActionForFiles.createDirectories(DIRECTORIES_3, serviceBuildDirectoryPath, logger);
         Path pathTestFile1 =  UtilsActionForFiles.preparePreliminaryFilesForCopyDirectories(
                 serviceBuildDirectoryPath,
@@ -72,7 +72,8 @@ public class ControllerApiCopyDirectoryTests {
                         .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
                                 new ArrayList<>(),
                                 List.of(DIRECTORIES_3.get(0)),
-                                DIRECTORIES_1.get(0)
+                                DIRECTORIES_1.get(0),
+                                1
                         )))
                 )
                 .andExpect(status().isNoContent());
@@ -80,6 +81,55 @@ public class ControllerApiCopyDirectoryTests {
         Path newPathTestFile1 = Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_3), "test_file1.txt");
         Path newPathTestFile2 = Path.of(
                 serviceBuildDirectoryPath.build(DIRECTORIES_3),
+                "test_folder2",
+                "test_file2.txt"
+        );
+        Assertions.assertTrue(Files.exists(newPathTestFile1));
+        Assertions.assertTrue(Files.exists(newPathTestFile2));
+        Assertions.assertTrue(Files.exists(pathTestFile1));
+        Assertions.assertTrue(Files.exists(pathTestFile2));
+
+        FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_1)));
+        FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_3)));
+    }
+
+    @Test
+    public void copyDirectoryFolder_success() throws Exception {
+        UtilsActionForFiles.createDirectories(DIRECTORIES_3, serviceBuildDirectoryPath, logger);
+        Path pathTestFile1 =  UtilsActionForFiles.preparePreliminaryFilesForCopyDirectories(
+                serviceBuildDirectoryPath,
+                logger,
+                DIRECTORIES_1,
+                "test_file1.txt"
+        );
+        Path pathTestFile2 = UtilsActionForFiles.preparePreliminaryFilesForCopyDirectories(
+                serviceBuildDirectoryPath,
+                logger,
+                DIRECTORIES_2,
+                "test_file2.txt"
+        );
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/directory/copy")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
+                                new ArrayList<>(),
+                                List.of(DIRECTORIES_3.get(0)),
+                                DIRECTORIES_1.get(0),
+                                2
+                        )))
+                )
+                .andExpect(status().isNoContent());
+
+        Path newPathTestFile1 = Path.of(
+                serviceBuildDirectoryPath.build(DIRECTORIES_3),
+                DIRECTORIES_1.get(0),
+                "test_file1.txt"
+        );
+        Path newPathTestFile2 = Path.of(
+                serviceBuildDirectoryPath.build(DIRECTORIES_3),
+                DIRECTORIES_1.get(0),
                 "test_folder2",
                 "test_file2.txt"
         );
@@ -101,7 +151,8 @@ public class ControllerApiCopyDirectoryTests {
                         .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
                                 Arrays.asList("invalid", "path", "directory"),
                                 new ArrayList<>(),
-                                "testFolder"
+                                "testFolder",
+                                1
                         )))
                 )
                 .andExpect(status().isNotFound())
@@ -123,7 +174,8 @@ public class ControllerApiCopyDirectoryTests {
                         .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
                                 new ArrayList<>(),
                                 Arrays.asList("invalid", "path", "directory"),
-                                "testFolder"
+                                "testFolder",
+                                1
                         )))
                 )
                 .andExpect(status().isNotFound())
@@ -143,7 +195,7 @@ public class ControllerApiCopyDirectoryTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
-                                null, new ArrayList<>(), "testFolder"
+                                null, new ArrayList<>(), "testFolder", 1
                         )))
                 )
                 .andExpect(status().isBadRequest());
@@ -156,7 +208,7 @@ public class ControllerApiCopyDirectoryTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
-                                new ArrayList<>(), null, "testFolder"
+                                new ArrayList<>(), null, "testFolder", 1
                         )))
                 )
                 .andExpect(status().isBadRequest());
@@ -169,7 +221,7 @@ public class ControllerApiCopyDirectoryTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
-                                new ArrayList<>(), new ArrayList<>(), ""
+                                new ArrayList<>(), new ArrayList<>(), "", 1
                         )))
                 )
                 .andExpect(status().isBadRequest());

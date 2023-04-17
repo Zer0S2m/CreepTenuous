@@ -14,6 +14,9 @@ public record FormCopyDirectoryApi(
 
         @NotNull(message = "Please provide name folder (Not NULL)")
         @NotBlank(message = "Please provide name folder")
-        String nameDirectory
+        String nameDirectory,
+
+        @NotNull(message = "Please provide method copy (Not NULL)")
+        Integer method
 ) { }
 

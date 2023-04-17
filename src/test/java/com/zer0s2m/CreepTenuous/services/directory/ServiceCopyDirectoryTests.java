@@ -45,7 +45,7 @@ public class ServiceCopyDirectoryTests {
     List<String> DIRECTORIES_3 = List.of("test_folder3");
 
     @Test
-    public void copyDirectory_success() throws IOException {
+    public void copyDirectoryContent_success() throws IOException {
         UtilsActionForFiles.createDirectories(DIRECTORIES_3, serviceBuildDirectoryPath, logger);
         Path pathTestFile1 =  UtilsActionForFiles.preparePreliminaryFilesForCopyDirectories(
                 serviceBuildDirectoryPath,
@@ -63,12 +63,56 @@ public class ServiceCopyDirectoryTests {
         service.copy(
                 new ArrayList<>(),
                 List.of(DIRECTORIES_3.get(0)),
-                DIRECTORIES_1.get(0)
+                DIRECTORIES_1.get(0),
+                1
         );
 
         Path newPathTestFile1 = Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_3), "test_file1.txt");
         Path newPathTestFile2 = Path.of(
                 serviceBuildDirectoryPath.build(DIRECTORIES_3),
+                "test_folder2",
+                "test_file2.txt"
+        );
+        Assertions.assertTrue(Files.exists(newPathTestFile1));
+        Assertions.assertTrue(Files.exists(newPathTestFile2));
+        Assertions.assertTrue(Files.exists(pathTestFile1));
+        Assertions.assertTrue(Files.exists(pathTestFile2));
+
+        FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_1)));
+        FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_3)));
+    }
+
+    @Test
+    public void copyDirectoryFolder_success() throws IOException {
+        UtilsActionForFiles.createDirectories(DIRECTORIES_3, serviceBuildDirectoryPath, logger);
+        Path pathTestFile1 =  UtilsActionForFiles.preparePreliminaryFilesForCopyDirectories(
+                serviceBuildDirectoryPath,
+                logger,
+                DIRECTORIES_1,
+                "test_file1.txt"
+        );
+        Path pathTestFile2 = UtilsActionForFiles.preparePreliminaryFilesForCopyDirectories(
+                serviceBuildDirectoryPath,
+                logger,
+                DIRECTORIES_2,
+                "test_file2.txt"
+        );
+
+        service.copy(
+                new ArrayList<>(),
+                List.of(DIRECTORIES_3.get(0)),
+                DIRECTORIES_1.get(0),
+                2
+        );
+
+        Path newPathTestFile1 = Path.of(
+                serviceBuildDirectoryPath.build(DIRECTORIES_3),
+                DIRECTORIES_1.get(0),
+                "test_file1.txt"
+        );
+        Path newPathTestFile2 = Path.of(
+                serviceBuildDirectoryPath.build(DIRECTORIES_3),
+                DIRECTORIES_1.get(0),
                 "test_folder2",
                 "test_file2.txt"
         );
@@ -88,7 +132,8 @@ public class ServiceCopyDirectoryTests {
                 () -> service.copy(
                         Arrays.asList("invalid", "path", "directory"),
                         new ArrayList<>(),
-                        "testFolder"
+                        "testFolder",
+                        1
                 )
         );
     }
@@ -100,7 +145,8 @@ public class ServiceCopyDirectoryTests {
                 () -> service.copy(
                         new ArrayList<>(),
                         Arrays.asList("invalid", "path", "directory"),
-                        "testFolder"
+                        "testFolder",
+                        1
                 )
         );
     }

@@ -26,7 +26,8 @@ public class ControllerApiCopyDirectory implements CheckIsExistsDirectoryApi {
         copyDirectory.copy(
                 dataDirectory.parents(),
                 dataDirectory.toParents(),
-                dataDirectory.nameDirectory()
+                dataDirectory.nameDirectory(),
+                dataDirectory.method()
         );
     }
 
