@@ -1,19 +1,19 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
-import com.zer0s2m.CreepTenuous.api.controllers.directory.copy.data.FormCopyDirectoryApi;
+import com.zer0s2m.CreepTenuous.api.controllers.directory.move.data.FormMoveDirectoryApi;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
-import com.zer0s2m.CreepTenuous.services.directory.copy.enums.MethodCopyDirectory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.messages.ExceptionNotDirectoryMsg;
+import com.zer0s2m.CreepTenuous.services.directory.move.enums.MethodMoveDirectory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,8 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-public class ControllerApiCopyDirectoryTests {
-    Logger logger = LogManager.getLogger(ControllerApiCreateDirectoryTests.class);
+public class ControllerApiMoveDirectoryTests {
+    Logger logger = LogManager.getLogger(ControllerApiMoveDirectoryTests.class);
 
     @Autowired
     private ServiceBuildDirectoryPath serviceBuildDirectoryPath;
@@ -51,7 +51,7 @@ public class ControllerApiCopyDirectoryTests {
     List<String> DIRECTORIES_3 = List.of("test_folder3");
 
     @Test
-    public void copyDirectoryFolder_success() throws Exception {
+    public void moveDirectoryFolder_success() throws Exception {
         UtilsActionForFiles.createDirectories(DIRECTORIES_3, serviceBuildDirectoryPath, logger);
         Path pathTestFile1 =  UtilsActionForFiles.preparePreliminaryFilesForCopyDirectories(
                 serviceBuildDirectoryPath,
@@ -67,20 +67,20 @@ public class ControllerApiCopyDirectoryTests {
         );
 
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/directory/copy")
+                MockMvcRequestBuilders.post("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
+                        .content(objectMapper.writeValueAsString(new FormMoveDirectoryApi(
                                 new ArrayList<>(),
                                 List.of(DIRECTORIES_3.get(0)),
                                 DIRECTORIES_1.get(0),
-                                MethodCopyDirectory.FOLDER.getMethod()
+                                MethodMoveDirectory.FOLDER.getMethod()
                         )))
                 )
                 .andExpect(status().isNoContent());
 
-        Path newPathTestFile1 = Path.of(serviceBuildDirectoryPath.build(
-                DIRECTORIES_3),
+        Path newPathTestFile1 = Path.of(
+                serviceBuildDirectoryPath.build(DIRECTORIES_3),
                 DIRECTORIES_1.get(0),
                 "test_file1.txt"
         );
@@ -92,15 +92,14 @@ public class ControllerApiCopyDirectoryTests {
         );
         Assertions.assertTrue(Files.exists(newPathTestFile1));
         Assertions.assertTrue(Files.exists(newPathTestFile2));
-        Assertions.assertTrue(Files.exists(pathTestFile1));
-        Assertions.assertTrue(Files.exists(pathTestFile2));
+        Assertions.assertFalse(Files.exists(pathTestFile1));
+        Assertions.assertFalse(Files.exists(pathTestFile2));
 
-        FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_1)));
         FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_3)));
     }
 
     @Test
-    public void copyDirectoryContent_success() throws Exception {
+    public void moveDirectoryContent_success() throws Exception {
         UtilsActionForFiles.createDirectories(DIRECTORIES_3, serviceBuildDirectoryPath, logger);
         Path pathTestFile1 =  UtilsActionForFiles.preparePreliminaryFilesForCopyDirectories(
                 serviceBuildDirectoryPath,
@@ -116,14 +115,14 @@ public class ControllerApiCopyDirectoryTests {
         );
 
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/directory/copy")
+                MockMvcRequestBuilders.post("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
+                        .content(objectMapper.writeValueAsString(new FormMoveDirectoryApi(
                                 new ArrayList<>(),
                                 List.of(DIRECTORIES_3.get(0)),
                                 DIRECTORIES_1.get(0),
-                                MethodCopyDirectory.CONTENT.getMethod()
+                                MethodMoveDirectory.CONTENT.getMethod()
                         )))
                 )
                 .andExpect(status().isNoContent());
@@ -139,20 +138,19 @@ public class ControllerApiCopyDirectoryTests {
         );
         Assertions.assertTrue(Files.exists(newPathTestFile1));
         Assertions.assertTrue(Files.exists(newPathTestFile2));
-        Assertions.assertTrue(Files.exists(pathTestFile1));
-        Assertions.assertTrue(Files.exists(pathTestFile2));
+        Assertions.assertFalse(Files.exists(pathTestFile1));
+        Assertions.assertFalse(Files.exists(pathTestFile2));
 
-        FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_1)));
         FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_3)));
     }
 
     @Test
-    public void copyDirectory_fail_invalidPathDirectory() throws Exception {
+    public void moveDirectory_fail_invalidPathDirectory() throws Exception {
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/directory/copy")
+                MockMvcRequestBuilders.post("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
+                        .content(objectMapper.writeValueAsString(new FormMoveDirectoryApi(
                                 Arrays.asList("invalid", "path", "directory"),
                                 new ArrayList<>(),
                                 "testFolder",
@@ -170,12 +168,12 @@ public class ControllerApiCopyDirectoryTests {
     }
 
     @Test
-    public void copyDirectory_fail_invalidToPathDirectory() throws Exception {
+    public void moveDirectory_fail_invalidToPathDirectory() throws Exception {
         this.mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/v1/directory/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
+                        .content(objectMapper.writeValueAsString(new FormMoveDirectoryApi(
                                 new ArrayList<>(),
                                 Arrays.asList("invalid", "path", "directory"),
                                 "testFolder",
@@ -190,44 +188,5 @@ public class ControllerApiCopyDirectoryTests {
                                 )
                         )
                 ));
-    }
-
-    @Test
-    public void copyDirectory_fail_notParents() throws Exception {
-        this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/directory/copy")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
-                                null, new ArrayList<>(), "testFolder", 1
-                        )))
-                )
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void copyDirectory_fail_notToParents() throws Exception {
-        this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/directory/copy")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
-                                new ArrayList<>(), null, "testFolder", 1
-                        )))
-                )
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void copyDirectory_fail_notFileName() throws Exception {
-        this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/directory/copy")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
-                                new ArrayList<>(), new ArrayList<>(), "", 1
-                        )))
-                )
-                .andExpect(status().isBadRequest());
     }
 }

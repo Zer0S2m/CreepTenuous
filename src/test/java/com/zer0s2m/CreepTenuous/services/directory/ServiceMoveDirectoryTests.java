@@ -5,7 +5,7 @@ import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
 import com.zer0s2m.CreepTenuous.services.directory.copy.enums.MethodCopyDirectory;
-import com.zer0s2m.CreepTenuous.services.directory.copy.services.impl.ServiceCopyDirectory;
+import com.zer0s2m.CreepTenuous.services.directory.move.services.impl.ServiceMoveDirectory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,24 +19,22 @@ import org.springframework.util.FileSystemUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @SpringBootTest(classes = {
-        ServiceCopyDirectory.class,
+        ServiceMoveDirectory.class,
         ServiceBuildDirectoryPath.class,
         CollectRootPath.class,
         RootPath.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-public class ServiceCopyDirectoryTests {
-    Logger logger = LogManager.getLogger(ServiceCopyDirectoryTests.class);
+public class ServiceMoveDirectoryTests {
+    Logger logger = LogManager.getLogger(ServiceMoveDirectoryTests.class);
 
     @Autowired
-    private ServiceCopyDirectory service;
+    private ServiceMoveDirectory service;
 
     @Autowired
     private ServiceBuildDirectoryPath serviceBuildDirectoryPath;
@@ -46,7 +44,7 @@ public class ServiceCopyDirectoryTests {
     List<String> DIRECTORIES_3 = List.of("test_folder3");
 
     @Test
-    public void copyDirectoryFolder_success() throws IOException {
+    public void moveDirectoryFolder_success() throws IOException {
         UtilsActionForFiles.createDirectories(DIRECTORIES_3, serviceBuildDirectoryPath, logger);
         Path pathTestFile1 =  UtilsActionForFiles.preparePreliminaryFilesForCopyDirectories(
                 serviceBuildDirectoryPath,
@@ -61,7 +59,7 @@ public class ServiceCopyDirectoryTests {
                 "test_file2.txt"
         );
 
-        service.copy(
+        service.move(
                 new ArrayList<>(),
                 List.of(DIRECTORIES_3.get(0)),
                 DIRECTORIES_1.get(0),
@@ -81,15 +79,14 @@ public class ServiceCopyDirectoryTests {
         );
         Assertions.assertTrue(Files.exists(newPathTestFile1));
         Assertions.assertTrue(Files.exists(newPathTestFile2));
-        Assertions.assertTrue(Files.exists(pathTestFile1));
-        Assertions.assertTrue(Files.exists(pathTestFile2));
+        Assertions.assertFalse(Files.exists(pathTestFile1));
+        Assertions.assertFalse(Files.exists(pathTestFile2));
 
-        FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_1)));
         FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_3)));
     }
 
     @Test
-    public void copyDirectoryContent_success() throws IOException {
+    public void moveDirectoryContent_success() throws IOException {
         UtilsActionForFiles.createDirectories(DIRECTORIES_3, serviceBuildDirectoryPath, logger);
         Path pathTestFile1 =  UtilsActionForFiles.preparePreliminaryFilesForCopyDirectories(
                 serviceBuildDirectoryPath,
@@ -104,7 +101,7 @@ public class ServiceCopyDirectoryTests {
                 "test_file2.txt"
         );
 
-        service.copy(
+        service.move(
                 new ArrayList<>(),
                 List.of(DIRECTORIES_3.get(0)),
                 DIRECTORIES_1.get(0),
@@ -122,36 +119,9 @@ public class ServiceCopyDirectoryTests {
         );
         Assertions.assertTrue(Files.exists(newPathTestFile1));
         Assertions.assertTrue(Files.exists(newPathTestFile2));
-        Assertions.assertTrue(Files.exists(pathTestFile1));
-        Assertions.assertTrue(Files.exists(pathTestFile2));
+        Assertions.assertFalse(Files.exists(pathTestFile1));
+        Assertions.assertFalse(Files.exists(pathTestFile2));
 
-        FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_1)));
         FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_3)));
-    }
-
-    @Test
-    public void copyDirectory_fail_invalidPathDirectory() {
-        Assertions.assertThrows(
-                NoSuchFileException.class,
-                () -> service.copy(
-                        Arrays.asList("invalid", "path", "directory"),
-                        new ArrayList<>(),
-                        "testFolder",
-                        MethodCopyDirectory.CONTENT.getMethod()
-                )
-        );
-    }
-
-    @Test
-    public void copyDirectory_fail_invalidToPathDirectory() {
-        Assertions.assertThrows(
-                NoSuchFileException.class,
-                () -> service.copy(
-                        new ArrayList<>(),
-                        Arrays.asList("invalid", "path", "directory"),
-                        "testFolder",
-                        MethodCopyDirectory.CONTENT.getMethod()
-                )
-        );
     }
 }

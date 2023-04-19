@@ -36,7 +36,7 @@ public class ServiceCopyDirectory implements ICopyDirectory, CheckIsExistsDirect
         Path currentPath = Paths.get(buildDirectoryPath.build(parents) + Directory.SEPARATOR.get(), nameDirectory);
         checkDirectory(currentPath);
 
-        if (Objects.equals(method, MethodCopyDirectory.CONTENT.getMethod())) {
+        if (Objects.equals(method, MethodCopyDirectory.FOLDER.getMethod())) {
             Path futurePath = Paths.get(buildDirectoryPath.build(toParents), nameDirectory);
             if (!Files.exists(futurePath)) {
                 this.newPath = Files.createDirectory(futurePath);
