@@ -2,6 +2,9 @@ package com.zer0s2m.CreepTenuous.services.directory.upload.threads;
 
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.*;
 import java.nio.file.Path;
 import java.util.List;
@@ -9,6 +12,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class ThreadUnpackingDirectory extends Thread {
+    private final Logger logger = LogManager.getLogger(ThreadUnpackingDirectory.class);
     private final List<Path> files;
     private final Path outputDirectory;
     private final byte[] buffer = new byte[(int) Directory.BYTES_UNPACKING_ZIP.getInt()];
@@ -25,7 +29,7 @@ public class ThreadUnpackingDirectory extends Thread {
             File realFile = file.toFile();
             try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(realFile))) {
                 unpacking(zipInputStream, outputDirectoryFile);
-                realFile.delete();
+                logger.info(String.format("Is part file(s) unpacking: %s", realFile.delete()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

@@ -11,9 +11,8 @@ public class ContainerUploadFile {
         this.files = new ArrayList<>();
     }
 
-    public Path setFile(Path file) {
+    public void setFile(Path file) {
         files.add(file);
-        return file;
     }
 
     public List<Path> getFiles() {

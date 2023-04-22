@@ -2,35 +2,36 @@ package com.zer0s2m.CreepTenuous.api.controllers.directory.upload;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.upload.http.ResponseUploadDirectory;
 import com.zer0s2m.CreepTenuous.api.core.version.v1.V1APIController;
-import com.zer0s2m.CreepTenuous.services.directory.upload.services.impl.UploadDirectory;
+import com.zer0s2m.CreepTenuous.services.directory.upload.services.impl.ServiceUploadDirectory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RequestParam;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.NoSuchFileException;
+import java.io.IOException;
 import java.util.List;
 
 @V1APIController
-public class UploadDirectoryApi implements CheckIsExistsDirectoryApi {
-    private final UploadDirectory uploadDirectory;
+public class ControllerApiUploadDirectory implements CheckIsExistsDirectoryApi {
+    private final ServiceUploadDirectory uploadDirectory;
 
     @Autowired
-    public UploadDirectoryApi(UploadDirectory uploadDirectory) {
+    public ControllerApiUploadDirectory(ServiceUploadDirectory uploadDirectory) {
         this.uploadDirectory = uploadDirectory;
     }
 
     @PostMapping(path = "/directory/upload")
-    public final Mono<ResponseUploadDirectory> upload(
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public final ResponseUploadDirectory upload(
             final @Nullable @RequestParam("parents") List<String> parents,
-            final @RequestPart("directory") Flux<FilePart> directory
-    ) throws NoSuchFileException {
-        return uploadDirectory.upload(parents, directory);
+            final @RequestPart("directory") MultipartFile zipFile
+    ) throws IOException {
+        return uploadDirectory.upload(parents, zipFile);
     }
 }
