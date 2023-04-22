@@ -6,6 +6,8 @@ import com.zer0s2m.CreepTenuous.services.directory.download.services.ICollectZip
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryService;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -13,7 +15,6 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,31 +23,34 @@ import java.util.List;
 import java.nio.file.Path;
 
 @Service("download-directory")
-public class DownloadDirectory implements IDownloadDirectory, ICollectZipDirectory, CheckIsExistsDirectoryService {
+public class ServiceDownloadDirectory implements
+        IDownloadDirectory,
+        ICollectZipDirectory,
+        CheckIsExistsDirectoryService
+{
+    private final Logger logger = LogManager.getLogger(ServiceDownloadDirectory.class);
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public DownloadDirectory(ServiceBuildDirectoryPath buildDirectoryPath) {
+    public ServiceDownloadDirectory(ServiceBuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 
     @Override
-    public Mono<ResponseEntity<Resource>> download(
+    public ResponseEntity<Resource> download(
             List<String> parents,
             String directory
     ) throws IOException {
-        Path path = Paths.get(buildDirectoryPath.build(parents) + Directory.SEPARATOR.get() + directory);
+        Path path = Paths.get(buildDirectoryPath.build(parents), directory);
         checkDirectory(path);
 
         Path pathToZip = collectZip(path);
         ByteArrayResource contentBytes = new ByteArrayResource(Files.readAllBytes(pathToZip));
 
-        return Mono.just(true)
-                .then(deleteFileZip(pathToZip))
-                .thenReturn(ResponseEntity.ok()
-                        .headers(collectHeaders(pathToZip, contentBytes))
-                        .body(contentBytes)
-                );
+        deleteFileZip(pathToZip);
+        return ResponseEntity.ok()
+                .headers(collectHeaders(pathToZip, contentBytes))
+                .body(contentBytes);
     }
 
     @Override
@@ -66,10 +70,8 @@ public class DownloadDirectory implements IDownloadDirectory, ICollectZipDirecto
         return headers;
     }
 
-    private Mono<Void> deleteFileZip(Path path) {
-        return Mono.create(sink -> {
-            path.toFile().delete();
-            sink.success();
-        });
+    private void deleteFileZip(Path path) {
+        boolean isDeleted = path.toFile().delete();
+        logger.info("Is deleted zip file: " + isDeleted);
     }
 }

@@ -38,3 +38,6 @@ logs
 
 ### ENV ###
 .env
+
+### TESTS ###
+htmlReport/
