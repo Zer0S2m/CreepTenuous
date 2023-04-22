@@ -31,3 +31,13 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Logs ###
+var
+logs
+
+### ENV ###
+.env
+
+### TESTS ###
+htmlReport/

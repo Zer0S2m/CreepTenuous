@@ -1,0 +1,2 @@
+ALTER TABLE "user"
+    ADD COLUMN role VARCHAR NOT NULL default 'USER';
