@@ -8,7 +8,7 @@ import com.zer0s2m.CreepTenuous.providers.jwt.exceptions.messages.UserNotValidPa
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtRefreshTokenRequest;
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtResponse;
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtUserRequest;
-import com.zer0s2m.CreepTenuous.providers.redis.repositories.JwtRedisDataRepository;
+import com.zer0s2m.CreepTenuous.providers.redis.repositories.JwtRedisRepository;
 import com.zer0s2m.CreepTenuous.repositories.UserRepository;
 import com.zer0s2m.CreepTenuous.services.user.enums.UserException;
 
@@ -48,7 +48,7 @@ public class ControllerApiAuthTests {
     private UserRepository userRepository;
 
     @Autowired
-    private JwtRedisDataRepository jwtRedisDataRepository;
+    private JwtRedisRepository jwtRedisDataRepository;
 
     @Autowired
     private ObjectMapper objectMapper;

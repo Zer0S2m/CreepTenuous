@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.repositories;
 
 import com.zer0s2m.CreepTenuous.providers.redis.models.JwtRedis;
-import com.zer0s2m.CreepTenuous.providers.redis.repositories.JwtRedisDataRepository;
+import com.zer0s2m.CreepTenuous.providers.redis.repositories.JwtRedisRepository;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +18,7 @@ public class JwtRedisDataRepositoryDBTests {
     Logger logger = LogManager.getLogger(JwtRedisDataRepositoryDBTests.class);
 
     @Autowired
-    private JwtRedisDataRepository repository;
+    private JwtRedisRepository repository;
 
     JwtRedis RECORD_1 = new JwtRedis(
             "test_login",

@@ -13,5 +13,5 @@ public interface IBuilderDirectory {
     List<String> getArrPartsDirectory();
 
     DataManagerDirectory build(List<String> arrPartsDirectory, Integer level)
-            throws IOException, NotValidLevelDirectoryException;
+            throws IOException, NotValidLevelDirectoryException, NoSuchFieldException;
 }

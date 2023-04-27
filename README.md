@@ -9,6 +9,11 @@ Before starting, create an **`.env`** file and edit it (it is advisable to speci
 cp .env.example .env
 ```
 
+InitL
+```shell
+sudo chmod 755 ./init.sh
+```
+
 Build docker:
 ```shell
 make build-dev-docker

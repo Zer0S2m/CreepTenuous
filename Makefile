@@ -18,7 +18,6 @@ dev:
 	@$(run-docker-dev)
 
 full-dev:
-	sudo chmod 755 ./init.sh
 	./init.sh
 	@$(run-docker-dev)
 	mvn spring-boot:run

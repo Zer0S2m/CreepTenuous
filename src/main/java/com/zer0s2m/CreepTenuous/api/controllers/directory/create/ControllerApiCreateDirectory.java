@@ -21,8 +21,10 @@ public class ControllerApiCreateDirectory implements CheckIsExistsDirectoryApi {
     @PostMapping("/directory/create")
     @ResponseStatus(code = HttpStatus.CREATED)
     public final void createDirectory(
-            final @Valid @RequestBody FormCreateDirectoryApi directoryForm
+            final @Valid @RequestBody FormCreateDirectoryApi directoryForm,
+            @RequestHeader(name = "Authorization") String accessToken
     ) throws NoSuchFileException, FileAlreadyExistsException {
+        createDirectory.setAccessToken(accessToken);
         createDirectory.create(
                 directoryForm.parents(),
                 directoryForm.name()

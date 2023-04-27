@@ -1,5 +1,7 @@
 package com.zer0s2m.CreepTenuous.services.directory.manager.services.impl;
 
+import com.zer0s2m.CreepTenuous.providers.redis.models.DirectoryRedis;
+import com.zer0s2m.CreepTenuous.services.directory.manager.containers.ContainerDataFiles;
 import com.zer0s2m.CreepTenuous.services.directory.manager.services.IBuilderDataFile;
 
 import org.json.JSONObject;
@@ -14,18 +16,21 @@ import java.util.List;
 @Service("build-data-file")
 public class BuilderDataFile implements IBuilderDataFile {
     @Override
-    public List<Object> build(ArrayList<List<Path>> paths) {
+    public ContainerDataFiles build(ArrayList<List<Path>> paths) {
         JSONArray readyFiles = new JSONArray();
+        List<String> pathsDirectory = new ArrayList<>();
 
         for (Path path : paths.get(0)) {
             buildJSON(path, readyFiles, true, false);
+            pathsDirectory.add(path.getFileName().toString());
         }
 
         for (Path path : paths.get(1)) {
             buildJSON(path, readyFiles, false, true);
+            pathsDirectory.add(path.getFileName().toString());
         }
 
-        return readyFiles.toList();
+        return new ContainerDataFiles(readyFiles.toList(), pathsDirectory);
     }
 
     private void buildJSON(Path path, JSONArray readyFiles, boolean isFile, boolean isDirectory) {
@@ -44,5 +49,19 @@ public class BuilderDataFile implements IBuilderDataFile {
         }
 
         readyFiles.put(obj);
+    }
+
+    @Override
+    public List<Object> build(List<DirectoryRedis> redisList) {
+        JSONArray readyFiles = new JSONArray();
+
+        redisList.forEach((objRedis) -> {
+            JSONObject objJson = new JSONObject();
+            objJson.put("fileName", objRedis.getNameDirectory());
+            objJson.put("path", objRedis.getPathDirectory());
+            readyFiles.put(objJson);
+        });
+
+        return readyFiles.toList();
     }
 }

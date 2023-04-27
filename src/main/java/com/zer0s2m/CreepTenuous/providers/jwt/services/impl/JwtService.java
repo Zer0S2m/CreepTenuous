@@ -8,7 +8,7 @@ import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtUserRequest;
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtResponse;
 import com.zer0s2m.CreepTenuous.providers.redis.data.JwtRedisData;
 import com.zer0s2m.CreepTenuous.providers.redis.models.JwtRedis;
-import com.zer0s2m.CreepTenuous.providers.redis.services.imple.RedisService;
+import com.zer0s2m.CreepTenuous.providers.redis.services.impl.ServiceJwtRedis;
 import com.zer0s2m.CreepTenuous.repositories.UserRepository;
 import com.zer0s2m.CreepTenuous.services.user.enums.UserException;
 import com.zer0s2m.CreepTenuous.services.user.exceptions.UserNotFoundException;
@@ -34,7 +34,7 @@ public class JwtService implements IJwtService {
 
     final private GeneratePassword generatePassword;
 
-    final private RedisService redisService;
+    final private ServiceJwtRedis redisService;
 
     @Override
     public JwtResponse login(JwtUserRequest user) throws UserNotFoundException, UserNotValidPasswordException {

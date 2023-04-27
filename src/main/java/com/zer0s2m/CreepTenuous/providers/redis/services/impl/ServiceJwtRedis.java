@@ -1,9 +1,9 @@
-package com.zer0s2m.CreepTenuous.providers.redis.services.imple;
+package com.zer0s2m.CreepTenuous.providers.redis.services.impl;
 
 import com.zer0s2m.CreepTenuous.providers.redis.data.JwtRedisData;
 import com.zer0s2m.CreepTenuous.providers.redis.models.JwtRedis;
-import com.zer0s2m.CreepTenuous.providers.redis.services.IRedisService;
-import com.zer0s2m.CreepTenuous.providers.redis.repositories.JwtRedisDataRepository;
+import com.zer0s2m.CreepTenuous.providers.redis.repositories.JwtRedisRepository;
+import com.zer0s2m.CreepTenuous.providers.redis.services.IServiceJwtRedis;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -13,8 +13,8 @@ import java.util.Optional;
 
 @Service("redis-service")
 @AllArgsConstructor
-public class RedisService implements IRedisService {
-    private final JwtRedisDataRepository repository;
+public class ServiceJwtRedis implements IServiceJwtRedis {
+    private final JwtRedisRepository repository;
 
     @Override
     public void save(@NotNull JwtRedisData data) {

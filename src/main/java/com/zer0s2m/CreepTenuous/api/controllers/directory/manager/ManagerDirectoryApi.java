@@ -22,8 +22,10 @@ public class ManagerDirectoryApi implements CheckIsExistsDirectoryApi {
     @ResponseStatus(code = HttpStatus.OK)
     public DataManagerDirectory main(
             final @RequestParam(value = "level", defaultValue = "0") Integer level,
-            final @RequestParam(value = "parents", defaultValue = "") List<String> parents
-    ) throws IOException, NotValidLevelDirectoryException {
+            final @RequestParam(value = "parents", defaultValue = "") List<String> parents,
+            @RequestHeader(name = "Authorization") String accessToken
+    ) throws IOException, NotValidLevelDirectoryException, NoSuchFieldException {
+        builderDirectory.setAccessToken(accessToken);
         return builderDirectory.build(parents, level);
     }
 

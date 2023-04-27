@@ -1,11 +1,18 @@
 package com.zer0s2m.CreepTenuous.services.directory.manager.services.impl;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.manager.data.DataManagerDirectory;
+import com.zer0s2m.CreepTenuous.providers.jwt.JwtProvider;
+import com.zer0s2m.CreepTenuous.providers.jwt.utils.JwtUtils;
+import com.zer0s2m.CreepTenuous.providers.redis.models.DirectoryRedis;
+import com.zer0s2m.CreepTenuous.providers.redis.repositories.DirectoryRedisRepository;
+import com.zer0s2m.CreepTenuous.providers.redis.services.IServiceDirectoryRedis;
+import com.zer0s2m.CreepTenuous.services.directory.manager.containers.ContainerDataFiles;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.NotValidLevelDirectoryException;
 import com.zer0s2m.CreepTenuous.services.directory.manager.services.IBuilderDirectory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,15 +30,25 @@ public class BuilderDirectory implements IBuilderDirectory {
 
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
+    private final DirectoryRedisRepository redisRepository;
+
+    private final JwtProvider jwtProvider;
+
+    private Claims accessClaims;
+
     @Autowired
     public BuilderDirectory(
             CollectDirectory collectDirectory, 
             BuilderDataFile builderDataFile, 
-            ServiceBuildDirectoryPath buildDirectoryPath
+            ServiceBuildDirectoryPath buildDirectoryPath,
+            DirectoryRedisRepository redisRepository,
+            JwtProvider jwtProvider
     ) {
         this.collectDirectory = collectDirectory;
         this.builderDataFile = builderDataFile;
         this.buildDirectoryPath = buildDirectoryPath;
+        this.redisRepository = redisRepository;
+        this.jwtProvider = jwtProvider;
     }
 
     @Override
@@ -46,8 +63,7 @@ public class BuilderDirectory implements IBuilderDirectory {
 
     @Override
     public DataManagerDirectory build(List<String> arrPartsDirectory, Integer level)
-            throws NotValidLevelDirectoryException, IOException
-    {
+            throws NotValidLevelDirectoryException, IOException, NoSuchFieldException {
         this.arrPartsDirectory = arrPartsDirectory;
 
         if (level != arrPartsDirectory.toArray().length) {
@@ -55,13 +71,27 @@ public class BuilderDirectory implements IBuilderDirectory {
         }
 
         String directory = getDirectory();
-        List<Object> paths = builderDataFile.build(collectDirectory.collect(directory));
+        ContainerDataFiles data = builderDataFile.build(collectDirectory.collect(directory));
+
+        List<DirectoryRedis> redisList = IServiceDirectoryRedis.getDirectoriesByLogin(
+                redisRepository,
+                accessClaims.get("login", String.class),
+                data.namesDirectory()
+        );
 
         return new DataManagerDirectory(
                 getArrPartsDirectory(),
                 directory,
                 level,
-                paths
+                builderDataFile.build(redisList)
         );
+    }
+
+    public void setAccessToken(String rawAccessToken) {
+        setAccessClaims(JwtUtils.getPureAccessToken(rawAccessToken));
+    }
+
+    protected void setAccessClaims(String accessToken) {
+        this.accessClaims = jwtProvider.getAccessClaims(accessToken);
     }
 }

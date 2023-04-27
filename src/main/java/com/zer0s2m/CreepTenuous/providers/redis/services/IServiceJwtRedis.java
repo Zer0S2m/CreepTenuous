@@ -5,7 +5,7 @@ import com.zer0s2m.CreepTenuous.providers.redis.models.JwtRedis;
 
 import java.util.Optional;
 
-public interface IRedisService {
+public interface IServiceJwtRedis {
     void save(JwtRedisData data);
 
     void deleteTokensByLogin(String login);
