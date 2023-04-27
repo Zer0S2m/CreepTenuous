@@ -1,9 +1,12 @@
 package com.zer0s2m.CreepTenuous.services.files.create.services.impl;
 
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
+import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
+import com.zer0s2m.CreepTenuous.services.files.create.containers.ContainerDataCreatedFile;
 import com.zer0s2m.CreepTenuous.services.files.create.exceptions.NotFoundTypeFileException;
 import com.zer0s2m.CreepTenuous.services.files.create.services.ICreateFile;
 
+import com.zer0s2m.CreepTenuous.services.files.enums.TypeFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +24,7 @@ public class ServiceCreateFile implements ICreateFile {
     }
 
     @Override
-    public void create(
+    public ContainerDataCreatedFile create(
             List<String> parents,
             String nameFile,
             Integer typeFile
@@ -29,5 +32,10 @@ public class ServiceCreateFile implements ICreateFile {
         checkTypeFile(typeFile);
         Path path = Paths.get(buildDirectoryPath.build(parents));
         conductor(path, nameFile, typeFile);
+
+        String fullNameFile = nameFile + "." + TypeFile.getExtension(typeFile);
+        Path fullPath = Path.of(path + Directory.SEPARATOR.get() + fullNameFile);
+
+        return new ContainerDataCreatedFile(fullNameFile, fullPath);
     }
 }
