@@ -22,10 +22,18 @@ public class DirectoryRedis {
     @Column(name = "role")
     private String role;
 
+    @Column(name = "isDirectory")
+    private Boolean isDirectory;
+
+    @Column(name = "isFile")
+    private Boolean isFile;
+
     public DirectoryRedis(String login, String role, String nameDirectory, String pathDirectory) {
         this.login = login;
         this.role = role;
         this.nameDirectory = nameDirectory;
         this.pathDirectory = pathDirectory;
+        this.isDirectory = true;
+        this.isFile = false;
     }
 }

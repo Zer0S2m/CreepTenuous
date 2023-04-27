@@ -7,5 +7,5 @@ public record DataManagerDirectory(
         List<String> partsDirectory,
         String readyDirectory,
         Integer levelDirectory,
-        List<Object> paths
+        List<Object> objects
 ) { }

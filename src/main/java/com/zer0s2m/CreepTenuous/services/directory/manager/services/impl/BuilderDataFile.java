@@ -59,6 +59,8 @@ public class BuilderDataFile implements IBuilderDataFile {
             JSONObject objJson = new JSONObject();
             objJson.put("fileName", objRedis.getNameDirectory());
             objJson.put("path", objRedis.getPathDirectory());
+            objJson.put("isDirectory", objRedis.getIsDirectory());
+            objJson.put("isFile", objRedis.getIsFile());
             readyFiles.put(objJson);
         });
 
