@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 public interface IServiceDirectoryRedis extends IBaseServiceRedis<DirectoryRedis> {
-    static DirectoryRedis createObj(String login, String role, String nameDirectory, String pathDirectory) {
+    static DirectoryRedis getObjRedis(String login, String role, String nameDirectory, String pathDirectory) {
         return new DirectoryRedis(login, role, nameDirectory, pathDirectory);
     }
 

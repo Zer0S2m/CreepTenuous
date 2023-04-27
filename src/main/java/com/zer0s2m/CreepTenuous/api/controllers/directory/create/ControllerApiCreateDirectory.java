@@ -2,10 +2,12 @@ package com.zer0s2m.CreepTenuous.api.controllers.directory.create;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.create.data.FormCreateDirectoryApi;
 import com.zer0s2m.CreepTenuous.api.core.version.v1.V1APIController;
+import com.zer0s2m.CreepTenuous.services.directory.create.containers.ContainerDataCreatedDirectory;
 import com.zer0s2m.CreepTenuous.services.directory.create.exceptions.messages.ExceptionDirectoryExistsMsg;
 import com.zer0s2m.CreepTenuous.services.directory.create.services.impl.ServiceCreateDirectory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 
+import com.zer0s2m.CreepTenuous.services.directory.create.services.impl.ServiceDirectoryRedis;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,22 +20,29 @@ import java.nio.file.NoSuchFileException;
 public class ControllerApiCreateDirectory implements CheckIsExistsDirectoryApi {
     private final ServiceCreateDirectory createDirectory;
 
+    private final ServiceDirectoryRedis serviceDirectoryRedis;
+
     @PostMapping("/directory/create")
     @ResponseStatus(code = HttpStatus.CREATED)
     public final void createDirectory(
             final @Valid @RequestBody FormCreateDirectoryApi directoryForm,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws NoSuchFileException, FileAlreadyExistsException {
-        createDirectory.setAccessToken(accessToken);
-        createDirectory.create(
+        ContainerDataCreatedDirectory dataCreatedDirectory = createDirectory.create(
                 directoryForm.parents(),
                 directoryForm.name()
         );
+        serviceDirectoryRedis.setAccessToken(accessToken);
+        serviceDirectoryRedis.create(dataCreatedDirectory);
     }
 
     @Autowired
-    public ControllerApiCreateDirectory(ServiceCreateDirectory createDirectory) {
+    public ControllerApiCreateDirectory(
+            ServiceCreateDirectory createDirectory,
+            ServiceDirectoryRedis serviceDirectoryRedis
+    ) {
         this.createDirectory = createDirectory;
+        this.serviceDirectoryRedis = serviceDirectoryRedis;
     }
 
     @ExceptionHandler(FileAlreadyExistsException.class)
