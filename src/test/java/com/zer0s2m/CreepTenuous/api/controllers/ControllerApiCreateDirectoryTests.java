@@ -2,6 +2,7 @@ package com.zer0s2m.CreepTenuous.api.controllers;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.create.data.FormCreateDirectoryApi;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
+import com.zer0s2m.CreepTenuous.helpers.UtilsAuthAction;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.directory.create.exceptions.messages.ExceptionDirectoryExistsMsg;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
@@ -45,6 +46,8 @@ public class ControllerApiCreateDirectoryTests {
     @Autowired
     private MockMvc mockMvc;
 
+    private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
+
     List<String> DIRECTORIES_1 = List.of("test_folder1");
 
     FormCreateDirectoryApi RECORD_1 = new FormCreateDirectoryApi(
@@ -63,6 +66,7 @@ public class ControllerApiCreateDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/create")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
                         .content(objectMapper.writeValueAsString(RECORD_1))
                 )
                 .andExpect(status().isCreated());
@@ -80,6 +84,7 @@ public class ControllerApiCreateDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/create")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(RECORD_1))
                 )
                 .andExpect(status().isBadRequest())
@@ -101,6 +106,7 @@ public class ControllerApiCreateDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/create")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(INVALID_RECORD))
                 )
                 .andExpect(status().isNotFound())

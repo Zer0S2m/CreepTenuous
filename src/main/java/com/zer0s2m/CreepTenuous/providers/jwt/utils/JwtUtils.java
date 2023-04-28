@@ -33,6 +33,6 @@ public class JwtUtils {
         if (StringUtils.hasText(token) && token.startsWith(JwtUtils.HEADER_PREFIX)) {
             return token.substring(7);
         }
-        return null;
+        return token;
     }
 }

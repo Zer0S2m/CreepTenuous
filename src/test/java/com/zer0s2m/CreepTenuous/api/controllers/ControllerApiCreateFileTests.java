@@ -2,6 +2,7 @@ package com.zer0s2m.CreepTenuous.api.controllers;
 
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.create.data.DataCreateFile;
+import com.zer0s2m.CreepTenuous.helpers.UtilsAuthAction;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.messages.ExceptionNotDirectoryMsg;
@@ -47,6 +48,8 @@ public class ControllerApiCreateFileTests {
     @Autowired
     private ServiceBuildDirectoryPath buildDirectoryPath;
 
+    private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
+
     protected String nameTestFile1 = "testFile_1";
     protected String nameTestFile2 = "testFile_2";
     protected String nameTestFile3 = "testFile_3";
@@ -74,6 +77,7 @@ public class ControllerApiCreateFileTests {
                     MockMvcRequestBuilders.post("/api/v1/file/create")
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", accessToken)
                             .content(objectMapper.writeValueAsString(record))
             )
                     .andExpect(status().isCreated());
@@ -89,6 +93,7 @@ public class ControllerApiCreateFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/create")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(INVALID_RECORD_TYPE_FILE))
                 )
                 .andExpect(status().isBadRequest())
@@ -105,6 +110,7 @@ public class ControllerApiCreateFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/create")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(INVALID_RECORD_PATH_DIRECTORY))
                 )
                 .andExpect(status().isNotFound())
@@ -126,6 +132,7 @@ public class ControllerApiCreateFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/create")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataCreateFile(1, nameTestFile4, new ArrayList<>())
                         ))
