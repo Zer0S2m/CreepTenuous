@@ -4,7 +4,7 @@ import com.zer0s2m.CreepTenuous.providers.jwt.JwtProvider;
 import com.zer0s2m.CreepTenuous.providers.jwt.utils.JwtUtils;
 import com.zer0s2m.CreepTenuous.providers.redis.models.DirectoryRedis;
 import com.zer0s2m.CreepTenuous.providers.redis.repositories.DirectoryRedisRepository;
-import com.zer0s2m.CreepTenuous.providers.redis.services.IServiceDirectoryRedis;
+import com.zer0s2m.CreepTenuous.providers.redis.services.IServiceCreateDirectoryRedis;
 import com.zer0s2m.CreepTenuous.services.directory.create.containers.ContainerDataCreatedDirectory;
 
 import io.jsonwebtoken.Claims;
@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("service-directory-redis")
-public class ServiceDirectoryRedis implements IServiceDirectoryRedis {
+public class ServiceCreateDirectoryRedis implements IServiceCreateDirectoryRedis {
     private final JwtProvider jwtProvider;
 
     private final DirectoryRedisRepository redisRepository;
@@ -20,7 +20,7 @@ public class ServiceDirectoryRedis implements IServiceDirectoryRedis {
     private Claims accessClaims;
 
     @Autowired
-    public ServiceDirectoryRedis(JwtProvider jwtProvider, DirectoryRedisRepository redisRepository) {
+    public ServiceCreateDirectoryRedis(JwtProvider jwtProvider, DirectoryRedisRepository redisRepository) {
         this.jwtProvider = jwtProvider;
         this.redisRepository = redisRepository;
     }
@@ -29,7 +29,7 @@ public class ServiceDirectoryRedis implements IServiceDirectoryRedis {
         String loginUser = accessClaims.get("login", String.class);
         String roleUser = accessClaims.get("role", String.class);
 
-        DirectoryRedis objRedis = IServiceDirectoryRedis.getObjRedis(
+        DirectoryRedis objRedis = IServiceCreateDirectoryRedis.getObjRedis(
                 loginUser,
                 roleUser,
                 dataCreatedDirectory.nameDirectory(),

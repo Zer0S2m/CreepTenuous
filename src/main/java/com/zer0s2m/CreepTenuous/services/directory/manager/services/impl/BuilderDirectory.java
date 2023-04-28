@@ -5,7 +5,7 @@ import com.zer0s2m.CreepTenuous.providers.jwt.JwtProvider;
 import com.zer0s2m.CreepTenuous.providers.jwt.utils.JwtUtils;
 import com.zer0s2m.CreepTenuous.providers.redis.models.DirectoryRedis;
 import com.zer0s2m.CreepTenuous.providers.redis.repositories.DirectoryRedisRepository;
-import com.zer0s2m.CreepTenuous.providers.redis.services.IServiceDirectoryRedis;
+import com.zer0s2m.CreepTenuous.providers.redis.services.IServiceCreateDirectoryRedis;
 import com.zer0s2m.CreepTenuous.services.directory.manager.containers.ContainerDataFiles;
 import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.NotValidLevelDirectoryException;
@@ -73,7 +73,7 @@ public class BuilderDirectory implements IBuilderDirectory {
         String directory = getDirectory();
         ContainerDataFiles data = builderDataFile.build(collectDirectory.collect(directory));
 
-        List<DirectoryRedis> redisList = IServiceDirectoryRedis.getDirectoriesByLogin(
+        List<DirectoryRedis> redisList = IServiceCreateDirectoryRedis.getDirectoriesByLogin(
                 redisRepository,
                 accessClaims.get("login", String.class),
                 data.namesDirectory()

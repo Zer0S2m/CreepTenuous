@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public interface IServiceDirectoryRedis extends IBaseServiceRedis<DirectoryRedis> {
+public interface IServiceCreateDirectoryRedis extends IBaseServiceRedis<DirectoryRedis> {
     static DirectoryRedis getObjRedis(String login, String role, String nameDirectory, String pathDirectory) {
         return new DirectoryRedis(login, role, nameDirectory, pathDirectory);
     }

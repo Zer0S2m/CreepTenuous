@@ -46,9 +46,9 @@ public class ServiceUploadFile implements IUploadFile {
                         Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
                     } catch (IOException e) {
                         logger.error(e);
-                        return new ResponseUploadFile(fileName, false);
+                        return new ResponseUploadFile(fileName, false, targetLocation);
                     }
-                    return new ResponseUploadFile(fileName, true);
+                    return new ResponseUploadFile(fileName, true, targetLocation);
                 })
                 .collect(Collectors.toList());
     }

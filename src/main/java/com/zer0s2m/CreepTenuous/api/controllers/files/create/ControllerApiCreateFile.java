@@ -9,7 +9,7 @@ import com.zer0s2m.CreepTenuous.services.files.create.exceptions.messages.FileAl
 import com.zer0s2m.CreepTenuous.services.files.create.exceptions.messages.NotFoundTypeFileMsg;
 import com.zer0s2m.CreepTenuous.services.files.create.services.impl.ServiceCreateFile;
 
-import com.zer0s2m.CreepTenuous.services.files.create.services.impl.ServiceFileRedis;
+import com.zer0s2m.CreepTenuous.services.files.create.services.impl.ServiceCreateFileRedis;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,10 +22,10 @@ import java.nio.file.FileAlreadyExistsException;
 public class ControllerApiCreateFile implements CheckIsExistsDirectoryApi {
     private final ServiceCreateFile serviceCreateFile;
 
-    private final ServiceFileRedis serviceFileRedis;
+    private final ServiceCreateFileRedis serviceFileRedis;
 
     @Autowired
-    public ControllerApiCreateFile(ServiceCreateFile serviceCreateFile, ServiceFileRedis serviceFileRedis) {
+    public ControllerApiCreateFile(ServiceCreateFile serviceCreateFile, ServiceCreateFileRedis serviceFileRedis) {
         this.serviceCreateFile = serviceCreateFile;
         this.serviceFileRedis = serviceFileRedis;
     }

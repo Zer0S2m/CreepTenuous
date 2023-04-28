@@ -33,7 +33,7 @@ public class FileRedis {
         this.role = role;
         this.nameFile = nameFile;
         this.pathFile = pathFile;
-        this.isDirectory = true;
-        this.isFile = false;
+        this.isDirectory = false;
+        this.isFile = true;
     }
 }

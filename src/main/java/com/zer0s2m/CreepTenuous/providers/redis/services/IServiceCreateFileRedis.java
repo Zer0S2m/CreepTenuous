@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public interface IServiceFileRedis extends IBaseServiceRedis<FileRedis> {
+public interface IServiceCreateFileRedis extends IBaseServiceRedis<FileRedis> {
     static FileRedis getObjRedis(String login, String role, String nameFile, String pathFile) {
         return new FileRedis(login, role, nameFile, pathFile);
     }

@@ -7,7 +7,7 @@ import com.zer0s2m.CreepTenuous.services.directory.create.exceptions.messages.Ex
 import com.zer0s2m.CreepTenuous.services.directory.create.services.impl.ServiceCreateDirectory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 
-import com.zer0s2m.CreepTenuous.services.directory.create.services.impl.ServiceDirectoryRedis;
+import com.zer0s2m.CreepTenuous.services.directory.create.services.impl.ServiceCreateDirectoryRedis;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +20,7 @@ import java.nio.file.NoSuchFileException;
 public class ControllerApiCreateDirectory implements CheckIsExistsDirectoryApi {
     private final ServiceCreateDirectory createDirectory;
 
-    private final ServiceDirectoryRedis serviceDirectoryRedis;
+    private final ServiceCreateDirectoryRedis serviceDirectoryRedis;
 
     @PostMapping("/directory/create")
     @ResponseStatus(code = HttpStatus.CREATED)
@@ -39,7 +39,7 @@ public class ControllerApiCreateDirectory implements CheckIsExistsDirectoryApi {
     @Autowired
     public ControllerApiCreateDirectory(
             ServiceCreateDirectory createDirectory,
-            ServiceDirectoryRedis serviceDirectoryRedis
+            ServiceCreateDirectoryRedis serviceDirectoryRedis
     ) {
         this.createDirectory = createDirectory;
         this.serviceDirectoryRedis = serviceDirectoryRedis;
