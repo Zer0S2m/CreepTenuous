@@ -7,7 +7,7 @@ import com.zer0s2m.CreepTenuous.providers.redis.models.DirectoryRedis;
 import com.zer0s2m.CreepTenuous.providers.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.CreepTenuous.providers.redis.services.IServiceCreateDirectoryRedis;
 import com.zer0s2m.CreepTenuous.services.directory.manager.containers.ContainerDataFiles;
-import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
+import com.zer0s2m.CreepTenuous.services.core.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.NotValidLevelDirectoryException;
 import com.zer0s2m.CreepTenuous.services.directory.manager.services.IBuilderDirectory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;

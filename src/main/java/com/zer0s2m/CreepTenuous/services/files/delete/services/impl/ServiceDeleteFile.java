@@ -1,6 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.files.delete.services.impl;
 
-import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
+import com.zer0s2m.CreepTenuous.services.core.Directory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.files.delete.services.IDeleteFile;
 import com.zer0s2m.CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;

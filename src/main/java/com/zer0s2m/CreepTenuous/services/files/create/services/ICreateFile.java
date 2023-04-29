@@ -1,9 +1,9 @@
 package com.zer0s2m.CreepTenuous.services.files.create.services;
 
-import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
+import com.zer0s2m.CreepTenuous.services.core.Directory;
 import com.zer0s2m.CreepTenuous.services.files.create.containers.ContainerDataCreatedFile;
-import com.zer0s2m.CreepTenuous.services.files.enums.ExceptionFile;
-import com.zer0s2m.CreepTenuous.services.files.enums.TypeFile;
+import com.zer0s2m.CreepTenuous.services.core.ExceptionFile;
+import com.zer0s2m.CreepTenuous.services.core.TypeFile;
 import com.zer0s2m.CreepTenuous.services.files.create.exceptions.NotFoundTypeFileException;
 
 import java.io.IOException;

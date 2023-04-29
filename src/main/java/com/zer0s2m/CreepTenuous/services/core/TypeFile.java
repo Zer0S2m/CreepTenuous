@@ -1,4 +1,4 @@
-package com.zer0s2m.CreepTenuous.services.files.enums;
+package com.zer0s2m.CreepTenuous.services.core;
 
 import java.util.ArrayList;
 import java.util.List;

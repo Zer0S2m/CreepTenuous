@@ -1,4 +1,4 @@
-package com.zer0s2m.CreepTenuous.services.files.enums;
+package com.zer0s2m.CreepTenuous.services.core;
 
 public enum ExceptionFile {
     NOT_FOUND_TYPE_FILE("Тип файла не найден."),

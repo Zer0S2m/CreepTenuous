@@ -1,6 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.directory.upload.threads;
 
-import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
+import com.zer0s2m.CreepTenuous.services.core.Directory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

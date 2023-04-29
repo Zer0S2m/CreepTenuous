@@ -1,6 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.directory.download.services.impl;
 
-import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
+import com.zer0s2m.CreepTenuous.services.core.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.download.services.IDownloadDirectory;
 import com.zer0s2m.CreepTenuous.services.directory.download.services.ICollectZipDirectory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;

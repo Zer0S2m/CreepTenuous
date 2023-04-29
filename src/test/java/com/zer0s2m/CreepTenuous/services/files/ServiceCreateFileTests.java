@@ -7,7 +7,7 @@ import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDir
 import com.zer0s2m.CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
 import com.zer0s2m.CreepTenuous.services.files.create.exceptions.NotFoundTypeFileException;
 import com.zer0s2m.CreepTenuous.services.files.create.services.impl.ServiceCreateFile;
-import com.zer0s2m.CreepTenuous.services.files.enums.TypeFile;
+import com.zer0s2m.CreepTenuous.services.core.TypeFile;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

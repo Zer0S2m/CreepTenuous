@@ -1,4 +1,4 @@
-package com.zer0s2m.CreepTenuous.services.directory.manager.enums;
+package com.zer0s2m.CreepTenuous.services.core;
 
 public enum Directory {
     SEPARATOR("/"),
