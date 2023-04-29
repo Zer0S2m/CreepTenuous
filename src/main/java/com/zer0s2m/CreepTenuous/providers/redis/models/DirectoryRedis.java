@@ -9,8 +9,12 @@ import org.springframework.data.redis.core.index.Indexed;
 @Data
 @RedisHash("directories")
 public class DirectoryRedis {
+    @Indexed
+    @Column(name = "realNameDirectory")
+    private String realNameDirectory;
+
     @Id
-    private String nameDirectory;
+    private String systemNameDirectory;
 
     @Column(name = "pathDirectory")
     private String pathDirectory;
@@ -28,10 +32,17 @@ public class DirectoryRedis {
     @Column(name = "isFile")
     private Boolean isFile;
 
-    public DirectoryRedis(String login, String role, String nameDirectory, String pathDirectory) {
+    public DirectoryRedis(
+            String login,
+            String role,
+            String realNameDirectory,
+            String systemNameDirectory,
+            String pathDirectory
+    ) {
         this.login = login;
         this.role = role;
-        this.nameDirectory = nameDirectory;
+        this.realNameDirectory = realNameDirectory;
+        this.systemNameDirectory = systemNameDirectory;
         this.pathDirectory = pathDirectory;
         this.isDirectory = true;
         this.isFile = false;

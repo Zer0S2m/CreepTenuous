@@ -3,14 +3,22 @@ package com.zer0s2m.CreepTenuous.providers.redis.services;
 import com.zer0s2m.CreepTenuous.providers.redis.models.DirectoryRedis;
 import com.zer0s2m.CreepTenuous.providers.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.CreepTenuous.providers.redis.services.base.IBaseServiceRedis;
+import com.zer0s2m.CreepTenuous.services.directory.create.exceptions.NoRightsCreateDirectoryException;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public interface IServiceCreateDirectoryRedis extends IBaseServiceRedis<DirectoryRedis> {
-    static DirectoryRedis getObjRedis(String login, String role, String nameDirectory, String pathDirectory) {
-        return new DirectoryRedis(login, role, nameDirectory, pathDirectory);
+    static DirectoryRedis getObjRedis(
+            String login,
+            String role,
+            String realNameDirectory,
+            String systemNameDirectory,
+            String pathDirectory
+    ) {
+        return new DirectoryRedis(login, role, realNameDirectory, systemNameDirectory, pathDirectory);
     }
 
     static List<DirectoryRedis> getDirectoriesByLogin(
@@ -27,4 +35,9 @@ public interface IServiceCreateDirectoryRedis extends IBaseServiceRedis<Director
         });
         return data;
     }
+
+    void checkRights(List<String> parents, List<String> systemParents, String nameDirectory)
+            throws NoRightsCreateDirectoryException;
+
+    void checkIsExistsDirectory(Path systemSource, String nameDirectory);
 }

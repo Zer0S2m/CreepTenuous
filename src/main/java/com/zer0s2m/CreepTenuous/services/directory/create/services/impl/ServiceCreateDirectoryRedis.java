@@ -6,10 +6,16 @@ import com.zer0s2m.CreepTenuous.providers.redis.models.DirectoryRedis;
 import com.zer0s2m.CreepTenuous.providers.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.CreepTenuous.providers.redis.services.IServiceCreateDirectoryRedis;
 import com.zer0s2m.CreepTenuous.services.directory.create.containers.ContainerDataCreatedDirectory;
+import com.zer0s2m.CreepTenuous.services.directory.create.exceptions.FileAlreadyExistsException;
+import com.zer0s2m.CreepTenuous.services.directory.create.exceptions.NoRightsCreateDirectoryException;
 
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Objects;
 
 @Service("service-directory-redis")
 public class ServiceCreateDirectoryRedis implements IServiceCreateDirectoryRedis {
@@ -32,7 +38,8 @@ public class ServiceCreateDirectoryRedis implements IServiceCreateDirectoryRedis
         DirectoryRedis objRedis = IServiceCreateDirectoryRedis.getObjRedis(
                 loginUser,
                 roleUser,
-                dataCreatedDirectory.nameDirectory(),
+                dataCreatedDirectory.realNameDirectory(),
+                dataCreatedDirectory.systemNameDirectory(),
                 dataCreatedDirectory.pathDirectory().toString()
         );
         push(objRedis);
@@ -49,5 +56,30 @@ public class ServiceCreateDirectoryRedis implements IServiceCreateDirectoryRedis
     @Override
     public void push(DirectoryRedis objRedis) {
         redisRepository.save(objRedis);
+    }
+
+    @Override
+    public void checkRights(List<String> parents, List<String> systemParents, String nameDirectory)
+            throws NoRightsCreateDirectoryException {
+        String loginUser = accessClaims.get("login", String.class);
+
+        Iterable<DirectoryRedis> objsRedis = redisRepository.findAllById(systemParents);
+
+        objsRedis.forEach((objRedis) -> {
+            if (!Objects.equals(objRedis.getLogin(), loginUser)) {
+                throw new NoRightsCreateDirectoryException();
+            }
+        });
+    }
+
+    @Override
+    public void checkIsExistsDirectory(Path systemSource, String nameDirectory) {
+        // TODO: finalize
+        redisRepository.findAllByRealNameDirectory(nameDirectory).forEach((fileRedis) -> {
+            if ((Objects.equals(fileRedis.getRealNameDirectory(), nameDirectory) &&
+                    Objects.equals(fileRedis.getPathDirectory(), systemSource.toString()))) {
+                throw new FileAlreadyExistsException();
+            }
+        });
     }
 }

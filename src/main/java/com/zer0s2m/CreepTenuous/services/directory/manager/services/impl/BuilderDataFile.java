@@ -57,7 +57,8 @@ public class BuilderDataFile implements IBuilderDataFile {
 
         redisList.forEach((objRedis) -> {
             JSONObject objJson = new JSONObject();
-            objJson.put("fileName", objRedis.getNameDirectory());
+            objJson.put("nameDirectory", objRedis.getRealNameDirectory());
+            objJson.put("systemNameDirectory", objRedis.getSystemNameDirectory());
             objJson.put("path", objRedis.getPathDirectory());
             objJson.put("isDirectory", objRedis.getIsDirectory());
             objJson.put("isFile", objRedis.getIsFile());

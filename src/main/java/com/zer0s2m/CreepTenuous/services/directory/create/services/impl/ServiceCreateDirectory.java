@@ -1,12 +1,12 @@
 package com.zer0s2m.CreepTenuous.services.directory.create.services.impl;
 
+import com.zer0s2m.CreepTenuous.providers.build.os.core.Distribution;
+import com.zer0s2m.CreepTenuous.services.core.ServiceFileSystem;
 import com.zer0s2m.CreepTenuous.services.directory.create.containers.ContainerDataCreatedDirectory;
-import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.create.services.ICreateDirectory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.NoSuchFileException;
@@ -14,7 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-@Service("create-directory")
+@ServiceFileSystem("create-directory")
 public class ServiceCreateDirectory implements ICreateDirectory {
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
@@ -25,16 +25,18 @@ public class ServiceCreateDirectory implements ICreateDirectory {
 
     @Override
     public ContainerDataCreatedDirectory create(
-            List<String> parents,
+            List<String> systemParents,
             String nameDirectory
     ) throws NoSuchFileException, FileAlreadyExistsException {
-        Path path = Paths.get(buildDirectoryPath.build(parents));
-        Path pathNewDirectory = Paths.get(path + Directory.SEPARATOR.get() + nameDirectory);
+        Path path = Paths.get(buildDirectoryPath.build(systemParents));
+
+        String newNameDirectory = Distribution.getUUID();
+        Path pathNewDirectory = Path.of(path.toString(), newNameDirectory);
 
         checkDirectory(pathNewDirectory);
 
         pathNewDirectory.toFile().mkdir();
 
-        return new ContainerDataCreatedDirectory(nameDirectory, pathNewDirectory);
+        return new ContainerDataCreatedDirectory(nameDirectory, newNameDirectory, pathNewDirectory);
     }
 }
