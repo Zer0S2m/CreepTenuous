@@ -22,17 +22,29 @@ public class BaseServiceFileSystemRedis implements IBaseServiceFileSystemRedis {
 
     protected Claims accessClaims;
 
+    private Boolean enableCheckIsNameDirectory = false;
+
     @Autowired
     protected BaseServiceFileSystemRedis(DirectoryRedisRepository redisRepository, JwtProvider jwtProvider) {
         this.redisRepository = redisRepository;
         this.jwtProvider = jwtProvider;
     }
 
+    /**
+     * Validate right user (directories)
+     * @param parents Real names directory
+     * @param systemParents System names directory
+     * @param nameDirectory System name directory
+     * @throws NoRightsCreateDirectoryException When the user has no execution rights
+     */
     @Override
     public void checkRights(List<String> parents, List<String> systemParents, String nameDirectory)
             throws NoRightsCreateDirectoryException {
         String loginUser = accessClaims.get("login", String.class);
 
+        if (enableCheckIsNameDirectory && nameDirectory != null) {
+            systemParents.add(nameDirectory);
+        }
         Iterable<DirectoryRedis> objsRedis = redisRepository.findAllById(systemParents);
 
         objsRedis.forEach((objRedis) -> {
@@ -48,5 +60,9 @@ public class BaseServiceFileSystemRedis implements IBaseServiceFileSystemRedis {
 
     protected void setAccessClaims(String rawAccessToken) {
         this.accessClaims = jwtProvider.getAccessClaims(rawAccessToken);
+    }
+
+    public void setEnableCheckIsNameDirectory(Boolean enableCheckIsNameDirectory) {
+        this.enableCheckIsNameDirectory = enableCheckIsNameDirectory;
     }
 }

@@ -4,5 +4,5 @@ import java.nio.file.NoSuchFileException;
 import java.util.List;
 
 public interface IDeleteDirectory {
-    void delete(List<String> parents, String name) throws NoSuchFileException;
+    void delete(List<String> systemParents, String systemName) throws NoSuchFileException;
 }
