@@ -13,17 +13,13 @@ import org.springframework.stereotype.Service;
 
 @Service("service-file-redis")
 public class ServiceCreateFileRedis extends BaseServiceFileSystemRedis implements IServiceCreateFileRedis {
-    private final FileRedisRepository fileRedisRepository;
-
     @Autowired
     public ServiceCreateFileRedis(
-            FileRedisRepository fileRedisRepository,
             DirectoryRedisRepository directoryRedisRepository,
+            FileRedisRepository fileRedisRepository,
             JwtProvider jwtProvider
     ) {
-        super(directoryRedisRepository, jwtProvider);
-
-        this.fileRedisRepository = fileRedisRepository;
+        super(directoryRedisRepository, fileRedisRepository, jwtProvider);
     }
 
     @Override

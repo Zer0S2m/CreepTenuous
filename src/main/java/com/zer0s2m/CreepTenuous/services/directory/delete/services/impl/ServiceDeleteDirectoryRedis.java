@@ -3,6 +3,7 @@ package com.zer0s2m.CreepTenuous.services.directory.delete.services.impl;
 import com.zer0s2m.CreepTenuous.providers.jwt.JwtProvider;
 import com.zer0s2m.CreepTenuous.providers.redis.models.DirectoryRedis;
 import com.zer0s2m.CreepTenuous.providers.redis.repositories.DirectoryRedisRepository;
+import com.zer0s2m.CreepTenuous.providers.redis.repositories.FileRedisRepository;
 import com.zer0s2m.CreepTenuous.providers.redis.services.IServiceDeleteDirectoryRedis;
 import com.zer0s2m.CreepTenuous.services.core.BaseServiceFileSystemRedis;
 
@@ -20,10 +21,11 @@ public class ServiceDeleteDirectoryRedis extends BaseServiceFileSystemRedis impl
     @Autowired
     public ServiceDeleteDirectoryRedis(
             DirectoryRedisRepository redisRepository,
+            FileRedisRepository fileRedisRepository,
             JwtProvider jwtProvider,
             StringRedisTemplate redisTemplate
     ) {
-        super(redisRepository, jwtProvider);
+        super(redisRepository, fileRedisRepository, jwtProvider);
 
         this.redisTemplate = redisTemplate;
     }

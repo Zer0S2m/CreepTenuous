@@ -3,6 +3,7 @@ package com.zer0s2m.CreepTenuous.services.directory.create.services.impl;
 import com.zer0s2m.CreepTenuous.providers.jwt.JwtProvider;
 import com.zer0s2m.CreepTenuous.providers.redis.models.DirectoryRedis;
 import com.zer0s2m.CreepTenuous.providers.redis.repositories.DirectoryRedisRepository;
+import com.zer0s2m.CreepTenuous.providers.redis.repositories.FileRedisRepository;
 import com.zer0s2m.CreepTenuous.providers.redis.services.IServiceCreateDirectoryRedis;
 import com.zer0s2m.CreepTenuous.services.core.BaseServiceFileSystemRedis;
 import com.zer0s2m.CreepTenuous.services.directory.create.containers.ContainerDataCreatedDirectory;
@@ -17,8 +18,11 @@ import java.util.Objects;
 @Service("service-directory-redis")
 public class ServiceCreateDirectoryRedis extends BaseServiceFileSystemRedis implements IServiceCreateDirectoryRedis {
     @Autowired
-    public ServiceCreateDirectoryRedis(DirectoryRedisRepository redisRepository, JwtProvider jwtProvider) {
-        super(redisRepository, jwtProvider);
+    public ServiceCreateDirectoryRedis(
+            DirectoryRedisRepository redisRepository,
+            FileRedisRepository fileRedisRepository,
+            JwtProvider jwtProvider) {
+        super(redisRepository, fileRedisRepository, jwtProvider);
     }
 
     public void create(ContainerDataCreatedDirectory dataCreatedDirectory) {

@@ -3,7 +3,9 @@ package com.zer0s2m.CreepTenuous.services.core;
 import com.zer0s2m.CreepTenuous.providers.jwt.JwtProvider;
 import com.zer0s2m.CreepTenuous.providers.jwt.utils.JwtUtils;
 import com.zer0s2m.CreepTenuous.providers.redis.models.DirectoryRedis;
+import com.zer0s2m.CreepTenuous.providers.redis.models.FileRedis;
 import com.zer0s2m.CreepTenuous.providers.redis.repositories.DirectoryRedisRepository;
+import com.zer0s2m.CreepTenuous.providers.redis.repositories.FileRedisRepository;
 import com.zer0s2m.CreepTenuous.providers.redis.services.base.IBaseServiceFileSystemRedis;
 import com.zer0s2m.CreepTenuous.services.directory.create.exceptions.NoRightsCreateDirectoryException;
 
@@ -18,6 +20,8 @@ import java.util.Objects;
 public class BaseServiceFileSystemRedis implements IBaseServiceFileSystemRedis {
     protected final DirectoryRedisRepository directoryRedisRepository;
 
+    protected final FileRedisRepository fileRedisRepository;
+
     protected final JwtProvider jwtProvider;
 
     protected Claims accessClaims;
@@ -25,8 +29,13 @@ public class BaseServiceFileSystemRedis implements IBaseServiceFileSystemRedis {
     private Boolean enableCheckIsNameDirectory = false;
 
     @Autowired
-    protected BaseServiceFileSystemRedis(DirectoryRedisRepository directoryRedisRepository, JwtProvider jwtProvider) {
+    protected BaseServiceFileSystemRedis(
+            DirectoryRedisRepository directoryRedisRepository,
+            FileRedisRepository fileRedisRepository,
+            JwtProvider jwtProvider
+    ) {
         this.directoryRedisRepository = directoryRedisRepository;
+        this.fileRedisRepository = fileRedisRepository;
         this.jwtProvider = jwtProvider;
     }
 
@@ -54,14 +63,48 @@ public class BaseServiceFileSystemRedis implements IBaseServiceFileSystemRedis {
         });
     }
 
+    /**
+     * Validate right user (files)
+     * @param systemNameFiles system names files
+     * @throws NoRightsCreateDirectoryException When the user has no execution right
+     */
+    @Override
+    public void checkRights(List<String> systemNameFiles)
+            throws NoRightsCreateDirectoryException {
+        String loginUser = accessClaims.get("login", String.class);
+
+        Iterable<FileRedis> objsRedis = fileRedisRepository.findAllById(systemNameFiles);
+
+        objsRedis.forEach((objRedis) -> {
+            if (!Objects.equals(objRedis.getLogin(), loginUser)) {
+                throw new NoRightsCreateDirectoryException();
+            }
+        });
+    }
+
+    /**
+     * Set access token
+     * @param accessToken <b>JWT</b> access token
+     */
     public void setAccessToken(String accessToken) {
         setAccessClaims(JwtUtils.getPureAccessToken(accessToken));
     }
 
+    /**
+     * Set access claims (resources)
+     * @param rawAccessToken <b>JWT</b> raw access token, example (string):
+     * <pre>
+     * Bearer: token...
+     * </pre>
+     */
     protected void setAccessClaims(String rawAccessToken) {
         this.accessClaims = jwtProvider.getAccessClaims(rawAccessToken);
     }
 
+    /**
+     * Enable check right inclusive name directory
+     * @param enableCheckIsNameDirectory is enabled
+     */
     public void setEnableCheckIsNameDirectory(Boolean enableCheckIsNameDirectory) {
         this.enableCheckIsNameDirectory = enableCheckIsNameDirectory;
     }
