@@ -35,7 +35,7 @@ public class ServiceDeleteDirectoryRedis extends BaseServiceFileSystemRedis impl
 
     @Override
     public void delete(List<String> systemParents, String systemNameDirectory) {
-        Optional<DirectoryRedis> objRedis = redisRepository.findById(systemNameDirectory);
+        Optional<DirectoryRedis> objRedis = directoryRedisRepository.findById(systemNameDirectory);
         objRedis.ifPresent(this::push);
     }
 }

@@ -10,6 +10,10 @@ public interface IServiceUploadFileRedis extends IBaseServiceRedis<FileRedis> {
     void create(ContainerDataUploadFile dataCreatedFile);
 
     default void create(List<ContainerDataUploadFile> dataCreatedFile) {
-        dataCreatedFile.forEach(this::create);
+        dataCreatedFile.forEach((data) -> {
+            if (data != null) {
+                create(data);
+            }
+        });
     }
 }

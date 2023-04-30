@@ -37,13 +37,13 @@ public class ServiceCreateDirectoryRedis extends BaseServiceFileSystemRedis impl
 
     @Override
     public void push(DirectoryRedis objRedis) {
-        redisRepository.save(objRedis);
+        directoryRedisRepository.save(objRedis);
     }
 
     @Override
     public void checkIsExistsDirectory(Path systemSource, String nameDirectory) {
         // TODO: finalize
-        redisRepository.findAllByRealNameDirectory(nameDirectory).forEach((fileRedis) -> {
+        directoryRedisRepository.findAllByRealNameDirectory(nameDirectory).forEach((fileRedis) -> {
             if ((Objects.equals(fileRedis.getRealNameDirectory(), nameDirectory) &&
                     Objects.equals(fileRedis.getPathDirectory(), systemSource.toString()))) {
                 throw new FileAlreadyExistsException();

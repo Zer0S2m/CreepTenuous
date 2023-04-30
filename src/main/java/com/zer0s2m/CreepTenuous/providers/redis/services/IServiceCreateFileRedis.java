@@ -10,8 +10,14 @@ import java.util.List;
 import java.util.Objects;
 
 public interface IServiceCreateFileRedis extends IBaseServiceRedis<FileRedis> {
-    static FileRedis getObjRedis(String login, String role, String nameFile, String pathFile) {
-        return new FileRedis(login, role, nameFile, pathFile);
+    static FileRedis getObjRedis(
+            String login,
+            String role,
+            String realNameFile,
+            String systemNameFile,
+            String pathFile
+    ) {
+        return new FileRedis(login, role, realNameFile, systemNameFile, pathFile);
     }
 
     static List<FileRedis> getFilesByLogin(

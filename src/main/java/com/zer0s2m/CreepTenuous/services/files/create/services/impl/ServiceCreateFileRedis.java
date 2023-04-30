@@ -1,27 +1,29 @@
 package com.zer0s2m.CreepTenuous.services.files.create.services.impl;
 
 import com.zer0s2m.CreepTenuous.providers.jwt.JwtProvider;
-import com.zer0s2m.CreepTenuous.providers.jwt.utils.JwtUtils;
 import com.zer0s2m.CreepTenuous.providers.redis.models.FileRedis;
+import com.zer0s2m.CreepTenuous.providers.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.CreepTenuous.providers.redis.repositories.FileRedisRepository;
 import com.zer0s2m.CreepTenuous.providers.redis.services.IServiceCreateFileRedis;
+import com.zer0s2m.CreepTenuous.services.core.BaseServiceFileSystemRedis;
 import com.zer0s2m.CreepTenuous.services.files.create.containers.ContainerDataCreatedFile;
-import io.jsonwebtoken.Claims;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("service-file-redis")
-public class ServiceCreateFileRedis implements IServiceCreateFileRedis {
-    private final FileRedisRepository redisRepository;
-
-    private final JwtProvider jwtProvider;
-
-    private Claims accessClaims;
+public class ServiceCreateFileRedis extends BaseServiceFileSystemRedis implements IServiceCreateFileRedis {
+    private final FileRedisRepository fileRedisRepository;
 
     @Autowired
-    public ServiceCreateFileRedis(FileRedisRepository redisRepository, JwtProvider jwtProvider) {
-        this.redisRepository = redisRepository;
-        this.jwtProvider = jwtProvider;
+    public ServiceCreateFileRedis(
+            FileRedisRepository fileRedisRepository,
+            DirectoryRedisRepository directoryRedisRepository,
+            JwtProvider jwtProvider
+    ) {
+        super(directoryRedisRepository, jwtProvider);
+
+        this.fileRedisRepository = fileRedisRepository;
     }
 
     @Override
@@ -32,8 +34,9 @@ public class ServiceCreateFileRedis implements IServiceCreateFileRedis {
         FileRedis objRedis = IServiceCreateFileRedis.getObjRedis(
                 loginUser,
                 roleUser,
-                dataCreatedFile.nameFile(),
-                dataCreatedFile.pathFile().toString()
+                dataCreatedFile.realNameFile(),
+                dataCreatedFile.systemNameFile(),
+                dataCreatedFile.systemPathFile().toString()
         );
 
         push(objRedis);
@@ -41,14 +44,6 @@ public class ServiceCreateFileRedis implements IServiceCreateFileRedis {
 
     @Override
     public void push(FileRedis objRedis) {
-        redisRepository.save(objRedis);
-    }
-
-    public void setAccessToken(String rawAccessToken) {
-        setAccessClaims(JwtUtils.getPureAccessToken(rawAccessToken));
-    }
-
-    protected void setAccessClaims(String accessToken) {
-        this.accessClaims = jwtProvider.getAccessClaims(accessToken);
+        fileRedisRepository.save(objRedis);
     }
 }

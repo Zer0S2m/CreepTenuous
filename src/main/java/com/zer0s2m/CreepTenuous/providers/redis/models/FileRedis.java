@@ -10,7 +10,11 @@ import org.springframework.data.redis.core.index.Indexed;
 @RedisHash("files")
 public class FileRedis {
     @Id
-    private String nameFile;
+    private String systemNameFile;
+
+    @Indexed
+    @Column(name = "realNameFile")
+    private String realNameFile;
 
     @Column(name = "pathFile")
     private String pathFile;
@@ -28,10 +32,11 @@ public class FileRedis {
     @Column(name = "isFile")
     private Boolean isFile;
 
-    public FileRedis(String login, String role, String nameFile, String pathFile) {
+    public FileRedis(String login, String role, String realNameFile, String systemNameFile, String pathFile) {
         this.login = login;
         this.role = role;
-        this.nameFile = nameFile;
+        this.realNameFile = realNameFile;
+        this.systemNameFile = systemNameFile;
         this.pathFile = pathFile;
         this.isDirectory = false;
         this.isFile = true;

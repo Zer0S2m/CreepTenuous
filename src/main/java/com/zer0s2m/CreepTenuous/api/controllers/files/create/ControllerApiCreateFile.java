@@ -3,6 +3,7 @@ package com.zer0s2m.CreepTenuous.api.controllers.files.create;
 import com.zer0s2m.CreepTenuous.api.controllers.files.create.data.DataCreateFile;
 import com.zer0s2m.CreepTenuous.api.core.version.v1.V1APIController;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
+import com.zer0s2m.CreepTenuous.providers.redis.controllers.CheckRightsActionFileSystem;
 import com.zer0s2m.CreepTenuous.services.files.create.containers.ContainerDataCreatedFile;
 import com.zer0s2m.CreepTenuous.services.files.create.exceptions.NotFoundTypeFileException;
 import com.zer0s2m.CreepTenuous.services.files.create.exceptions.messages.FileAlreadyExistsMsg;
@@ -19,7 +20,7 @@ import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 
 @V1APIController
-public class ControllerApiCreateFile implements CheckIsExistsDirectoryApi {
+public class ControllerApiCreateFile implements CheckIsExistsDirectoryApi, CheckRightsActionFileSystem {
     private final ServiceCreateFile serviceCreateFile;
 
     private final ServiceCreateFileRedis serviceFileRedis;
@@ -36,12 +37,13 @@ public class ControllerApiCreateFile implements CheckIsExistsDirectoryApi {
             final @Valid @RequestBody DataCreateFile file,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws NotFoundTypeFileException, IOException {
+        serviceFileRedis.setAccessToken(accessToken);
+        serviceFileRedis.checkRights(file.parents(), file.systemParents(), null);
         ContainerDataCreatedFile dataCreatedFile = serviceCreateFile.create(
-                file.parents(),
+                file.systemParents(),
                 file.nameFile(),
                 file.typeFile()
         );
-        serviceFileRedis.setAccessToken(accessToken);
         serviceFileRedis.create(dataCreatedFile);
     }
 

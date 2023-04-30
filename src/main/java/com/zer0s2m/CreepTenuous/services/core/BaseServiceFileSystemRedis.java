@@ -16,7 +16,7 @@ import java.util.Objects;
 
 @Service
 public class BaseServiceFileSystemRedis implements IBaseServiceFileSystemRedis {
-    protected final DirectoryRedisRepository redisRepository;
+    protected final DirectoryRedisRepository directoryRedisRepository;
 
     protected final JwtProvider jwtProvider;
 
@@ -25,8 +25,8 @@ public class BaseServiceFileSystemRedis implements IBaseServiceFileSystemRedis {
     private Boolean enableCheckIsNameDirectory = false;
 
     @Autowired
-    protected BaseServiceFileSystemRedis(DirectoryRedisRepository redisRepository, JwtProvider jwtProvider) {
-        this.redisRepository = redisRepository;
+    protected BaseServiceFileSystemRedis(DirectoryRedisRepository directoryRedisRepository, JwtProvider jwtProvider) {
+        this.directoryRedisRepository = directoryRedisRepository;
         this.jwtProvider = jwtProvider;
     }
 
@@ -45,7 +45,7 @@ public class BaseServiceFileSystemRedis implements IBaseServiceFileSystemRedis {
         if (enableCheckIsNameDirectory && nameDirectory != null) {
             systemParents.add(nameDirectory);
         }
-        Iterable<DirectoryRedis> objsRedis = redisRepository.findAllById(systemParents);
+        Iterable<DirectoryRedis> objsRedis = directoryRedisRepository.findAllById(systemParents);
 
         objsRedis.forEach((objRedis) -> {
             if (!Objects.equals(objRedis.getLogin(), loginUser)) {

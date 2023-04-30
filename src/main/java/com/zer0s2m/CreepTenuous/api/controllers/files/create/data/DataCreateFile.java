@@ -14,7 +14,10 @@ public record DataCreateFile(
         String nameFile,
 
         @NotNull(message = "Please provide path directory (Not NULL)")
-        List<String> parents
+        List<String> parents,
+
+        @NotNull(message = "Please provide path directory (system) (Not NULL)")
+        List<String> systemParents
 ) {
     @Override
     public String nameFile() {

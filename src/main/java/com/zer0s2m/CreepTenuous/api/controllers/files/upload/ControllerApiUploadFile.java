@@ -3,6 +3,7 @@ package com.zer0s2m.CreepTenuous.api.controllers.files.upload;
 import com.zer0s2m.CreepTenuous.api.controllers.files.upload.http.ResponseUploadFile;
 import com.zer0s2m.CreepTenuous.api.core.version.v1.V1APIController;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
+import com.zer0s2m.CreepTenuous.providers.redis.controllers.CheckRightsActionFileSystem;
 import com.zer0s2m.CreepTenuous.services.files.upload.containers.ContainerDataUploadFile;
 import com.zer0s2m.CreepTenuous.services.files.upload.services.impl.ServiceUploadFile;
 
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @V1APIController
-public class ControllerApiUploadFile implements CheckIsExistsDirectoryApi {
+public class ControllerApiUploadFile implements CheckIsExistsDirectoryApi, CheckRightsActionFileSystem {
     private final ServiceUploadFile uploadFile;
 
     private final ServiceUploadFileRedis uploadFileRedis;
@@ -34,13 +35,26 @@ public class ControllerApiUploadFile implements CheckIsExistsDirectoryApi {
     public List<ResponseUploadFile> upload(
             final @RequestPart("files") List<MultipartFile> files,
             final @RequestParam("parents") List<String> parents,
+            final @RequestParam("systemParents") List<String> systemParents,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws IOException {
-        List<ResponseUploadFile> data = uploadFile.upload(files, parents);
         uploadFileRedis.setAccessToken(accessToken);
+        uploadFileRedis.checkRights(parents, systemParents, null);
+
+        List<ResponseUploadFile> data = uploadFile.upload(files, systemParents);
         uploadFileRedis.create(data
                 .stream()
-                .map((obj) -> new ContainerDataUploadFile(obj.fileName(), obj.path()))
+                .map((obj) -> {
+                    if (obj.success()) {
+                        return new ContainerDataUploadFile(
+                                obj.realFileName(),
+                                obj.systemFileName(),
+                                obj.realPath(),
+                                obj.systemPath()
+                        );
+                    }
+                    return null;
+                })
                 .collect(Collectors.toList()));
         return data;
     }

@@ -1,6 +1,7 @@
 package com.zer0s2m.CreepTenuous.services.files.upload.services.impl;
 
 import com.zer0s2m.CreepTenuous.api.controllers.files.upload.http.ResponseUploadFile;
+import com.zer0s2m.CreepTenuous.providers.build.os.core.Distribution;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.files.upload.services.IUploadFile;
 
@@ -40,16 +41,50 @@ public class ServiceUploadFile implements IUploadFile {
         return files
                 .stream()
                 .map((file) -> {
-                    String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+                    String originFileName = file.getOriginalFilename();
+
+                    String fileName = StringUtils.cleanPath(Objects.requireNonNull(originFileName));
+                    String newFileName = getNewFileName(originFileName);
                     Path targetLocation = path.resolve(fileName);
+                    Path newTargetLocation = path.resolve(newFileName);
+
                     try {
-                        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+                        Files.copy(file.getInputStream(), newTargetLocation, StandardCopyOption.REPLACE_EXISTING);
                     } catch (IOException e) {
                         logger.error(e);
-                        return new ResponseUploadFile(fileName, false, targetLocation);
+                        return new ResponseUploadFile(
+                                fileName,
+                                newFileName,
+                                false,
+                                targetLocation,
+                                newTargetLocation
+                        );
                     }
-                    return new ResponseUploadFile(fileName, true, targetLocation);
+                    return new ResponseUploadFile(
+                            fileName,
+                            newFileName,
+                            true,
+                            targetLocation,
+                            newTargetLocation
+                    );
                 })
                 .collect(Collectors.toList());
+    }
+
+    protected String getExtensionFile(String nameFile) {
+        String[] partFileName = nameFile.split("\\.");
+        if (partFileName.length == 1) {
+            return null;
+        }
+        return partFileName[partFileName.length - 1];
+    }
+
+    protected String getNewFileName(String nameFile) {
+        String extensionFile = getExtensionFile(nameFile);
+        String newFileName = Distribution.getUUID();
+        if (extensionFile != null) {
+            return newFileName + "." + extensionFile;
+        }
+        return newFileName;
     }
 }
