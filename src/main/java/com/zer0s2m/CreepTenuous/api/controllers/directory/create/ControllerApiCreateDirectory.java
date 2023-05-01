@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.api.controllers.directory.create;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.create.data.FormCreateDirectoryApi;
-import com.zer0s2m.CreepTenuous.api.core.version.v1.V1APIController;
+import com.zer0s2m.CreepTenuous.api.core.annotations.V1APIRestController;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 import com.zer0s2m.CreepTenuous.providers.redis.controllers.CheckRightsActionFileSystem;
 import com.zer0s2m.CreepTenuous.services.directory.create.containers.ContainerDataCreatedDirectory;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.NoSuchFileException;
 
-@V1APIController
+@V1APIRestController
 public class ControllerApiCreateDirectory implements CheckIsExistsDirectoryApi, CheckRightsActionFileSystem {
     private final ServiceCreateDirectory createDirectory;
 

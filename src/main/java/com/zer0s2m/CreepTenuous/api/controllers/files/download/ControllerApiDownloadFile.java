@@ -2,7 +2,7 @@ package com.zer0s2m.CreepTenuous.api.controllers.files.download;
 
 import com.zer0s2m.CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
 import com.zer0s2m.CreepTenuous.api.controllers.files.download.data.DataDownloadFile;
-import com.zer0s2m.CreepTenuous.api.core.version.v1.V1APIController;
+import com.zer0s2m.CreepTenuous.api.core.annotations.V1APIRestController;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 import com.zer0s2m.CreepTenuous.services.files.download.containers.ContainerDownloadFile3;
 import com.zer0s2m.CreepTenuous.services.files.download.services.impl.ServiceDownloadFile;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.io.IOException;
 
-@V1APIController
+@V1APIRestController
 public class ControllerApiDownloadFile implements CheckIsExistsDirectoryApi, CheckIsExistsFileApi {
     private final ServiceDownloadFile downloadFile;
 

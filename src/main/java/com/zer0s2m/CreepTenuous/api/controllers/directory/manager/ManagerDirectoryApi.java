@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.api.controllers.directory.manager;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.manager.data.DataManagerDirectory;
-import com.zer0s2m.CreepTenuous.api.core.version.v1.V1APIController;
+import com.zer0s2m.CreepTenuous.api.core.annotations.V1APIRestController;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.NotValidLevelDirectoryException;
 import com.zer0s2m.CreepTenuous.services.directory.manager.services.impl.BuilderDirectory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.messages.ExceptionBadLevelDirectoryMsg;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-@V1APIController
+@V1APIRestController
 public class ManagerDirectoryApi implements CheckIsExistsDirectoryApi {
     private final BuilderDirectory builderDirectory;
 

@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.api.controllers.directory.move;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.move.data.FormMoveDirectoryApi;
-import com.zer0s2m.CreepTenuous.api.core.version.v1.V1APIController;
+import com.zer0s2m.CreepTenuous.api.core.annotations.V1APIRestController;
 import com.zer0s2m.CreepTenuous.services.directory.move.services.impl.ServiceMoveDirectory;
 
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-@V1APIController
+@V1APIRestController
 public class ControllerApiMoveDirectory implements CheckIsExistsDirectoryApi {
     private final ServiceMoveDirectory moveDirectory;
 

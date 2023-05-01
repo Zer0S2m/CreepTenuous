@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.api.controllers.files.copy;
 
 import com.zer0s2m.CreepTenuous.api.controllers.files.copy.data.DataCopyFile;
-import com.zer0s2m.CreepTenuous.api.core.version.v1.V1APIController;
+import com.zer0s2m.CreepTenuous.api.core.annotations.V1APIRestController;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsFileApi;
 import com.zer0s2m.CreepTenuous.services.files.copy.services.impl.ServiceCopyFile;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.io.IOException;
 import java.util.Objects;
 
-@V1APIController
+@V1APIRestController
 public class ControllerApiCopyFile implements CheckIsExistsDirectoryApi, CheckIsExistsFileApi {
     private final ServiceCopyFile serviceCopyFile;
 

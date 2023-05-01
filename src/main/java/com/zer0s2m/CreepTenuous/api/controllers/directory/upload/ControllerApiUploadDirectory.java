@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.api.controllers.directory.upload;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.upload.http.ResponseUploadDirectory;
-import com.zer0s2m.CreepTenuous.api.core.version.v1.V1APIController;
+import com.zer0s2m.CreepTenuous.api.core.annotations.V1APIRestController;
 import com.zer0s2m.CreepTenuous.services.directory.upload.services.impl.ServiceUploadDirectory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 
@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-@V1APIController
+@V1APIRestController
 public class ControllerApiUploadDirectory implements CheckIsExistsDirectoryApi {
     private final ServiceUploadDirectory uploadDirectory;
 

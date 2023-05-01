@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.api.controllers.directory.delete;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.delete.data.FormDeleteDirectoryApi;
-import com.zer0s2m.CreepTenuous.api.core.version.v1.V1APIController;
+import com.zer0s2m.CreepTenuous.api.core.annotations.V1APIRestController;
 import com.zer0s2m.CreepTenuous.providers.redis.controllers.CheckRightsActionFileSystem;
 import com.zer0s2m.CreepTenuous.services.directory.delete.services.impl.ServiceDeleteDirectory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 
 import java.nio.file.NoSuchFileException;
 
-@V1APIController
+@V1APIRestController
 public class ControllerApiDeleteDirectory implements CheckIsExistsDirectoryApi, CheckRightsActionFileSystem {
     private final ServiceDeleteDirectory deleteDirectory;
 

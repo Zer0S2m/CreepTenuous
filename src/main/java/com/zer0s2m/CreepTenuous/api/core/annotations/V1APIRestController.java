@@ -1,4 +1,4 @@
-package com.zer0s2m.CreepTenuous.api.core.version.v1;
+package com.zer0s2m.CreepTenuous.api.core.annotations;
 
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Component
 @RestController
 @RequestMapping("/api/v1")
-public @interface V1APIController {
+public @interface V1APIRestController {
     @AliasFor(annotation = Component.class)
     String value() default "";
 }

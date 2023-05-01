@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.api.controllers.files.move;
 
 import com.zer0s2m.CreepTenuous.api.controllers.files.move.data.DataMoveFile;
-import com.zer0s2m.CreepTenuous.api.core.version.v1.V1APIController;
+import com.zer0s2m.CreepTenuous.api.core.annotations.V1APIRestController;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsFileApi;
 import com.zer0s2m.CreepTenuous.providers.redis.controllers.CheckRightsActionFileSystem;
@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.List;
 
-@V1APIController
+@V1APIRestController
 public class ControllerApiMoveFile implements
         CheckIsExistsDirectoryApi, CheckIsExistsFileApi, CheckRightsActionFileSystem {
     private final ServiceMoveFile serviceMoveFile;

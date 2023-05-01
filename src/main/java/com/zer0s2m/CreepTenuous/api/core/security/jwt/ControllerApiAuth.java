@@ -5,7 +5,7 @@ import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtRefreshTokenRequest;
 import com.zer0s2m.CreepTenuous.providers.jwt.exceptions.messages.NoValidJwtRefreshTokenMsg;
 import com.zer0s2m.CreepTenuous.providers.jwt.exceptions.messages.UserNotFoundMsg;
 import com.zer0s2m.CreepTenuous.providers.jwt.exceptions.messages.UserNotValidPasswordMsg;
-import com.zer0s2m.CreepTenuous.api.core.version.v1.V1APIController;
+import com.zer0s2m.CreepTenuous.api.core.annotations.V1APIRestController;
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtResponse;
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtUserRequest;
 import com.zer0s2m.CreepTenuous.services.user.exceptions.UserNotFoundException;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-@V1APIController
+@V1APIRestController
 @CrossOrigin
 public class ControllerApiAuth {
     private final JwtService jwtService;
