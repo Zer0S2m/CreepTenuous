@@ -8,7 +8,6 @@ import com.zer0s2m.CreepTenuous.providers.redis.services.IServiceDeleteDirectory
 import com.zer0s2m.CreepTenuous.services.core.BaseServiceFileSystemRedis;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,23 +15,18 @@ import java.util.Optional;
 
 @Service("delete-directory-redis")
 public class ServiceDeleteDirectoryRedis extends BaseServiceFileSystemRedis implements IServiceDeleteDirectoryRedis {
-    private final StringRedisTemplate redisTemplate;
-
     @Autowired
     public ServiceDeleteDirectoryRedis(
             DirectoryRedisRepository redisRepository,
             FileRedisRepository fileRedisRepository,
-            JwtProvider jwtProvider,
-            StringRedisTemplate redisTemplate
+            JwtProvider jwtProvider
     ) {
         super(redisRepository, fileRedisRepository, jwtProvider);
-
-        this.redisTemplate = redisTemplate;
     }
 
     @Override
     public void push(DirectoryRedis objRedis) {
-        redisTemplate.delete(objRedis.getSystemNameDirectory());
+        directoryRedisRepository.delete(objRedis);
     }
 
     @Override
