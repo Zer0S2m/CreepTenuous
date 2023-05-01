@@ -15,6 +15,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,8 +37,10 @@ public class ControllerApiDownloadFile implements CheckIsExistsDirectoryApi, Che
 
     @GetMapping(path = "/file/download")
     public ResponseEntity<Resource> download(
-            final @Valid DataDownloadFile data
+            final @Valid DataDownloadFile data,
+            @RequestHeader(name = "Authorization") String accessToken
     ) throws IOException, NoSuchFileExistsException {
+        serviceDownloadFileRedis.setAccessToken(accessToken);
         serviceDownloadFileRedis.checkRights(data.parents(), data.systemParents(), null);
         serviceDownloadFileRedis.checkRights(List.of(data.systemFileName()));
         final ContainerDownloadFile3<ByteArrayResource, String> dataFile = serviceDownloadFile.download(

@@ -1,21 +1,23 @@
 package com.zer0s2m.CreepTenuous.services.files.copy.services.impl;
 
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
-import com.zer0s2m.CreepTenuous.services.core.Directory;
+import com.zer0s2m.CreepTenuous.services.core.ServiceFileSystem;
 import com.zer0s2m.CreepTenuous.services.files.copy.services.ICopyFile;
+import com.zer0s2m.CreepTenuous.services.files.move.containers.ContainerMovingFiles;
+import com.zer0s2m.CreepTenuous.utils.UtilsFiles;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-@Service("copy-file")
+@ServiceFileSystem("copy-file")
 public class ServiceCopyFile implements ICopyFile {
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
@@ -25,26 +27,40 @@ public class ServiceCopyFile implements ICopyFile {
     }
 
     @Override
-    public void copy(String nameFile, List<String> parents, List<String> toParents) throws IOException {
-        Path currentPath = Paths.get(
-                Paths.get(buildDirectoryPath.build(parents)) + Directory.SEPARATOR.get() + nameFile
-        );
-        Path createdNewPath = Paths.get(
-                Paths.get(buildDirectoryPath.build(toParents)) + Directory.SEPARATOR.get() + nameFile
-        );
+    public ContainerMovingFiles copy(
+            String systemNameFile,
+            List<String> systemParents,
+            List<String> systemToParents
+    )
+            throws IOException {
+        Path currentPath = Paths.get(buildDirectoryPath.build(systemParents), systemNameFile);
 
-        copy(currentPath, createdNewPath);
+        String newSystemNameFile = UtilsFiles.getNewFileName(systemNameFile);
+
+        Path createdNewPath = Paths.get(buildDirectoryPath.build(systemToParents), newSystemNameFile);
+
+        return copy(currentPath, createdNewPath);
     }
 
     @Override
-    public void copy(List<String> nameFiles, List<String> parents, List<String> toParents) throws IOException {
-        for (String name : nameFiles) {
-            copy(name, parents, toParents);
+    public List<ContainerMovingFiles> copy(
+            List<String> systemNameFiles,
+            List<String> systemParents,
+            List<String> systemToParents
+    )
+            throws IOException {
+        List<ContainerMovingFiles> containers = new ArrayList<>();
+        for (String name : systemNameFiles) {
+            containers.add(copy(name, systemParents, systemToParents));
         }
+        return containers;
     }
 
     @Override
-    public void copy(Path source, Path target) throws IOException {
-        Files.copy(source, target, REPLACE_EXISTING);
+    public ContainerMovingFiles copy(Path source, Path target) throws IOException {
+        Path newTarget = Files.copy(source, target, REPLACE_EXISTING);
+        return new ContainerMovingFiles(
+            newTarget, newTarget.getFileName().toString()
+        );
     }
 }

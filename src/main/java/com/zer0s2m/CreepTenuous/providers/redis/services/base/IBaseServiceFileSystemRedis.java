@@ -21,4 +21,13 @@ public interface IBaseServiceFileSystemRedis {
      * @throws NoRightsCreateDirectoryException When the user has no execution right
      */
     void checkRights(List<String> systemNameFiles) throws NoRightsCreateDirectoryException;
+
+    /**
+     * Validate right user (file)
+     * @param systemNameFile system name files
+     * @throws NoRightsCreateDirectoryException When the user has no execution right
+     */
+     default void checkRights(String systemNameFile) {
+         checkRights(List.of(systemNameFile));
+     }
 }
