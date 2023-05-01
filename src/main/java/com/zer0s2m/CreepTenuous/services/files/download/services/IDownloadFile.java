@@ -10,9 +10,17 @@ import java.io.IOException;
 import java.util.List;
 
 public interface IDownloadFile {
+    /**
+     * Get resource for download file
+     * @param systemParents system path part directories
+     * @param systemNameFile system name file
+     * @return container data download file
+     * @throws IOException error system
+     * @throws NoSuchFileExistsException when no file in file system
+     */
     ContainerDownloadFile3<ByteArrayResource, String> download(
-            List<String> parents,
-            String filename
+            List<String> systemParents,
+            String systemNameFile
     ) throws IOException, NoSuchFileExistsException;
 
     HttpHeaders collectHeaders(ContainerDownloadFile3<ByteArrayResource, String> data);
