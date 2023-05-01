@@ -1,4 +1,4 @@
-package com.zer0s2m.CreepTenuous.services.directory.create.exceptions.messages;
+package com.zer0s2m.CreepTenuous.services.core.exceptions.messages;
 
 import org.springframework.http.HttpStatus;
 

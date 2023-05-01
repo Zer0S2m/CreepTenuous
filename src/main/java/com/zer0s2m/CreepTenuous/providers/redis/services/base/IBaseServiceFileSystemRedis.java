@@ -1,6 +1,6 @@
 package com.zer0s2m.CreepTenuous.providers.redis.services.base;
 
-import com.zer0s2m.CreepTenuous.services.directory.create.exceptions.NoRightsCreateDirectoryException;
+import com.zer0s2m.CreepTenuous.services.core.exceptions.NoRightsCreateDirectoryException;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.zer0s2m.CreepTenuous.services.directory.create.exceptions;
+package com.zer0s2m.CreepTenuous.services.core.exceptions;
 
 public class NoRightsCreateDirectoryException extends RuntimeException {
     public NoRightsCreateDirectoryException(String message) {

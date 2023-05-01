@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.providers.redis.controllers;
 
-import com.zer0s2m.CreepTenuous.services.directory.create.exceptions.NoRightsCreateDirectoryException;
-import com.zer0s2m.CreepTenuous.services.directory.create.exceptions.messages.ExceptionNoRightsCreateDirectoryMsg;
+import com.zer0s2m.CreepTenuous.services.core.exceptions.NoRightsCreateDirectoryException;
+import com.zer0s2m.CreepTenuous.services.core.exceptions.messages.ExceptionNoRightsCreateDirectoryMsg;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

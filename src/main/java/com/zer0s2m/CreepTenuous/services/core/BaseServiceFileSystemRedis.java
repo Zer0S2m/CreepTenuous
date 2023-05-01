@@ -7,7 +7,7 @@ import com.zer0s2m.CreepTenuous.providers.redis.models.FileRedis;
 import com.zer0s2m.CreepTenuous.providers.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.CreepTenuous.providers.redis.repositories.FileRedisRepository;
 import com.zer0s2m.CreepTenuous.providers.redis.services.base.IBaseServiceFileSystemRedis;
-import com.zer0s2m.CreepTenuous.services.directory.create.exceptions.NoRightsCreateDirectoryException;
+import com.zer0s2m.CreepTenuous.services.core.exceptions.NoRightsCreateDirectoryException;
 
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
