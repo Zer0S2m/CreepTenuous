@@ -1,23 +1,28 @@
 package com.zer0s2m.CreepTenuous.services.directory.upload.services.impl;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.upload.http.ResponseUploadDirectory;
+import com.zer0s2m.CreepTenuous.services.core.ServiceFileSystem;
+import com.zer0s2m.CreepTenuous.services.directory.upload.containers.ContainerDataUploadFile;
 import com.zer0s2m.CreepTenuous.services.directory.upload.containers.ContainerUploadFile;
-import com.zer0s2m.CreepTenuous.services.directory.upload.services.IUploadDirectory;
-import com.zer0s2m.CreepTenuous.services.directory.upload.services.IUnpackingDirectory;
+import com.zer0s2m.CreepTenuous.services.directory.upload.services.IServiceUploadDirectory;
+import com.zer0s2m.CreepTenuous.services.directory.upload.services.IServiceUnpackingDirectory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
-@Service("upload-service")
-public class ServiceUploadDirectory implements IUploadDirectory, IUnpackingDirectory {
+@EnableAsync
+@ServiceFileSystem("upload-service")
+public class ServiceUploadDirectory implements IServiceUploadDirectory, IServiceUnpackingDirectory {
     private final Logger logger = LogManager.getLogger(ServiceUploadDirectory.class);
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
@@ -26,22 +31,24 @@ public class ServiceUploadDirectory implements IUploadDirectory, IUnpackingDirec
         this.buildDirectoryPath = buildDirectoryPath;
     }
 
-    public ResponseUploadDirectory upload(
+    @Async
+    @Override
+    public CompletableFuture<ResponseUploadDirectory> upload(
             List<String> parents,
             MultipartFile zipFile
     ) throws IOException {
         Path path = Path.of(buildDirectoryPath.build(parents));
+        Path newPathZipFile = Path.of(String.valueOf(path), zipFile.getOriginalFilename());
         final ContainerUploadFile container = new ContainerUploadFile();
 
-        Path newPathZipFile = Path.of(String.valueOf(path), zipFile.getOriginalFilename());
         try {
             zipFile.transferTo(newPathZipFile);
             container.setFile(newPathZipFile);
-            unpacking(container, path);
-            return new ResponseUploadDirectory(true);
-        } catch (IOException e) {
+            final List<ContainerDataUploadFile> finalData = unpacking(container, path);
+            return CompletableFuture.completedFuture(new ResponseUploadDirectory(true, finalData));
+        } catch (IOException | InterruptedException e) {
             logger.error(e);
-            return new ResponseUploadDirectory(false);
+            return CompletableFuture.completedFuture(new ResponseUploadDirectory(false, null));
         }
     }
 }

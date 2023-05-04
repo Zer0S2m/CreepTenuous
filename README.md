@@ -9,7 +9,7 @@ Before starting, create an **`.env`** file and edit it (it is advisable to speci
 cp .env.example .env
 ```
 
-InitL
+Init:
 ```shell
 sudo chmod 755 ./init.sh
 ```
