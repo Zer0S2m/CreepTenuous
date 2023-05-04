@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-public class DataCopyDirectoryValidationsApiTests extends BaseValidationDataApi<FormCopyDirectoryApi> {
+public class DataCopyDirectoryApiValidationTests extends BaseValidationDataApi<FormCopyDirectoryApi> {
     @Test
     public void notValidParents_fail() {
         FormCopyDirectoryApi invalidDataCopyDirectory = new FormCopyDirectoryApi(

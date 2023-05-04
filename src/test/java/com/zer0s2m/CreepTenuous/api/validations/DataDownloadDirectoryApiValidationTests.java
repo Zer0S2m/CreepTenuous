@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-public class DataDownloadDirectoryTests extends BaseValidationDataApi<DataDownloadDirectory>
+public class DataDownloadDirectoryApiValidationTests extends BaseValidationDataApi<DataDownloadDirectory>
 {
     @Test
     public void notValidNameFile_fail() {
