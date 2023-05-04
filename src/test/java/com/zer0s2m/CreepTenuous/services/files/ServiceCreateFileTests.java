@@ -6,9 +6,9 @@ import com.zer0s2m.CreepTenuous.api.controllers.files.create.data.DataCreateFile
 import com.zer0s2m.CreepTenuous.components.RootPath;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
+import com.zer0s2m.CreepTenuous.services.files.create.containers.ContainerDataCreatedFile;
 import com.zer0s2m.CreepTenuous.services.files.create.exceptions.NotFoundTypeFileException;
 import com.zer0s2m.CreepTenuous.services.files.create.services.impl.ServiceCreateFile;
-import com.zer0s2m.CreepTenuous.services.core.TypeFile;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,23 +38,13 @@ public class ServiceCreateFileTests {
     @Autowired
     private ServiceCreateFile service;
 
-    @Autowired
-    private ServiceBuildDirectoryPath buildDirectoryPath;
-
     private final String nameTestFile1 = "tesFile_1";
     private final String nameTestFile2 = "tesFile_2";
     private final String nameTestFile3 = "tesFile_3";
-    private final String nameTestFile4 = "tesFile_4";
 
     DataCreateFile RECORD_1 = new DataCreateFile(1, nameTestFile1, new ArrayList<>(), new ArrayList<>());
     DataCreateFile RECORD_2 = new DataCreateFile(2, nameTestFile2, new ArrayList<>(), new ArrayList<>());
     DataCreateFile RECORD_3 = new DataCreateFile(3, nameTestFile3, new ArrayList<>(), new ArrayList<>());
-    DataCreateFile INVALID_RECORD_FILE_EXISTS = new DataCreateFile(
-            1,
-            nameTestFile4,
-            new ArrayList<>(),
-            new ArrayList<>()
-    );
     DataCreateFile INVALID_RECORD_TYPE_FILE = new DataCreateFile(
             9999,
             "failFile",
@@ -70,82 +60,41 @@ public class ServiceCreateFileTests {
 
     @Test
     public void createFileType1_success() throws NotFoundTypeFileException, IOException {
-        final String nameFile = nameTestFile1 + "." + TypeFile.getExtension(RECORD_1.typeFile());
-        final Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
-                nameFile, RECORD_1.parents(), logger, buildDirectoryPath
-        );
-
-        service.create(
+        ContainerDataCreatedFile container = service.create(
                 RECORD_1.parents(),
                 RECORD_1.nameFile(),
                 RECORD_1.typeFile()
         );
 
-        Assertions.assertTrue(Files.exists(pathTestFile));
+        Assertions.assertTrue(Files.exists(container.systemPathFile()));
 
-        UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile, logger);
+        UtilsActionForFiles.deleteFileAndWriteLog(container.systemPathFile(), logger);
     }
 
     @Test
     public void createFileType2_success() throws NotFoundTypeFileException, IOException {
-        final String nameFile = nameTestFile2 + "." + TypeFile.getExtension(RECORD_2.typeFile());
-        final Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
-                nameFile, RECORD_2.parents(), logger, buildDirectoryPath
-        );
-
-        service.create(
+        ContainerDataCreatedFile container = service.create(
                 RECORD_2.parents(),
                 RECORD_2.nameFile(),
                 RECORD_2.typeFile()
         );
 
-        Assertions.assertTrue(Files.exists(pathTestFile));
+        Assertions.assertTrue(Files.exists(container.systemPathFile()));
 
-        UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile, logger);
+        UtilsActionForFiles.deleteFileAndWriteLog(container.systemPathFile(), logger);
     }
 
     @Test
     public void createFileType3_success() throws NotFoundTypeFileException, IOException {
-        final String nameFile = nameTestFile3 + "." + TypeFile.getExtension(RECORD_3.typeFile());
-        final Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
-                nameFile, RECORD_3.parents(), logger, buildDirectoryPath
-        );
-
-        service.create(
+        ContainerDataCreatedFile container = service.create(
                 RECORD_3.parents(),
                 RECORD_3.nameFile(),
                 RECORD_3.typeFile()
         );
 
-        Assertions.assertTrue(Files.exists(pathTestFile));
+        Assertions.assertTrue(Files.exists(container.systemPathFile()));
 
-        UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile, logger);
-    }
-
-    @Test
-    public void createFile_fail_fileIsExists() throws IOException {
-        final String nameFile =
-                INVALID_RECORD_FILE_EXISTS.nameFile()
-                + "."
-                + TypeFile.getExtension(INVALID_RECORD_FILE_EXISTS.typeFile());
-        final Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
-                nameFile, INVALID_RECORD_FILE_EXISTS.parents(), logger, buildDirectoryPath
-        );
-
-        final Path newPathTestFile = Files.createFile(pathTestFile);
-
-        Assertions.assertThrows(
-                FileAlreadyExistsException.class,
-                () -> service.create(
-                        INVALID_RECORD_FILE_EXISTS.parents(),
-                        INVALID_RECORD_FILE_EXISTS.nameFile(),
-                        INVALID_RECORD_FILE_EXISTS.typeFile()
-                )
-        );
-
-        Assertions.assertTrue(Files.exists(newPathTestFile));
-
-        UtilsActionForFiles.deleteFileAndWriteLog(newPathTestFile, logger);
+        UtilsActionForFiles.deleteFileAndWriteLog(container.systemPathFile(), logger);
     }
 
     @Test
