@@ -17,7 +17,7 @@ public class DataDeleteDirectoryApiValidationsTests extends BaseValidationDataAp
     @Test
     public void notValidParents_fail() {
         FormDeleteDirectoryApi invalidDataDeleteDirectory = new FormDeleteDirectoryApi(
-                null, "testFolder"
+                null, null, "testFolder", "testFolder"
         );
         setErrorInvalidData(getValidator(), invalidDataDeleteDirectory);
     }
@@ -25,7 +25,7 @@ public class DataDeleteDirectoryApiValidationsTests extends BaseValidationDataAp
     @Test
     public void notValidNameFile_fail() {
         FormDeleteDirectoryApi invalidDataDeleteDirectory = new FormDeleteDirectoryApi(
-                new ArrayList<>(), ""
+                new ArrayList<>(), new ArrayList<>(),  "", ""
         );
         setErrorInvalidData(getValidator(), invalidDataDeleteDirectory);
     }

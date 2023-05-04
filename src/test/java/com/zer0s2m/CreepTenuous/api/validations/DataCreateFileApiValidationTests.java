@@ -16,19 +16,29 @@ import java.util.ArrayList;
 public class DataCreateFileApiValidationTests extends BaseValidationDataApi<DataCreateFile> {
     @Test
     public void notValidTypeFile_fail() {
-        DataCreateFile invalidDataCreateFile = new DataCreateFile(null, "testFile", new ArrayList<>());
+        DataCreateFile invalidDataCreateFile = new DataCreateFile(
+                null,
+                "testFile",
+                new ArrayList<>(),
+                new ArrayList<>()
+        );
         setErrorInvalidData(getValidator(), invalidDataCreateFile);
     }
 
     @Test
     public void notValidNameFile_fail() {
-        DataCreateFile invalidDataCreateFile = new DataCreateFile(1, "", new ArrayList<>());
+        DataCreateFile invalidDataCreateFile = new DataCreateFile(
+                1,
+                "",
+                new ArrayList<>(),
+                new ArrayList<>()
+        );
         setErrorInvalidData(getValidator(), invalidDataCreateFile);
     }
 
     @Test
     public void notValidParents_fail() {
-        DataCreateFile invalidDataCreateFile = new DataCreateFile(1, "testFile", null);
+        DataCreateFile invalidDataCreateFile = new DataCreateFile(1, "testFile", null, null);
         setErrorInvalidData(getValidator(), invalidDataCreateFile);
     }
 }

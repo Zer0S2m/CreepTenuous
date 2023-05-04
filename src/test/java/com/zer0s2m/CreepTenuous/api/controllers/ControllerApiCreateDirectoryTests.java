@@ -1,6 +1,7 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.create.data.FormCreateDirectoryApi;
+import com.zer0s2m.CreepTenuous.helpers.TestTagControllerApi;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.helpers.UtilsAuthAction;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
@@ -34,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagControllerApi
 public class ControllerApiCreateDirectoryTests {
     Logger logger = LogManager.getLogger(ControllerApiCreateDirectoryTests.class);
 
@@ -52,10 +54,12 @@ public class ControllerApiCreateDirectoryTests {
 
     FormCreateDirectoryApi RECORD_1 = new FormCreateDirectoryApi(
             new ArrayList<>(),
+            new ArrayList<>(),
             "test_folder1"
     );
 
     FormCreateDirectoryApi INVALID_RECORD = new FormCreateDirectoryApi(
+            Arrays.asList("invalid", "path", "directory"),
             Arrays.asList("invalid", "path", "directory"),
             "test_folder1"
     );
@@ -126,7 +130,9 @@ public class ControllerApiCreateDirectoryTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new FormCreateDirectoryApi(
-                                new ArrayList<>(), ""
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                ""
                         )))
                 )
                 .andExpect(status().isBadRequest());

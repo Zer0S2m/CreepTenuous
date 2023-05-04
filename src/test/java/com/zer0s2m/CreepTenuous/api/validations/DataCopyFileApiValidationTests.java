@@ -18,8 +18,12 @@ public class DataCopyFileApiValidationTests extends BaseValidationDataApi<DataCo
     public void notValidParents_fail() {
         DataCopyFile invalidDataCopyFile = new DataCopyFile(
                 "file.txt",
+                "file.txt",
                 null,
                 null,
+                null,
+                null,
+                new ArrayList<>(),
                 new ArrayList<>()
         );
         setErrorInvalidData(getValidator(), invalidDataCopyFile);
@@ -29,8 +33,12 @@ public class DataCopyFileApiValidationTests extends BaseValidationDataApi<DataCo
     public void notValidParents_toParents() {
         DataCopyFile invalidDataCopyFile = new DataCopyFile(
                 "file.txt",
+                "file.txt",
+                null,
                 null,
                 new ArrayList<>(),
+                new ArrayList<>(),
+                null,
                 null
         );
         setErrorInvalidData(getValidator(), invalidDataCopyFile);

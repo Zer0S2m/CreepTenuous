@@ -18,8 +18,12 @@ public class DataMoveFileApiValidationTests extends BaseValidationDataApi<DataMo
     public void notValidParents_fail() {
         DataMoveFile invalidDataMoveFile = new DataMoveFile(
                 "file.txt",
+                "file.txt",
                 null,
                 null,
+                null,
+                null,
+                new ArrayList<>(),
                 new ArrayList<>()
         );
         setErrorInvalidData(getValidator(), invalidDataMoveFile);
@@ -29,8 +33,12 @@ public class DataMoveFileApiValidationTests extends BaseValidationDataApi<DataMo
     public void notValidParents_toParents() {
         DataMoveFile invalidDataMoveFile = new DataMoveFile(
                 "file.txt",
+                "file.txt",
+                null,
                 null,
                 new ArrayList<>(),
+                new ArrayList<>(),
+                null,
                 null
         );
         setErrorInvalidData(getValidator(), invalidDataMoveFile);

@@ -1,5 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.files;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagServiceFileSystem;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.copy.data.DataCopyFile;
 import com.zer0s2m.CreepTenuous.components.RootPath;
@@ -7,6 +8,7 @@ import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDir
 import com.zer0s2m.CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
 import com.zer0s2m.CreepTenuous.services.files.copy.services.impl.ServiceCopyFile;
 
+import com.zer0s2m.CreepTenuous.services.files.move.containers.ContainerMovingFiles;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -33,6 +35,7 @@ import java.util.Objects;
         RootPath.class,
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagServiceFileSystem
 public class ServiceCopyFileTests {
     Logger logger = LogManager.getLogger(ServiceCopyFileTests.class);
 
@@ -47,29 +50,45 @@ public class ServiceCopyFileTests {
 
     DataCopyFile RECORD_1 = new DataCopyFile(
             "testFile1.txt",
+            "testFile1.txt",
+            null,
             null,
             new ArrayList<>(),
+            new ArrayList<>(),
+            List.of("testFolder1"),
             List.of("testFolder1")
     );
 
     DataCopyFile RECORD_2 = new DataCopyFile(
             null,
+            null,
+            Arrays.asList("testFile1.txt", "testFile12txt"),
             Arrays.asList("testFile1.txt", "testFile12txt"),
             new ArrayList<>(),
+            new ArrayList<>(),
+            List.of("testFolder2"),
             List.of("testFolder2")
     );
 
     DataCopyFile INVALID_RECORD_NOT_IS_EXISTS_FILE = new DataCopyFile(
             "notIsExistsFile.txt",
+            "notIsExistsFile.txt",
+            null,
             null,
             new ArrayList<>(),
+            new ArrayList<>(),
+            List.of("testFolder1"),
             List.of("testFolder1")
     );
 
     DataCopyFile INVALID_RECORD_INVALID_PATH_DIRECTORY = new DataCopyFile(
             "testFile1.txt",
+            "testFile1.txt",
+            null,
             null,
             new ArrayList<>(),
+            new ArrayList<>(),
+            Arrays.asList("invalid", "path", "directory"),
             Arrays.asList("invalid", "path", "directory")
     );
 
@@ -90,13 +109,9 @@ public class ServiceCopyFileTests {
 
         logger.info("Create folder for tests: " + pathTestFolder);
 
-        service.copy(RECORD_1.nameFile(), RECORD_1.parents(), RECORD_1.toParents());
+        ContainerMovingFiles container = service.copy(RECORD_1.nameFile(), RECORD_1.parents(), RECORD_1.toParents());
 
-        Path newPathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
-                RECORD_1.nameFile(), RECORD_1.toParents(), logger, buildDirectoryPath
-        );
-
-        UtilsActionForFiles.deleteFileAndWriteLog(newPathTestFile, logger);
+        UtilsActionForFiles.deleteFileAndWriteLog(container.target(), logger);
         UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile, logger);
         UtilsActionForFiles.deleteFileAndWriteLog(pathTestFolder, logger);
     }
@@ -118,24 +133,17 @@ public class ServiceCopyFileTests {
         Files.createFile(pathTestFile2);
         Files.createDirectory(pathTestFolder);
 
-        Path newPathTestFile1 = UtilsActionForFiles.preparePreliminaryFiles(
-                nameFiles.get(0), RECORD_2.toParents(), logger, buildDirectoryPath
-        );
-        Path newPathTestFile2 = UtilsActionForFiles.preparePreliminaryFiles(
-                nameFiles.get(1), RECORD_2.toParents(), logger, buildDirectoryPath
-        );
-
-        service.copy(nameFiles, RECORD_2.parents(), RECORD_2.toParents());
+        List<ContainerMovingFiles> containerList = service.copy(nameFiles, RECORD_2.parents(), RECORD_2.toParents());
 
         Assertions.assertTrue(Files.exists(pathTestFile1));
         Assertions.assertTrue(Files.exists(pathTestFile2));
-        Assertions.assertTrue(Files.exists(newPathTestFile1));
-        Assertions.assertTrue(Files.exists(newPathTestFile2));
+        Assertions.assertTrue(Files.exists(containerList.get(0).target()));
+        Assertions.assertTrue(Files.exists(containerList.get(1).target()));
 
         UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile1, logger);
         UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile2, logger);
-        UtilsActionForFiles.deleteFileAndWriteLog(newPathTestFile1, logger);
-        UtilsActionForFiles.deleteFileAndWriteLog(newPathTestFile2, logger);
+        UtilsActionForFiles.deleteFileAndWriteLog(containerList.get(0).target(), logger);
+        UtilsActionForFiles.deleteFileAndWriteLog(containerList.get(1).target(), logger);
         UtilsActionForFiles.deleteFileAndWriteLog(pathTestFolder, logger);
     }
 

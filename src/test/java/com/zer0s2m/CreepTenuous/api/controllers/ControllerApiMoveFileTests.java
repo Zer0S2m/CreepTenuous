@@ -50,14 +50,22 @@ public class ControllerApiMoveFileTests {
 
     DataMoveFile RECORD_1 = new DataMoveFile(
             testFile1,
+            testFile1,
             new ArrayList<>(),
             new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            List.of("testFolder1"),
             List.of("testFolder1")
     );
     DataMoveFile RECORD_2 = new DataMoveFile(
             null,
+            null,
+            Arrays.asList(testFile2, testFile3),
             Arrays.asList(testFile2, testFile3),
             new ArrayList<>(),
+            new ArrayList<>(),
+            List.of("testFolder2"),
             List.of("testFolder2")
     );
 
@@ -154,8 +162,12 @@ public class ControllerApiMoveFileTests {
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveFile(
                                         "testFile.txt",
+                                        "testFile.txt",
+                                        null,
                                         null,
                                         new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        Arrays.asList("not", "valid", "directory"),
                                         Arrays.asList("not", "valid", "directory")
                                 )
                         ))
@@ -174,7 +186,11 @@ public class ControllerApiMoveFileTests {
                 .content(objectMapper.writeValueAsString(
                         new DataMoveFile(
                                 "fileNotIsExists.txt",
+                                "fileNotIsExists.txt",
                                 null,
+                                null,
+                                new ArrayList<>(),
+                                new ArrayList<>(),
                                 new ArrayList<>(),
                                 new ArrayList<>()
                         )
@@ -184,7 +200,11 @@ public class ControllerApiMoveFileTests {
                 .content(objectMapper.writeValueAsString(
                         new DataMoveFile(
                                 null,
+                                null,
                                 Arrays.asList("fileNotIsExists1.txt", "fileNotIsExists2.txt"),
+                                Arrays.asList("fileNotIsExists1.txt", "fileNotIsExists2.txt"),
+                                new ArrayList<>(),
+                                new ArrayList<>(),
                                 new ArrayList<>(),
                                 new ArrayList<>()
                         )
@@ -201,8 +221,12 @@ public class ControllerApiMoveFileTests {
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveFile(
                                         "file.txt",
+                                        "file.txt",
                                         null,
                                         null,
+                                        null,
+                                        null,
+                                        new ArrayList<>(),
                                         new ArrayList<>()
                                 )
                         ))
@@ -219,8 +243,12 @@ public class ControllerApiMoveFileTests {
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveFile(
                                         "file.txt",
+                                        "file.txt",
+                                        null,
                                         null,
                                         new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        null,
                                         null
                                 )
                         ))

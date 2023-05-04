@@ -17,13 +17,23 @@ public class DataDeleteFileApiValidationsTests extends BaseValidationDataApi<Dat
 {
     @Test
     public void notValidNameFile_fail() {
-        DataDeleteFile invalidDataDeleteFile = new DataDeleteFile("", new ArrayList<>());
+        DataDeleteFile invalidDataDeleteFile = new DataDeleteFile(
+                "",
+                "",
+                new ArrayList<>(),
+                new ArrayList<>()
+        );
         setErrorInvalidData(getValidator(), invalidDataDeleteFile);
     }
 
     @Test
     public void notValidParents_fail() {
-        DataDeleteFile invalidDataDeleteFile = new DataDeleteFile("testFile", null);
+        DataDeleteFile invalidDataDeleteFile = new DataDeleteFile(
+                "testFile",
+                "testFile",
+                null,
+                null
+        );
         setErrorInvalidData(getValidator(), invalidDataDeleteFile);
     }
 }

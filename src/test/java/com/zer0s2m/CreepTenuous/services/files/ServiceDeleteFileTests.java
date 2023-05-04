@@ -3,6 +3,7 @@ package com.zer0s2m.CreepTenuous.services.files;
 import com.zer0s2m.CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
 import com.zer0s2m.CreepTenuous.api.controllers.files.delete.data.DataDeleteFile;
 import com.zer0s2m.CreepTenuous.components.RootPath;
+import com.zer0s2m.CreepTenuous.helpers.TestTagServiceFileSystem;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
 import com.zer0s2m.CreepTenuous.services.core.Directory;
@@ -32,6 +33,7 @@ import java.util.Arrays;
         RootPath.class,
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagServiceFileSystem
 public class ServiceDeleteFileTests {
     Logger logger = LogManager.getLogger(ServiceDeleteFileTests.class);
 
@@ -46,10 +48,17 @@ public class ServiceDeleteFileTests {
 
     private final String testFile1 = "testFile1.txt";
 
-    DataDeleteFile RECORD_1 = new DataDeleteFile(testFile1, new ArrayList<>());
-    DataDeleteFile INVALID_RECORD_NOT_IS_EXISTS = new DataDeleteFile("notFileIsExists.txt", new ArrayList<>());
+    DataDeleteFile RECORD_1 = new DataDeleteFile(testFile1, testFile1, new ArrayList<>(), new ArrayList<>());
+    DataDeleteFile INVALID_RECORD_NOT_IS_EXISTS = new DataDeleteFile(
+            "notFileIsExists.txt",
+            "notFileIsExists.txt",
+            new ArrayList<>(),
+            new ArrayList<>()
+    );
     DataDeleteFile INVALID_RECORD_INVALID_PATH_DIRECTORY = new DataDeleteFile(
             "testFile.txt",
+            "testFile.txt",
+            Arrays.asList("invalid", "path", "directory"),
             Arrays.asList("invalid", "path", "directory")
     );
 

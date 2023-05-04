@@ -17,7 +17,7 @@ public class DataCreateDirectoryApiValidationsTests extends BaseValidationDataAp
     @Test
     public void notValidParents_fail() {
         FormCreateDirectoryApi invalidDataCreateDirectory = new FormCreateDirectoryApi(
-                null, "testFolder"
+                null, null, "testFolder"
         );
         setErrorInvalidData(getValidator(), invalidDataCreateDirectory);
     }
@@ -25,7 +25,7 @@ public class DataCreateDirectoryApiValidationsTests extends BaseValidationDataAp
     @Test
     public void notValidNameFile_fail() {
         FormCreateDirectoryApi invalidDataCreateDirectory = new FormCreateDirectoryApi(
-                new ArrayList<>(), ""
+                new ArrayList<>(), new ArrayList<>(), ""
         );
         setErrorInvalidData(getValidator(), invalidDataCreateDirectory);
     }

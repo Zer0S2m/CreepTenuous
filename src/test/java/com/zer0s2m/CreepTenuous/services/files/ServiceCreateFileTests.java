@@ -1,5 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.files;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagServiceFileSystem;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.create.data.DataCreateFile;
 import com.zer0s2m.CreepTenuous.components.RootPath;
@@ -30,6 +31,7 @@ import java.util.Arrays;
         RootPath.class,
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagServiceFileSystem
 public class ServiceCreateFileTests {
     Logger logger = LogManager.getLogger(ServiceCreateFileTests.class);
 
@@ -44,14 +46,25 @@ public class ServiceCreateFileTests {
     private final String nameTestFile3 = "tesFile_3";
     private final String nameTestFile4 = "tesFile_4";
 
-    DataCreateFile RECORD_1 = new DataCreateFile(1, nameTestFile1, new ArrayList<>());
-    DataCreateFile RECORD_2 = new DataCreateFile(2, nameTestFile2, new ArrayList<>());
-    DataCreateFile RECORD_3 = new DataCreateFile(3, nameTestFile3, new ArrayList<>());
-    DataCreateFile INVALID_RECORD_FILE_EXISTS = new DataCreateFile(1, nameTestFile4, new ArrayList<>());
-    DataCreateFile INVALID_RECORD_TYPE_FILE = new DataCreateFile(9999, "failFile", new ArrayList<>());
+    DataCreateFile RECORD_1 = new DataCreateFile(1, nameTestFile1, new ArrayList<>(), new ArrayList<>());
+    DataCreateFile RECORD_2 = new DataCreateFile(2, nameTestFile2, new ArrayList<>(), new ArrayList<>());
+    DataCreateFile RECORD_3 = new DataCreateFile(3, nameTestFile3, new ArrayList<>(), new ArrayList<>());
+    DataCreateFile INVALID_RECORD_FILE_EXISTS = new DataCreateFile(
+            1,
+            nameTestFile4,
+            new ArrayList<>(),
+            new ArrayList<>()
+    );
+    DataCreateFile INVALID_RECORD_TYPE_FILE = new DataCreateFile(
+            9999,
+            "failFile",
+            new ArrayList<>(),
+            new ArrayList<>()
+    );
     DataCreateFile INVALID_RECORD_PATH_DIRECTORY = new DataCreateFile(
             1,
             "failFile",
+            Arrays.asList("fail", "path", "directory"),
             Arrays.asList("fail", "path", "directory")
     );
 

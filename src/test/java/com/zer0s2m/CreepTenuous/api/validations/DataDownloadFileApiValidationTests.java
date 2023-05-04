@@ -16,13 +16,23 @@ import java.util.ArrayList;
 public class DataDownloadFileApiValidationTests extends BaseValidationDataApi<DataDownloadFile> {
     @Test
     public void notValidNameFile_fail() {
-        DataDownloadFile invalidDataDownloadFile = new DataDownloadFile(new ArrayList<>(), "");
+        DataDownloadFile invalidDataDownloadFile = new DataDownloadFile(
+                new ArrayList<>(),
+                new ArrayList<>(),
+                "",
+                ""
+        );
         setErrorInvalidData(getValidator(), invalidDataDownloadFile);
     }
 
     @Test
     public void notValidParents_fail() {
-        DataDownloadFile invalidDataDownloadFile = new DataDownloadFile(null, "testFile.txt");
+        DataDownloadFile invalidDataDownloadFile = new DataDownloadFile(
+                null,
+                null,
+                "testFile.txt",
+                "testFile.txt"
+        );
         setErrorInvalidData(getValidator(), invalidDataDownloadFile);
     }
 }

@@ -1,5 +1,6 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagControllerApi;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.copy.data.DataCopyFile;
 import com.zer0s2m.CreepTenuous.components.RootPath;
@@ -31,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagControllerApi
 public class ControllerApiCopyFileTests {
     Logger logger = LogManager.getLogger(ControllerApiCopyFileTests.class);
 
@@ -52,14 +54,22 @@ public class ControllerApiCopyFileTests {
 
     DataCopyFile RECORD_1 = new DataCopyFile(
             testFile1,
+            testFile1,
             new ArrayList<>(),
             new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            List.of("testFolder1"),
             List.of("testFolder1")
     );
     DataCopyFile RECORD_2 = new DataCopyFile(
             null,
+            null,
+            Arrays.asList(testFile2, testFile3),
             Arrays.asList(testFile2, testFile3),
             new ArrayList<>(),
+            new ArrayList<>(),
+            List.of("testFolder2"),
             List.of("testFolder2")
     );
 
@@ -159,8 +169,12 @@ public class ControllerApiCopyFileTests {
                         .content(objectMapper.writeValueAsString(
                                 new DataCopyFile(
                                         "file.txt",
+                                        "file.txt",
                                         null,
                                         null,
+                                        null,
+                                        null,
+                                        new ArrayList<>(),
                                         new ArrayList<>()
                                 )
                         ))
@@ -177,8 +191,12 @@ public class ControllerApiCopyFileTests {
                         .content(objectMapper.writeValueAsString(
                                 new DataCopyFile(
                                         "file.txt",
+                                        "file.txt",
+                                        null,
                                         null,
                                         new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        null,
                                         null
                                 )
                         ))

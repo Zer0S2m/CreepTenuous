@@ -1,5 +1,6 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagControllerApi;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.common.exceptions.messages.NoSuchFileExists;
 import com.zer0s2m.CreepTenuous.api.controllers.files.delete.data.DataDeleteFile;
@@ -33,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagControllerApi
 public class ControllerApiDeleteFileTests {
     Logger logger = LogManager.getLogger(ControllerApiDeleteFileTests.class);
 
@@ -48,13 +50,20 @@ public class ControllerApiDeleteFileTests {
     private final String testFile1 = "testFile1.txt";
     private final String testFile2 = "testFile2.txt";
 
-    DataDeleteFile RECORD_1 = new DataDeleteFile(testFile1, new ArrayList<>());
-    DataDeleteFile RECORD_2 = new DataDeleteFile(testFile2, new ArrayList<>());
+    DataDeleteFile RECORD_1 = new DataDeleteFile(testFile1, testFile1, new ArrayList<>(), new ArrayList<>());
+    DataDeleteFile RECORD_2 = new DataDeleteFile(testFile2, testFile2, new ArrayList<>(), new ArrayList<>());
     DataDeleteFile INVALID_RECORD_PATH_DIRECTORY = new DataDeleteFile(
             "failTestFile",
+            "failTestFile",
+            Arrays.asList("invalid", "path", "directory"),
             Arrays.asList("invalid", "path", "directory")
     );
-    DataDeleteFile INVALID_RECORD_NOT_EXISTS_FILE = new DataDeleteFile("notExistsFileFail", new ArrayList<>());
+    DataDeleteFile INVALID_RECORD_NOT_EXISTS_FILE = new DataDeleteFile(
+            "notExistsFileFail",
+            "notExistsFileFail",
+            new ArrayList<>(),
+            new ArrayList<>()
+    );
 
     @Test
     public void deleteFile_success() throws Exception {
@@ -116,7 +125,7 @@ public class ControllerApiDeleteFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new DataDeleteFile("", new ArrayList<>())
+                                new DataDeleteFile("", "", new ArrayList<>(), new ArrayList<>())
                         ))
                 )
                 .andExpect(status().isBadRequest());
@@ -129,7 +138,7 @@ public class ControllerApiDeleteFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new DataDeleteFile("testFile", null)
+                                new DataDeleteFile("testFile", "testFile", null, null)
                         ))
                 )
                 .andExpect(status().isBadRequest());

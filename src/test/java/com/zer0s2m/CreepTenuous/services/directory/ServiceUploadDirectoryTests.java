@@ -2,6 +2,7 @@ package com.zer0s2m.CreepTenuous.services.directory;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.upload.http.ResponseUploadDirectory;
 import com.zer0s2m.CreepTenuous.components.RootPath;
+import com.zer0s2m.CreepTenuous.helpers.TestTagServiceFileSystem;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
 import com.zer0s2m.CreepTenuous.services.directory.upload.services.impl.ServiceUploadDirectory;
@@ -9,6 +10,8 @@ import com.zer0s2m.CreepTenuous.services.directory.upload.services.impl.ServiceU
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +28,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @SpringBootTest(classes = {
         ServiceUploadDirectory.class,
@@ -32,6 +37,8 @@ import java.util.List;
         CollectRootPath.class,
         RootPath.class
 })
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagServiceFileSystem
 public class ServiceUploadDirectoryTests {
     Logger logger = LogManager.getLogger(ServiceUploadDirectoryTests.class);
 
@@ -42,7 +49,7 @@ public class ServiceUploadDirectoryTests {
     private ServiceBuildDirectoryPath serviceBuildDirectoryPath;
 
     @Test
-    public void uploadDirectory_success() throws IOException, InterruptedException {
+    public void uploadDirectory_success() throws IOException, InterruptedException, ExecutionException {
         String testFileZip = "test-zip.zip";
         File testFile = new File("src/main/resources/test/" + testFileZip);
 
@@ -57,7 +64,7 @@ public class ServiceUploadDirectoryTests {
 
         InputStream targetStream = new FileInputStream(path.toFile());
 
-        ResponseUploadDirectory response = service.upload(new ArrayList<>(), new MockMultipartFile(
+        CompletableFuture<ResponseUploadDirectory> response = service.upload(new ArrayList<>(), new MockMultipartFile(
                 "directory",
                 testFileZip,
                 "application/zip",
@@ -68,7 +75,7 @@ public class ServiceUploadDirectoryTests {
 
         String testPath = serviceBuildDirectoryPath.build(new ArrayList<>());
 
-        Assertions.assertTrue(response.success());
+        Assertions.assertTrue(response.get().success());
 
         Thread.sleep(500);
 
