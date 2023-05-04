@@ -5,6 +5,7 @@ import com.zer0s2m.CreepTenuous.components.RootPath;
 import com.zer0s2m.CreepTenuous.helpers.TestTagServiceFileSystem;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
+import com.zer0s2m.CreepTenuous.services.directory.upload.containers.ContainerDataUploadFile;
 import com.zer0s2m.CreepTenuous.services.directory.upload.services.impl.ServiceUploadDirectory;
 
 import org.apache.logging.log4j.LogManager;
@@ -73,25 +74,27 @@ public class ServiceUploadDirectoryTests {
 
         targetStream.close();
 
-        String testPath = serviceBuildDirectoryPath.build(new ArrayList<>());
-
         Assertions.assertTrue(response.get().success());
 
-        Thread.sleep(500);
+        List<ContainerDataUploadFile> container = response.get().data();
 
-        Assertions.assertTrue(Files.exists(Path.of(testPath, "folder_1", "test_image_1.jpeg")));
-        Assertions.assertTrue(Files.exists(Path.of(testPath, "folder_1", "folder_2", "test_image_1.jpeg")));
-        Assertions.assertTrue(Files.exists(Path.of(testPath, "folder_1", "folder_2", "test_image_2.jpeg")));
-        Assertions.assertTrue(Files.exists(Path.of(testPath, "folder_1", "folder_2", "test-file-1.txt")));
-        Assertions.assertTrue(Files.exists(Path.of(testPath, "folder_1", "folder_3", "test-file-1.txt")));
-        Assertions.assertTrue(Files.exists(Path.of(testPath, "folder_4", "test_image_1.jpeg")));
+        Assertions.assertTrue(Files.exists(container.get(0).systemPath()));
+        Assertions.assertTrue(Files.exists(container.get(1).systemPath()));
+        Assertions.assertTrue(Files.exists(container.get(2).systemPath()));
+        Assertions.assertTrue(Files.exists(container.get(3).systemPath()));
+        Assertions.assertTrue(Files.exists(container.get(4).systemPath()));
+        Assertions.assertTrue(Files.exists(container.get(5).systemPath()));
 
-        Path pathTestFolder1 = Path.of(serviceBuildDirectoryPath.build(List.of("folder_1")));
-        Path pathTestFolder2 = Path.of(serviceBuildDirectoryPath.build(List.of("folder_4")));
-        FileSystemUtils.deleteRecursively(pathTestFolder1);
-        FileSystemUtils.deleteRecursively(pathTestFolder2);
-
-        logger.info(String.format("Delete folders for tests: %s; %s", pathTestFolder1, pathTestFolder2));
+        container.forEach((obj) -> {
+            if (obj.isDirectory()) {
+                try {
+                    FileSystemUtils.deleteRecursively(obj.systemPath());
+                    logger.info(String.format("Delete folder for tests: %s", obj.systemPath()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
     @Test
