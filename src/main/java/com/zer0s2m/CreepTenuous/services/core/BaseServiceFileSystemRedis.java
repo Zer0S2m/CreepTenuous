@@ -28,6 +28,8 @@ public class BaseServiceFileSystemRedis implements IBaseServiceFileSystemRedis {
 
     private Boolean enableCheckIsNameDirectory = false;
 
+    private Boolean resetCheckIsNameDirectory = false;
+
     @Autowired
     protected BaseServiceFileSystemRedis(
             DirectoryRedisRepository directoryRedisRepository,
@@ -53,6 +55,9 @@ public class BaseServiceFileSystemRedis implements IBaseServiceFileSystemRedis {
 
         if (enableCheckIsNameDirectory && nameDirectory != null) {
             systemParents.add(nameDirectory);
+        }
+        if (resetCheckIsNameDirectory) {
+            setEnableCheckIsNameDirectory(false);
         }
         Iterable<DirectoryRedis> objsRedis = directoryRedisRepository.findAllById(systemParents);
 
@@ -107,5 +112,13 @@ public class BaseServiceFileSystemRedis implements IBaseServiceFileSystemRedis {
      */
     public void setEnableCheckIsNameDirectory(Boolean enableCheckIsNameDirectory) {
         this.enableCheckIsNameDirectory = enableCheckIsNameDirectory;
+    }
+
+    /**
+     * Reset parameter - {@link BaseServiceFileSystemRedis#enableCheckIsNameDirectory}
+     * @param resetCheckIsNameDirectory is enabled
+     */
+    public void setResetCheckIsNameDirectory(Boolean resetCheckIsNameDirectory) {
+        this.resetCheckIsNameDirectory = resetCheckIsNameDirectory;
     }
 }

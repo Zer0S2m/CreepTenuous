@@ -43,7 +43,7 @@ public class ControllerApiUploadDirectory implements CheckIsExistsDirectoryApi {
     ) throws IOException, ExecutionException, InterruptedException {
         serviceUploadDirectoryRedis.setAccessToken(accessToken);
         serviceUploadDirectoryRedis.checkRights(parents, systemParents, null);
-        final ResponseUploadDirectory finalData = serviceUploadDirectory.upload(parents, zipFile).get();
+        final ResponseUploadDirectory finalData = serviceUploadDirectory.upload(systemParents, zipFile).get();
         serviceUploadDirectoryRedis.upload(finalData.data());
         return finalData;
     }

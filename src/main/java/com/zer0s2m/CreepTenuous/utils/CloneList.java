@@ -10,8 +10,18 @@ public interface CloneList {
     }
 
     static <E> List<E> cloneOneLevel(List<E> list1, List<E> list2) {
-        List<E> newList1 = new ArrayList<>(list1);
-        List<E> newList2 = new ArrayList<>(list2);
+        List<E> newList1 = cloneOneLevel(list1);
+        List<E> newList2 = cloneOneLevel(list2);
+
+        if (newList1.size() == 0 && newList2.size() != 0) {
+            return newList2;
+        }
+        if (newList2.size() == 0 && newList1.size() != 0) {
+            return newList1;
+        }
+        if (newList2.size() == 0) {
+            return new ArrayList<>();
+        }
 
         return Stream.concat(
                 newList1.stream(),

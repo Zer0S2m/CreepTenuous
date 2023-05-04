@@ -1,8 +1,5 @@
 package com.zer0s2m.CreepTenuous.utils;
 
-import jdk.internal.ValueBased;
-
-@ValueBased
 public final class OptionalMutable<T> {
     private T value;
 
