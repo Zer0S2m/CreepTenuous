@@ -1,5 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.redis;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagServiceRedis;
 import com.zer0s2m.CreepTenuous.providers.redis.data.JwtRedisData;
 import com.zer0s2m.CreepTenuous.providers.redis.models.JwtRedis;
 import com.zer0s2m.CreepTenuous.providers.redis.repositories.JwtRedisRepository;
@@ -13,8 +14,9 @@ import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 
 @DataRedisTest
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-public class RedisServiceTests {
-    Logger logger = LogManager.getLogger(RedisServiceTests.class);
+@TestTagServiceRedis
+public class ServiceJwtRedisTests {
+    Logger logger = LogManager.getLogger(ServiceJwtRedisTests.class);
 
     private ServiceJwtRedis service;
 
