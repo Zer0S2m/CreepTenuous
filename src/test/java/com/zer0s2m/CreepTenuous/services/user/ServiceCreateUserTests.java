@@ -1,5 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.user;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagService;
 import com.zer0s2m.CreepTenuous.models.User;
 import com.zer0s2m.CreepTenuous.services.user.create.services.impl.ServiceCreateUser;
 import com.zer0s2m.CreepTenuous.services.user.enums.UserRole;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @Transactional
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagService
 public class ServiceCreateUserTests {
     Logger logger = LogManager.getLogger(ServiceCreateUserTests.class);
 

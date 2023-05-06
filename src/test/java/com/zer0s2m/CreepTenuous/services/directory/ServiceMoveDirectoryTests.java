@@ -1,6 +1,7 @@
 package com.zer0s2m.CreepTenuous.services.directory;
 
 import com.zer0s2m.CreepTenuous.components.RootPath;
+import com.zer0s2m.CreepTenuous.helpers.TestTagServiceFileSystem;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.common.collectRootPath.impl.CollectRootPath;
@@ -30,6 +31,7 @@ import java.util.List;
         RootPath.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagServiceFileSystem
 public class ServiceMoveDirectoryTests {
     Logger logger = LogManager.getLogger(ServiceMoveDirectoryTests.class);
 

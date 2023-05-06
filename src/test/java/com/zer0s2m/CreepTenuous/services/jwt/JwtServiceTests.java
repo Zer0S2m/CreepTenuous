@@ -1,5 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.jwt;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagService;
 import com.zer0s2m.CreepTenuous.models.User;
 import com.zer0s2m.CreepTenuous.providers.jwt.JwtProvider;
 import com.zer0s2m.CreepTenuous.providers.jwt.exceptions.NoValidJwtRefreshTokenException;
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagService
 public class JwtServiceTests {
     Logger logger = LogManager.getLogger(JwtServiceTests.class);
 

@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -20,7 +19,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-@EnableAsync
 @ServiceFileSystem("upload-service")
 public class ServiceUploadDirectory implements IServiceUploadDirectory, IServiceUnpackingDirectory {
     private final Logger logger = LogManager.getLogger(ServiceUploadDirectory.class);

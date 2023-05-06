@@ -1,5 +1,6 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagControllerApi;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.create.data.DataCreateFile;
 import com.zer0s2m.CreepTenuous.helpers.UtilsAuthAction;
@@ -36,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagControllerApi
 public class ControllerApiCreateFileTests {
     Logger logger = LogManager.getLogger(ControllerApiCreateFileTests.class);
 
@@ -55,13 +57,19 @@ public class ControllerApiCreateFileTests {
     protected String nameTestFile3 = "testFile_3";
     protected String nameTestFile4 = "testFile_4";
 
-    DataCreateFile RECORD_1 = new DataCreateFile(1, nameTestFile1, new ArrayList<>());
-    DataCreateFile RECORD_2 = new DataCreateFile(2, nameTestFile2, new ArrayList<>());
-    DataCreateFile RECORD_3 = new DataCreateFile(3, nameTestFile3, new ArrayList<>());
-    DataCreateFile INVALID_RECORD_TYPE_FILE = new DataCreateFile(9999, "failFile", new ArrayList<>());
+    DataCreateFile RECORD_1 = new DataCreateFile(1, nameTestFile1, new ArrayList<>(), new ArrayList<>());
+    DataCreateFile RECORD_2 = new DataCreateFile(2, nameTestFile2, new ArrayList<>(), new ArrayList<>());
+    DataCreateFile RECORD_3 = new DataCreateFile(3, nameTestFile3, new ArrayList<>(), new ArrayList<>());
+    DataCreateFile INVALID_RECORD_TYPE_FILE = new DataCreateFile(
+            9999,
+            "failFile",
+            new ArrayList<>(),
+            new ArrayList<>()
+    );
     DataCreateFile INVALID_RECORD_PATH_DIRECTORY = new DataCreateFile(
             1,
             "failFile",
+            Arrays.asList("invalid", "path", "directory"),
             Arrays.asList("invalid", "path", "directory")
     );
 
@@ -134,7 +142,7 @@ public class ControllerApiCreateFileTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
-                                new DataCreateFile(1, nameTestFile4, new ArrayList<>())
+                                new DataCreateFile(1, nameTestFile4, new ArrayList<>(), new ArrayList<>())
                         ))
                 )
                 .andExpect(status().isBadRequest())
@@ -154,7 +162,7 @@ public class ControllerApiCreateFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new DataCreateFile(1, "", new ArrayList<>())
+                                new DataCreateFile(1, "", new ArrayList<>(), new ArrayList<>())
                         ))
                 )
                 .andExpect(status().isBadRequest());
@@ -167,7 +175,12 @@ public class ControllerApiCreateFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new DataCreateFile(null, "testFile", new ArrayList<>())
+                                new DataCreateFile(
+                                        null,
+                                        "testFile",
+                                        new ArrayList<>(),
+                                        new ArrayList<>()
+                                )
                         ))
                 )
                 .andExpect(status().isBadRequest());
@@ -180,7 +193,7 @@ public class ControllerApiCreateFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new DataCreateFile(1, "testFile", null)
+                                new DataCreateFile(1, "testFile", null, null)
                         ))
                 )
                 .andExpect(status().isBadRequest());

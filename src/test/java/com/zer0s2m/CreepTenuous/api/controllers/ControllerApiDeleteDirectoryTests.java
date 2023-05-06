@@ -1,6 +1,7 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.delete.data.FormDeleteDirectoryApi;
+import com.zer0s2m.CreepTenuous.helpers.TestTagControllerApi;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.core.Directory;
@@ -31,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagControllerApi
 public class ControllerApiDeleteDirectoryTests {
     Logger logger = LogManager.getLogger(ControllerApiDeleteDirectoryTests.class);
 
@@ -45,18 +47,22 @@ public class ControllerApiDeleteDirectoryTests {
 
     FormDeleteDirectoryApi RECORD_1 = new FormDeleteDirectoryApi(
             new ArrayList<>(),
+            new ArrayList<>(),
+            "test_folder1",
             "test_folder1"
     );
 
     FormDeleteDirectoryApi INVALID_RECORD = new FormDeleteDirectoryApi(
             Arrays.asList("invalid", "path", "directory"),
+            Arrays.asList("invalid", "path", "directory"),
+            "test_folder1",
             "test_folder1"
     );
 
     @Test
     public void deleteDirectory_success() throws Exception {
         Path newFolder = UtilsActionForFiles.preparePreliminaryFiles(
-                RECORD_1.name(),
+                RECORD_1.systemDirectoryName(),
                 new ArrayList<>(),
                 logger,
                 serviceBuildDirectoryPath
@@ -98,7 +104,10 @@ public class ControllerApiDeleteDirectoryTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new FormDeleteDirectoryApi(
-                                new ArrayList<>(), ""
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                "",
+                                ""
                         )))
                 )
                 .andExpect(status().isBadRequest());
