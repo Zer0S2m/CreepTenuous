@@ -1,8 +1,9 @@
 package com.zer0s2m.CreepTenuous.services.directory.move.services.impl;
 
 import com.zer0s2m.CreepTenuous.components.RootPath;
+import com.zer0s2m.CreepTenuous.utils.WalkDirectoryInfo;
 import com.zer0s2m.CreepTenuous.services.core.ServiceFileSystem;
-import com.zer0s2m.CreepTenuous.services.directory.move.containers.ContainerInfoFileSystemObject;
+import com.zer0s2m.CreepTenuous.utils.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.CreepTenuous.services.directory.move.containers.ContainerMoveDirectory;
 import com.zer0s2m.CreepTenuous.services.directory.move.enums.MethodMoveDirectory;
 import com.zer0s2m.CreepTenuous.services.directory.move.services.IServiceMoveDirectory;
@@ -46,7 +47,7 @@ public class ServiceMoveDirectory implements IServiceMoveDirectory {
         Path currentPathParents = Paths.get(buildDirectoryPath.build(systemParents));
         Path currentPath = Path.of(currentPathParents.toString(), systemNameDirectory);
         Path createdNewPath = builderDirectory(systemToParents, systemNameDirectory, method);
-        List<ContainerInfoFileSystemObject> attached = walkDirectory(currentPath, createdNewPath);
+        List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(currentPath, createdNewPath);
         return new ContainerMoveDirectory(
                 Files.move(currentPath, createdNewPath, StandardCopyOption.REPLACE_EXISTING),
                 currentPath,

@@ -18,6 +18,12 @@ public class ServiceBuildDirectoryPath {
         this.collectRootPath = collectRootPath;
     }
 
+    /**
+     * Get path
+     * @param parents parts system folders
+     * @return path
+     * @throws NoSuchFileException system error
+     */
     public String build(List<String> parents) throws NoSuchFileException {
         StringBuilder rawDirectory = new StringBuilder();
         for (String part : parents) {
@@ -25,5 +31,14 @@ public class ServiceBuildDirectoryPath {
         }
 
         return collectRootPath.collect(rawDirectory.toString());
+    }
+
+    /**
+     * Get root path
+     * @return root path
+     * @throws NoSuchFileException system error
+     */
+    public String build() throws NoSuchFileException {
+        return collectRootPath.collect("");
     }
 }

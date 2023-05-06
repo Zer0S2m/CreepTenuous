@@ -2,6 +2,7 @@ package com.zer0s2m.CreepTenuous.api.controllers.directory.upload;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.upload.http.ResponseUploadDirectory;
 import com.zer0s2m.CreepTenuous.api.core.annotations.V1APIRestController;
+import com.zer0s2m.CreepTenuous.providers.redis.controllers.CheckRightsActionFileSystem;
 import com.zer0s2m.CreepTenuous.services.directory.upload.services.impl.ServiceUploadDirectory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 import com.zer0s2m.CreepTenuous.services.directory.upload.services.impl.ServiceUploadDirectoryRedis;
@@ -19,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 
 @EnableAsync
 @V1APIRestController
-public class ControllerApiUploadDirectory implements CheckIsExistsDirectoryApi {
+public class ControllerApiUploadDirectory implements CheckIsExistsDirectoryApi, CheckRightsActionFileSystem {
     private final ServiceUploadDirectory serviceUploadDirectory;
 
     private final ServiceUploadDirectoryRedis serviceUploadDirectoryRedis;

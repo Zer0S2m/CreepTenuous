@@ -5,7 +5,7 @@ import java.util.UUID;
 public class Distribution {
     /**
      * Get random name file
-     * @return uuid string
+     * @return <b>uuid</b> string
      */
     public static String getUUID() {
         return UUID.randomUUID().toString();

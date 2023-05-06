@@ -7,7 +7,7 @@ import com.zer0s2m.CreepTenuous.providers.redis.repositories.DirectoryRedisRepos
 import com.zer0s2m.CreepTenuous.providers.redis.repositories.FileRedisRepository;
 import com.zer0s2m.CreepTenuous.providers.redis.services.IServiceMoveDirectoryRedis;
 import com.zer0s2m.CreepTenuous.services.core.BaseServiceFileSystemRedis;
-import com.zer0s2m.CreepTenuous.services.directory.move.containers.ContainerInfoFileSystemObject;
+import com.zer0s2m.CreepTenuous.utils.containers.ContainerInfoFileSystemObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

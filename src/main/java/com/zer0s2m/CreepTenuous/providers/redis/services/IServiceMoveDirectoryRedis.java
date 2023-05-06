@@ -1,6 +1,6 @@
 package com.zer0s2m.CreepTenuous.providers.redis.services;
 
-import com.zer0s2m.CreepTenuous.services.directory.move.containers.ContainerInfoFileSystemObject;
+import com.zer0s2m.CreepTenuous.utils.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.CreepTenuous.services.directory.move.containers.ContainerMoveDirectory;
 
 import java.nio.file.Path;

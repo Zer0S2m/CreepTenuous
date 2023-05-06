@@ -1,22 +1,21 @@
-package com.zer0s2m.CreepTenuous.services.directory.move.services;
+package com.zer0s2m.CreepTenuous.services.directory.copy.services;
 
-import com.zer0s2m.CreepTenuous.services.directory.move.containers.ContainerMoveDirectory;
-import com.zer0s2m.CreepTenuous.services.directory.move.enums.MethodMoveDirectory;
+import com.zer0s2m.CreepTenuous.utils.containers.ContainerInfoFileSystemObject;
 
 import java.io.IOException;
 import java.util.List;
 
-public interface IServiceMoveDirectory {
+public interface IServiceCopyDirectory {
     /**
-     * Move directory
+     * Copy directory
      * @param systemParents system path part directories
      * @param systemToParents system path part directories
      * @param systemNameDirectory system name directory
-     * @param method method moving {@link MethodMoveDirectory}
-     * @return info target and source path
+     * @param method method copy {@link com.zer0s2m.CreepTenuous.services.directory.copy.enums.MethodCopyDirectory}
+     * @return information about copied file system objects
      * @throws IOException error system
      */
-    ContainerMoveDirectory move(
+    List<ContainerInfoFileSystemObject> copy(
             List<String> systemParents,
             List<String> systemToParents,
             String systemNameDirectory,

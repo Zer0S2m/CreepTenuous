@@ -84,8 +84,8 @@ public class ThreadUnpackingDirectory extends Thread {
     private File newFile(File destinationDir, ZipEntry zipEntryDir) throws IOException {
         List<String> systemPartPaths = buildHashMapPathFiles(zipEntryDir);
         String newFileName = String.join(File.separator, systemPartPaths);
-        if (destinationDir.isDirectory()) {
-            newFileName = newFileName + Directory.SEPARATOR.get();
+        if (zipEntryDir.isDirectory()) {
+            newFileName += Directory.SEPARATOR.get();
         }
 
         File destFile = new File(destinationDir, newFileName);
@@ -120,6 +120,7 @@ public class ThreadUnpackingDirectory extends Thread {
         List<String> buildParts = new ArrayList<>();
 
         parts.forEach((part) -> {
+            // TODO: finalize
             Optional<TreeNode<String>> node = map.findTreeNode(part);
             if (node.isPresent()) {
                 TreeNode<String> readyNode = node.get();

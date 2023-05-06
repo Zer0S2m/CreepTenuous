@@ -2,6 +2,7 @@ package com.zer0s2m.CreepTenuous.api.controllers.directory.move;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.move.data.FormMoveDirectoryApi;
 import com.zer0s2m.CreepTenuous.api.core.annotations.V1APIRestController;
+import com.zer0s2m.CreepTenuous.providers.redis.controllers.CheckRightsActionFileSystem;
 import com.zer0s2m.CreepTenuous.services.directory.move.containers.ContainerMoveDirectory;
 import com.zer0s2m.CreepTenuous.services.directory.move.services.impl.ServiceMoveDirectory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
@@ -17,7 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 @V1APIRestController
-public class ControllerApiMoveDirectory implements CheckIsExistsDirectoryApi {
+public class ControllerApiMoveDirectory implements CheckIsExistsDirectoryApi, CheckRightsActionFileSystem {
     private final ServiceMoveDirectory serviceMoveDirectory;
 
     private final ServiceMoveDirectoryRedis serviceMoveDirectoryRedis;
