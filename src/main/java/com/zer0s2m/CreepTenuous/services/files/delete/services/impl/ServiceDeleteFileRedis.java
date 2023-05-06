@@ -24,6 +24,11 @@ public class ServiceDeleteFileRedis extends BaseServiceFileSystemRedis implement
         super(directoryRedisRepository, fileRedisRepository, jwtProvider);
     }
 
+    /**
+     * Delete file from redis
+     * @param systemPath system path
+     * @param systemNameFile system name file
+     */
     @Override
     public void delete(Path systemPath, String systemNameFile) {
         Optional<FileRedis> objRedis = fileRedisRepository.findById(systemNameFile);

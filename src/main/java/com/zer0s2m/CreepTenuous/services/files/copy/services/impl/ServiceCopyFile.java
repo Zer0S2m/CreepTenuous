@@ -26,6 +26,14 @@ public class ServiceCopyFile implements ICopyFile {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 
+    /**
+     * Copy file
+     * @param systemNameFile system name file
+     * @param systemParents parts of the system path - source
+     * @param systemToParents parts of the system path - target
+     * @return info copy files
+     * @throws IOException system error
+     */
     @Override
     public ContainerMovingFiles copy(
             String systemNameFile,
@@ -42,6 +50,14 @@ public class ServiceCopyFile implements ICopyFile {
         return copy(currentPath, createdNewPath);
     }
 
+    /**
+     * Copy file
+     * @param systemNameFiles system names file
+     * @param systemParents parts of the system path - source
+     * @param systemToParents parts of the system path - target
+     * @return info copy files
+     * @throws IOException system error
+     */
     @Override
     public List<ContainerMovingFiles> copy(
             List<String> systemNameFiles,
@@ -56,6 +72,13 @@ public class ServiceCopyFile implements ICopyFile {
         return containers;
     }
 
+    /**
+     * Copy file
+     * @param source source system path
+     * @param target target system path
+     * @return info copy file
+     * @throws IOException system error
+     */
     @Override
     public ContainerMovingFiles copy(Path source, Path target) throws IOException {
         Path newTarget = Files.copy(source, target, REPLACE_EXISTING);

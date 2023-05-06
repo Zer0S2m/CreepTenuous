@@ -7,8 +7,16 @@ import com.zer0s2m.CreepTenuous.services.files.upload.containers.ContainerDataUp
 import java.util.List;
 
 public interface IServiceUploadFileRedis extends IBaseServiceRedis<FileRedis> {
+    /**
+     * Push data in redis create file
+     * @param dataCreatedFile data upload file
+     */
     void create(ContainerDataUploadFile dataCreatedFile);
 
+    /**
+     * Push data in redis create file
+     * @param dataCreatedFile data upload files
+     */
     default void create(List<ContainerDataUploadFile> dataCreatedFile) {
         dataCreatedFile.forEach((data) -> {
             if (data != null) {

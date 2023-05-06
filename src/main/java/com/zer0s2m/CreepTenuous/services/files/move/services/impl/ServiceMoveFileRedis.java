@@ -25,6 +25,11 @@ public class ServiceMoveFileRedis extends BaseServiceFileSystemRedis implements 
         super(directoryRedisRepository, fileRedisRepository, jwtProvider);
     }
 
+    /**
+     * Move file in redis
+     * @param systemPath system path file
+     * @param systemNameFile system name file
+     */
     @Override
     public void move(Path systemPath, String systemNameFile) {
         Optional<FileRedis> objRedis = fileRedisRepository.findById(systemNameFile);
@@ -37,6 +42,11 @@ public class ServiceMoveFileRedis extends BaseServiceFileSystemRedis implements 
         }
     }
 
+    /**
+     * Move files in redis
+     * @param systemPath system path file
+     * @param systemNameFile system names files
+     */
     @Override
     public void move(Path systemPath, List<String> systemNameFile) {
         Iterable<FileRedis> objsRedis = fileRedisRepository.findAllById(systemNameFile);

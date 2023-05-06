@@ -32,12 +32,19 @@ public class ServiceUploadFile implements IUploadFile {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 
+    /**
+     * Upload files
+     * @param files files
+     * @param systemParents parts of the system path - target
+     * @return info is upload and info system file object
+     * @throws IOException system error
+     */
     @Override
     public List<ResponseUploadFile> upload(
             List<MultipartFile> files,
-            List<String> parents
+            List<String> systemParents
     ) throws IOException {
-        Path path = Paths.get(buildDirectoryPath.build(parents));
+        Path path = Paths.get(buildDirectoryPath.build(systemParents));
         return files
                 .stream()
                 .map((file) -> {
