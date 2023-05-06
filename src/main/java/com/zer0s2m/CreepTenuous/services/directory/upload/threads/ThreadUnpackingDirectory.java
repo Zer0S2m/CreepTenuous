@@ -26,7 +26,7 @@ public class ThreadUnpackingDirectory extends Thread {
 
     private final List<ContainerDataUploadFile> finalData = new ArrayList<>();
 
-    private final TreeNode<String> map = new TreeNode<>("root");
+    private final TreeNode<String> map = new TreeNode<>();
 
     public ThreadUnpackingDirectory(String name, List<Path> files, Path outputDirectory) {
         this.setName(name);
@@ -48,6 +48,12 @@ public class ThreadUnpackingDirectory extends Thread {
         }
     }
 
+    /**
+     * Unpacking archive zip
+     * @param zipInputStream stream
+     * @param outputDirectoryFile output
+     * @throws IOException system error
+     */
     private void unpacking(
             ZipInputStream zipInputStream,
             File outputDirectoryFile
@@ -81,6 +87,13 @@ public class ThreadUnpackingDirectory extends Thread {
         }
     }
 
+    /**
+     * Get file from zip archive
+     * @param destinationDir zip archive
+     * @param zipEntryDir object from zip archive
+     * @return ready file for file system
+     * @throws IOException system error
+     */
     private File newFile(File destinationDir, ZipEntry zipEntryDir) throws IOException {
         List<String> systemPartPaths = buildHashMapPathFiles(zipEntryDir);
         String newFileName = String.join(File.separator, systemPartPaths);
@@ -100,6 +113,12 @@ public class ThreadUnpackingDirectory extends Thread {
         return destFile;
     }
 
+    /**
+     * Get data after create file system object
+     * @param file output file
+     * @param realName real name file system object
+     * @return info file system object
+     */
     private ContainerDataUploadFile buildFinalData(File file, String realName) {
         return new ContainerDataUploadFile(
                 realName,
@@ -116,17 +135,20 @@ public class ThreadUnpackingDirectory extends Thread {
      * @return prepared parts of the <b>system path</b>
      */
     private List<String> buildHashMapPathFiles(ZipEntry zipEntryDir) {
-        List<String> parts = Arrays.asList(zipEntryDir.getName().split("/"));
+        List<String> parts = Arrays.asList(zipEntryDir.getName().split(Directory.SEPARATOR.get()));
         List<String> buildParts = new ArrayList<>();
 
+        final Optional<TreeNode<String>>[] previewNode = new Optional[]{Optional.of(this.map)};
+
         parts.forEach((part) -> {
-            // TODO: finalize
-            Optional<TreeNode<String>> node = map.findTreeNode(part);
+            Optional<TreeNode<String>> node = previewNode[0].get().findChildren(part);
+
             if (node.isPresent()) {
                 TreeNode<String> readyNode = node.get();
                 buildParts.add(readyNode.getMetaValue("systemName"));
+                previewNode[0] = previewNode[0].get().findChildren(part);
             } else {
-                TreeNode<String> newNode = map.addChild(part);
+                TreeNode<String> newNode = previewNode[0].get().addChild(part);
                 String systemName;
                 if (zipEntryDir.isDirectory()) {
                     systemName = Distribution.getUUID();
@@ -141,6 +163,10 @@ public class ThreadUnpackingDirectory extends Thread {
         return buildParts;
     }
 
+    /**
+     * Add final data
+     * @param partFinalData data info file system object
+     */
     private void addFinalData(ContainerDataUploadFile partFinalData) {
         this.finalData.add(partFinalData);
     }

@@ -27,6 +27,7 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
     public TreeNode() {
         this.children = new ArrayList<>();
         this.elementsIndex = new ArrayList<>();
+        this.elementsIndex.add(this);
     }
 
     public boolean isRoot() {
@@ -103,5 +104,16 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
 
     public List<TreeNode<T>> getChildren() {
         return children;
+    }
+
+    public Optional<TreeNode<T>> findChildren(Comparable<T> cmp) {
+        for (TreeNode<T> element : this.children) {
+            T elData = element.data;
+            if (cmp.compareTo(elData) == 0) {
+                return Optional.of(element);
+            }
+        }
+
+        return Optional.empty();
     }
 }
