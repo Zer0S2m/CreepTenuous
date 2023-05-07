@@ -2,7 +2,7 @@ package com.zer0s2m.CreepTenuous.services.files.copy.services.impl;
 
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.core.ServiceFileSystem;
-import com.zer0s2m.CreepTenuous.services.files.copy.services.ICopyFile;
+import com.zer0s2m.CreepTenuous.services.files.copy.services.IServiceCopyFile;
 import com.zer0s2m.CreepTenuous.services.files.move.containers.ContainerMovingFiles;
 import com.zer0s2m.CreepTenuous.utils.UtilsFiles;
 
@@ -18,7 +18,7 @@ import java.util.List;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @ServiceFileSystem("copy-file")
-public class ServiceCopyFile implements ICopyFile {
+public class ServiceCopyFile implements IServiceCopyFile {
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired

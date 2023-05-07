@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.services.user.create.services.impl;
 
 import com.zer0s2m.CreepTenuous.services.user.enums.UserAlready;
-import com.zer0s2m.CreepTenuous.services.user.create.services.ICreateUser;
+import com.zer0s2m.CreepTenuous.services.user.create.services.IServiceCreateUser;
 import com.zer0s2m.CreepTenuous.services.user.enums.UserRole;
 import com.zer0s2m.CreepTenuous.services.user.exceptions.UserAlreadyExistException;
 import com.zer0s2m.CreepTenuous.models.User;
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
-public class ServiceCreateUser implements ICreateUser {
+@Service("service-create-user")
+public class ServiceCreateUser implements IServiceCreateUser {
     private final UserRepository userRepository;
 
     @Autowired
@@ -21,6 +21,12 @@ public class ServiceCreateUser implements ICreateUser {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Create user in system
+     * @param user entity user model
+     * @return id user
+     * @throws UserAlreadyExistException user already exists (by email or login)
+     */
     @Override
     public Long create(User user) throws UserAlreadyExistException {
         Optional<String> email = Optional.ofNullable(user.getEmail());

@@ -3,7 +3,7 @@ package com.zer0s2m.CreepTenuous.services.files.download.services.impl;
 import com.zer0s2m.CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.core.ServiceFileSystem;
-import com.zer0s2m.CreepTenuous.services.files.download.services.IDownloadFile;
+import com.zer0s2m.CreepTenuous.services.files.download.services.IServiceDownloadFile;
 import com.zer0s2m.CreepTenuous.services.files.download.containers.ContainerDownloadFile3;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsFileService;
 
@@ -20,7 +20,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @ServiceFileSystem("download-file")
-public class ServiceDownloadFile implements IDownloadFile, CheckIsExistsFileService {
+public class ServiceDownloadFile implements IServiceDownloadFile, CheckIsExistsFileService {
     private final ServiceBuildDirectoryPath buildDirectoryPath;
     private final ConfigurableMimeFileTypeMap fileTypeMap = new ConfigurableMimeFileTypeMap();
 

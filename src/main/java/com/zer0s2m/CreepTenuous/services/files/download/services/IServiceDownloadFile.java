@@ -9,7 +9,7 @@ import org.springframework.http.HttpHeaders;
 import java.io.IOException;
 import java.util.List;
 
-public interface IDownloadFile {
+public interface IServiceDownloadFile {
     /**
      * Get resource for download file
      * @param systemParents system path part directories

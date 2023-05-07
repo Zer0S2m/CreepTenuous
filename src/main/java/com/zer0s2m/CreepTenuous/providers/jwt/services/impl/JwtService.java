@@ -13,7 +13,7 @@ import com.zer0s2m.CreepTenuous.repositories.UserRepository;
 import com.zer0s2m.CreepTenuous.services.user.enums.UserException;
 import com.zer0s2m.CreepTenuous.services.user.exceptions.UserNotFoundException;
 import com.zer0s2m.CreepTenuous.services.user.exceptions.UserNotValidPasswordException;
-import com.zer0s2m.CreepTenuous.services.user.generatePassword.services.impl.GeneratePassword;
+import com.zer0s2m.CreepTenuous.services.user.utils.impl.GeneratePassword;
 import com.zer0s2m.CreepTenuous.providers.jwt.services.IJwtService;
 
 import io.jsonwebtoken.Claims;

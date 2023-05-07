@@ -44,5 +44,6 @@ public class ControllerApiDeleteDirectory implements CheckIsExistsDirectoryApi, 
                 directoryForm.systemDirectoryName()
         );
         deleteDirectory.delete(directoryForm.systemParents(), directoryForm.systemDirectoryName());
+        deleteDirectoryRedis.delete(directoryForm.systemDirectoryName());
     }
 }

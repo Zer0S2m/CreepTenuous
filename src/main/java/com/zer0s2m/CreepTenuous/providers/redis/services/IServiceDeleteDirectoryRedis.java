@@ -6,5 +6,9 @@ import com.zer0s2m.CreepTenuous.providers.redis.services.base.IBaseServiceRedis;
 import java.util.List;
 
 public interface IServiceDeleteDirectoryRedis extends IBaseServiceRedis<DirectoryRedis> {
-    void delete(List<String> systemParents, String systemNameDirectory);
+    /**
+     * Delete object in redis
+     * @param systemNameDirectory system name directory id {@link DirectoryRedis#getRealNameDirectory()}
+     */
+    void delete(String systemNameDirectory);
 }

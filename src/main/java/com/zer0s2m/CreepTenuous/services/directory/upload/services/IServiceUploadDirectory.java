@@ -9,5 +9,13 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public interface IServiceUploadDirectory {
-    CompletableFuture<ResponseUploadDirectory> upload(List<String> parents, MultipartFile zipFile) throws IOException;
+    /**
+     * Run thread for unpacking zip archive
+     * @param systemParents parts of the system path - target
+     * @param zipFile zip archive
+     * @return data upload
+     * @throws IOException system error
+     */
+    CompletableFuture<ResponseUploadDirectory> upload(List<String> systemParents, MultipartFile zipFile)
+            throws IOException;
 }

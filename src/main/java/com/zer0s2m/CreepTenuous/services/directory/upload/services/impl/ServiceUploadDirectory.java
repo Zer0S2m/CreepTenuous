@@ -29,13 +29,20 @@ public class ServiceUploadDirectory implements IServiceUploadDirectory, IService
         this.buildDirectoryPath = buildDirectoryPath;
     }
 
+    /**
+     * Run thread for unpacking zip archive
+     * @param systemParents parts of the system path - target
+     * @param zipFile zip archive
+     * @return data upload
+     * @throws IOException system error
+     */
     @Async
     @Override
     public CompletableFuture<ResponseUploadDirectory> upload(
-            List<String> parents,
+            List<String> systemParents,
             MultipartFile zipFile
     ) throws IOException {
-        Path path = Path.of(buildDirectoryPath.build(parents));
+        Path path = Path.of(buildDirectoryPath.build(systemParents));
         Path newPathZipFile = Path.of(String.valueOf(path), zipFile.getOriginalFilename());
         final ContainerUploadFile container = new ContainerUploadFile();
 

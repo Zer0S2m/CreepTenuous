@@ -10,7 +10,6 @@ import com.zer0s2m.CreepTenuous.services.core.BaseServiceFileSystemRedis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service("delete-directory-redis")
@@ -29,8 +28,12 @@ public class ServiceDeleteDirectoryRedis extends BaseServiceFileSystemRedis impl
         directoryRedisRepository.delete(objRedis);
     }
 
+    /**
+     * Delete object in redis
+     * @param systemNameDirectory system name directory id {@link DirectoryRedis#getRealNameDirectory()}
+     */
     @Override
-    public void delete(List<String> systemParents, String systemNameDirectory) {
+    public void delete(String systemNameDirectory) {
         Optional<DirectoryRedis> objRedis = directoryRedisRepository.findById(systemNameDirectory);
         objRedis.ifPresent(this::push);
     }

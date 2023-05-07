@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
-public interface IDeleteFile {
+public interface IServiceDeleteFile {
     /**
      * Delete file from file system
      * @param systemNameFile system name file

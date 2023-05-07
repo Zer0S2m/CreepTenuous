@@ -3,7 +3,7 @@ package com.zer0s2m.CreepTenuous.services.directory.create.services.impl;
 import com.zer0s2m.CreepTenuous.providers.build.os.core.Distribution;
 import com.zer0s2m.CreepTenuous.services.core.ServiceFileSystem;
 import com.zer0s2m.CreepTenuous.services.directory.create.containers.ContainerDataCreatedDirectory;
-import com.zer0s2m.CreepTenuous.services.directory.create.services.ICreateDirectory;
+import com.zer0s2m.CreepTenuous.services.directory.create.services.IServiceCreateDirectory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @ServiceFileSystem("create-directory")
-public class ServiceCreateDirectory implements ICreateDirectory {
+public class ServiceCreateDirectory implements IServiceCreateDirectory {
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
@@ -23,6 +23,14 @@ public class ServiceCreateDirectory implements ICreateDirectory {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 
+    /**
+     * Create directory in system
+     * @param systemParents parts of the system path - source
+     * @param nameDirectory real system name
+     * @return data create directory
+     * @throws NoSuchFileException no directory in system
+     * @throws FileAlreadyExistsException directory exists
+     */
     @Override
     public ContainerDataCreatedDirectory create(
             List<String> systemParents,

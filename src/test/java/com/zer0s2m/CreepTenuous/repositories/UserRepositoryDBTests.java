@@ -3,7 +3,7 @@ package com.zer0s2m.CreepTenuous.repositories;
 import com.zer0s2m.CreepTenuous.helpers.TestTagRepository;
 import com.zer0s2m.CreepTenuous.models.User;
 import com.zer0s2m.CreepTenuous.services.user.enums.UserRole;
-import com.zer0s2m.CreepTenuous.services.user.generatePassword.services.impl.GeneratePassword;
+import com.zer0s2m.CreepTenuous.services.user.utils.impl.GeneratePassword;
 
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

@@ -30,16 +30,28 @@ public class ServiceUploadDirectoryRedis extends BaseServiceFileSystemRedis impl
         super(directoryRedisRepository, fileRedisRepository, jwtProvider);
     }
 
+    /**
+     * Save data directories
+     * @param dataRedis entities must not be {@literal null} nor must it contain {@literal null}.
+     */
     @Override
-    public void pushDirectoryRedis(List<DirectoryRedis> dataRedis) {
+    public void pushDirectoryRedis(Iterable<DirectoryRedis> dataRedis) {
         directoryRedisRepository.saveAll(dataRedis);
     }
 
+    /**
+     * Save data files
+     * @param dataRedis entities must not be {@literal null} nor must it contain {@literal null}.
+     */
     @Override
-    public void pushFileRedis(List<FileRedis> dataRedis) {
+    public void pushFileRedis(Iterable<FileRedis> dataRedis) {
         fileRedisRepository.saveAll(dataRedis);
     }
 
+    /**
+     * Create objects in redis
+     * @param dataUploadFileList data upload file system objects
+     */
     @Override
     public void upload(List<ContainerDataUploadFile> dataUploadFileList) {
         this.loginUser = accessClaims.get("login", String.class);
@@ -60,6 +72,11 @@ public class ServiceUploadDirectoryRedis extends BaseServiceFileSystemRedis impl
         pushFileRedis(fileRedisList);
     }
 
+    /**
+     * Data preparation for redis
+     * @param dataUploadFile data
+     * @return object in redis entity
+     */
     private DirectoryRedis buildDirectoryRedis(ContainerDataUploadFile dataUploadFile) {
         return new DirectoryRedis(
                 this.loginUser,
@@ -70,6 +87,11 @@ public class ServiceUploadDirectoryRedis extends BaseServiceFileSystemRedis impl
         );
     }
 
+    /**
+     * Data preparation for redis
+     * @param dataUploadFile data
+     * @return object in redis entity
+     */
     private FileRedis buildFileRedis(ContainerDataUploadFile dataUploadFile) {
         return new FileRedis(
                 this.loginUser,

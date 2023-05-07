@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.services.directory.delete.services.impl;
 
 import com.zer0s2m.CreepTenuous.services.core.ServiceFileSystem;
-import com.zer0s2m.CreepTenuous.services.directory.delete.services.IDeleteDirectory;
+import com.zer0s2m.CreepTenuous.services.directory.delete.services.IServiceDeleteDirectory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryService;
 
@@ -14,7 +14,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 @ServiceFileSystem("delete-directory")
-public class ServiceDeleteDirectory implements IDeleteDirectory, CheckIsExistsDirectoryService {
+public class ServiceDeleteDirectory implements IServiceDeleteDirectory, CheckIsExistsDirectoryService {
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
@@ -22,6 +22,12 @@ public class ServiceDeleteDirectory implements IDeleteDirectory, CheckIsExistsDi
         this.buildDirectoryPath = buildDirectoryPath;
     }
 
+    /**
+     * Delete directory from system
+     * @param systemParents parts of the system path - source
+     * @param systemName system name directory
+     * @throws NoSuchFileException system error
+     */
     @Override
     public void delete(
             List<String> systemParents,
