@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 public interface WalkDirectoryInfo {
     /**
      * Get info directory from source path
+     * <p><b>Replaces sources with target path</b></p>
      * @param source source system path
      * @param target target system path
      * @return info attached files and directories
@@ -23,12 +24,24 @@ public interface WalkDirectoryInfo {
             paths
                     .forEach((attach) -> attached.add(new ContainerInfoFileSystemObject(
                             attach,
-                            Path.of(attach.toString().replace(source.toString(), target.toString())),
+                            target != null ?
+                                    Path.of(attach.toString().replace(source.toString(), target.toString())) : null,
                             attach.getFileName().toString(),
                             Files.isRegularFile(attach),
                             Files.isDirectory(attach)
                     )));
         }
         return attached;
+    }
+
+    /**
+     * Get info directory from source path
+     * <p>No replaces sources with target path</p>
+     * @param source source system path
+     * @return info attached files and directories
+     * @throws IOException error system
+     */
+    static List<ContainerInfoFileSystemObject> walkDirectory(Path source) throws IOException {
+        return walkDirectory(source, null);
     }
 }
