@@ -3,6 +3,7 @@ package com.zer0s2m.CreepTenuous.services.directory.copy.services.impl;
 import com.zer0s2m.CreepTenuous.components.RootPath;
 import com.zer0s2m.CreepTenuous.providers.build.os.core.Distribution;
 import com.zer0s2m.CreepTenuous.services.core.Directory;
+import com.zer0s2m.CreepTenuous.services.core.ServiceFileSystem;
 import com.zer0s2m.CreepTenuous.services.directory.copy.enums.MethodCopyDirectory;
 import com.zer0s2m.CreepTenuous.services.directory.copy.services.IServiceCopyDirectory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
@@ -12,14 +13,13 @@ import com.zer0s2m.CreepTenuous.utils.WalkDirectoryInfo;
 import com.zer0s2m.CreepTenuous.utils.containers.ContainerInfoFileSystemObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
 
-@Service("copy-directory")
+@ServiceFileSystem("copy-directory")
 public class ServiceCopyDirectory implements IServiceCopyDirectory, CheckIsExistsDirectoryService {
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 

@@ -1,22 +1,26 @@
 package com.zer0s2m.CreepTenuous.services.directory.manager.services.impl;
 
-import com.zer0s2m.CreepTenuous.providers.redis.models.DirectoryRedis;
-import com.zer0s2m.CreepTenuous.services.directory.manager.containers.ContainerDataFiles;
-import com.zer0s2m.CreepTenuous.services.directory.manager.services.IBuilderDataFile;
+import com.zer0s2m.CreepTenuous.services.core.ServiceFileSystem;
+import com.zer0s2m.CreepTenuous.services.directory.manager.containers.ContainerDataSystemFileObject;
+import com.zer0s2m.CreepTenuous.services.directory.manager.services.IServiceBuilderDataFile;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
-import org.springframework.stereotype.Service;
 
 import java.net.URLConnection;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service("build-data-file")
-public class BuilderDataFile implements IBuilderDataFile {
+@ServiceFileSystem("build-data-file")
+public class ServiceBuilderDataFile implements IServiceBuilderDataFile {
+    /**
+     * Get data system file objects
+     * @param paths source directories
+     * @return data system file objects
+     */
     @Override
-    public ContainerDataFiles build(ArrayList<List<Path>> paths) {
+    public ContainerDataSystemFileObject build(ArrayList<List<Path>> paths) {
         JSONArray readyFiles = new JSONArray();
         List<String> pathsDirectory = new ArrayList<>();
 
@@ -30,9 +34,16 @@ public class BuilderDataFile implements IBuilderDataFile {
             pathsDirectory.add(path.getFileName().toString());
         }
 
-        return new ContainerDataFiles(readyFiles.toList(), pathsDirectory);
+        return new ContainerDataSystemFileObject(readyFiles.toList(), pathsDirectory);
     }
 
+    /**
+     * Build json
+     * @param path source
+     * @param readyFiles array data
+     * @param isFile is file
+     * @param isDirectory is directory
+     */
     private void buildJSON(Path path, JSONArray readyFiles, boolean isFile, boolean isDirectory) {
         JSONObject obj = new JSONObject();
         obj.put("fileName", path.getFileName().toString());
@@ -49,22 +60,5 @@ public class BuilderDataFile implements IBuilderDataFile {
         }
 
         readyFiles.put(obj);
-    }
-
-    @Override
-    public List<Object> build(List<DirectoryRedis> redisList) {
-        JSONArray readyFiles = new JSONArray();
-
-        redisList.forEach((objRedis) -> {
-            JSONObject objJson = new JSONObject();
-            objJson.put("nameDirectory", objRedis.getRealNameDirectory());
-            objJson.put("systemNameDirectory", objRedis.getSystemNameDirectory());
-            objJson.put("path", objRedis.getPathDirectory());
-            objJson.put("isDirectory", objRedis.getIsDirectory());
-            objJson.put("isFile", objRedis.getIsFile());
-            readyFiles.put(objJson);
-        });
-
-        return readyFiles.toList();
     }
 }

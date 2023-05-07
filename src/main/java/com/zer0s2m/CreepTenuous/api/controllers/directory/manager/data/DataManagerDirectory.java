@@ -4,8 +4,7 @@ import java.util.List;
 
 
 public record DataManagerDirectory(
-        List<String> partsDirectory,
-        String readyDirectory,
+        List<String> systemParents,
         Integer levelDirectory,
         List<Object> objects
 ) { }

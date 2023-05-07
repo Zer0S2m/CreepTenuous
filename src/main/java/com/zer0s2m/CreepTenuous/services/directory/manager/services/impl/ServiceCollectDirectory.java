@@ -1,9 +1,8 @@
 package com.zer0s2m.CreepTenuous.services.directory.manager.services.impl;
 
 import com.zer0s2m.CreepTenuous.services.core.Directory;
-import com.zer0s2m.CreepTenuous.services.directory.manager.services.ICollectDirectory;
-
-import org.springframework.stereotype.Service;
+import com.zer0s2m.CreepTenuous.services.core.ServiceFileSystem;
+import com.zer0s2m.CreepTenuous.services.directory.manager.services.IServiceCollectDirectory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,15 +14,19 @@ import java.util.List;
 import java.util.stream.Stream;
 import java.util.function.Supplier;
 
-@Service("collect-directory")
-public class CollectDirectory implements ICollectDirectory {
-
+@ServiceFileSystem("collect-directory")
+public class ServiceCollectDirectory implements IServiceCollectDirectory {
+    /**
+     * Collect children in directory
+     * @param path system source path
+     * @return data: directories and files
+     */
     @Override
     public ArrayList<List<Path>> collect(String path) {
-        Path _path = Paths.get(path);
+        Path source = Paths.get(path);
         Supplier<Stream<Path>> stream = () -> {
             try {
-                return Files.walk(_path, 1);
+                return Files.walk(source, 1);
             } catch (IOException e) {
                 try {
                     throw new NoSuchFileException(Directory.NOT_FOUND_DIRECTORY.get());
