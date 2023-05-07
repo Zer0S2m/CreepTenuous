@@ -3,7 +3,7 @@ package com.zer0s2m.CreepTenuous.services.user.enums;
 public enum UserAlready {
     USER_EMAIL_EXISTS("email"),
     USER_LOGIN_EXISTS("login"),
-    USER_ALREADY_EXISTS("Пользователь с таким %s уже существует");
+    USER_ALREADY_EXISTS("User with this %s already exists.");
 
     private final String msg;
 

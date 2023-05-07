@@ -74,7 +74,10 @@ public class ControllerApiCopyDirectoryTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
                                 new ArrayList<>(),
+                                new ArrayList<>(),
                                 List.of(DIRECTORIES_3.get(0)),
+                                List.of(DIRECTORIES_3.get(0)),
+                                DIRECTORIES_1.get(0),
                                 DIRECTORIES_1.get(0),
                                 MethodCopyDirectory.FOLDER.getMethod()
                         )))
@@ -123,7 +126,10 @@ public class ControllerApiCopyDirectoryTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
                                 new ArrayList<>(),
+                                new ArrayList<>(),
                                 List.of(DIRECTORIES_3.get(0)),
+                                List.of(DIRECTORIES_3.get(0)),
+                                DIRECTORIES_1.get(0),
                                 DIRECTORIES_1.get(0),
                                 MethodCopyDirectory.CONTENT.getMethod()
                         )))
@@ -156,7 +162,10 @@ public class ControllerApiCopyDirectoryTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
                                 Arrays.asList("invalid", "path", "directory"),
+                                Arrays.asList("invalid", "path", "directory"),
                                 new ArrayList<>(),
+                                new ArrayList<>(),
+                                "testFolder",
                                 "testFolder",
                                 1
                         )))
@@ -179,7 +188,10 @@ public class ControllerApiCopyDirectoryTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
                                 new ArrayList<>(),
+                                new ArrayList<>(),
                                 Arrays.asList("invalid", "path", "directory"),
+                                Arrays.asList("invalid", "path", "directory"),
+                                "testFolder",
                                 "testFolder",
                                 1
                         )))
@@ -201,7 +213,13 @@ public class ControllerApiCopyDirectoryTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
-                                null, new ArrayList<>(), "testFolder", 1
+                                null,
+                                null,
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                "testFolder",
+                                "testFolder",
+                                1
                         )))
                 )
                 .andExpect(status().isBadRequest());
@@ -214,7 +232,13 @@ public class ControllerApiCopyDirectoryTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
-                                new ArrayList<>(), null, "testFolder", 1
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                null,
+                                null,
+                                "testFolder",
+                                "testFolder",
+                                1
                         )))
                 )
                 .andExpect(status().isBadRequest());
@@ -227,7 +251,13 @@ public class ControllerApiCopyDirectoryTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new FormCopyDirectoryApi(
-                                new ArrayList<>(), new ArrayList<>(), "", 1
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                "",
+                                "",
+                                1
                         )))
                 )
                 .andExpect(status().isBadRequest());
