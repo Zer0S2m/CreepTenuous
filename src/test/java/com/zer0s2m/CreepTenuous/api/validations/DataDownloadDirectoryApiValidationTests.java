@@ -19,13 +19,23 @@ public class DataDownloadDirectoryApiValidationTests extends BaseValidationDataA
 {
     @Test
     public void notValidNameFile_fail() {
-        DataDownloadDirectory invalidDataDownloadDirectory = new DataDownloadDirectory(new ArrayList<>(), null);
+        DataDownloadDirectory invalidDataDownloadDirectory = new DataDownloadDirectory(
+                new ArrayList<>(),
+                new ArrayList<>(),
+                null,
+                null
+        );
         setErrorInvalidData(getValidator(), invalidDataDownloadDirectory);
     }
 
     @Test
     public void notValidParents_fail() {
-        DataDownloadDirectory invalidDataDownloadDirectory = new DataDownloadDirectory(null, "testFolder");
+        DataDownloadDirectory invalidDataDownloadDirectory = new DataDownloadDirectory(
+                null,
+                null,
+                "testFolder",
+                "testFolder"
+        );
         setErrorInvalidData(getValidator(), invalidDataDownloadDirectory);
     }
 }

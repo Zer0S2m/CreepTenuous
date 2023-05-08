@@ -1,6 +1,7 @@
 package com.zer0s2m.CreepTenuous.api.controllers.files.copy;
 
 import com.zer0s2m.CreepTenuous.api.controllers.files.copy.data.DataCopyFile;
+import com.zer0s2m.CreepTenuous.api.controllers.files.copy.http.ResponseCopyFile;
 import com.zer0s2m.CreepTenuous.api.core.annotations.V1APIRestController;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsFileApi;
@@ -38,7 +39,7 @@ public class ControllerApiCopyFile implements
 
     @PostMapping("/file/copy")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void createFile(
+    public ResponseCopyFile copy(
             final @Valid @RequestBody DataCopyFile file,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws IOException {
@@ -56,6 +57,7 @@ public class ControllerApiCopyFile implements
                     file.systemToParents()
             );
             serviceCopyFileRedis.copy(containerData.target(), file.systemNameFile(), containerData.systemNameFile());
+            return new ResponseCopyFile(List.of(containerData));
         } else {
             serviceCopyFileRedis.checkRights(file.systemNameFiles());
             List<ContainerMovingFiles> containersData = serviceCopyFile.copy(
@@ -68,6 +70,7 @@ public class ControllerApiCopyFile implements
                     Objects.requireNonNull(file.systemNameFiles()),
                     containersData.stream().map(ContainerMovingFiles::systemNameFile).collect(Collectors.toList())
             );
+            return new ResponseCopyFile(containersData);
         }
     }
 }

@@ -37,6 +37,10 @@ public class ServiceCopyFileRedis extends BaseServiceFileSystemRedis implements 
         List<FileRedis> existingObjsRedis = (List<FileRedis>) fileRedisRepository.findAllById(existingSystemNameFile);
         List<FileRedis> newObjsRedis = new ArrayList<>();
 
+        if (existingObjsRedis.size() == 0) {
+            return;
+        }
+
         for (int i = 0; i < newSystemFileName.size(); i++) {
             FileRedis existingObjRedis = existingObjsRedis.get(i);
             FileRedis newObjRedis = IServiceCreateFileRedis.getObjRedis(

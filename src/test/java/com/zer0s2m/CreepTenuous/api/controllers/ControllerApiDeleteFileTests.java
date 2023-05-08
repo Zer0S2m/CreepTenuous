@@ -4,6 +4,7 @@ import com.zer0s2m.CreepTenuous.helpers.TestTagControllerApi;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.common.exceptions.messages.NoSuchFileExists;
 import com.zer0s2m.CreepTenuous.api.controllers.files.delete.data.DataDeleteFile;
+import com.zer0s2m.CreepTenuous.helpers.UtilsAuthAction;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.core.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.messages.ExceptionNotDirectoryMsg;
@@ -47,6 +48,8 @@ public class ControllerApiDeleteFileTests {
     @Autowired
     private ServiceBuildDirectoryPath buildDirectoryPath;
 
+    private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
+
     private final String testFile1 = "testFile1.txt";
     private final String testFile2 = "testFile2.txt";
 
@@ -78,6 +81,7 @@ public class ControllerApiDeleteFileTests {
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(record))
+                            .header("Authorization",  accessToken)
                     )
                     .andExpect(status().isNoContent());
             Assertions.assertFalse(Files.exists(pathTestFile));
@@ -93,6 +97,7 @@ public class ControllerApiDeleteFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(INVALID_RECORD_PATH_DIRECTORY))
+                        .header("Authorization",  accessToken)
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(content().json(
@@ -109,6 +114,7 @@ public class ControllerApiDeleteFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(INVALID_RECORD_NOT_EXISTS_FILE))
+                        .header("Authorization",  accessToken)
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(content().json(
@@ -127,6 +133,7 @@ public class ControllerApiDeleteFileTests {
                         .content(objectMapper.writeValueAsString(
                                 new DataDeleteFile("", "", new ArrayList<>(), new ArrayList<>())
                         ))
+                        .header("Authorization",  accessToken)
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -138,8 +145,13 @@ public class ControllerApiDeleteFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new DataDeleteFile("testFile", "testFile", null, null)
+                                new DataDeleteFile(
+                                        "testFile",
+                                        "testFile",
+                                        null, null
+                                )
                         ))
+                        .header("Authorization",  accessToken)
                 )
                 .andExpect(status().isBadRequest());
     }

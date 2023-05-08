@@ -19,7 +19,13 @@ public class DataCopyDirectoryApiValidationTests extends BaseValidationDataApi<F
     @Test
     public void notValidParents_fail() {
         FormCopyDirectoryApi invalidDataCopyDirectory = new FormCopyDirectoryApi(
-                null, new ArrayList<>(), "testFolder", 1
+                null,
+                null,
+                new ArrayList<>(),
+                new ArrayList<>(),
+                "testFolder",
+                "testFolder",
+                1
         );
         setErrorInvalidData(getValidator(), invalidDataCopyDirectory);
     }
@@ -27,7 +33,13 @@ public class DataCopyDirectoryApiValidationTests extends BaseValidationDataApi<F
     @Test
     public void notValidToParents_fail() {
         FormCopyDirectoryApi invalidDataCopyDirectory = new FormCopyDirectoryApi(
-                new ArrayList<>(), null, "testFolder", 1
+                new ArrayList<>(),
+                new ArrayList<>(),
+                null,
+                null,
+                "testFolder",
+                "testFolder",
+                1
         );
         setErrorInvalidData(getValidator(), invalidDataCopyDirectory);
     }
@@ -35,7 +47,13 @@ public class DataCopyDirectoryApiValidationTests extends BaseValidationDataApi<F
     @Test
     public void notValidNameFile_fail() {
         FormCopyDirectoryApi invalidDataCopyDirectory = new FormCopyDirectoryApi(
-                new ArrayList<>(), new ArrayList<>(), null, 1
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                null,
+                null,
+                1
         );
         setErrorInvalidData(getValidator(), invalidDataCopyDirectory);
     }
@@ -43,7 +61,13 @@ public class DataCopyDirectoryApiValidationTests extends BaseValidationDataApi<F
     @Test
     public void notValidMethod_fail() {
         FormCopyDirectoryApi invalidDataCopyDirectory = new FormCopyDirectoryApi(
-                new ArrayList<>(), new ArrayList<>(), "testFolder", null
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                "testFolder",
+                "testFolder",
+                null
         );
         setErrorInvalidData(getValidator(), invalidDataCopyDirectory);
     }

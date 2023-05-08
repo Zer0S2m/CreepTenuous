@@ -1,13 +1,14 @@
 package com.zer0s2m.CreepTenuous.api.controllers.files.upload;
 
+import com.zer0s2m.CreepTenuous.api.controllers.files.upload.http.DataUploadFile;
 import com.zer0s2m.CreepTenuous.api.controllers.files.upload.http.ResponseUploadFile;
 import com.zer0s2m.CreepTenuous.api.core.annotations.V1APIRestController;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 import com.zer0s2m.CreepTenuous.providers.redis.controllers.CheckRightsActionFileSystem;
 import com.zer0s2m.CreepTenuous.services.files.upload.containers.ContainerDataUploadFile;
 import com.zer0s2m.CreepTenuous.services.files.upload.services.impl.ServiceUploadFile;
-
 import com.zer0s2m.CreepTenuous.services.files.upload.services.impl.ServiceUploadFileRedis;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -32,7 +33,7 @@ public class ControllerApiUploadFile implements CheckIsExistsDirectoryApi, Check
     }
 
     @PostMapping(value = "/file/upload")
-    public List<ResponseUploadFile> upload(
+    public ResponseUploadFile upload(
             final @RequestPart("files") List<MultipartFile> files,
             final @RequestParam("parents") List<String> parents,
             final @RequestParam("systemParents") List<String> systemParents,
@@ -41,7 +42,7 @@ public class ControllerApiUploadFile implements CheckIsExistsDirectoryApi, Check
         uploadFileRedis.setAccessToken(accessToken);
         uploadFileRedis.checkRights(parents, systemParents, null);
 
-        List<ResponseUploadFile> data = uploadFile.upload(files, systemParents);
+        List<DataUploadFile> data = uploadFile.upload(files, systemParents);
         uploadFileRedis.create(data
                 .stream()
                 .map((obj) -> {
@@ -56,6 +57,6 @@ public class ControllerApiUploadFile implements CheckIsExistsDirectoryApi, Check
                     return null;
                 })
                 .collect(Collectors.toList()));
-        return data;
+        return new ResponseUploadFile(data);
     }
 }

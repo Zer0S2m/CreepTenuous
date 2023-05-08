@@ -1,6 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.files;
 
-import com.zer0s2m.CreepTenuous.api.controllers.files.upload.http.ResponseUploadFile;
+import com.zer0s2m.CreepTenuous.api.controllers.files.upload.http.DataUploadFile;
 import com.zer0s2m.CreepTenuous.helpers.TestTagServiceFileSystem;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.components.RootPath;
@@ -49,7 +49,7 @@ public class ServiceUploadFileTests {
         File testFile = Path.of("src/main/resources/test/", nameTestFile1).toFile();
         InputStream targetStream = new FileInputStream(testFile);
 
-        List<ResponseUploadFile> containerList = service.upload(
+        List<DataUploadFile> containerList = service.upload(
                 List.of(getMockFile(nameTestFile1, targetStream)),
                 new ArrayList<>()
         );
@@ -68,7 +68,7 @@ public class ServiceUploadFileTests {
         InputStream targetStream1 = new FileInputStream(testFile1);
         InputStream targetStream2 = new FileInputStream(testFile2);
 
-        List<ResponseUploadFile> containerList = service.upload(
+        List<DataUploadFile> containerList = service.upload(
                 Arrays.asList(
                         getMockFile(nameTestFile1, targetStream1),
                         getMockFile(nameTestFile2, targetStream2)

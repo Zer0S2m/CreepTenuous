@@ -29,7 +29,7 @@ public interface ICollectZipDirectory {
         String pathToZip = source.getParent().toString();
         String realPathToZip;
 
-        if (map != null) {
+        if (map != null && map.size() > 0) {
             realPathToZip = Paths.get(
                     pathToZip, map.get(source.getFileName().toString()) + Directory.EXTENSION_FILE_ZIP.get()
             ).toString();
@@ -120,13 +120,23 @@ public interface ICollectZipDirectory {
     private String buildRealNameSystemObject(String rawPath, HashMap<String, String> map) {
         if (map == null) {
             return rawPath;
+        } else if (map.size() == 0) {
+            return rawPath;
         }
 
         StringBuilder readyPathStrContainer = new StringBuilder();
         List<String> rawPathPart = Arrays.asList(rawPath.split(Directory.SEPARATOR.get()));
 
-        rawPathPart.forEach((part) -> readyPathStrContainer
-                .append(map.get(part)).append(Directory.SEPARATOR.get()));
+        rawPathPart.forEach((part) -> {
+            String realNameFileSystemObject = map.get(part);
+            if (realNameFileSystemObject == null) {
+                readyPathStrContainer
+                        .append(part).append(Directory.SEPARATOR.get());
+            } else {
+                readyPathStrContainer
+                        .append(realNameFileSystemObject).append(Directory.SEPARATOR.get());
+            }
+        });
 
         return readyPathStrContainer.substring(0, readyPathStrContainer.length() - 1);
     }

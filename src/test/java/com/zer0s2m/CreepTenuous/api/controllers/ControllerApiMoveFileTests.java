@@ -1,8 +1,10 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagControllerApi;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.move.data.DataMoveFile;
 import com.zer0s2m.CreepTenuous.components.RootPath;
+import com.zer0s2m.CreepTenuous.helpers.UtilsAuthAction;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagControllerApi
 public class ControllerApiMoveFileTests {
     Logger logger = LogManager.getLogger(ControllerApiMoveFileTests.class);
 
@@ -43,6 +46,8 @@ public class ControllerApiMoveFileTests {
 
     @Autowired
     private RootPath rootPath;
+
+    private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     private final String testFile1 = "testFile1.txt";
     private final String testFile2 = "testFile2.txt";
@@ -89,6 +94,7 @@ public class ControllerApiMoveFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_1))
+                        .header("Authorization",  accessToken)
                 )
                 .andExpect(status().isCreated());
 
@@ -132,6 +138,7 @@ public class ControllerApiMoveFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_2))
+                        .header("Authorization",  accessToken)
                 )
                 .andExpect(status().isCreated());
 
@@ -159,6 +166,7 @@ public class ControllerApiMoveFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveFile(
                                         "testFile.txt",
@@ -180,7 +188,8 @@ public class ControllerApiMoveFileTests {
     public void moveFiles_fail_fileNotIsExists() throws Exception {
         MockHttpServletRequestBuilder builderRequest = MockMvcRequestBuilders.post("/api/v1/file/move")
                 .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON);
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization",  accessToken);
 
         this.mockMvc.perform(builderRequest
                 .content(objectMapper.writeValueAsString(
@@ -218,6 +227,7 @@ public class ControllerApiMoveFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveFile(
                                         "file.txt",
@@ -240,6 +250,7 @@ public class ControllerApiMoveFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveFile(
                                         "file.txt",

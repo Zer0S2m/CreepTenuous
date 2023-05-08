@@ -1,8 +1,8 @@
 package com.zer0s2m.CreepTenuous.services.user.enums;
 
 public enum UserException {
-    USER_NOT_IS_EXISTS("Пользователь не найден"),
-    USER_NOT_VALID_PASSWORD("Неверный пароль");
+    USER_NOT_IS_EXISTS("User is not found."),
+    USER_NOT_VALID_PASSWORD("Incorrect password.");
 
     private final String msg;
 

@@ -1,6 +1,7 @@
 package com.zer0s2m.CreepTenuous.api.controllers.files.create;
 
 import com.zer0s2m.CreepTenuous.api.controllers.files.create.data.DataCreateFile;
+import com.zer0s2m.CreepTenuous.api.controllers.files.create.data.ResponseCreateFileApi;
 import com.zer0s2m.CreepTenuous.api.core.annotations.V1APIRestController;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 import com.zer0s2m.CreepTenuous.providers.redis.controllers.CheckRightsActionFileSystem;
@@ -33,7 +34,7 @@ public class ControllerApiCreateFile implements CheckIsExistsDirectoryApi, Check
 
     @PostMapping("/file/create")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void createFile(
+    public ResponseCreateFileApi createFile(
             final @Valid @RequestBody DataCreateFile file,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws NotFoundTypeFileException, IOException {
@@ -45,6 +46,7 @@ public class ControllerApiCreateFile implements CheckIsExistsDirectoryApi, Check
                 file.typeFile()
         );
         serviceFileRedis.create(dataCreatedFile);
+        return new ResponseCreateFileApi(dataCreatedFile.realNameFile(), dataCreatedFile.systemNameFile());
     }
 
     @ExceptionHandler(NotFoundTypeFileException.class)

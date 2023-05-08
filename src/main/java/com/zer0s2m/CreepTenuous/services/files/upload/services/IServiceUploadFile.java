@@ -1,6 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.files.upload.services;
 
-import com.zer0s2m.CreepTenuous.api.controllers.files.upload.http.ResponseUploadFile;
+import com.zer0s2m.CreepTenuous.api.controllers.files.upload.http.DataUploadFile;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,5 +15,5 @@ public interface IServiceUploadFile {
      * @return info is upload and info system file object
      * @throws IOException system error
      */
-    List<ResponseUploadFile> upload(List<MultipartFile> files, List<String> systemParents) throws IOException;
+    List<DataUploadFile> upload(List<MultipartFile> files, List<String> systemParents) throws IOException;
 }
