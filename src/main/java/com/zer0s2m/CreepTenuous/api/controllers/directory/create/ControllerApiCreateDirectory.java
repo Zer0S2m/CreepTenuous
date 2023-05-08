@@ -1,6 +1,7 @@
 package com.zer0s2m.CreepTenuous.api.controllers.directory.create;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.create.data.FormCreateDirectoryApi;
+import com.zer0s2m.CreepTenuous.api.controllers.directory.create.data.ResponseCreateDirectoryApi;
 import com.zer0s2m.CreepTenuous.api.core.annotations.V1APIRestController;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 import com.zer0s2m.CreepTenuous.providers.redis.controllers.CheckRightsActionFileSystem;
@@ -35,7 +36,7 @@ public class ControllerApiCreateDirectory implements CheckIsExistsDirectoryApi, 
 
     @PostMapping("/directory/create")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public final void createDirectory(
+    public final ResponseCreateDirectoryApi createDirectory(
             final @Valid @RequestBody FormCreateDirectoryApi directoryForm,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws NoSuchFileException, FileAlreadyExistsException, NoRightsCreateDirectoryException,
@@ -47,6 +48,10 @@ public class ControllerApiCreateDirectory implements CheckIsExistsDirectoryApi, 
                 directoryForm.name()
         );
         serviceDirectoryRedis.create(dataCreatedDirectory);
+        return new ResponseCreateDirectoryApi(
+                dataCreatedDirectory.realNameDirectory(),
+                dataCreatedDirectory.systemNameDirectory()
+        );
     }
 
     @ExceptionHandler({FileAlreadyExistsException.class, java.nio.file.FileAlreadyExistsException.class})

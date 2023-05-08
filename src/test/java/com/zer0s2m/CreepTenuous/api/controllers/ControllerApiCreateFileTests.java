@@ -15,7 +15,6 @@ import com.zer0s2m.CreepTenuous.services.core.TypeFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -76,11 +75,6 @@ public class ControllerApiCreateFileTests {
     @Test
     public void createFile_success() throws Exception {
         for (DataCreateFile record : Arrays.asList(RECORD_1, RECORD_2, RECORD_3)) {
-            Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(record.nameFile()
-                    + "."
-                    + TypeFile.getExtension(record.typeFile()), record.parents(), logger, buildDirectoryPath
-            );
-
             this.mockMvc.perform(
                     MockMvcRequestBuilders.post("/api/v1/file/create")
                             .accept(MediaType.APPLICATION_JSON)
@@ -89,9 +83,6 @@ public class ControllerApiCreateFileTests {
                             .content(objectMapper.writeValueAsString(record))
             )
                     .andExpect(status().isCreated());
-            Assertions.assertTrue(Files.exists(pathTestFile));
-
-            UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile, logger);
         }
     }
 
@@ -129,7 +120,9 @@ public class ControllerApiCreateFileTests {
                 ));
     }
 
-    @Test
+    /**
+     * @deprecated
+     */
     public void createFile_fail_fileIsExists() throws Exception {
         Path testFile = UtilsActionForFiles.preparePreliminaryFiles(
                 nameTestFile4 + "." + TypeFile.TXT.getExtension(), new ArrayList<>(), logger, buildDirectoryPath

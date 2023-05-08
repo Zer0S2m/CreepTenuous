@@ -1,9 +1,12 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
+import com.zer0s2m.CreepTenuous.api.controllers.directory.upload.http.ResponseUploadDirectory;
 import com.zer0s2m.CreepTenuous.helpers.TestTagControllerApi;
+import com.zer0s2m.CreepTenuous.helpers.UtilsAuthAction;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.core.Directory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -15,13 +18,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.util.FileSystemUtils;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,13 +42,15 @@ public class ControllerApiUploadDirectoryTests {
     @Autowired
     private ServiceBuildDirectoryPath buildDirectoryPath;
 
+    private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
+
     @Test
     public void uploadDirectory_success() throws Exception {
         String testFileZip = "test-zip.zip";
         File testFile = new File("src/main/resources/test/" + testFileZip);
         InputStream targetStream = new FileInputStream(testFile);
 
-        mockMvc.perform(
+        MvcResult result = mockMvc.perform(
                 multipart("/api/v1/directory/upload")
                         .file(new MockMultipartFile(
                                 "directory",
@@ -54,27 +59,32 @@ public class ControllerApiUploadDirectoryTests {
                                 targetStream
                         ))
                         .queryParam("parents", "")
+                        .queryParam("systemParents", "")
+                        .header("Authorization",  accessToken)
                 )
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andReturn();
 
         targetStream.close();
+
+        String json = result.getResponse().getContentAsString();
+        ResponseUploadDirectory response = new ObjectMapper().readValue(json, ResponseUploadDirectory.class);
 
         String testPath = buildDirectoryPath.build(new ArrayList<>());
         logger.info(String.format("Upload file zip: %s", testPath + Directory.SEPARATOR.get() + testFileZip));
 
-        Assertions.assertTrue(Files.exists(Path.of(testPath, "folder_1", "test_image_1.jpeg")));
-        Assertions.assertTrue(Files.exists(Path.of(testPath, "folder_1", "folder_2", "test_image_1.jpeg")));
-        Assertions.assertTrue(Files.exists(Path.of(testPath, "folder_1", "folder_2", "test_image_2.jpeg")));
-        Assertions.assertTrue(Files.exists(Path.of(testPath, "folder_1", "folder_2", "test-file-1.txt")));
-        Assertions.assertTrue(Files.exists(Path.of(testPath, "folder_1", "folder_3", "test-file-1.txt")));
-        Assertions.assertTrue(Files.exists(Path.of(testPath, "folder_4", "test_image_1.jpeg")));
+        response.data().forEach(obj -> Assertions.assertTrue(Files.exists(obj.systemPath())));
 
-        Path pathTestFolder1 = Path.of(buildDirectoryPath.build(List.of("folder_1")));
-        Path pathTestFolder2 = Path.of(buildDirectoryPath.build(List.of("folder_4")));
-        FileSystemUtils.deleteRecursively(pathTestFolder1);
-        FileSystemUtils.deleteRecursively(pathTestFolder2);
-
-        logger.info(String.format("Delete folders for tests: %s; %s", pathTestFolder1, pathTestFolder2));
+        response.data().forEach(obj -> {
+            if (Objects.equals(obj.realName(), "folder_1") || Objects.equals(obj.realName(), "folder_4")) {
+                try {
+                    FileSystemUtils.deleteRecursively(obj.systemPath());
+                    logger.info(String.format("Delete folders for tests: %s", obj.systemPath()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
     @Test
@@ -82,6 +92,8 @@ public class ControllerApiUploadDirectoryTests {
         mockMvc.perform(
                 multipart("/api/v1/directory/upload")
                         .queryParam("parents", "invalid", "path", "directory")
+                        .queryParam("systemParents", "invalid", "path", "directory")
+                        .header("Authorization",  accessToken)
                 )
                 .andExpect(status().isBadRequest());
     }

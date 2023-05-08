@@ -1,6 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.files.upload.services.impl;
 
-import com.zer0s2m.CreepTenuous.api.controllers.files.upload.http.ResponseUploadFile;
+import com.zer0s2m.CreepTenuous.api.controllers.files.upload.http.DataUploadFile;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.core.ServiceFileSystem;
 import com.zer0s2m.CreepTenuous.services.files.upload.services.IServiceUploadFile;
@@ -40,7 +40,7 @@ public class ServiceUploadFile implements IServiceUploadFile {
      * @throws IOException system error
      */
     @Override
-    public List<ResponseUploadFile> upload(
+    public List<DataUploadFile> upload(
             List<MultipartFile> files,
             List<String> systemParents
     ) throws IOException {
@@ -59,7 +59,7 @@ public class ServiceUploadFile implements IServiceUploadFile {
                         Files.copy(file.getInputStream(), newTargetLocation, StandardCopyOption.REPLACE_EXISTING);
                     } catch (IOException e) {
                         logger.error(e);
-                        return new ResponseUploadFile(
+                        return new DataUploadFile(
                                 fileName,
                                 newFileName,
                                 false,
@@ -67,7 +67,7 @@ public class ServiceUploadFile implements IServiceUploadFile {
                                 newTargetLocation
                         );
                     }
-                    return new ResponseUploadFile(
+                    return new DataUploadFile(
                             fileName,
                             newFileName,
                             true,

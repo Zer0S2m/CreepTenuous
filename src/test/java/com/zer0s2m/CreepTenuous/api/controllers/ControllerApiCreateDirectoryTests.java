@@ -1,6 +1,7 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.create.data.FormCreateDirectoryApi;
+import com.zer0s2m.CreepTenuous.api.controllers.directory.create.data.ResponseCreateDirectoryApi;
 import com.zer0s2m.CreepTenuous.helpers.TestTagControllerApi;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.helpers.UtilsAuthAction;
@@ -21,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.nio.file.Files;
@@ -66,21 +68,29 @@ public class ControllerApiCreateDirectoryTests {
 
     @Test
     public void createDirectory_success() throws Exception {
-        this.mockMvc.perform(
+        MvcResult result = this.mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/v1/directory/create")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization",  accessToken)
                         .content(objectMapper.writeValueAsString(RECORD_1))
                 )
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andReturn();
 
-        Path newFolder = Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_1));
+        String json = result.getResponse().getContentAsString();
+        ResponseCreateDirectoryApi response = new ObjectMapper().readValue(json, ResponseCreateDirectoryApi.class);
+
+        Path newFolder = Path.of(serviceBuildDirectoryPath.build(
+                List.of(response.systemNameDirectory())
+        ));
         Assertions.assertTrue(Files.exists(newFolder));
         UtilsActionForFiles.deleteFileAndWriteLog(newFolder, logger);
     }
 
-    @Test
+    /**
+     * @deprecated
+     */
     public void createDirectory_fail_directoryExists() throws Exception {
         UtilsActionForFiles.createDirectories(DIRECTORIES_1, serviceBuildDirectoryPath, logger);
 

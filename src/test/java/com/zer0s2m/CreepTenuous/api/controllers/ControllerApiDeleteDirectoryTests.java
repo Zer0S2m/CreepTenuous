@@ -3,6 +3,7 @@ package com.zer0s2m.CreepTenuous.api.controllers;
 import com.zer0s2m.CreepTenuous.api.controllers.directory.delete.data.FormDeleteDirectoryApi;
 import com.zer0s2m.CreepTenuous.helpers.TestTagControllerApi;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
+import com.zer0s2m.CreepTenuous.helpers.UtilsAuthAction;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.core.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.messages.ExceptionNotDirectoryMsg;
@@ -45,6 +46,8 @@ public class ControllerApiDeleteDirectoryTests {
     @Autowired
     private MockMvc mockMvc;
 
+    private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
+
     FormDeleteDirectoryApi RECORD_1 = new FormDeleteDirectoryApi(
             new ArrayList<>(),
             new ArrayList<>(),
@@ -73,6 +76,7 @@ public class ControllerApiDeleteDirectoryTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_1))
+                        .header("Authorization",  accessToken)
                 )
                 .andExpect(status().isNoContent());
 
@@ -86,6 +90,7 @@ public class ControllerApiDeleteDirectoryTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(INVALID_RECORD))
+                        .header("Authorization",  accessToken)
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(content().json(
@@ -103,6 +108,7 @@ public class ControllerApiDeleteDirectoryTests {
                 MockMvcRequestBuilders.delete("/api/v1/directory/delete")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
                         .content(objectMapper.writeValueAsString(new FormDeleteDirectoryApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),

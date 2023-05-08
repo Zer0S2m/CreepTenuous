@@ -3,6 +3,7 @@ package com.zer0s2m.CreepTenuous.api.controllers;
 import com.zer0s2m.CreepTenuous.api.controllers.directory.move.data.FormMoveDirectoryApi;
 import com.zer0s2m.CreepTenuous.helpers.TestTagControllerApi;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
+import com.zer0s2m.CreepTenuous.helpers.UtilsAuthAction;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.core.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.messages.ExceptionNotDirectoryMsg;
@@ -48,6 +49,8 @@ public class ControllerApiMoveDirectoryTests {
     @Autowired
     private MockMvc mockMvc;
 
+    private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
+
     List<String> DIRECTORIES_1 = List.of("test_folder1");
     List<String> DIRECTORIES_2 = List.of("test_folder1", "test_folder2");
     List<String> DIRECTORIES_3 = List.of("test_folder3");
@@ -72,6 +75,7 @@ public class ControllerApiMoveDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
                         .content(objectMapper.writeValueAsString(new FormMoveDirectoryApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),
@@ -123,6 +127,7 @@ public class ControllerApiMoveDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
                         .content(objectMapper.writeValueAsString(new FormMoveDirectoryApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),
@@ -158,6 +163,7 @@ public class ControllerApiMoveDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
                         .content(objectMapper.writeValueAsString(new FormMoveDirectoryApi(
                                 Arrays.asList("invalid", "path", "directory"),
                                 Arrays.asList("invalid", "path", "directory"),
@@ -184,6 +190,7 @@ public class ControllerApiMoveDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
                         .content(objectMapper.writeValueAsString(new FormMoveDirectoryApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),
