@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.api.controllers.common.infoFileAndDirectory;
 
 import com.zer0s2m.CreepTenuous.api.controllers.common.infoFileAndDirectory.data.DataInfoAndDirectoryApi;
-import com.zer0s2m.CreepTenuous.api.core.version.v1.V1APIController;
+import com.zer0s2m.CreepTenuous.api.core.annotations.V1APIRestController;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.CheckIsExistsDirectoryApi;
 import com.zer0s2m.CreepTenuous.services.common.infoFileAndDirectory.impl.InfoFileAndDirectory;
 
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.file.NoSuchFileException;
 import java.util.List;
 
-@V1APIController
+@V1APIRestController
 public class InfoFileAndDirectoryApi implements CheckIsExistsDirectoryApi {
     private final InfoFileAndDirectory collectInfo;
 

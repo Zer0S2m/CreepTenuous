@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.providers.build.os.services;
 
 import com.zer0s2m.CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
-import com.zer0s2m.CreepTenuous.services.files.enums.ExceptionFile;
+import com.zer0s2m.CreepTenuous.services.core.ExceptionFile;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

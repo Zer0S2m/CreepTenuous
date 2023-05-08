@@ -1,5 +1,7 @@
 package com.zer0s2m.CreepTenuous.services.files;
 
+import com.zer0s2m.CreepTenuous.api.controllers.files.upload.http.DataUploadFile;
+import com.zer0s2m.CreepTenuous.helpers.TestTagServiceFileSystem;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.components.RootPath;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
@@ -32,14 +34,12 @@ import java.util.List;
         RootPath.class,
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagServiceFileSystem
 public class ServiceUploadFileTests {
     Logger logger = LogManager.getLogger(ServiceUploadFileTests.class);
 
     @Autowired
     private ServiceUploadFile service;
-
-    @Autowired
-    private ServiceBuildDirectoryPath buildDirectoryPath;
 
     private final String nameTestFile1 = "test_image_1.jpeg";
     private final String nameTestFile2 = "test_image_2.jpeg";
@@ -49,22 +49,16 @@ public class ServiceUploadFileTests {
         File testFile = Path.of("src/main/resources/test/", nameTestFile1).toFile();
         InputStream targetStream = new FileInputStream(testFile);
 
-        Path pathTestUploadFile = UtilsActionForFiles.preparePreliminaryFiles(
-                nameTestFile1, new ArrayList<>(), logger, buildDirectoryPath
-        );
-
-        service.upload(
+        List<DataUploadFile> containerList = service.upload(
                 List.of(getMockFile(nameTestFile1, targetStream)),
                 new ArrayList<>()
         );
 
         targetStream.close();
 
-        Assertions.assertTrue(Files.exists(pathTestUploadFile));
-
-        UtilsActionForFiles.deleteFileAndWriteLog(pathTestUploadFile, logger);
-
-        Assertions.assertFalse(Files.exists(pathTestUploadFile));
+        Assertions.assertTrue(Files.exists(containerList.get(0).systemPath()));
+        UtilsActionForFiles.deleteFileAndWriteLog(containerList.get(0).systemPath(), logger);
+        Assertions.assertFalse(Files.exists(containerList.get(0).systemPath()));
     }
 
     @Test
@@ -74,14 +68,7 @@ public class ServiceUploadFileTests {
         InputStream targetStream1 = new FileInputStream(testFile1);
         InputStream targetStream2 = new FileInputStream(testFile2);
 
-        Path pathTestUploadFile1 = UtilsActionForFiles.preparePreliminaryFiles(
-                nameTestFile1, new ArrayList<>(), logger, buildDirectoryPath
-        );
-        Path pathTestUploadFile2 = UtilsActionForFiles.preparePreliminaryFiles(
-                nameTestFile1, new ArrayList<>(), logger, buildDirectoryPath
-        );
-
-        service.upload(
+        List<DataUploadFile> containerList = service.upload(
                 Arrays.asList(
                         getMockFile(nameTestFile1, targetStream1),
                         getMockFile(nameTestFile2, targetStream2)
@@ -92,14 +79,14 @@ public class ServiceUploadFileTests {
         targetStream1.close();
         targetStream2.close();
 
-        Assertions.assertTrue(Files.exists(pathTestUploadFile1));
-        Assertions.assertTrue(Files.exists(pathTestUploadFile2));
+        Assertions.assertTrue(Files.exists(containerList.get(0).systemPath()));
+        Assertions.assertTrue(Files.exists(containerList.get(1).systemPath()));
 
-        UtilsActionForFiles.deleteFileAndWriteLog(pathTestUploadFile1, logger);
-        UtilsActionForFiles.deleteFileAndWriteLog(pathTestUploadFile2, logger);
+        UtilsActionForFiles.deleteFileAndWriteLog(containerList.get(0).systemPath(), logger);
+        UtilsActionForFiles.deleteFileAndWriteLog(containerList.get(1).systemPath(), logger);
 
-        Assertions.assertFalse(Files.exists(pathTestUploadFile1));
-        Assertions.assertFalse(Files.exists(pathTestUploadFile2));
+        Assertions.assertFalse(Files.exists(containerList.get(0).systemPath()));
+        Assertions.assertFalse(Files.exists(containerList.get(1).systemPath()));
     }
 
     protected MockMultipartFile getMockFile(String nameFile, InputStream stream) throws IOException {

@@ -1,6 +1,7 @@
 package com.zer0s2m.CreepTenuous.services.directory.download.services.impl;
 
-import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
+import com.zer0s2m.CreepTenuous.providers.redis.services.IServiceDownloadDirectoryRedis;
+import com.zer0s2m.CreepTenuous.services.core.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.download.services.IDownloadDirectory;
 import com.zer0s2m.CreepTenuous.services.directory.download.services.ICollectZipDirectory;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.nio.file.Path;
 
@@ -31,20 +33,32 @@ public class ServiceDownloadDirectory implements
     private final Logger logger = LogManager.getLogger(ServiceDownloadDirectory.class);
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
+    /**
+     * info directory (get data - {@link IServiceDownloadDirectoryRedis#getResource(List)})
+     */
+    private HashMap<String, String> map = null;
+
     @Autowired
     public ServiceDownloadDirectory(ServiceBuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 
+    /**
+     * Download directory archive zip
+     * @param systemParents parts of the system path - source
+     * @param systemNameDirectory system name directory
+     * @return archive zip
+     * @throws IOException system error
+     */
     @Override
     public ResponseEntity<Resource> download(
-            List<String> parents,
-            String directory
+            List<String> systemParents,
+            String systemNameDirectory
     ) throws IOException {
-        Path path = Paths.get(buildDirectoryPath.build(parents), directory);
-        checkDirectory(path);
+        Path source = Paths.get(buildDirectoryPath.build(systemParents), systemNameDirectory);
+        checkDirectory(source);
 
-        Path pathToZip = collectZip(path);
+        Path pathToZip = collectZip(source, this.map);
         ByteArrayResource contentBytes = new ByteArrayResource(Files.readAllBytes(pathToZip));
 
         deleteFileZip(pathToZip);
@@ -53,6 +67,12 @@ public class ServiceDownloadDirectory implements
                 .body(contentBytes);
     }
 
+    /**
+     * Collect headers for download directory
+     * @param path source archive zip
+     * @param data byre data
+     * @return headers
+     */
     @Override
     public HttpHeaders collectHeaders(Path path, ByteArrayResource data) {
         HttpHeaders headers = new HttpHeaders();
@@ -70,8 +90,20 @@ public class ServiceDownloadDirectory implements
         return headers;
     }
 
-    private void deleteFileZip(Path path) {
-        boolean isDeleted = path.toFile().delete();
+    /**
+     * Delete zip archive
+     * @param source source zip archive
+     */
+    private void deleteFileZip(Path source) {
+        boolean isDeleted = source.toFile().delete();
         logger.info("Is deleted zip file: " + isDeleted);
+    }
+
+    /**
+     * Set resource for archiving directory
+     * @param map data
+     */
+    public void setMap(HashMap<String, String> map) {
+        this.map = map;
     }
 }

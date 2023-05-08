@@ -1,8 +1,9 @@
 package com.zer0s2m.CreepTenuous.services.files.create.services;
 
-import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
-import com.zer0s2m.CreepTenuous.services.files.enums.ExceptionFile;
-import com.zer0s2m.CreepTenuous.services.files.enums.TypeFile;
+import com.zer0s2m.CreepTenuous.services.core.Directory;
+import com.zer0s2m.CreepTenuous.services.files.create.containers.ContainerDataCreatedFile;
+import com.zer0s2m.CreepTenuous.services.core.ExceptionFile;
+import com.zer0s2m.CreepTenuous.services.core.TypeFile;
 import com.zer0s2m.CreepTenuous.services.files.create.exceptions.NotFoundTypeFileException;
 
 import java.io.IOException;
@@ -17,7 +18,8 @@ public interface ICreateFile extends ICreateFileExcel, ICreateFileDocx {
     String document = "docx";
     String excel = "xlsx";
 
-    void create(List<String> parents, String nameFile, Integer typeFile) throws NotFoundTypeFileException, IOException;
+    ContainerDataCreatedFile create(List<String> parents, String nameFile, Integer typeFile)
+            throws NotFoundTypeFileException, IOException;
 
     default void checkTypeFile(Integer typeFile) throws NotFoundTypeFileException {
         List<Integer> types = TypeFile.getTypesCode();

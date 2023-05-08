@@ -10,8 +10,15 @@ public record DataDeleteFile(
         @NotBlank(message = "Please provide name file")
         String nameFile,
 
+        @NotNull(message = "Please provide name file (system) (Not NULL)")
+        @NotBlank(message = "Please provide name file (system)")
+        String systemNameFile,
+
         @NotNull(message = "Please provide path directory (Not NULL)")
-        List<String> parents
+        List<String> parents,
+
+        @NotNull(message = "Please provide path directory (system) (Not NULL)")
+        List<String> systemParents
 ) {
     @Override
     public String nameFile() {

@@ -1,8 +1,10 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagControllerApi;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.move.data.DataMoveFile;
 import com.zer0s2m.CreepTenuous.components.RootPath;
+import com.zer0s2m.CreepTenuous.helpers.UtilsAuthAction;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagControllerApi
 public class ControllerApiMoveFileTests {
     Logger logger = LogManager.getLogger(ControllerApiMoveFileTests.class);
 
@@ -44,20 +47,30 @@ public class ControllerApiMoveFileTests {
     @Autowired
     private RootPath rootPath;
 
+    private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
+
     private final String testFile1 = "testFile1.txt";
     private final String testFile2 = "testFile2.txt";
     private final String testFile3 = "testFile3.txt";
 
     DataMoveFile RECORD_1 = new DataMoveFile(
             testFile1,
+            testFile1,
             new ArrayList<>(),
             new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            List.of("testFolder1"),
             List.of("testFolder1")
     );
     DataMoveFile RECORD_2 = new DataMoveFile(
             null,
+            null,
+            Arrays.asList(testFile2, testFile3),
             Arrays.asList(testFile2, testFile3),
             new ArrayList<>(),
+            new ArrayList<>(),
+            List.of("testFolder2"),
             List.of("testFolder2")
     );
 
@@ -81,6 +94,7 @@ public class ControllerApiMoveFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_1))
+                        .header("Authorization",  accessToken)
                 )
                 .andExpect(status().isCreated());
 
@@ -124,6 +138,7 @@ public class ControllerApiMoveFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_2))
+                        .header("Authorization",  accessToken)
                 )
                 .andExpect(status().isCreated());
 
@@ -151,11 +166,16 @@ public class ControllerApiMoveFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveFile(
                                         "testFile.txt",
+                                        "testFile.txt",
+                                        null,
                                         null,
                                         new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        Arrays.asList("not", "valid", "directory"),
                                         Arrays.asList("not", "valid", "directory")
                                 )
                         ))
@@ -168,13 +188,18 @@ public class ControllerApiMoveFileTests {
     public void moveFiles_fail_fileNotIsExists() throws Exception {
         MockHttpServletRequestBuilder builderRequest = MockMvcRequestBuilders.post("/api/v1/file/move")
                 .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON);
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization",  accessToken);
 
         this.mockMvc.perform(builderRequest
                 .content(objectMapper.writeValueAsString(
                         new DataMoveFile(
                                 "fileNotIsExists.txt",
+                                "fileNotIsExists.txt",
                                 null,
+                                null,
+                                new ArrayList<>(),
+                                new ArrayList<>(),
                                 new ArrayList<>(),
                                 new ArrayList<>()
                         )
@@ -184,7 +209,11 @@ public class ControllerApiMoveFileTests {
                 .content(objectMapper.writeValueAsString(
                         new DataMoveFile(
                                 null,
+                                null,
                                 Arrays.asList("fileNotIsExists1.txt", "fileNotIsExists2.txt"),
+                                Arrays.asList("fileNotIsExists1.txt", "fileNotIsExists2.txt"),
+                                new ArrayList<>(),
+                                new ArrayList<>(),
                                 new ArrayList<>(),
                                 new ArrayList<>()
                         )
@@ -198,11 +227,16 @@ public class ControllerApiMoveFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveFile(
                                         "file.txt",
+                                        "file.txt",
                                         null,
                                         null,
+                                        null,
+                                        null,
+                                        new ArrayList<>(),
                                         new ArrayList<>()
                                 )
                         ))
@@ -216,11 +250,16 @@ public class ControllerApiMoveFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveFile(
                                         "file.txt",
+                                        "file.txt",
+                                        null,
                                         null,
                                         new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        null,
                                         null
                                 )
                         ))

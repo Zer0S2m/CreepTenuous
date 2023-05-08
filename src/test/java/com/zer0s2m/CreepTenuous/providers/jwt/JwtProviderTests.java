@@ -1,5 +1,6 @@
 package com.zer0s2m.CreepTenuous.providers.jwt;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagService;
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtUserRequest;
 import com.zer0s2m.CreepTenuous.services.user.enums.UserRole;
 import org.junit.jupiter.api.*;
@@ -8,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagService
 public class JwtProviderTests {
     JwtProvider jwtProvider;
 

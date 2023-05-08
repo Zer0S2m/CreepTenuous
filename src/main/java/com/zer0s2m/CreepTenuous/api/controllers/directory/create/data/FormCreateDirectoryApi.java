@@ -9,6 +9,9 @@ public record FormCreateDirectoryApi(
         @NotNull(message = "Please provide path directory (Not NULL)")
         List<String> parents,
 
+        @NotNull(message = "Please provide path directory (system) (Not NULL)")
+        List<String> systemParents,
+
         @NotNull(message = "Please provide name folder (Not NULL)")
         @NotBlank(message = "Please provide name folder")
         String name

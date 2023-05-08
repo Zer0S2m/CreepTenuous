@@ -1,7 +1,7 @@
 package com.zer0s2m.CreepTenuous.models;
 
 import com.zer0s2m.CreepTenuous.services.user.enums.UserRole;
-import com.zer0s2m.CreepTenuous.services.user.generatePassword.services.impl.GeneratePassword;
+import com.zer0s2m.CreepTenuous.services.user.utils.impl.GeneratePassword;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;

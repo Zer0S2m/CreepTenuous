@@ -1,5 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.files;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagServiceFileSystem;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.common.exceptions.NoSuchFileExistsException;
 import com.zer0s2m.CreepTenuous.components.RootPath;
@@ -36,6 +37,7 @@ import java.util.Objects;
         RootPath.class,
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagServiceFileSystem
 public class ServiceDownloadFileTests {
     Logger logger = LogManager.getLogger(ServiceDownloadFileTests.class);
 

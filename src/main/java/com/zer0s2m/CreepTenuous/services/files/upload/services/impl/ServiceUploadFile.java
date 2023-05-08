@@ -1,13 +1,14 @@
 package com.zer0s2m.CreepTenuous.services.files.upload.services.impl;
 
-import com.zer0s2m.CreepTenuous.api.controllers.files.upload.http.ResponseUploadFile;
+import com.zer0s2m.CreepTenuous.api.controllers.files.upload.http.DataUploadFile;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
-import com.zer0s2m.CreepTenuous.services.files.upload.services.IUploadFile;
+import com.zer0s2m.CreepTenuous.services.core.ServiceFileSystem;
+import com.zer0s2m.CreepTenuous.services.files.upload.services.IServiceUploadFile;
+import com.zer0s2m.CreepTenuous.utils.UtilsFiles;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,8 +21,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Service("upload-file")
-public class ServiceUploadFile implements IUploadFile {
+@ServiceFileSystem("upload-file")
+public class ServiceUploadFile implements IServiceUploadFile {
     Logger logger = LogManager.getLogger(ServiceUploadFile.class);
 
     private final ServiceBuildDirectoryPath buildDirectoryPath;
@@ -31,24 +32,48 @@ public class ServiceUploadFile implements IUploadFile {
         this.buildDirectoryPath = buildDirectoryPath;
     }
 
+    /**
+     * Upload files
+     * @param files files
+     * @param systemParents parts of the system path - target
+     * @return info is upload and info system file object
+     * @throws IOException system error
+     */
     @Override
-    public List<ResponseUploadFile> upload(
+    public List<DataUploadFile> upload(
             List<MultipartFile> files,
-            List<String> parents
+            List<String> systemParents
     ) throws IOException {
-        Path path = Paths.get(buildDirectoryPath.build(parents));
+        Path path = Paths.get(buildDirectoryPath.build(systemParents));
         return files
                 .stream()
                 .map((file) -> {
-                    String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+                    String originFileName = file.getOriginalFilename();
+
+                    String fileName = StringUtils.cleanPath(Objects.requireNonNull(originFileName));
+                    String newFileName = UtilsFiles.getNewFileName(originFileName);
                     Path targetLocation = path.resolve(fileName);
+                    Path newTargetLocation = path.resolve(newFileName);
+
                     try {
-                        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+                        Files.copy(file.getInputStream(), newTargetLocation, StandardCopyOption.REPLACE_EXISTING);
                     } catch (IOException e) {
                         logger.error(e);
-                        return new ResponseUploadFile(fileName, false);
+                        return new DataUploadFile(
+                                fileName,
+                                newFileName,
+                                false,
+                                targetLocation,
+                                newTargetLocation
+                        );
                     }
-                    return new ResponseUploadFile(fileName, true);
+                    return new DataUploadFile(
+                            fileName,
+                            newFileName,
+                            true,
+                            targetLocation,
+                            newTargetLocation
+                    );
                 })
                 .collect(Collectors.toList());
     }

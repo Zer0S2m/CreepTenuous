@@ -18,7 +18,6 @@ dev:
 	@$(run-docker-dev)
 
 full-dev:
-	sudo chmod 755 ./init.sh
 	./init.sh
 	@$(run-docker-dev)
 	mvn spring-boot:run
@@ -26,5 +25,8 @@ full-dev:
 build:
 	mvn clean package spring-boot:repackage
 
+build-scip-tests:
+	mvn clean install -Dmaven.test.skip
+
 run:
-	java -jar target/CreepTenuous-0.0.1-SNAPSHOT.jar
+	java -jar target/CreepTenuous-0.0.2-SNAPSHOT.jar

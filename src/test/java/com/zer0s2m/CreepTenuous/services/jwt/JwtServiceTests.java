@@ -1,13 +1,14 @@
 package com.zer0s2m.CreepTenuous.services.jwt;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagService;
 import com.zer0s2m.CreepTenuous.models.User;
 import com.zer0s2m.CreepTenuous.providers.jwt.JwtProvider;
 import com.zer0s2m.CreepTenuous.providers.jwt.exceptions.NoValidJwtRefreshTokenException;
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtResponse;
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtUserRequest;
 import com.zer0s2m.CreepTenuous.providers.jwt.services.impl.JwtService;
-import com.zer0s2m.CreepTenuous.providers.redis.repositories.JwtRedisDataRepository;
-import com.zer0s2m.CreepTenuous.providers.redis.services.imple.RedisService;
+import com.zer0s2m.CreepTenuous.providers.redis.repositories.JwtRedisRepository;
+import com.zer0s2m.CreepTenuous.providers.redis.services.impl.ServiceJwtRedis;
 import com.zer0s2m.CreepTenuous.repositories.UserRepository;
 import com.zer0s2m.CreepTenuous.services.user.enums.UserRole;
 import com.zer0s2m.CreepTenuous.services.user.exceptions.UserNotFoundException;
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagService
 public class JwtServiceTests {
     Logger logger = LogManager.getLogger(JwtServiceTests.class);
 
@@ -36,7 +38,7 @@ public class JwtServiceTests {
     private UserRepository userRepository;
 
     @Autowired
-    private JwtRedisDataRepository jwtRedisDataRepository;
+    private JwtRedisRepository jwtRedisDataRepository;
 
     @Autowired
     private JwtService jwtService;
@@ -45,7 +47,7 @@ public class JwtServiceTests {
     private JwtProvider jwtProvider;
 
     @Autowired
-    private RedisService redisService;
+    private ServiceJwtRedis redisService;
 
     User RECORD_USER = new User(
             "test_login",

@@ -6,12 +6,15 @@ import com.zer0s2m.CreepTenuous.services.user.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import java.util.Set;
 import java.util.TreeSet;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JwtUtils {
+    public static final String HEADER_PREFIX = "Bearer ";
+
     public static JwtAuthentication generate(Claims claims) {
         final JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setRoles(getRoles(claims));
@@ -24,5 +27,12 @@ public class JwtUtils {
         Set<UserRole> roles = new TreeSet<>();
         roles.add(UserRole.valueOf(claims.get("role", String.class)));
         return roles;
+    }
+
+    public static String getPureAccessToken(String token) {
+        if (StringUtils.hasText(token) && token.startsWith(JwtUtils.HEADER_PREFIX)) {
+            return token.substring(7);
+        }
+        return token;
     }
 }

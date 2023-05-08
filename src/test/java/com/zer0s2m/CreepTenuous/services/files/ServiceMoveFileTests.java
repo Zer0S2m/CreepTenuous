@@ -1,5 +1,6 @@
 package com.zer0s2m.CreepTenuous.services.files;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagServiceFileSystem;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.files.move.data.DataMoveFile;
 import com.zer0s2m.CreepTenuous.components.RootPath;
@@ -33,6 +34,7 @@ import java.util.Objects;
         RootPath.class,
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagServiceFileSystem
 public class ServiceMoveFileTests {
     Logger logger = LogManager.getLogger(ServiceMoveFileTests.class);
 
@@ -47,28 +49,44 @@ public class ServiceMoveFileTests {
 
     DataMoveFile RECORD_1 = new DataMoveFile(
             "testFile1.txt",
+            "testFile1.txt",
+            null,
             null,
             new ArrayList<>(),
+            new ArrayList<>(),
+            List.of("testFolder1"),
             List.of("testFolder1")
     );
     DataMoveFile RECORD_2 = new DataMoveFile(
             null,
+            null,
+            Arrays.asList("testFile2.txt", "testFile3.txt"),
             Arrays.asList("testFile2.txt", "testFile3.txt"),
             new ArrayList<>(),
+            new ArrayList<>(),
+            List.of("testFolder2"),
             List.of("testFolder2")
     );
 
     DataMoveFile INVALID_RECORD_NOT_IS_EXISTS_FILE = new DataMoveFile(
             "notIsExistsFile.txt",
+            "notIsExistsFile.txt",
+            null,
             null,
             new ArrayList<>(),
+            new ArrayList<>(),
+            List.of("testFolder1"),
             List.of("testFolder1")
     );
 
     DataMoveFile INVALID_RECORD_INVALID_PATH_DIRECTORY = new DataMoveFile(
             "testFile1.txt",
+            "testFile1.txt",
+            null,
             null,
             new ArrayList<>(),
+            new ArrayList<>(),
+            Arrays.asList("invalid", "path", "directory"),
             Arrays.asList("invalid", "path", "directory")
     );
 

@@ -1,10 +1,13 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
 import com.zer0s2m.CreepTenuous.api.controllers.directory.create.data.FormCreateDirectoryApi;
+import com.zer0s2m.CreepTenuous.api.controllers.directory.create.data.ResponseCreateDirectoryApi;
+import com.zer0s2m.CreepTenuous.helpers.TestTagControllerApi;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
+import com.zer0s2m.CreepTenuous.helpers.UtilsAuthAction;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.directory.create.exceptions.messages.ExceptionDirectoryExistsMsg;
-import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
+import com.zer0s2m.CreepTenuous.services.core.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.messages.ExceptionNotDirectoryMsg;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.nio.file.Files;
@@ -33,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagControllerApi
 public class ControllerApiCreateDirectoryTests {
     Logger logger = LogManager.getLogger(ControllerApiCreateDirectoryTests.class);
 
@@ -45,34 +50,47 @@ public class ControllerApiCreateDirectoryTests {
     @Autowired
     private MockMvc mockMvc;
 
+    private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
+
     List<String> DIRECTORIES_1 = List.of("test_folder1");
 
     FormCreateDirectoryApi RECORD_1 = new FormCreateDirectoryApi(
+            new ArrayList<>(),
             new ArrayList<>(),
             "test_folder1"
     );
 
     FormCreateDirectoryApi INVALID_RECORD = new FormCreateDirectoryApi(
             Arrays.asList("invalid", "path", "directory"),
+            Arrays.asList("invalid", "path", "directory"),
             "test_folder1"
     );
 
     @Test
     public void createDirectory_success() throws Exception {
-        this.mockMvc.perform(
+        MvcResult result = this.mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/v1/directory/create")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
                         .content(objectMapper.writeValueAsString(RECORD_1))
                 )
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andReturn();
 
-        Path newFolder = Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_1));
+        String json = result.getResponse().getContentAsString();
+        ResponseCreateDirectoryApi response = new ObjectMapper().readValue(json, ResponseCreateDirectoryApi.class);
+
+        Path newFolder = Path.of(serviceBuildDirectoryPath.build(
+                List.of(response.systemNameDirectory())
+        ));
         Assertions.assertTrue(Files.exists(newFolder));
         UtilsActionForFiles.deleteFileAndWriteLog(newFolder, logger);
     }
 
-    @Test
+    /**
+     * @deprecated
+     */
     public void createDirectory_fail_directoryExists() throws Exception {
         UtilsActionForFiles.createDirectories(DIRECTORIES_1, serviceBuildDirectoryPath, logger);
 
@@ -80,6 +98,7 @@ public class ControllerApiCreateDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/create")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(RECORD_1))
                 )
                 .andExpect(status().isBadRequest())
@@ -101,6 +120,7 @@ public class ControllerApiCreateDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/create")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(INVALID_RECORD))
                 )
                 .andExpect(status().isNotFound())
@@ -120,7 +140,9 @@ public class ControllerApiCreateDirectoryTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new FormCreateDirectoryApi(
-                                new ArrayList<>(), ""
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                ""
                         )))
                 )
                 .andExpect(status().isBadRequest());

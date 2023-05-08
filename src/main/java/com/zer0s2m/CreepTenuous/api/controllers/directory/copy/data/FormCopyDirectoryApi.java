@@ -9,12 +9,22 @@ public record FormCopyDirectoryApi(
         @NotNull(message = "Please provide source directory (Not NULL)")
         List<String> parents,
 
+        @NotNull(message = "Please provide source directory (system) (Not NULL)")
+        List<String> systemParents,
+
         @NotNull(message = "Please provide target directory (Not NULL)")
         List<String> toParents,
+
+        @NotNull(message = "Please provide target directory (system) (Not NULL)")
+        List<String> systemToParents,
 
         @NotNull(message = "Please provide name folder (Not NULL)")
         @NotBlank(message = "Please provide name folder")
         String nameDirectory,
+
+        @NotNull(message = "Please provide name folder (system) (Not NULL)")
+        @NotBlank(message = "Please provide name folder (system)")
+        String systemNameDirectory,
 
         @NotNull(message = "Please provide method copy (Not NULL)")
         Integer method

@@ -1,7 +1,8 @@
 package com.zer0s2m.CreepTenuous.repositories;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagRepository;
 import com.zer0s2m.CreepTenuous.providers.redis.models.JwtRedis;
-import com.zer0s2m.CreepTenuous.providers.redis.repositories.JwtRedisDataRepository;
+import com.zer0s2m.CreepTenuous.providers.redis.repositories.JwtRedisRepository;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,11 +15,12 @@ import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 
 @DataRedisTest
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagRepository
 public class JwtRedisDataRepositoryDBTests {
     Logger logger = LogManager.getLogger(JwtRedisDataRepositoryDBTests.class);
 
     @Autowired
-    private JwtRedisDataRepository repository;
+    private JwtRedisRepository repository;
 
     JwtRedis RECORD_1 = new JwtRedis(
             "test_login",

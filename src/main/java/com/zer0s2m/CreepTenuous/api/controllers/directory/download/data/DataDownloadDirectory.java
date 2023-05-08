@@ -9,7 +9,14 @@ public record DataDownloadDirectory(
         @NotNull(message = "Please provide source directory (Not NULL)")
         List<String> parents,
 
+        @NotNull(message = "Please provide source directory (system) (Not NULL)")
+        List<String> systemParents,
+
         @NotNull(message = "Please provide name folder (Not NULL)")
         @NotBlank(message = "Please provide name folder")
-        String directory
+        String directory,
+
+        @NotNull(message = "Please provide name folder (system) (Not NULL)")
+        @NotBlank(message = "Please provide name folder (system)")
+        String systemDirectory
 ) { }

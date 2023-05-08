@@ -1,6 +1,7 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
 import com.zer0s2m.CreepTenuous.helpers.CollectionTokens;
+import com.zer0s2m.CreepTenuous.helpers.TestTagControllerApi;
 import com.zer0s2m.CreepTenuous.models.User;
 import com.zer0s2m.CreepTenuous.providers.jwt.JwtProvider;
 import com.zer0s2m.CreepTenuous.providers.jwt.exceptions.messages.UserNotFoundMsg;
@@ -8,7 +9,7 @@ import com.zer0s2m.CreepTenuous.providers.jwt.exceptions.messages.UserNotValidPa
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtRefreshTokenRequest;
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtResponse;
 import com.zer0s2m.CreepTenuous.providers.jwt.http.JwtUserRequest;
-import com.zer0s2m.CreepTenuous.providers.redis.repositories.JwtRedisDataRepository;
+import com.zer0s2m.CreepTenuous.providers.redis.repositories.JwtRedisRepository;
 import com.zer0s2m.CreepTenuous.repositories.UserRepository;
 import com.zer0s2m.CreepTenuous.services.user.enums.UserException;
 
@@ -38,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagControllerApi
 public class ControllerApiAuthTests {
     Logger logger = LogManager.getLogger(ControllerApiAuthTests.class);
 
@@ -48,7 +50,7 @@ public class ControllerApiAuthTests {
     private UserRepository userRepository;
 
     @Autowired
-    private JwtRedisDataRepository jwtRedisDataRepository;
+    private JwtRedisRepository jwtRedisDataRepository;
 
     @Autowired
     private ObjectMapper objectMapper;

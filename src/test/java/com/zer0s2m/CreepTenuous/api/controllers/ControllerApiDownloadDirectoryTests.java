@@ -1,9 +1,11 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagControllerApi;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
+import com.zer0s2m.CreepTenuous.helpers.UtilsAuthAction;
 import com.zer0s2m.CreepTenuous.providers.build.os.services.impl.ServiceBuildDirectoryPath;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.messages.ExceptionNotDirectoryMsg;
-import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
+import com.zer0s2m.CreepTenuous.services.core.Directory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
@@ -27,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagControllerApi
 public class ControllerApiDownloadDirectoryTests {
     Logger logger = LogManager.getLogger(ControllerApiDownloadDirectoryTests.class);
 
@@ -38,6 +41,8 @@ public class ControllerApiDownloadDirectoryTests {
 
     @Autowired
     private ServiceBuildDirectoryPath buildDirectoryPath;
+
+    private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     List<String> DIRECTORIES_1 = List.of("test_folder1");
 
@@ -59,7 +64,10 @@ public class ControllerApiDownloadDirectoryTests {
         this.mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/v1/directory/download")
                         .queryParam("parents", "")
+                        .queryParam("systemParents", "")
                         .queryParam("directory", DIRECTORIES_1.get(0))
+                        .queryParam("systemDirectory", DIRECTORIES_1.get(0))
+                        .header("Authorization",  accessToken)
         ).andExpect(status().isOk());
 
         Path directoryTest = Path.of(buildDirectoryPath.build(DIRECTORIES_1));
@@ -73,6 +81,8 @@ public class ControllerApiDownloadDirectoryTests {
         this.mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/v1/directory/download")
                         .queryParam("parents", "")
+                        .queryParam("systemParents", "")
+                        .header("Authorization",  accessToken)
         ).andExpect(status().isBadRequest());
     }
 
@@ -81,6 +91,8 @@ public class ControllerApiDownloadDirectoryTests {
         this.mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/v1/directory/download")
                         .queryParam("directory", DIRECTORIES_1.get(0))
+                        .queryParam("systemDirectory", DIRECTORIES_1.get(0))
+                        .header("Authorization",  accessToken)
         ).andExpect(status().isBadRequest());
     }
 
@@ -89,7 +101,10 @@ public class ControllerApiDownloadDirectoryTests {
         this.mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/v1/directory/download")
                         .queryParam("parents", "invalid", "path", "directory")
+                        .queryParam("systemParents", "invalid", "path", "directory")
                         .queryParam("directory", DIRECTORIES_1.get(0))
+                        .queryParam("systemDirectory", DIRECTORIES_1.get(0))
+                        .header("Authorization",  accessToken)
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(content().json(

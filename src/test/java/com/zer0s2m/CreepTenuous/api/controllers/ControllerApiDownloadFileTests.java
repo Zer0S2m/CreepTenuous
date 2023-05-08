@@ -1,11 +1,13 @@
 package com.zer0s2m.CreepTenuous.api.controllers;
 
+import com.zer0s2m.CreepTenuous.helpers.TestTagControllerApi;
 import com.zer0s2m.CreepTenuous.helpers.UtilsActionForFiles;
 import com.zer0s2m.CreepTenuous.api.controllers.common.exceptions.messages.NoSuchFileExists;
 import com.zer0s2m.CreepTenuous.components.RootPath;
-import com.zer0s2m.CreepTenuous.services.directory.manager.enums.Directory;
+import com.zer0s2m.CreepTenuous.helpers.UtilsAuthAction;
+import com.zer0s2m.CreepTenuous.services.core.Directory;
 import com.zer0s2m.CreepTenuous.services.directory.manager.exceptions.messages.ExceptionNotDirectoryMsg;
-import com.zer0s2m.CreepTenuous.services.files.enums.ExceptionFile;
+import com.zer0s2m.CreepTenuous.services.core.ExceptionFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestTagControllerApi
 public class ControllerApiDownloadFileTests {
     Logger logger = LogManager.getLogger(ControllerApiDownloadFileTests.class);
 
@@ -41,6 +44,8 @@ public class ControllerApiDownloadFileTests {
 
     @Autowired
     private RootPath rootPath;
+
+    private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     private final String nameTestFile1 = "test_image_1.jpeg";
 
@@ -59,8 +64,11 @@ public class ControllerApiDownloadFileTests {
         mockMvc.perform(
                 MockMvcRequestBuilders
                         .get("/api/v1/file/download")
-                        .queryParam("filename", nameTestFile1)
+                        .queryParam("fileName", nameTestFile1)
+                        .queryParam("systemFileName", nameTestFile1)
                         .queryParam("parents", "")
+                        .queryParam("systemParents", "")
+                        .header("Authorization",  accessToken)
         )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.IMAGE_JPEG_VALUE));
@@ -74,8 +82,11 @@ public class ControllerApiDownloadFileTests {
         mockMvc.perform(
                 MockMvcRequestBuilders
                         .get("/api/v1/file/download")
-                        .queryParam("filename", failNameTestFile)
+                        .queryParam("fileName", failNameTestFile)
+                        .queryParam("systemFileName", failNameTestFile)
                         .queryParam("parents", "")
+                        .queryParam("systemParents", "")
+                        .header("Authorization",  accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -92,8 +103,11 @@ public class ControllerApiDownloadFileTests {
         mockMvc.perform(
                 MockMvcRequestBuilders
                         .get("/api/v1/file/download")
-                        .queryParam("filename", failNameTestFile)
+                        .queryParam("fileName", failNameTestFile)
+                        .queryParam("systemFileName", failNameTestFile)
                         .queryParam("parents", "invalid", "file", "directory")
+                        .queryParam("systemParents", "invalid", "file", "directory")
+                        .header("Authorization",  accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -110,6 +124,8 @@ public class ControllerApiDownloadFileTests {
         this.mockMvc.perform(
                         MockMvcRequestBuilders.get("/api/v1/file/download")
                                 .queryParam("parents", "")
+                                .queryParam("systemParents", "")
+                                .header("Authorization",  accessToken)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -120,7 +136,9 @@ public class ControllerApiDownloadFileTests {
     public void downloadFile_fail_notValidParents() throws Exception {
         this.mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/v1/file/download")
-                        .queryParam("filename", "testFile")
+                        .queryParam("fileName", "testFile")
+                        .queryParam("systemFileName", "testFile")
+                        .header("Authorization",  accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
