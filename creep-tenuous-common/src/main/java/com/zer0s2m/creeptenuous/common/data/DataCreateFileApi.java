@@ -1,0 +1,26 @@
+package com.zer0s2m.creeptenuous.common.data;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+
+import java.util.List;
+
+public record DataCreateFileApi(
+        @NotNull(message = "Please provide type file (Not NULL)")
+        Integer typeFile,
+
+        @NotNull(message = "Please provide name file (Not NULL)")
+        @NotBlank(message = "Please provide name file")
+        String nameFile,
+
+        @NotNull(message = "Please provide path directory (Not NULL)")
+        List<String> parents,
+
+        @NotNull(message = "Please provide path directory (system) (Not NULL)")
+        List<String> systemParents
+) {
+    @Override
+    public String nameFile() {
+        return nameFile.trim();
+    }
+}
