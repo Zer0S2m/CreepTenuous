@@ -7,6 +7,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.NotFoundTypeFileException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.FileAlreadyExistsMsg;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.NotFoundTypeFileMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateFileApi;
+import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceCreateFileRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateFileImpl;
 import jakarta.validation.Valid;
@@ -14,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.FileAlreadyExistsException;
 
 @V1APIRestController
@@ -37,10 +38,11 @@ public class ControllerApiCreateFile {
     public ResponseCreateFileApi createFile(
             final @Valid @RequestBody DataCreateFileApi file,
             @RequestHeader(name = "Authorization") String accessToken
-    ) throws NotFoundTypeFileException, IOException {
+    ) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         serviceFileRedis.setAccessToken(accessToken);
         serviceFileRedis.checkRights(file.parents(), file.systemParents(), null);
-        ContainerDataCreateFile dataCreatedFile = serviceCreateFile.create(
+        ContainerDataCreateFile dataCreatedFile = AtomicSystemCallManager.call(
+                this.serviceCreateFile,
                 file.systemParents(),
                 file.nameFile(),
                 file.typeFile()
