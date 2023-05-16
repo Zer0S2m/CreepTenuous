@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateFile;
 import com.zer0s2m.creeptenuous.common.enums.TypeFile;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundTypeFileException;
 import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
 import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
@@ -27,7 +28,10 @@ public class ServiceCreateFileImpl implements ServiceCreateFile, AtomicServiceFi
     }
 
     @Override
-    @AtomicFileSystem(name = "create-file", exception = IOException.class)
+    @AtomicFileSystem(
+            name = "create-file",
+            handlers = { @AtomicFileSystemExceptionHandler(exception = NoSuchFileException.class) }
+    )
     public ContainerDataCreateFile create(
             List<String> parents,
             String nameFile,

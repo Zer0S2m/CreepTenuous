@@ -1,10 +1,11 @@
 package com.zer0s2m.creeptenuous.core.annotations;
 
-import com.zer0s2m.creeptenuous.core.handlers.ServiceFileSystemExceptionHandler;
-import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerImpl;
-
 import java.lang.annotation.*;
 
+/**
+ * <b>Annotation</b> for error handling via method call via system manager
+ * {@link com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager}
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Documented
@@ -16,14 +17,9 @@ public @interface AtomicFileSystem {
     String name() default "";
 
     /**
-     * The class that handles the exception and pushes it up
-     * @return class handler
+     * Error handlers called by method via system manager call
+     * {@link com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager}
+     * @return handlers exception {@link AtomicFileSystemExceptionHandler#exception()}
      */
-    Class<? extends ServiceFileSystemExceptionHandler> handler() default ServiceFileSystemExceptionHandlerImpl.class;
-
-    /**
-     * The target exception to be handled and raised up
-     * @return target exception
-     */
-    Class<? extends Throwable> exception() default Exception.class;
+    AtomicFileSystemExceptionHandler[] handlers();
 }

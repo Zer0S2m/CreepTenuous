@@ -1,6 +1,6 @@
-package com.zer0s2m.creeptenuous.core.handlers.impl;
+package com.zer0s2m.creeptenuous.core.services.impl;
 
-import com.zer0s2m.creeptenuous.core.handlers.ServiceFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.services.ServiceFileSystemExceptionHandler;
 
 /**
  * Basic interface for services that interact with the file system
@@ -13,7 +13,6 @@ public class ServiceFileSystemExceptionHandlerImpl implements ServiceFileSystemE
      */
     @Override
     public void handleException(Throwable t) {
-        System.out.println("+++++++++");
-        System.out.println(t.getMessage());
+        System.out.println(t.getClass());
     }
 }

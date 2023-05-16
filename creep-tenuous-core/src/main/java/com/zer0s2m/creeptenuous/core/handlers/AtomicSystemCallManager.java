@@ -1,11 +1,15 @@
 package com.zer0s2m.creeptenuous.core.handlers;
 
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
 import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.services.ServiceFileSystemExceptionHandler;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,18 +22,21 @@ public final class AtomicSystemCallManager {
     /**
      * Call a method through the system manager to handle <b>exceptions</b> and push them up.
      * <p>The name of the method is given in: {@link CoreServiceFileSystem#method}</p>
+     * <p>If the method takes one of the arguments that the class has {@link ArrayList},
+     * it will be converted to {@link List}. Call through the system manager, in methods it
+     * is better to use an array with the type {@link List}</p>
      * @param instance base atomic service file system
      *                 {@link AtomicServiceFileSystem} and {@link CoreServiceFileSystem}
      * @param args arguments in method
      * @return data {@link T}
      * @param <T> return type
      * @throws NoSuchMethodException not found method
-     * @throws InvocationTargetException invocation target exception
-     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
+     * @throws InvocationTargetException called if an exception was thrown in the method
+     * @throws IllegalAccessException an IllegalAccessException is thrown when an application
      *                                tries to reflectively create an instance
      */
     public static <T> T call(AtomicServiceFileSystem instance, Object... args)
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?>[] argTypes = new Class<?>[args.length];
 
         for (int i = 0; i < args.length; i++) {
@@ -57,6 +64,31 @@ public final class AtomicSystemCallManager {
         Method targetMethod = instance
                 .getClass()
                 .getDeclaredMethod(method, argTypes);
+
+        List<AtomicFileSystemExceptionHandler> systemExceptionHandlers;
+        AtomicFileSystem atomicFileSystem = targetMethod.getAnnotation(AtomicFileSystem.class);
+        if (atomicFileSystem != null) {
+            systemExceptionHandlers = Arrays.asList(atomicFileSystem.handlers());
+        } else {
+            systemExceptionHandlers = null;
+        }
+
+        if (systemExceptionHandlers != null) {
+            try {
+                return (T) targetMethod.invoke(instance, args);
+            } catch (Throwable e) {
+                for (AtomicFileSystemExceptionHandler atomicFileSystemExceptionHandler: systemExceptionHandlers) {
+                    if (e.getCause().getClass().equals(atomicFileSystemExceptionHandler.exception())) {
+                        ServiceFileSystemExceptionHandler handler = atomicFileSystemExceptionHandler
+                                .handler()
+                                .getDeclaredConstructor()
+                                .newInstance();
+                        handler.handleException(e.getCause());
+                        throw e;
+                    }
+                }
+            }
+        }
 
         return (T) targetMethod.invoke(instance, args);
     }

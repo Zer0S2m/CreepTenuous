@@ -38,7 +38,7 @@ public class ControllerApiCreateFile {
     public ResponseCreateFileApi createFile(
             final @Valid @RequestBody DataCreateFileApi file,
             @RequestHeader(name = "Authorization") String accessToken
-    ) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    ) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
         serviceFileRedis.setAccessToken(accessToken);
         serviceFileRedis.checkRights(file.parents(), file.systemParents(), null);
         ContainerDataCreateFile dataCreatedFile = AtomicSystemCallManager.call(
