@@ -4,6 +4,10 @@ import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 
 import java.lang.annotation.*;
 
+/**
+ * Basic annotation for a service that works with the file system and system error handling
+ * <p>Required to get data to the specified method</p>
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented

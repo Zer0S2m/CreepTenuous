@@ -5,6 +5,8 @@ import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * System manager for callable objects that work with the file system
@@ -16,7 +18,8 @@ public final class AtomicSystemCallManager {
     /**
      * Call a method through the system manager to handle <b>exceptions</b> and push them up.
      * <p>The name of the method is given in: {@link CoreServiceFileSystem#method}</p>
-     * @param instance base atomic service file system {@link AtomicServiceFileSystem}
+     * @param instance base atomic service file system
+     *                 {@link AtomicServiceFileSystem} and {@link CoreServiceFileSystem}
      * @param args arguments in method
      * @return data {@link T}
      * @param <T> return type
@@ -29,7 +32,11 @@ public final class AtomicSystemCallManager {
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Class<?>[] argTypes = new Class<?>[args.length];
 
-        for(int i = 0; i < args.length; i++) {
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].getClass().equals(ArrayList.class)) {
+                argTypes[i] = List.class;
+                continue;
+            }
             argTypes[i] = args[i].getClass();
         }
 
