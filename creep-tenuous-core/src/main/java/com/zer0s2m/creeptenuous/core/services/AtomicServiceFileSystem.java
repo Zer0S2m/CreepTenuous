@@ -1,4 +1,6 @@
-package com.zer0s2m.creeptenuous.core.handlers;
+package com.zer0s2m.creeptenuous.core.services;
+
+import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 
 /**
  * Interface for classes that interact with the file system and handle system errors

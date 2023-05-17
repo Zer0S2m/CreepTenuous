@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.core.annotations;
 
-import com.zer0s2m.creeptenuous.core.services.ServiceFileSystemExceptionHandler;
-import com.zer0s2m.creeptenuous.core.services.impl.ServiceFileSystemExceptionHandlerImpl;
+import com.zer0s2m.creeptenuous.core.handlers.ServiceFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerImpl;
 
 import java.lang.annotation.*;
 

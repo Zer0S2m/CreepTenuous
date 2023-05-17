@@ -3,7 +3,7 @@ package com.zer0s2m.creeptenuous.core.handlers;
 import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
 import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
-import com.zer0s2m.creeptenuous.core.services.ServiceFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
