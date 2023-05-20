@@ -48,7 +48,9 @@ public final class ContextAtomicFileSystem {
         DELETE,
         CREATE,
         UPLOAD,
-        DOWNLOAD
+        DOWNLOAD,
+        COPY,
+        MOVE
     }
 
     private static ContextAtomicFileSystem instance;

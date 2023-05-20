@@ -6,6 +6,7 @@ import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
 import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.context.nio.file.FilesContextAtomic;
+import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationCreateImpl;
 import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
@@ -37,7 +38,12 @@ public class ServiceCreateDirectoryImpl implements ServiceCreateDirectory, Atomi
     @Override
     @AtomicFileSystem(
             name = "create-directory",
-            handlers = { @AtomicFileSystemExceptionHandler(exception = IOException.class) }
+            handlers = {
+                    @AtomicFileSystemExceptionHandler(
+                            exception = IOException.class,
+                            handler = ServiceFileSystemExceptionHandlerOperationCreateImpl.class
+                    )
+            }
     )
     public ContainerDataCreateDirectory create(
             List<String> systemParents,

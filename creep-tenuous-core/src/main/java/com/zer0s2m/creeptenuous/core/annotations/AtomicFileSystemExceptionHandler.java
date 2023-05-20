@@ -1,7 +1,6 @@
 package com.zer0s2m.creeptenuous.core.annotations;
 
 import com.zer0s2m.creeptenuous.core.handlers.ServiceFileSystemExceptionHandler;
-import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerImpl;
 
 import java.lang.annotation.*;
 
@@ -16,7 +15,7 @@ public @interface AtomicFileSystemExceptionHandler {
      * The class that handles the exception and pushes it up {@link AtomicFileSystemExceptionHandler#exception()}
      * @return class handler
      */
-    Class<? extends ServiceFileSystemExceptionHandler> handler() default ServiceFileSystemExceptionHandlerImpl.class;
+    Class<? extends ServiceFileSystemExceptionHandler> handler();
 
     /**
      * The target exception to be handled and raised up

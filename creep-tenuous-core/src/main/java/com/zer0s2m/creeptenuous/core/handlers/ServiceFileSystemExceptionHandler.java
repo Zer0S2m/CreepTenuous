@@ -12,7 +12,8 @@ import java.util.HashMap;
 public interface ServiceFileSystemExceptionHandler {
 
     /**
-     * Handle exception caused by file system.
+     * Handling an exception thrown by the file system. Each handler must be
+     * responsible for one type of operation {@link ContextAtomicFileSystem.Operations}
      * <p>After handling the exception, call atomic mode handling
      * {@link com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem#handleOperation(ContextAtomicFileSystem.Operations, String)}
      * to clear the context</p>
