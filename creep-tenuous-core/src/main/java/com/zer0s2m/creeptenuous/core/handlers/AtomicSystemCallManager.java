@@ -116,6 +116,8 @@ public final class AtomicSystemCallManager {
             }
         }
 
+        contextAtomicFileSystem.clearOperationsData();
+
         return (T) targetMethod.invoke(instance, args);
     }
 }

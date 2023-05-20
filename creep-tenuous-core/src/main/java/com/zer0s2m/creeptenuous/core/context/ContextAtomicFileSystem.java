@@ -124,4 +124,8 @@ public final class ContextAtomicFileSystem {
     private void cleanOperationData(String key) {
         this.operationsData.remove(key);
     }
+
+    public void clearOperationsData() {
+        this.operationsData.clear();
+    }
 }
