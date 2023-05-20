@@ -7,7 +7,7 @@ import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.common.enums.MethodCopyDirectory;
 import com.zer0s2m.creeptenuous.services.system.utils.WalkDirectoryInfo;
 import com.zer0s2m.creeptenuous.services.system.ServiceCopyDirectory;
-import com.zer0s2m.creeptenuous.services.system.core.Distribution;
+import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.utils.UtilsFiles;
 import org.springframework.beans.factory.annotation.Autowired;

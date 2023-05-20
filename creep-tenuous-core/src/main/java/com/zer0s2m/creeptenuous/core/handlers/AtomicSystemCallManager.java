@@ -3,7 +3,10 @@ package com.zer0s2m.creeptenuous.core.handlers;
 import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
 import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -11,6 +14,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * System manager for callable objects that work with the file system
@@ -19,9 +23,18 @@ import java.util.List;
  */
 public final class AtomicSystemCallManager {
 
+     private static final Logger logger = LoggerFactory.getLogger(AtomicSystemCallManager.class);
+
+    /**
+     * Context for working with the file system in <b>atomic mode</b>
+     */
+    private static final ContextAtomicFileSystem contextAtomicFileSystem = ContextAtomicFileSystem.getInstance();
+
     /**
      * Call a method through the system manager to handle <b>exceptions</b> and push them up.
      * <p>The name of the method is given in: {@link CoreServiceFileSystem#method}</p>
+     * <p>An atomic mode context is required to invoke exception handling
+     * {@link com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem}</p>
      * <p>If the method takes one of the arguments that the class has {@link ArrayList},
      * it will be converted to {@link List}. Call through the system manager, in methods it
      * is better to use an array with the type {@link List}</p>
@@ -74,7 +87,17 @@ public final class AtomicSystemCallManager {
         }
 
         if (systemExceptionHandlers != null) {
+            String nameMethod;
+            if (Objects.equals(atomicFileSystem.name(), "")) {
+                nameMethod = targetMethod.getName();
+            } else {
+                nameMethod = atomicFileSystem.name();
+            }
             try {
+                logger.info(String.format(
+                        "Call method [%s] in service [%s] from atomic system manager",
+                        nameMethod, targetMethod.getDeclaringClass()
+                ));
                 return (T) targetMethod.invoke(instance, args);
             } catch (Throwable e) {
                 for (AtomicFileSystemExceptionHandler atomicFileSystemExceptionHandler: systemExceptionHandlers) {
@@ -83,7 +106,10 @@ public final class AtomicSystemCallManager {
                                 .handler()
                                 .getDeclaredConstructor()
                                 .newInstance();
-                        handler.handleException(e.getCause());
+                        handler.handleException(
+                                e.getCause(),
+                                contextAtomicFileSystem.getOperationsData()
+                        );
                         throw e;
                     }
                 }

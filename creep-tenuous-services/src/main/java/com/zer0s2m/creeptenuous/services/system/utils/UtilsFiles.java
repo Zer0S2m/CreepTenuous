@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.services.system.utils;
 
 import com.zer0s2m.creeptenuous.common.enums.Directory;
-import com.zer0s2m.creeptenuous.services.system.core.Distribution;
+import com.zer0s2m.creeptenuous.core.services.Distribution;
 
 public interface UtilsFiles {
     static String getExtensionFile(String nameFile) {

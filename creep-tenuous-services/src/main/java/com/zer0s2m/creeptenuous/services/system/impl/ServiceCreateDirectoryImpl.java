@@ -2,7 +2,7 @@ package com.zer0s2m.creeptenuous.services.system.impl;
 
 import com.zer0s2m.creeptenuous.common.annotations.ServiceFileSystem;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateDirectory;
-import com.zer0s2m.creeptenuous.services.system.core.Distribution;
+import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.ServiceCreateDirectory;
 import org.springframework.beans.factory.annotation.Autowired;
