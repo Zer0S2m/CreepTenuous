@@ -25,7 +25,10 @@ public class ServiceFileSystemExceptionHandlerImpl implements ServiceFileSystemE
     private final ContextAtomicFileSystem contextAtomicFileSystem = ContextAtomicFileSystem.getInstance();
 
     /**
-     * Handle exception caused by file system
+     * Handle exception caused by file system.
+     * <p>After handling the exception, call atomic mode handling
+     * {@link com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem#handleOperation(ContextAtomicFileSystem.Operations, String)}
+     * to clear the context</p>
      * @param t exception
      * @param operationsData Data about the operation from the file system. Are in the context of atomic mode
      *                       {@link com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem#getOperationsData()}

@@ -74,15 +74,15 @@ public final class ContextAtomicFileSystem {
     /**
      * Get operation data
      * @param key unique file system object name (uuid
-     * @return operation custom data {@link #operationsData}
+     * @return operation custom data (copied) {@link #operationsData}
      */
     public HashMap<String, Object> getOperationData(String key) {
-        return operationsData.get(key);
+        return new HashMap<>(operationsData.get(key));
     }
 
     /**
      * Get data
-     * @return operation custom data {@link #operationsData}
+     * @return operation custom data (copied) {@link #operationsData}
      */
     public HashMap<String, HashMap<String, Object>> getOperationsData() {
         return new HashMap<>(operationsData);

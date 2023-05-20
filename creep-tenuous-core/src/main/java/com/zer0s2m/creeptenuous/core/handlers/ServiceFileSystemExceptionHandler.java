@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.core.handlers;
 
 import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 
 import java.util.HashMap;
 
@@ -11,7 +12,10 @@ import java.util.HashMap;
 public interface ServiceFileSystemExceptionHandler {
 
     /**
-     * Handle exception caused by file system
+     * Handle exception caused by file system.
+     * <p>After handling the exception, call atomic mode handling
+     * {@link com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem#handleOperation(ContextAtomicFileSystem.Operations, String)}
+     * to clear the context</p>
      * @param t exception
      * @param operationsData Data about the operation from the file system. Are in the context of atomic mode
      *                       {@link com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem#getOperationsData()}
