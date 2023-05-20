@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.services.system;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateDirectory;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
 
+import java.io.IOException;
 import java.nio.file.*;
 import java.util.List;
 
@@ -15,8 +16,7 @@ public interface ServiceCreateDirectory {
      * @throws NoSuchFileException no directory in system
      * @throws FileAlreadyExistsException directory exists
      */
-    ContainerDataCreateDirectory create(List<String> systemParents, String nameDirectory) throws
-            NoSuchFileException, FileAlreadyExistsException;
+    ContainerDataCreateDirectory create(List<String> systemParents, String nameDirectory) throws IOException;
 
     /**
      * Checking if a directory exists

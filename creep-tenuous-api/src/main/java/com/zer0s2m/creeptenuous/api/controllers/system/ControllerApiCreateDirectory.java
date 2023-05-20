@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.NoSuchFileException;
+import java.io.IOException;
 
 @V1APIRestController
 public class ControllerApiCreateDirectory {
@@ -36,8 +36,7 @@ public class ControllerApiCreateDirectory {
     public final ResponseCreateDirectoryApi createDirectory(
             final @Valid @RequestBody DataCreateDirectoryApi directoryForm,
             @RequestHeader(name = "Authorization") String accessToken
-    ) throws NoSuchFileException, FileAlreadyExistsException, NoRightsDirectoryException,
-            java.nio.file.FileAlreadyExistsException {
+    ) throws IOException, FileAlreadyExistsException, NoRightsDirectoryException {
         serviceDirectoryRedis.setAccessToken(accessToken);
         serviceDirectoryRedis.checkRights(directoryForm.parents(), directoryForm.systemParents(), directoryForm.name());
         ContainerDataCreateDirectory dataCreatedDirectory = createDirectory.create(
