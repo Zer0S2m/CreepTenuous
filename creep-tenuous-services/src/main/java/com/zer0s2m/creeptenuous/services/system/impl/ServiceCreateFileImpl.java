@@ -38,7 +38,8 @@ public class ServiceCreateFileImpl implements ServiceCreateFile, AtomicServiceFi
             handlers = {
                     @AtomicFileSystemExceptionHandler(
                             exception = NoSuchFileException.class,
-                            handler = ServiceFileSystemExceptionHandlerOperationCreateImpl.class
+                            handler = ServiceFileSystemExceptionHandlerOperationCreateImpl.class,
+                            operation = ContextAtomicFileSystem.Operations.CREATE
                     )
             }
     )

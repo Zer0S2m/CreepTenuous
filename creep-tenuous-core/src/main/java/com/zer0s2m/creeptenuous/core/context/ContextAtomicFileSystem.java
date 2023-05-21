@@ -21,7 +21,7 @@ public final class ContextAtomicFileSystem {
      * <p>
      *     Basic key names and value types:<br>
      *     <ul>
-     *         <li><b>operation</b> - {@link Operations}</li>
+     *         <li><b>operation</b> - {@link Operations} (<b><u>required</u></b>)</li>
      *         <li><b>realName</b> - {@link String}</li>
      *         <li><b>systemName</b> - {@link String}</li>
      *         <li><b>realPath</b> - {@link java.nio.file.Path}</li>
@@ -31,6 +31,7 @@ public final class ContextAtomicFileSystem {
      * Example:
      * <pre>{@code
      * HashMap<String, Object> operationData = new HashMap<>();
+     * operationData.put("operation", Operations.CREATE);
      * operationData.put("realName", realNameFile);
      * operationData.put("systemName", systemNameFile);
      * operationData.put("realPath", Path.of(uri));
@@ -116,6 +117,10 @@ public final class ContextAtomicFileSystem {
             logger.info(String.format(baseLog, "upload", objectOperationData));
         } else if (operation.equals(Operations.DOWNLOAD)) {
             logger.info(String.format(baseLog, "download", objectOperationData));
+        } else if (operation.equals(Operations.COPY)) {
+            logger.info(String.format(baseLog, "copy", objectOperationData));
+        } else if (operation.equals(Operations.MOVE)) {
+            logger.info(String.format(baseLog, "move", objectOperationData));
         }
     }
 
@@ -127,7 +132,11 @@ public final class ContextAtomicFileSystem {
         this.operationsData.remove(key);
     }
 
-    public void clearOperationsData() {
-        this.operationsData.clear();
+    public void clearOperationsData(Operations operation) {
+        this.operationsData.forEach((key, operationData) -> {
+            if (operation.equals(operationData.get("operation"))) {
+                this.operationsData.remove(key);
+            }
+        });
     }
 }

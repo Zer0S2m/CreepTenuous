@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.core.annotations;
 
+import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.handlers.ServiceFileSystemExceptionHandler;
 
 import java.lang.annotation.*;
@@ -22,4 +23,11 @@ public @interface AtomicFileSystemExceptionHandler {
      * @return target exception
      */
     Class<? extends Throwable> exception() default Exception.class;
+
+    /**
+     * Type of operation when handling an exception, necessary for
+     * {@link com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager}
+     * @return type operation
+     */
+    ContextAtomicFileSystem.Operations operation();
 }

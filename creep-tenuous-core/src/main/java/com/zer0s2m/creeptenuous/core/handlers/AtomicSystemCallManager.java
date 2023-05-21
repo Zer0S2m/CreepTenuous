@@ -35,6 +35,8 @@ public final class AtomicSystemCallManager {
      * <p>The name of the method is given in: {@link CoreServiceFileSystem#method}</p>
      * <p>An atomic mode context is required to invoke exception handling
      * {@link com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem}</p>
+     * <p>Subsequent call to the specified operation handler in
+     * {@link AtomicFileSystemExceptionHandler#operation()}</p>
      * <p>If the method takes one of the arguments that the class has {@link ArrayList},
      * it will be converted to {@link List}. Call through the system manager, in methods it
      * is better to use an array with the type {@link List}</p>
@@ -86,6 +88,8 @@ public final class AtomicSystemCallManager {
             systemExceptionHandlers = null;
         }
 
+        List<ContextAtomicFileSystem.Operations> operations = new ArrayList<>();
+
         if (systemExceptionHandlers != null) {
             String nameMethod;
             if (Objects.equals(atomicFileSystem.name(), "")) {
@@ -110,13 +114,17 @@ public final class AtomicSystemCallManager {
                                 e.getCause(),
                                 contextAtomicFileSystem.getOperationsData()
                         );
-                        throw e;
+                        ContextAtomicFileSystem.Operations operation = atomicFileSystemExceptionHandler.operation();
+                        if (!operations.contains(operation)) {
+                            operations.add(operation);
+                        }
                     }
                 }
+                throw e;
             }
         }
 
-        contextAtomicFileSystem.clearOperationsData();
+        operations.forEach(contextAtomicFileSystem::clearOperationsData);
 
         return (T) targetMethod.invoke(instance, args);
     }
