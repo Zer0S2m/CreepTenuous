@@ -17,9 +17,9 @@ import java.nio.file.Path;
  * Operation type handler {@link ContextAtomicFileSystem.Operations#CREATE}
  * <p>Used in conjunction with an annotation: {@link AtomicFileSystemExceptionHandler#handler()}</p>
  */
-public class ServiceFileSystemExceptionHandlerOperationCreateImpl implements ServiceFileSystemExceptionHandler {
+public class ServiceFileSystemExceptionHandlerOperationCreate implements ServiceFileSystemExceptionHandler {
 
-    private final Logger logger = LoggerFactory.getLogger(ServiceFileSystemExceptionHandlerOperationCreateImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(ServiceFileSystemExceptionHandlerOperationCreate.class);
 
     /**
      * Context for working with the file system in <b>atomic mode</b>
@@ -51,10 +51,7 @@ public class ServiceFileSystemExceptionHandlerOperationCreateImpl implements Ser
                     throw new RuntimeException(e);
                 }
 
-                contextAtomicFileSystem.handleOperation(
-                        (ContextAtomicFileSystem.Operations) operationData.get("operation"),
-                        uniqueName
-                );
+                contextAtomicFileSystem.handleOperation(typeOperation, uniqueName);
             }
         });
     }

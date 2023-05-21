@@ -33,7 +33,7 @@ public final class AtomicSystemCallManager {
     /**
      * Call a method through the system manager to handle <b>exceptions</b> and push them up.
      * <p>The name of the method is given in: {@link CoreServiceFileSystem#method}</p>
-     * <p>An atomic mode context is required to invoke exception handling
+     * <p>An atomic mode context is <b><u>required</u></b> to invoke exception handling
      * {@link com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem}</p>
      * <p>Subsequent call to the specified operation handler in
      * {@link AtomicFileSystemExceptionHandler#operation()}</p>

@@ -2,6 +2,8 @@ package com.zer0s2m.creeptenuous.core.context;
 
 import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
 import com.zer0s2m.creeptenuous.core.handlers.ServiceFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationCreate;
+import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationMove;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,12 +21,11 @@ public final class ContextAtomicFileSystem {
     /**
      * <p> File system interaction data</p>
      * <p>
-     *     Basic key names and value types:<br>
+     *     1) Used in handler {@link ServiceFileSystemExceptionHandlerOperationCreate}.
+     *     Basic key names and value types for operation {@link ContextAtomicFileSystem.Operations#CREATE}:<br>
      *     <ul>
      *         <li><b>operation</b> - {@link Operations} (<b><u>required</u></b>)</li>
-     *         <li><b>realName</b> - {@link String}</li>
      *         <li><b>systemName</b> - {@link String}</li>
-     *         <li><b>realPath</b> - {@link java.nio.file.Path}</li>
      *         <li><b>systemPath</b> - {@link java.nio.file.Path}</li>
      *     </ul>
      * </p>
@@ -32,12 +33,29 @@ public final class ContextAtomicFileSystem {
      * <pre>{@code
      * HashMap<String, Object> operationData = new HashMap<>();
      * operationData.put("operation", Operations.CREATE);
-     * operationData.put("realName", realNameFile);
      * operationData.put("systemName", systemNameFile);
-     * operationData.put("realPath", Path.of(uri));
      * operationData.put("systemPath", Path.of(uri));
-     * contextAtomicFileSystem.addOperationData("unique-name", operationData);
+     * contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
      * }</pre>
+     *
+     * <p>
+     *     2) Used in handler {@link ServiceFileSystemExceptionHandlerOperationMove}
+     *     Basic key names and value types for operation {@link ContextAtomicFileSystem.Operations#MOVE}:<br>
+     *     <ul>
+     *         <li><b>operation</b> - {@link Operations} (<b><u>required</u></b>)</li>
+     *         <li><b>sourcePath</b> - {@link java.nio.file.Path}</li>
+     *         <li><b>targetPath</b> - {@link java.nio.file.Path}</li>
+     *     </ul>
+     * </p>
+     * Example:
+     * <pre>{@code
+     * HashMap<String, Object> operationData = new HashMap<>();
+     * operationData.put("operation", Operations.MOVE);
+     * operationData.put("sourcePath", Path.of(uri));
+     * operationData.put("targetPath", Path.of(uri));
+     * contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
+     * }</pre>
+     *
      * <b>Key</b> - unique file system object name (uuid)
      * <p>
      *     <b>Value</b> - data in file system object (custom data) <b><u>use at your own risk</u></b>
@@ -71,6 +89,16 @@ public final class ContextAtomicFileSystem {
      * @param value custom data in file system object, example: {@link #operationsData}
      */
     public void addOperationData(String key, HashMap<String, Object> value) {
+        final String keyOperation = "operation";
+
+        assert !value.containsKey(keyOperation) :
+                String.format("Parameter not specified [%s]", keyOperation);
+
+        Class<?> clsEnumOperation = value.get(keyOperation).getClass();
+        Class<?> superClsEnumOperation = clsEnumOperation.getSuperclass();
+        assert clsEnumOperation.isEnum() || (superClsEnumOperation != null && superClsEnumOperation.isEnum()) :
+                String.format("Invalid operation (key [%s]) format [%s]", keyOperation, superClsEnumOperation);
+
         this.operationsData.put(key, value);
     }
 

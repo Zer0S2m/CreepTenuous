@@ -6,7 +6,8 @@ import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 import java.util.HashMap;
 
 /**
- * The base interface for handling exceptions that interact with the file system.
+ * The base interface for handling exceptions that interact with the file system
+ * for different operations {@link ContextAtomicFileSystem.Operations} use different handlers
  * <p>Used in conjunction with an annotation: {@link AtomicFileSystemExceptionHandler#handler()}</p>
  */
 public interface ServiceFileSystemExceptionHandler {
