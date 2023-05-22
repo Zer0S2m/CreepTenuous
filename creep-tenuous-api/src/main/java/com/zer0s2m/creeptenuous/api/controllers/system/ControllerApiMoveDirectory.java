@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataMoveDirectory;
 import com.zer0s2m.creeptenuous.common.data.DataMoveDirectoryApi;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
+import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceMoveDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceMoveDirectoryImpl;
 import jakarta.validation.Valid;
@@ -11,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @V1APIRestController
@@ -34,7 +35,8 @@ public class ControllerApiMoveDirectory {
     public final void move(
             final @Valid @RequestBody DataMoveDirectoryApi dataDirectory,
             @RequestHeader(name = "Authorization") String accessToken
-    ) throws IOException {
+    ) throws InvocationTargetException, NoSuchMethodException,
+            InstantiationException, IllegalAccessException {
         List<String> mergeParents = CloneList.cloneOneLevel(
                 dataDirectory.systemParents(),
                 dataDirectory.systemToParents()
@@ -46,7 +48,8 @@ public class ControllerApiMoveDirectory {
                 mergeParents,
                 dataDirectory.systemNameDirectory()
         );
-        ContainerDataMoveDirectory infoMoving = serviceMoveDirectory.move(
+        ContainerDataMoveDirectory infoMoving = AtomicSystemCallManager.call(
+                serviceMoveDirectory,
                 dataDirectory.systemParents(),
                 dataDirectory.systemToParents(),
                 dataDirectory.systemNameDirectory(),

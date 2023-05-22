@@ -19,7 +19,27 @@ import java.util.Objects;
 /**
  * System manager for callable objects that work with the file system
  * <p>It is better to call all called objects through the manager - it is necessary to roll back
- *the loaded data when system exceptions are throws {@link java.io.IOException}</p>
+ * the loaded data when system exceptions are throws {@link java.io.IOException}</p>
+ * Example service:
+ * <pre>{@code
+ * @CoreServiceFileSystem(method = "method")
+ * public class ServiceFileSystem {
+ *
+ *      @AtomicFileSystem(
+ *          name = "method-service",
+ *          handlers = {
+ *              @AtomicFileSystemExceptionHandler(
+ *                  handler = ServiceFileSystemExceptionHandlerOperationCreate.class,
+ *                  exception = IOException.class,
+ *                  operation = ContextAtomicFileSystem.Operations.CREATE
+ *              )
+ *          }
+ *     )
+ *     public Path method(Path dir) {
+ *         return Files.createDirectory(dir);
+ *     }
+ * }
+ * }</pre>
  */
 public final class AtomicSystemCallManager {
 
