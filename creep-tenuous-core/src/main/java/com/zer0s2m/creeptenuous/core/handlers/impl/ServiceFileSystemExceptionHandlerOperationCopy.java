@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The base interface for handling exceptions that interact with the file system.
@@ -38,6 +39,8 @@ public class ServiceFileSystemExceptionHandlerOperationCopy implements ServiceFi
      */
     @Override
     public void handleException(Throwable t, HashMap<String, HashMap<String, Object>> operationsData) {
+        AtomicBoolean isEmpty = new AtomicBoolean(false);
+
         operationsData.forEach((uniqueName, operationData) -> {
             ContextAtomicFileSystem.Operations typeOperation = (ContextAtomicFileSystem.Operations) operationData.get("operation");
             if (typeOperation.equals(ContextAtomicFileSystem.Operations.COPY)) {
@@ -47,12 +50,17 @@ public class ServiceFileSystemExceptionHandlerOperationCopy implements ServiceFi
                             "Delete file atomic mode [%s]: [%s]",
                             targetPath, Files.deleteIfExists(targetPath)
                     ));
+                    contextAtomicFileSystem.handleOperation(typeOperation, uniqueName);
+                    isEmpty.set(true);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    logger.info(e.toString());
+                    isEmpty.set(false);
                 }
-
-                contextAtomicFileSystem.handleOperation(typeOperation, uniqueName);
             }
         });
+
+        if (!isEmpty.get()) {
+            handleException(t, operationsData);
+        }
     }
 }

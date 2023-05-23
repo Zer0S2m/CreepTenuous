@@ -117,11 +117,9 @@ public interface FilesContextAtomic {
     private static void addOperationDataCopy(Path target) {
         HashMap<String, Object> operationData = new HashMap<>();
 
-        String systemNameFile = target.getFileName().toString();
-
         operationData.put("operation", ContextAtomicFileSystem.Operations.COPY);
         operationData.put("targetPath", target);
 
-        contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
+        contextAtomicFileSystem.addOperationData(target.getFileName().toString(), operationData);
     }
 }
