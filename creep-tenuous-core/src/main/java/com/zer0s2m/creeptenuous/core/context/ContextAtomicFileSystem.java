@@ -110,9 +110,6 @@ public final class ContextAtomicFileSystem {
     public void addOperationData(String key, HashMap<String, Object> value) {
         final String keyOperation = "operation";
 
-        assert !value.containsKey(keyOperation) :
-                String.format("Parameter not specified [%s]", keyOperation);
-
         Class<?> clsEnumOperation = value.get(keyOperation).getClass();
         Class<?> superClsEnumOperation = clsEnumOperation.getSuperclass();
         assert clsEnumOperation.isEnum() || (superClsEnumOperation != null && superClsEnumOperation.isEnum()) :
