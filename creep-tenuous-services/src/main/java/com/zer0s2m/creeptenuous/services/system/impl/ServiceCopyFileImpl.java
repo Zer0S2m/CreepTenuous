@@ -2,13 +2,19 @@ package com.zer0s2m.creeptenuous.services.system.impl;
 
 import com.zer0s2m.creeptenuous.common.annotations.ServiceFileSystem;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCopyFile;
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.context.nio.file.FilesContextAtomic;
+import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationCopy;
+import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.ServiceCopyFile;
 import com.zer0s2m.creeptenuous.services.system.utils.UtilsFiles;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -17,7 +23,8 @@ import java.util.List;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @ServiceFileSystem("service-copy-file")
-public class ServiceCopyFileImpl implements ServiceCopyFile {
+@CoreServiceFileSystem(method = "copy")
+public class ServiceCopyFileImpl implements ServiceCopyFile, AtomicServiceFileSystem {
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
@@ -34,16 +41,23 @@ public class ServiceCopyFileImpl implements ServiceCopyFile {
      * @throws IOException system error
      */
     @Override
+    @AtomicFileSystem(
+            name = "copy-file",
+            handlers = {
+                    @AtomicFileSystemExceptionHandler(
+                            exception = IOException.class,
+                            handler = ServiceFileSystemExceptionHandlerOperationCopy.class,
+                            operation = ContextAtomicFileSystem.Operations.COPY
+                    )
+            }
+    )
     public ContainerDataCopyFile copy(
             String systemNameFile,
             List<String> systemParents,
             List<String> systemToParents
-    )
-            throws IOException {
+    ) throws IOException {
         Path currentPath = Paths.get(buildDirectoryPath.build(systemParents), systemNameFile);
-
         String newSystemNameFile = UtilsFiles.getNewFileName(systemNameFile);
-
         Path createdNewPath = Paths.get(buildDirectoryPath.build(systemToParents), newSystemNameFile);
 
         return copy(currentPath, createdNewPath);
@@ -58,12 +72,21 @@ public class ServiceCopyFileImpl implements ServiceCopyFile {
      * @throws IOException system error
      */
     @Override
+    @AtomicFileSystem(
+            name = "copy-file",
+            handlers = {
+                    @AtomicFileSystemExceptionHandler(
+                            exception = IOException.class,
+                            handler = ServiceFileSystemExceptionHandlerOperationCopy.class,
+                            operation = ContextAtomicFileSystem.Operations.COPY
+                    )
+            }
+    )
     public List<ContainerDataCopyFile> copy(
             List<String> systemNameFiles,
             List<String> systemParents,
             List<String> systemToParents
-    )
-            throws IOException {
+    ) throws IOException {
         List<ContainerDataCopyFile> containers = new ArrayList<>();
         for (String name : systemNameFiles) {
             containers.add(copy(name, systemParents, systemToParents));
@@ -79,8 +102,18 @@ public class ServiceCopyFileImpl implements ServiceCopyFile {
      * @throws IOException system error
      */
     @Override
+    @AtomicFileSystem(
+            name = "copy-file",
+            handlers = {
+                    @AtomicFileSystemExceptionHandler(
+                            exception = IOException.class,
+                            handler = ServiceFileSystemExceptionHandlerOperationCopy.class,
+                            operation = ContextAtomicFileSystem.Operations.COPY
+                    )
+            }
+    )
     public ContainerDataCopyFile copy(Path source, Path target) throws IOException {
-        Path newTarget = Files.copy(source, target, REPLACE_EXISTING);
+        Path newTarget = FilesContextAtomic.copy(source, target, REPLACE_EXISTING);
         return new ContainerDataCopyFile(
             newTarget, newTarget.getFileName().toString()
         );

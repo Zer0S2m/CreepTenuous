@@ -56,11 +56,25 @@ public interface FilesContextAtomic {
      * @param target the path to the target file (may be associated with a different provider to the source path)
      * @param options options specifying how the move should be done
      * @return the path to the target file
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     static Path move(Path source, Path target, CopyOption... options) throws IOException {
         addOperationDataMove(source, target);
         return Files.move(source, target, options);
+    }
+
+    /**
+     * Copy or rename a file to a target file. Add data in context {@link ContextAtomicFileSystem}
+     * of <b>atomic mode</b>
+     * @param source the path to the file to copy
+     * @param target the path to the target file (may be associated with a different provider to the source path)
+     * @param options options specifying how the move should be done
+     * @return the path to the target file
+     * @throws IOException if an I/O error occurs
+     */
+    static Path copy(Path source, Path target, CopyOption... options) throws IOException {
+        addOperationDataCopy(target);
+        return Files.copy(source, target, options);
     }
 
     /**
@@ -91,6 +105,21 @@ public interface FilesContextAtomic {
 
         operationData.put("operation", ContextAtomicFileSystem.Operations.MOVE);
         operationData.put("sourcePath", source);
+        operationData.put("targetPath", target);
+
+        contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
+    }
+
+    /**
+     * Write operation data to atomic mode context
+     * @param target the path target
+     */
+    private static void addOperationDataCopy(Path target) {
+        HashMap<String, Object> operationData = new HashMap<>();
+
+        String systemNameFile = target.getFileName().toString();
+
+        operationData.put("operation", ContextAtomicFileSystem.Operations.COPY);
         operationData.put("targetPath", target);
 
         contextAtomicFileSystem.addOperationData(systemNameFile, operationData);

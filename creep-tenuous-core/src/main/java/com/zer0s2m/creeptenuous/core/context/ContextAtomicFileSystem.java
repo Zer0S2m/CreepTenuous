@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandle
 import com.zer0s2m.creeptenuous.core.handlers.ServiceFileSystemExceptionHandler;
 import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationCreate;
 import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationMove;
+import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationCopy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +56,24 @@ public final class ContextAtomicFileSystem {
      * operationData.put("targetPath", Path.of(uri));
      * contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
      * }</pre>
+     *
+     * <p>
+     *     3) Used in handler {@link ServiceFileSystemExceptionHandlerOperationCopy}
+     *     Basic key names and value types for operation {@link ContextAtomicFileSystem.Operations#COPY}:<br>
+     *     <ul>
+     *         <li><b>operation</b> - {@link Operations} (<b><u>required</u></b>)</li>
+     *         <li><b>targetPath</b> - {@link java.nio.file.Path}</li>
+     *     </ul>
+     * </p>
+     * Example:
+     * <pre>{@code
+     * HashMap<String, Object> operationData = new HashMap<>();
+     * operationData.put("operation", Operations.COPY);
+     * operationData.put("targetPath", Path.of(uri));
+     * contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
+     * }</pre>
+     *
+     * <p><u>You have the right to manage this data as you wish.</u></p><br>
      *
      * <b>Key</b> - unique file system object name (uuid)
      * <p>
