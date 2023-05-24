@@ -24,6 +24,12 @@ public interface FilesContextAtomic {
     ContextAtomicFileSystem contextAtomicFileSystem = ContextAtomicFileSystem.getInstance();
 
     /**
+     * A directory made available for applications that need a place to create temporary files.
+     * <a href="https://refspecs.linuxfoundation.org/FHS_3.0/fhs/ch03s18.html">Documentation <b>tmp</b></a>
+     */
+    String tmpDirectory = "/tmp";
+
+    /**
      * Creating a file with record data about the operation in the context {@link ContextAtomicFileSystem}
      * of <b>atomic mode</b>
      * @param path the path to the file to create
@@ -78,6 +84,26 @@ public interface FilesContextAtomic {
     }
 
     /**
+     * Deletes a file. Add data in context {@link ContextAtomicFileSystem} of <b>atomic mode</b>
+     * @param path the path to the file to delete
+     * @throws IOException if an I/O error occurs
+     */
+    static void delete(Path path) throws IOException {
+        Path target = transferToTmp(path);
+        addOperationDataDelete(path, target);
+    }
+
+    /**
+     * Moving file system object to <b>/tmp</b>
+     * @param source the path to the file to transfer
+     * @return the path to the target file
+     * @throws IOException if an I/O error occurs
+     */
+    static private Path transferToTmp(Path source) throws IOException {
+        return Files.move(source, Path.of(tmpDirectory, source.getFileName().toString()));
+    }
+
+    /**
      * Write operation data to atomic mode context
      * @param path the path
      */
@@ -121,5 +147,22 @@ public interface FilesContextAtomic {
         operationData.put("targetPath", target);
 
         contextAtomicFileSystem.addOperationData(target.getFileName().toString(), operationData);
+    }
+
+    /**
+     * Write operation data to atomic mode context
+     * @param source the path source
+     * @param target the path target
+     */
+    private static void addOperationDataDelete(Path source, Path target) {
+        HashMap<String, Object> operationData = new HashMap<>();
+
+        String systemNameFile = target.getFileName().toString();
+
+        operationData.put("operation", ContextAtomicFileSystem.Operations.DELETE);
+        operationData.put("sourcePath", source);
+        operationData.put("targetPath", target);
+
+        contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
     }
 }
