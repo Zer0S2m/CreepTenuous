@@ -81,6 +81,8 @@ public final class ContextAtomicFileSystem {
      *         <li><b>operation</b> - {@link Operations} (<b><u>required</u></b>)</li>
      *         <li><b>targetPath</b> - {@link java.nio.file.Path}</li>
      *         <li><b>sourcePath</b> - {@link java.nio.file.Path}</li>
+     *         <li><b>isDirectory</b> - {@link Boolean}</li>
+     *         <li><b>isFile</b> - {@link Boolean}</li>
      *     </ul>
      * </p>
      * Example:
@@ -89,6 +91,8 @@ public final class ContextAtomicFileSystem {
      * operationData.put("operation", Operations.DELETE);
      * operationData.put("sourcePath", Path.of(uri));
      * operationData.put("targetPath", Path.of(uri));
+     * operationData.put("isDirectory", Files.isDirectory(uri));
+     * operationData.put("isFile", Files.isRegularFile(uri));
      * contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
      * }</pre>
      *

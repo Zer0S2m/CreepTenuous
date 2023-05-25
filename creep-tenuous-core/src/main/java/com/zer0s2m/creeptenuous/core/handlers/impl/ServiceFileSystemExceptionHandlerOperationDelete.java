@@ -3,15 +3,19 @@ package com.zer0s2m.creeptenuous.core.handlers.impl;
 import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
 import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem.Operations;
+import com.zer0s2m.creeptenuous.core.context.nio.file.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.handlers.ServiceFileSystemExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
+import java.util.*;
 import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Pattern;
 
 /**
  * The base interface for handling exceptions that interact with the file system.
@@ -47,7 +51,12 @@ public class ServiceFileSystemExceptionHandlerOperationDelete implements Service
 
                 if (Files.exists(targetPath)) {
                     try {
-                        Files.move(targetPath, sourcePath, StandardCopyOption.REPLACE_EXISTING);
+                        prepare(sourcePath);
+
+                        if (!Files.exists(sourcePath) && (boolean) operationData.get("isFile")) {
+                            Files.move(targetPath, sourcePath, StandardCopyOption.REPLACE_EXISTING);
+                        }
+
                         contextAtomicFileSystem.handleOperation(typeOperation, uniqueName);
                         logger.info(String.format(
                                 "Moving a deleted file to the previous state: [%s] -> [%s]",
@@ -59,5 +68,29 @@ public class ServiceFileSystemExceptionHandlerOperationDelete implements Service
                 }
             }
         });
+    }
+
+    /**
+     * Creates folders if they don't exist when moving a file
+     * @param source if an I/O error occurs
+     * @throws IOException the path to the file to move
+     */
+    protected void prepare(Path source) throws IOException {
+        List<String> partsSourcePath = List.of(source
+                .toString()
+                .replace(FilesContextAtomic.rootPath, "")
+                .split(File.separator));
+
+        AtomicReference<Path> restoredPartSourcePath =
+                new AtomicReference<>(Path.of(FilesContextAtomic.rootPath));
+        for (String partSourcePath : partsSourcePath) {
+            restoredPartSourcePath.set(
+                    Path.of(restoredPartSourcePath.toString(), partSourcePath)
+            );
+            if (!Files.exists(restoredPartSourcePath.get())
+                    && partSourcePath.split(Pattern.quote(".")).length == 1) {
+                Files.createDirectory(restoredPartSourcePath.get());
+            }
+        }
     }
 }

@@ -2,10 +2,12 @@ package com.zer0s2m.creeptenuous.core.context.nio.file;
 
 import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileAttribute;
 import java.util.HashMap;
 
@@ -28,6 +30,10 @@ public interface FilesContextAtomic {
      * <a href="https://refspecs.linuxfoundation.org/FHS_3.0/fhs/ch03s18.html">Documentation <b>tmp</b></a>
      */
     String tmpDirectory = "/tmp";
+
+    String rootPathKey = "ROOT_PATH";
+
+    String rootPath = System.getenv(rootPathKey);
 
     /**
      * Creating a file with record data about the operation in the context {@link ContextAtomicFileSystem}
@@ -89,8 +95,9 @@ public interface FilesContextAtomic {
      * @throws IOException if an I/O error occurs
      */
     static void delete(Path path) throws IOException {
-        Path target = transferToTmp(path);
-        addOperationDataDelete(path, target);
+        boolean isDirectory = Files.isDirectory(path);
+        boolean isFile = Files.isRegularFile(path);
+        addOperationDataDelete(path, transferToTmp(path), isDirectory, isFile);
     }
 
     /**
@@ -100,7 +107,21 @@ public interface FilesContextAtomic {
      * @throws IOException if an I/O error occurs
      */
     static private Path transferToTmp(Path source) throws IOException {
-        return Files.move(source, Path.of(tmpDirectory, source.getFileName().toString()));
+        Path directoryInTmp = Path.of(tmpDirectory, source.getFileName().toString());
+        return Files.move(source, directoryInTmp, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    /**
+     * Deletes the file or directory denoted by this abstract pathname.
+     * If this pathname denotes a directory, then the directory must be empty in order to be deleted.
+     * Add data in context {@link ContextAtomicFileSystem} of <b>atomic mode</b>
+     * @param file source file
+     */
+    static void deleteNoException(File file) {
+        try {
+            delete(file.toPath());
+        } catch (RuntimeException | IOException ignored) {
+        }
     }
 
     /**
@@ -153,8 +174,10 @@ public interface FilesContextAtomic {
      * Write operation data to atomic mode context
      * @param source the path source
      * @param target the path target
+     * @param isDirectory the path is directory
+     * @param isFile the path is file
      */
-    private static void addOperationDataDelete(Path source, Path target) {
+    private static void addOperationDataDelete(Path source, Path target, boolean isDirectory, boolean isFile) {
         HashMap<String, Object> operationData = new HashMap<>();
 
         String systemNameFile = target.getFileName().toString();
@@ -162,6 +185,8 @@ public interface FilesContextAtomic {
         operationData.put("operation", ContextAtomicFileSystem.Operations.DELETE);
         operationData.put("sourcePath", source);
         operationData.put("targetPath", target);
+        operationData.put("isDirectory", isDirectory);
+        operationData.put("isFile", isFile);
 
         contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
     }

@@ -120,7 +120,7 @@ public final class AtomicSystemCallManager {
             try {
                 logger.info(String.format(
                         "Call method [%s] in service [%s] from atomic system manager",
-                        nameMethod, targetMethod.getDeclaringClass()
+                        nameMethod, targetMethod.getDeclaringClass().getName()
                 ));
                 return (T) targetMethod.invoke(instance, args);
             } catch (Throwable e) {

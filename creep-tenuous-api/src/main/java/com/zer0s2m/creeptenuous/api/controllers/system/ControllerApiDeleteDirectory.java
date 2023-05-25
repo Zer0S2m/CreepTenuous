@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.api.controllers.system;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteDirectoryApi;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
+import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceDeleteDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteDirectoryImpl;
 import jakarta.validation.Valid;
@@ -10,21 +11,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
-import java.nio.file.NoSuchFileException;
+import java.lang.reflect.InvocationTargetException;
 
 @V1APIRestController
 public class ControllerApiDeleteDirectory {
-    private final ServiceDeleteDirectoryImpl deleteDirectory;
+    private final ServiceDeleteDirectoryImpl serviceDeleteDirectory;
 
-    private final ServiceDeleteDirectoryRedisImpl deleteDirectoryRedis;
+    private final ServiceDeleteDirectoryRedisImpl serviceDeleteDirectoryRedis;
 
     @Autowired
     public ControllerApiDeleteDirectory(
-            ServiceDeleteDirectoryImpl deleteDirectory,
-            ServiceDeleteDirectoryRedisImpl deleteDirectoryRedis
+            ServiceDeleteDirectoryImpl serviceDeleteDirectory,
+            ServiceDeleteDirectoryRedisImpl serviceDeleteDirectoryRedis
     ) {
-        this.deleteDirectory = deleteDirectory;
-        this.deleteDirectoryRedis = deleteDirectoryRedis;
+        this.serviceDeleteDirectory = serviceDeleteDirectory;
+        this.serviceDeleteDirectoryRedis = serviceDeleteDirectoryRedis;
     }
 
     @DeleteMapping("/directory/delete")
@@ -32,15 +33,20 @@ public class ControllerApiDeleteDirectory {
     public final void deleteDirectory(
             final @Valid @RequestBody DataDeleteDirectoryApi directoryForm,
             @RequestHeader(name = "Authorization") String accessToken
-    ) throws NoSuchFileException {
-        deleteDirectoryRedis.setAccessToken(accessToken);
-        deleteDirectoryRedis.setEnableCheckIsNameDirectory(true);
-        deleteDirectoryRedis.checkRights(
+    ) throws InvocationTargetException, NoSuchMethodException,
+            InstantiationException, IllegalAccessException {
+        serviceDeleteDirectoryRedis.setAccessToken(accessToken);
+        serviceDeleteDirectoryRedis.setEnableCheckIsNameDirectory(true);
+        serviceDeleteDirectoryRedis.checkRights(
                 directoryForm.parents(),
                 CloneList.cloneOneLevel(directoryForm.systemParents()),
                 directoryForm.systemDirectoryName()
         );
-        deleteDirectory.delete(directoryForm.systemParents(), directoryForm.systemDirectoryName());
-        deleteDirectoryRedis.delete(directoryForm.systemDirectoryName());
+        AtomicSystemCallManager.call(
+                serviceDeleteDirectory,
+                directoryForm.systemParents(),
+                directoryForm.systemDirectoryName()
+        );
+        serviceDeleteDirectoryRedis.delete(directoryForm.systemDirectoryName());
     }
 }
