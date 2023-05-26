@@ -61,6 +61,5 @@ public class ServiceDeleteDirectoryImpl implements ServiceDeleteDirectory, Atomi
                         .forEach(FilesContextAtomic::deleteNoException);
             }
         }
-        throw new IOException();
     }
 }
