@@ -63,6 +63,7 @@ public class ServiceFileSystemExceptionHandlerOperationDelete implements Service
                                 targetPath, sourcePath
                         ));
                     } catch (IOException e) {
+                        contextAtomicFileSystem.handleOperation(typeOperation, uniqueName);
                         throw new RuntimeException(e);
                     }
                 }

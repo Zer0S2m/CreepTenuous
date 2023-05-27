@@ -6,6 +6,8 @@ import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHan
 import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationMove;
 import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationCopy;
 import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationDelete;
+import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationUpload;
+import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationDownload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,7 +99,7 @@ public final class ContextAtomicFileSystem {
      * }</pre>
      *
      * <p>
-     *     5) Used in handler {@link ServiceFileSystemExceptionHandlerOperationCopy}
+     *     5) Used in handler {@link ServiceFileSystemExceptionHandlerOperationUpload}
      *     Basic key names and value types for operation {@link ContextAtomicFileSystem.Operations#UPLOAD}:<br>
      *     <ul>
      *         <li><b>operation</b> - {@link Operations} (<b><u>required</u></b>)</li>
@@ -107,7 +109,23 @@ public final class ContextAtomicFileSystem {
      * Example:
      * <pre>{@code
      * HashMap<String, Object> operationData = new HashMap<>();
-     * operationData.put("operation", Operations.COPY);
+     * operationData.put("operation", Operations.UPLOAD);
+     * operationData.put("targetPath", Path.of(uri));
+     * contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
+     * }</pre>
+     *
+     * <p>
+     *     5) Used in handler {@link ServiceFileSystemExceptionHandlerOperationDownload}
+     *     Basic key names and value types for operation {@link ContextAtomicFileSystem.Operations#DOWNLOAD}:<br>
+     *     <ul>
+     *         <li><b>operation</b> - {@link Operations} (<b><u>required</u></b>)</li>
+     *         <li><b>sourcePath</b> - {@link java.nio.file.Path}</li>
+     *     </ul>
+     * </p>
+     * Example:
+     * <pre>{@code
+     * HashMap<String, Object> operationData = new HashMap<>();
+     * operationData.put("operation", Operations.DOWNLOAD);
      * operationData.put("targetPath", Path.of(uri));
      * contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
      * }</pre>

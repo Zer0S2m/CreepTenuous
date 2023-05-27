@@ -64,6 +64,7 @@ public class ServiceFileSystemExceptionHandlerOperationUpload implements Service
                                     )));
                         }
                     } catch (IOException e) {
+                        contextAtomicFileSystem.handleOperation(typeOperation, uniqueName);
                         throw new RuntimeException(e);
                     }
                 }

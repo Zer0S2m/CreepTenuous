@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectoryApi;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
+import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceDownloadDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectoryImpl;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +46,8 @@ public class ControllerApiDownloadDirectory {
     public final ResponseEntity<Resource> download(
             final @Valid DataDownloadDirectoryApi data,
             @RequestHeader(name = "Authorization") String accessToken
-    ) throws IOException {
+    ) throws IOException, InvocationTargetException, NoSuchMethodException,
+            InstantiationException, IllegalAccessException {
         serviceDownloadDirectoryRedis.setAccessToken(accessToken);
         serviceDownloadDirectoryRedis.setEnableCheckIsNameDirectory(true);
         serviceDownloadDirectoryRedis.checkRights(
@@ -65,6 +68,10 @@ public class ControllerApiDownloadDirectory {
 
         serviceDownloadDirectory.setMap(resource);
 
-        return serviceDownloadDirectory.download(data.systemParents(), data.systemDirectory());
+        return AtomicSystemCallManager.call(
+                serviceDownloadDirectory,
+                data.systemParents(),
+                data.systemDirectory()
+        );
     }
 }

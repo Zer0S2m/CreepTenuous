@@ -53,6 +53,7 @@ public class ServiceFileSystemExceptionHandlerOperationCopy implements ServiceFi
                     contextAtomicFileSystem.handleOperation(typeOperation, uniqueName);
                     isEmpty.set(true);
                 } catch (IOException e) {
+                    contextAtomicFileSystem.handleOperation(typeOperation, uniqueName);
                     logger.info(e.toString());
                     isEmpty.set(false);
                 }

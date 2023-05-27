@@ -52,6 +52,7 @@ public class ServiceFileSystemExceptionHandlerOperationMove implements ServiceFi
                                 target, source
                         ));
                     } catch (IOException e) {
+                        contextAtomicFileSystem.handleOperation(typeOperation, uniqueName);
                         throw new RuntimeException(e);
                     }
                 } else {

@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.enums.Directory;
+import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectoryRedis;
 
 import java.io.File;
@@ -16,6 +17,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public interface CollectZipDirectory {
+
+    /**
+     * Context for working with the file system in <b>atomic mode</b>
+     */
+    ContextAtomicFileSystem contextAtomicFileSystem = ContextAtomicFileSystem.getInstance();
+
     /**
      * Collect archive zip
      * @param source source system path directory
@@ -39,13 +46,16 @@ public interface CollectZipDirectory {
             ).toString();
         }
 
+        final Path sourceZipFile = Paths.get(realPathToZip);
+        addOperationDataDownload(sourceZipFile);
+
         try (
                 final FileOutputStream fosFile = new FileOutputStream(realPathToZip);
                 final ZipOutputStream fosZip = new ZipOutputStream(fosFile)
         ) {
             File newFileZip = new File(source.toString());
             collectZipFile(newFileZip, newFileZip.getName(), fosZip, map);
-            return Paths.get(realPathToZip);
+            return sourceZipFile;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -139,5 +149,20 @@ public interface CollectZipDirectory {
         });
 
         return readyPathStrContainer.substring(0, readyPathStrContainer.length() - 1);
+    }
+
+    /**
+     * Write operation data to atomic mode context
+     * @param source the path source
+     */
+    private void addOperationDataDownload(Path source) {
+        HashMap<String, Object> operationData = new HashMap<>();
+
+        String systemNameFile = source.getFileName().toString();
+
+        operationData.put("operation", ContextAtomicFileSystem.Operations.DOWNLOAD);
+        operationData.put("sourcePath", source);
+
+        contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
     }
 }
