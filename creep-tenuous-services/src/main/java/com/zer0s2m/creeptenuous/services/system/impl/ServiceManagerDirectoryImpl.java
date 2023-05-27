@@ -40,7 +40,6 @@ public class ServiceManagerDirectoryImpl implements ServiceManagerDirectory {
      * @return data in directory
      * @throws IOException system error
      * @throws NotValidLevelDirectoryException invalid param directory level
-     * @throws NoSuchFieldException not exists directory
      */
     @Override
     public ContainerDataBuilderDirectory build(List<String> systemParents, Integer level)

@@ -34,7 +34,6 @@ public interface ServiceManagerDirectory {
      * @return data in directory
      * @throws IOException system error
      * @throws NotValidLevelDirectoryException invalid param directory level
-     * @throws NoSuchFieldException not exists directory
      */
     ContainerDataBuilderDirectory build(List<String> systemParents, Integer level)
             throws IOException, NotValidLevelDirectoryException;
