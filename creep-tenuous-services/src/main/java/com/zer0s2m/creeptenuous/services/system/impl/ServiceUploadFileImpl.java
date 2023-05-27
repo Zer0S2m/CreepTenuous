@@ -2,6 +2,13 @@ package com.zer0s2m.creeptenuous.services.system.impl;
 
 import com.zer0s2m.creeptenuous.common.annotations.ServiceFileSystem;
 import com.zer0s2m.creeptenuous.common.http.ResponseObjectUploadFileApi;
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.context.nio.file.FilesContextAtomic;
+import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationUpload;
+import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.ServiceUploadFile;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.utils.UtilsFiles;
@@ -12,16 +19,14 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @ServiceFileSystem("service-upload-file")
-public class ServiceUploadFileImpl implements ServiceUploadFile {
+@CoreServiceFileSystem(method = "upload")
+public class ServiceUploadFileImpl implements ServiceUploadFile, AtomicServiceFileSystem {
     Logger logger = LogManager.getLogger(ServiceUploadFileImpl.class);
 
     private final ServiceBuildDirectoryPath buildDirectoryPath;
@@ -39,6 +44,16 @@ public class ServiceUploadFileImpl implements ServiceUploadFile {
      * @throws IOException system error
      */
     @Override
+    @AtomicFileSystem(
+            name = "upload-file",
+            handlers = {
+                    @AtomicFileSystemExceptionHandler(
+                            handler = ServiceFileSystemExceptionHandlerOperationUpload.class,
+                            exception = IOException.class,
+                            operation = ContextAtomicFileSystem.Operations.UPLOAD
+                    )
+            }
+    )
     public List<ResponseObjectUploadFileApi> upload(
             List<MultipartFile> files,
             List<String> systemParents
@@ -55,7 +70,11 @@ public class ServiceUploadFileImpl implements ServiceUploadFile {
                     Path newTargetLocation = path.resolve(newFileName);
 
                     try {
-                        Files.copy(file.getInputStream(), newTargetLocation, StandardCopyOption.REPLACE_EXISTING);
+                        FilesContextAtomic.copy(
+                                file.getInputStream(),
+                                newTargetLocation,
+                                StandardCopyOption.REPLACE_EXISTING
+                        );
                     } catch (IOException e) {
                         logger.error(e);
                         return new ResponseObjectUploadFileApi(

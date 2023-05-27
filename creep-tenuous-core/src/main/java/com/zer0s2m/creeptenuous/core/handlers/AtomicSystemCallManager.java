@@ -7,10 +7,12 @@ import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ClassUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -60,6 +62,8 @@ public final class AtomicSystemCallManager {
      * <p>If the method takes one of the arguments that the class has {@link ArrayList},
      * it will be converted to {@link List}. Call through the system manager, in methods it
      * is better to use an array with the type {@link List}</p>
+     * <p>Captures classes if they are proxies. See the release note:
+     * <a href="https://docs.spring.io/spring-framework/docs/3.2.0.RELEASE/spring-framework-reference/html/migration-3.2.html">Spring Framework 3.2</a></p>
      * @param instance base atomic service file system
      *                 {@link AtomicServiceFileSystem} and {@link CoreServiceFileSystem}
      * @param args arguments in method
@@ -79,12 +83,20 @@ public final class AtomicSystemCallManager {
                 argTypes[i] = List.class;
                 continue;
             }
+            if (checkIsUnixPath(args[i].getClass().getCanonicalName())) {
+                argTypes[i] = Path.class;
+                continue;
+            }
+
             argTypes[i] = args[i].getClass();
         }
 
         boolean isServiceCoreFileSystem = false;
         String method = null;
-        Annotation [] annotationsClass = instance.getClass().getAnnotations();
+
+        Class<?> instanceFromProxy = ClassUtils.getUserClass(instance.getClass());
+        Annotation [] annotationsClass = instanceFromProxy.getAnnotations();
+
         for (Annotation as : annotationsClass) {
             if (as.annotationType().equals(CoreServiceFileSystem.class)) {
                 isServiceCoreFileSystem = true;
@@ -96,9 +108,7 @@ public final class AtomicSystemCallManager {
                     + CoreServiceFileSystem.class.getCanonicalName() + "]");
         }
 
-        Method targetMethod = instance
-                .getClass()
-                .getDeclaredMethod(method, argTypes);
+        Method targetMethod = instanceFromProxy.getDeclaredMethod(method, argTypes);
 
         List<AtomicFileSystemExceptionHandler> systemExceptionHandlers;
         AtomicFileSystem atomicFileSystem = targetMethod.getAnnotation(AtomicFileSystem.class);
@@ -147,5 +157,14 @@ public final class AtomicSystemCallManager {
         operations.forEach(contextAtomicFileSystem::clearOperationsData);
 
         return (T) targetMethod.invoke(instance, args);
+    }
+
+    /**
+     * Whether the class is a concrete implementation in the runtime (<b>Unix</b>) {@link Path}
+     * @param class_ raw class string. inherited from {@link Path}
+     * @return is the class
+     */
+    private static boolean checkIsUnixPath(String class_) {
+        return class_.equals("sun.nio.fs.UnixPath");
     }
 }

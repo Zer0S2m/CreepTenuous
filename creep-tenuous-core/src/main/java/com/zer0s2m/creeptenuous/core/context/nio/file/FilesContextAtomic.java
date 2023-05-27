@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -87,6 +88,20 @@ public interface FilesContextAtomic {
     static Path copy(Path source, Path target, CopyOption... options) throws IOException {
         addOperationDataCopy(target);
         return Files.copy(source, target, options);
+    }
+
+    /**
+     * Copies all bytes from an input stream to a file. On return, the input stream will be at end of stream.
+     * Add data in context {@link ContextAtomicFileSystem} of <b>atomic mode</b>
+     * @param in the input stream to read from
+     * @param target the path to the file
+     * @param options options specifying how the copy should be done
+     * @return the number of bytes read or written
+     * @throws IOException if an I/O error occurs when reading or writing
+     */
+    static long copy(InputStream in, Path target, CopyOption... options) throws IOException {
+        addOperationDataUpload(target);
+        return Files.copy(in, target, options);
     }
 
     /**
@@ -187,6 +202,21 @@ public interface FilesContextAtomic {
         operationData.put("targetPath", target);
         operationData.put("isDirectory", isDirectory);
         operationData.put("isFile", isFile);
+
+        contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
+    }
+
+    /**
+     * Write operation data to atomic mode context
+     * @param target the path target
+     */
+    private static void addOperationDataUpload(Path target) {
+        HashMap<String, Object> operationData = new HashMap<>();
+
+        String systemNameFile = target.getFileName().toString();
+
+        operationData.put("operation", ContextAtomicFileSystem.Operations.UPLOAD);
+        operationData.put("targetPath", target);
 
         contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
     }

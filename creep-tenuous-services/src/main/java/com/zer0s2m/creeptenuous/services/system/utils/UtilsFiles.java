@@ -4,6 +4,12 @@ import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.core.services.Distribution;
 
 public interface UtilsFiles {
+
+    /**
+     * Get extension file
+     * @param nameFile name file
+     * @return extension
+     */
     static String getExtensionFile(String nameFile) {
         String[] partFileName = nameFile.split("\\.");
         if (partFileName.length == 1) {
@@ -12,6 +18,11 @@ public interface UtilsFiles {
         return partFileName[partFileName.length - 1];
     }
 
+    /**
+     * Get new file name (for system)
+     * @param nameFile real name file
+     * @return system name file
+     */
     static String getNewFileName(String nameFile) {
         String extensionFile = getExtensionFile(nameFile);
         String newFileName = Distribution.getUUID();
@@ -21,6 +32,11 @@ public interface UtilsFiles {
         return newFileName;
     }
 
+    /**
+     * Get file name
+     * @param rawNameFile Raw name file (path)
+     * @return file name
+     */
     static String getNameFileRawStr(String rawNameFile) {
         String newRawNameFile;
         if (rawNameFile.substring(rawNameFile.length() - 1).equals(Directory.SEPARATOR.get())) {

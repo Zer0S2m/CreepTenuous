@@ -26,9 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @SpringBootTest(classes = {
@@ -64,18 +62,20 @@ public class ServiceUploadDirectoryTests {
 
         InputStream targetStream = new FileInputStream(path.toFile());
 
-        CompletableFuture<ResponseUploadDirectoryApi> response = service.upload(new ArrayList<>(), new MockMultipartFile(
+        Path systemPath = service.getPath(new ArrayList<>());
+        Path pathZipFile = service.getNewPathZipFile(systemPath, new MockMultipartFile(
                 "directory",
                 testFileZip,
                 "application/zip",
                 targetStream
         ));
+        ResponseUploadDirectoryApi response = service.upload(systemPath, pathZipFile);
 
         targetStream.close();
 
-        Assertions.assertTrue(response.get().success());
+        Assertions.assertTrue(response.success());
 
-        List<ContainerDataUploadFileSystemObject> container = response.get().data();
+        List<ContainerDataUploadFileSystemObject> container = response.data();
 
         Assertions.assertTrue(Files.exists(container.get(0).systemPath()));
         Assertions.assertTrue(Files.exists(container.get(1).systemPath()));
@@ -101,8 +101,11 @@ public class ServiceUploadDirectoryTests {
         Assertions.assertThrows(
                 NoSuchFileException.class,
                 () -> service.upload(
-                        Arrays.asList("invalid", "path", "directory"),
-                        new MockMultipartFile("test", "test".getBytes())
+                        Path.of("invalid", "path", "directory"),
+                        service.getNewPathZipFile(
+                                Path.of("invalid", "path", "directory"),
+                                new MockMultipartFile("test", "test".getBytes())
+                        )
                 )
         );
     }

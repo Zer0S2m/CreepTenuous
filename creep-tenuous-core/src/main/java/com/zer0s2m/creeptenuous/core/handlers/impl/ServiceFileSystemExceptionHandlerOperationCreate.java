@@ -44,7 +44,7 @@ public class ServiceFileSystemExceptionHandlerOperationCreate implements Service
                 Path systemPath = (Path) operationData.get("systemPath");
                 try {
                     logger.info(String.format(
-                            "Delete file atomic mode [%s]: [%s]",
+                            "Delete file atomic mode [%s] : [%s]",
                             systemPath, Files.deleteIfExists(systemPath)
                     ));
                 } catch (IOException e) {

@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.services.system.utils;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFileSystemObject;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.common.utils.TreeNode;
+import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.services.Distribution;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +26,11 @@ public class ThreadUnpackingDirectory extends Thread {
     private final List<ContainerDataUploadFileSystemObject> finalData = new ArrayList<>();
 
     private final TreeNode<String> map = new TreeNode<>();
+
+    /**
+     * Context for working with the file system in <b>atomic mode</b>
+     */
+    ContextAtomicFileSystem contextAtomicFileSystem = ContextAtomicFileSystem.getInstance();
 
     public ThreadUnpackingDirectory(String name, List<Path> files, Path outputDirectory) {
         this.setName(name);
@@ -108,7 +114,25 @@ public class ThreadUnpackingDirectory extends Thread {
             throw new IOException("Entry is outside of the target dir: " + newFileName);
         }
 
+        addOperationDataUpload(destFile);
+
         return destFile;
+    }
+
+    /**
+     * Write operation data to atomic mode context
+     * @param file dest file
+     */
+    private void addOperationDataUpload(File file) {
+        HashMap<String, Object> operationData = new HashMap<>();
+
+        Path target = file.toPath();
+        String systemNameFile = target.getFileName().toString();
+
+        operationData.put("operation", ContextAtomicFileSystem.Operations.UPLOAD);
+        operationData.put("targetPath", target);
+
+        contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
     }
 
     /**
