@@ -2,6 +2,12 @@ package com.zer0s2m.creeptenuous.services.system.impl;
 
 import com.zer0s2m.creeptenuous.common.annotations.ServiceFileSystem;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationDownload;
+import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectoryRedis;
 import com.zer0s2m.creeptenuous.services.system.CollectZipDirectory;
 import com.zer0s2m.creeptenuous.services.system.ServiceDownloadDirectory;
@@ -23,8 +29,9 @@ import java.util.List;
 import java.nio.file.Path;
 
 @ServiceFileSystem("service-download-directory")
+@CoreServiceFileSystem(method = "download")
 public class ServiceDownloadDirectoryImpl
-        implements ServiceDownloadDirectory, CollectZipDirectory {
+        implements ServiceDownloadDirectory, CollectZipDirectory, AtomicServiceFileSystem {
     private final Logger logger = LogManager.getLogger(ServiceDownloadDirectoryImpl.class);
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
@@ -46,6 +53,16 @@ public class ServiceDownloadDirectoryImpl
      * @throws IOException system error
      */
     @Override
+    @AtomicFileSystem(
+            name = "delete-file",
+            handlers = {
+                    @AtomicFileSystemExceptionHandler(
+                            exception = IOException.class,
+                            handler = ServiceFileSystemExceptionHandlerOperationDownload.class,
+                            operation = ContextAtomicFileSystem.Operations.DOWNLOAD
+                    )
+            }
+    )
     public ResponseEntity<Resource> download(
             List<String> systemParents,
             String systemNameDirectory
@@ -56,6 +73,7 @@ public class ServiceDownloadDirectoryImpl
         ByteArrayResource contentBytes = new ByteArrayResource(Files.readAllBytes(pathToZip));
 
         deleteFileZip(pathToZip);
+
         return ResponseEntity.ok()
                 .headers(collectHeaders(pathToZip, contentBytes))
                 .body(contentBytes);

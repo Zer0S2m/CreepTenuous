@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFile;
 import com.zer0s2m.creeptenuous.common.http.ResponseObjectUploadFileApi;
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadFileApi;
+import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceUploadFileRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceUploadFileImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,23 +14,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @V1APIRestController
 public class ControllerApiUploadFile {
-    private final ServiceUploadFileImpl uploadFile;
+    private final ServiceUploadFileImpl serviceUploadFile;
 
-    private final ServiceUploadFileRedisImpl uploadFileRedis;
+    private final ServiceUploadFileRedisImpl serviceUploadFileRedis;
 
     @Autowired
     public ControllerApiUploadFile(
-            ServiceUploadFileImpl uploadFile,
-            ServiceUploadFileRedisImpl uploadFileRedis
+            ServiceUploadFileImpl serviceUploadFile,
+            ServiceUploadFileRedisImpl serviceUploadFileRedis
     ) {
-        this.uploadFile = uploadFile;
-        this.uploadFileRedis = uploadFileRedis;
+        this.serviceUploadFile = serviceUploadFile;
+        this.serviceUploadFileRedis = serviceUploadFileRedis;
     }
 
     @PostMapping(value = "/file/upload")
@@ -38,12 +39,17 @@ public class ControllerApiUploadFile {
             final @RequestParam("parents") List<String> parents,
             final @RequestParam("systemParents") List<String> systemParents,
             @RequestHeader(name = "Authorization") String accessToken
-    ) throws IOException {
-        uploadFileRedis.setAccessToken(accessToken);
-        uploadFileRedis.checkRights(parents, systemParents, null);
+    ) throws InvocationTargetException, NoSuchMethodException,
+            InstantiationException, IllegalAccessException {
+        serviceUploadFileRedis.setAccessToken(accessToken);
+        serviceUploadFileRedis.checkRights(parents, systemParents, null);
 
-        List<ResponseObjectUploadFileApi> data = uploadFile.upload(files, systemParents);
-        uploadFileRedis.create(data
+        List<ResponseObjectUploadFileApi> data = AtomicSystemCallManager.call(
+                serviceUploadFile,
+                files,
+                systemParents
+        );
+        serviceUploadFileRedis.create(data
                 .stream()
                 .map((obj) -> {
                     if (obj.success()) {

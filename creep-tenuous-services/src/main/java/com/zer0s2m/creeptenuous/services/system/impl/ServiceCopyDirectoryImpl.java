@@ -5,9 +5,16 @@ import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.common.enums.MethodCopyDirectory;
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.context.nio.file.FilesContextAtomic;
+import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationCopy;
+import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.utils.WalkDirectoryInfo;
 import com.zer0s2m.creeptenuous.services.system.ServiceCopyDirectory;
-import com.zer0s2m.creeptenuous.services.system.core.Distribution;
+import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.utils.UtilsFiles;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +25,18 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @ServiceFileSystem("service-copy-directory")
-public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory {
+@CoreServiceFileSystem(method = "copy")
+public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicServiceFileSystem {
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     private final String rootPath;
 
     private Path target;
+
+    /**
+     * Context for working with the file system in <b>atomic mode</b>
+     */
+    private final ContextAtomicFileSystem contextAtomicFileSystem = ContextAtomicFileSystem.getInstance();
 
     /**
      * <p>Parts of source paths on target</p>
@@ -48,6 +61,16 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory {
      * @throws IOException error system
      */
     @Override
+    @AtomicFileSystem(
+            name = "copy-directory",
+            handlers = {
+                    @AtomicFileSystemExceptionHandler(
+                            exception = IOException.class,
+                            handler = ServiceFileSystemExceptionHandlerOperationCopy.class,
+                            operation = ContextAtomicFileSystem.Operations.COPY
+                    )
+            }
+    )
     public List<ContainerInfoFileSystemObject> copy(
             List<String> systemParents,
             List<String> systemToParents,
@@ -60,6 +83,13 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory {
             Path futurePath = Paths.get(buildDirectoryPath.build(systemToParents), Distribution.getUUID());
             if (!Files.exists(futurePath)) {
                 this.target = Files.createDirectory(futurePath);
+
+                HashMap<String, Object> operationData = new HashMap<>();
+
+                operationData.put("operation", ContextAtomicFileSystem.Operations.COPY);
+                operationData.put("targetPath", this.target);
+
+                contextAtomicFileSystem.addOperationData(this.target.getFileName().toString(), operationData);
             }
         } else {
             this.target = Paths.get(buildDirectoryPath.build(systemToParents));
@@ -72,7 +102,7 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory {
                 try {
                     buildingPaths(targetWalk);
                     Path newTarget = getTarget(targetWalk);
-                    Files.copy(
+                    FilesContextAtomic.copy(
                             targetWalk,
                             newTarget,
                             StandardCopyOption.REPLACE_EXISTING

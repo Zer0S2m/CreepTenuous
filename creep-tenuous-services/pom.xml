@@ -87,6 +87,12 @@
       <version>0.0.2-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-core</artifactId>
+      <version>0.0.2-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <build>

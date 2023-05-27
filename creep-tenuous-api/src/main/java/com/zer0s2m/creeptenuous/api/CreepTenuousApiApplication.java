@@ -16,7 +16,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
         "com.zer0s2m.creeptenuous.redis",
         "com.zer0s2m.creeptenuous.security",
         "com.zer0s2m.creeptenuous.models",
-        "com.zer0s2m.creeptenuous.repository"
+        "com.zer0s2m.creeptenuous.repository",
+        "com.zer0s2m.creeptenuous.core"
 })
 @EntityScan({
         "com.zer0s2m.creeptenuous.models",

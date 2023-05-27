@@ -5,6 +5,13 @@ import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataMoveDirectory;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.enums.MethodMoveDirectory;
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.context.nio.file.FilesContextAtomic;
+import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationMove;
+import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.ServiceMoveDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.utils.WalkDirectoryInfo;
@@ -16,7 +23,8 @@ import java.util.List;
 import java.util.Objects;
 
 @ServiceFileSystem("service-move-directory")
-public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory {
+@CoreServiceFileSystem(method = "move")
+public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory, AtomicServiceFileSystem {
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     private final RootPath rootPath;
@@ -37,6 +45,16 @@ public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory {
      * @throws IOException error system
      */
     @Override
+    @AtomicFileSystem(
+            name = "move-directory",
+            handlers = {
+                    @AtomicFileSystemExceptionHandler(
+                            handler = ServiceFileSystemExceptionHandlerOperationMove.class,
+                            exception = IOException.class,
+                            operation = ContextAtomicFileSystem.Operations.MOVE
+                    )
+            }
+    )
     public ContainerDataMoveDirectory move(
             List<String> systemParents,
             List<String> systemToParents,
@@ -48,7 +66,7 @@ public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory {
         Path createdNewPath = builderDirectory(systemToParents, systemNameDirectory, method);
         List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(currentPath, createdNewPath);
         return new ContainerDataMoveDirectory(
-                Files.move(currentPath, createdNewPath, StandardCopyOption.REPLACE_EXISTING),
+                FilesContextAtomic.move(currentPath, createdNewPath, StandardCopyOption.REPLACE_EXISTING),
                 currentPath,
                 attached,
                 systemNameDirectory

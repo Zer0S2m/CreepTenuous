@@ -6,6 +6,7 @@ import com.zer0s2m.creeptenuous.common.data.DataCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.common.exceptions.FileAlreadyExistsException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionDirectoryExistsMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
+import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsDirectoryException;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceCreateDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateDirectoryImpl;
@@ -14,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.NoSuchFileException;
+import java.lang.reflect.InvocationTargetException;
 
 @V1APIRestController
 public class ControllerApiCreateDirectory {
@@ -36,11 +37,12 @@ public class ControllerApiCreateDirectory {
     public final ResponseCreateDirectoryApi createDirectory(
             final @Valid @RequestBody DataCreateDirectoryApi directoryForm,
             @RequestHeader(name = "Authorization") String accessToken
-    ) throws NoSuchFileException, FileAlreadyExistsException, NoRightsDirectoryException,
-            java.nio.file.FileAlreadyExistsException {
+    ) throws FileAlreadyExistsException, NoRightsDirectoryException, InvocationTargetException,
+            NoSuchMethodException, InstantiationException, IllegalAccessException {
         serviceDirectoryRedis.setAccessToken(accessToken);
         serviceDirectoryRedis.checkRights(directoryForm.parents(), directoryForm.systemParents(), directoryForm.name());
-        ContainerDataCreateDirectory dataCreatedDirectory = createDirectory.create(
+        ContainerDataCreateDirectory dataCreatedDirectory = AtomicSystemCallManager.call(
+                this.createDirectory,
                 directoryForm.systemParents(),
                 directoryForm.name()
         );

@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.api.controllers.system;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataMoveFileApi;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
+import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceMoveFileRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceMoveFileImpl;
 import jakarta.validation.Valid;
@@ -13,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
-import java.io.IOException;
 import java.util.Objects;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class ControllerApiMoveFile {
     public void createFile(
             final @Valid @RequestBody DataMoveFileApi file,
             @RequestHeader(name = "Authorization") String accessToken
-    ) throws IOException {
+    ) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         serviceMoveFileRedis.setAccessToken(accessToken);
         List<String> mergeRealAndSystemParents = CloneList.cloneOneLevel(
                 file.systemParents(),
@@ -48,7 +49,8 @@ public class ControllerApiMoveFile {
 
         if (file.systemNameFile() != null) {
             serviceMoveFileRedis.checkRights(List.of(file.systemNameFile()));
-            Path newPathFile = serviceMoveFile.move(
+            Path newPathFile = AtomicSystemCallManager.call(
+                    serviceMoveFile,
                     file.systemNameFile(),
                     file.systemParents(),
                     file.systemToParents()
@@ -56,7 +58,8 @@ public class ControllerApiMoveFile {
             serviceMoveFileRedis.move(newPathFile, file.systemNameFile());
         } else {
             serviceMoveFileRedis.checkRights(file.systemNameFiles());
-            Path newPathsFile = serviceMoveFile.move(
+            Path newPathsFile = AtomicSystemCallManager.call(
+                    serviceMoveFile,
                     Objects.requireNonNull(file.systemNameFiles()),
                     file.systemParents(),
                     file.systemToParents()

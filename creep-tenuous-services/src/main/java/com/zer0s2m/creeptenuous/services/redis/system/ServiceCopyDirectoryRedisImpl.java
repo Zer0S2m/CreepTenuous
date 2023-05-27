@@ -42,7 +42,6 @@ public class ServiceCopyDirectoryRedisImpl extends BaseServiceFileSystemRedisImp
         List<String> systemNameFileSource = new ArrayList<>();
 
         attached.forEach((attach) -> {
-            System.out.println(attach.source().getFileName().toString());
             if (attach.isDirectory()) {
                 systemNameDirectorySource.add(attach.source().getFileName().toString());
             } else if (attach.isFile()) {

@@ -1,6 +1,13 @@
 package com.zer0s2m.creeptenuous.services.system.impl;
 
 import com.zer0s2m.creeptenuous.common.annotations.ServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.context.nio.file.FilesContextAtomic;
+import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationMove;
+import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.ServiceMoveFile;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +21,8 @@ import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @ServiceFileSystem("service-move-file")
-public class ServiceMoveFileImpl implements ServiceMoveFile {
+@CoreServiceFileSystem(method = "move")
+public class ServiceMoveFileImpl implements ServiceMoveFile, AtomicServiceFileSystem {
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
@@ -31,6 +39,16 @@ public class ServiceMoveFileImpl implements ServiceMoveFile {
      * @throws IOException system error
      */
     @Override
+    @AtomicFileSystem(
+            name = "move-file",
+            handlers = {
+                    @AtomicFileSystemExceptionHandler(
+                            handler = ServiceFileSystemExceptionHandlerOperationMove.class,
+                            exception = NoSuchFileException.class,
+                            operation = ContextAtomicFileSystem.Operations.MOVE
+                    )
+            }
+    )
     public Path move(String systemNameFile, List<String> systemParents, List<String> systemToParents)
             throws IOException {
         Path currentPath = Paths.get(buildDirectoryPath.build(systemParents), systemNameFile);
@@ -48,6 +66,16 @@ public class ServiceMoveFileImpl implements ServiceMoveFile {
      * @throws IOException system error
      */
     @Override
+    @AtomicFileSystem(
+            name = "move-file",
+            handlers = {
+                    @AtomicFileSystemExceptionHandler(
+                            handler = ServiceFileSystemExceptionHandlerOperationMove.class,
+                            exception = NoSuchFileException.class,
+                            operation = ContextAtomicFileSystem.Operations.MOVE
+                    )
+            }
+    )
     public Path move(List<String> systemNameFiles, List<String> systemParents, List<String> systemToParents)
             throws IOException {
         List<Path> paths = new ArrayList<>();
@@ -65,7 +93,17 @@ public class ServiceMoveFileImpl implements ServiceMoveFile {
      * @throws IOException system error
      */
     @Override
+    @AtomicFileSystem(
+            name = "move-file",
+            handlers = {
+                    @AtomicFileSystemExceptionHandler(
+                            handler = ServiceFileSystemExceptionHandlerOperationMove.class,
+                            exception = NoSuchFileException.class,
+                            operation = ContextAtomicFileSystem.Operations.MOVE
+                    )
+            }
+    )
     public Path move(Path source, Path target) throws IOException {
-        return Files.move(source, target, ATOMIC_MOVE, REPLACE_EXISTING);
+        return FilesContextAtomic.move(source, target, ATOMIC_MOVE, REPLACE_EXISTING);
     }
 }

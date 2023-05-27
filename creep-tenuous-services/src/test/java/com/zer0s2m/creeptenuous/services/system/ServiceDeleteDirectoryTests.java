@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -42,7 +43,7 @@ public class ServiceDeleteDirectoryTests {
     List<String> DIRECTORIES_1 = List.of("test_folder1");
 
     @Test
-    public void deleteDirectory_success() throws NoSuchFileException {
+    public void deleteDirectory_success() throws IOException {
         UtilsActionForFiles.createDirectories(DIRECTORIES_1, serviceBuildDirectoryPath, logger);
         Path deletedFolder = Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_1));
         service.delete(new ArrayList<>(), DIRECTORIES_1.get(0));

@@ -1,4 +1,4 @@
-package com.zer0s2m.creeptenuous.services.system.core;
+package com.zer0s2m.creeptenuous.core.services;
 
 import java.util.UUID;
 
