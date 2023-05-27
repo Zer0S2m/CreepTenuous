@@ -80,17 +80,7 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicSer
         Path source = Paths.get(buildDirectoryPath.build(systemParents), systemNameDirectory);
 
         if (Objects.equals(method, MethodCopyDirectory.FOLDER.getMethod())) {
-            Path futurePath = Paths.get(buildDirectoryPath.build(systemToParents), Distribution.getUUID());
-            if (!Files.exists(futurePath)) {
-                this.target = Files.createDirectory(futurePath);
-
-                HashMap<String, Object> operationData = new HashMap<>();
-
-                operationData.put("operation", ContextAtomicFileSystem.Operations.COPY);
-                operationData.put("targetPath", this.target);
-
-                contextAtomicFileSystem.addOperationData(this.target.getFileName().toString(), operationData);
-            }
+            this.target = Paths.get(buildDirectoryPath.build(systemToParents));
         } else {
             this.target = Paths.get(buildDirectoryPath.build(systemToParents));
         }
@@ -101,12 +91,15 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicSer
             stream.forEach(targetWalk -> {
                 try {
                     buildingPaths(targetWalk);
-                    Path newTarget = getTarget(targetWalk);
-                    FilesContextAtomic.copy(
-                            targetWalk,
-                            newTarget,
-                            StandardCopyOption.REPLACE_EXISTING
-                    );
+                    Path newTarget = getTarget(targetWalk, method);
+
+                    if (!Files.exists(newTarget)) {
+                        FilesContextAtomic.copy(
+                                targetWalk,
+                                newTarget,
+                                StandardCopyOption.REPLACE_EXISTING
+                        );
+                    }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -140,12 +133,16 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicSer
      * @param source source system file object
      * @return parts system names for building path
      */
-    private Path getTarget(Path source) {
+    private Path getTarget(Path source, Integer method) {
         List<String> parts = new ArrayList<>();
         String sourceStr = source.toString().replace(rootPath + Directory.SEPARATOR.get(), "");
         List<String> splitSource = Arrays.asList(sourceStr.split(Directory.SEPARATOR.get()));
 
         splitSource.forEach((part) -> parts.add(this.paths.get(part)));
+
+        if (method.equals(MethodCopyDirectory.CONTENT.getMethod())) {
+            parts.remove(0);
+        }
 
         return Paths.get(String.valueOf(this.target), String.join(Directory.SEPARATOR.get(), parts));
     }
