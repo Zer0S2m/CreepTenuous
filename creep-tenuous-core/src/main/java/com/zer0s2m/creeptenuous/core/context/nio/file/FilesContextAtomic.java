@@ -32,7 +32,7 @@ public interface FilesContextAtomic {
      */
     String tmpDirectory = "/tmp";
 
-    String rootPathKey = "ROOT_PATH";
+    String rootPathKey = "CT_ROOT_PATH";
 
     String rootPath = System.getenv(rootPathKey);
 
