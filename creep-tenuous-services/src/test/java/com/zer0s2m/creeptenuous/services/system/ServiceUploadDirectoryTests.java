@@ -27,7 +27,6 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @SpringBootTest(classes = {
         ServiceUploadDirectoryImpl.class,
@@ -47,7 +46,7 @@ public class ServiceUploadDirectoryTests {
     private ServiceBuildDirectoryPath serviceBuildDirectoryPath;
 
     @Test
-    public void uploadDirectory_success() throws IOException, InterruptedException, ExecutionException {
+    public void uploadDirectory_success() throws IOException {
         String testFileZip = "test-zip.zip";
         File testFile = new File("src/main/resources/test/" + testFileZip);
 
