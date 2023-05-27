@@ -3,7 +3,6 @@ package com.zer0s2m.creeptenuous.api.controllers.system;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataDownloadFile;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
-import com.zer0s2m.creeptenuous.common.exceptions.NoSuchFileExistsException;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceDownloadFileRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadFileImpl;
 import jakarta.validation.Valid;
@@ -32,11 +31,18 @@ public class ControllerApiDownloadFile {
         this.serviceDownloadFileRedis = serviceDownloadFileRedis;
     }
 
+    /**
+     * Download file
+     * @param data file download data
+     * @param accessToken raw JWT access token
+     * @return file
+     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     */
     @GetMapping(path = "/file/download")
     public ResponseEntity<Resource> download(
             final @Valid DataDownloadFileApi data,
             @RequestHeader(name = "Authorization") String accessToken
-    ) throws IOException, NoSuchFileExistsException {
+    ) throws IOException {
         serviceDownloadFileRedis.setAccessToken(accessToken);
         serviceDownloadFileRedis.checkRights(data.parents(), data.systemParents(), null);
         serviceDownloadFileRedis.checkRights(List.of(data.systemFileName()));

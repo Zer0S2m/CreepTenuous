@@ -42,6 +42,20 @@ public class ControllerApiDownloadDirectory {
         this.serviceDownloadDirectoryRedis = serviceDownloadDirectoryRedis;
     }
 
+    /**
+     * Download directory
+     * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceDownloadDirectoryImpl#download(List, String)}</p>
+     * @param data directory download data
+     * @param accessToken raw JWT access token
+     * @return zip file
+     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
+     * @throws InstantiationException Thrown when an application tries to create an instance of a class
+     * using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
+     * tries to reflectively create an instance
+     */
     @GetMapping(path = "/directory/download")
     public final ResponseEntity<Resource> download(
             final @Valid DataDownloadDirectoryApi data,

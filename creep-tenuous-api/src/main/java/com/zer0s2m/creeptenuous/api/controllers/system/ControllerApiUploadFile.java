@@ -33,6 +33,21 @@ public class ControllerApiUploadFile {
         this.serviceUploadFileRedis = serviceUploadFileRedis;
     }
 
+    /**
+     * Upload file
+     * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceUploadFileImpl#upload(List, List)}</p>
+     * @param files raw files
+     * @param parents real names directories
+     * @param systemParents parts of the system path - source
+     * @param accessToken raw JWT access token
+     * @return result upload file
+     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
+     * @throws InstantiationException Thrown when an application tries to create an instance of a class
+     * using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
+     * tries to reflectively create an instance
+     */
     @PostMapping(value = "/file/upload")
     public ResponseUploadFileApi upload(
             final @RequestPart("files") List<MultipartFile> files,

@@ -29,6 +29,17 @@ public class ControllerApiDeleteFile {
         this.serviceDeleteFileRedis = serviceDeleteFileRedis;
     }
 
+    /**
+     * Delete file
+     * @param file file delete data
+     * @param accessToken raw JWT access token
+     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
+     * @throws InstantiationException Thrown when an application tries to create an instance of a class
+     * using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
+     * tries to reflectively create an instance
+     */
     @DeleteMapping("/file/delete")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteFile(

@@ -37,6 +37,21 @@ public class ControllerApiCopyFile {
         this.serviceCopyFileRedis = serviceCopyFileRedis;
     }
 
+    /**
+     * Copy file(s)
+     * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceCopyFileImpl#copy(String, List, List)}
+     * or {@link ServiceCopyFileImpl#copy(List, List, List)}</p>
+     * @param file copy data file
+     * @param accessToken raw JWT access token
+     * @return result copy file(s)
+     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
+     * @throws InstantiationException Thrown when an application tries to create an instance of a class
+     * using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
+     * tries to reflectively create an instance
+     */
     @PostMapping("/file/copy")
     @ResponseStatus(code = HttpStatus.CREATED)
     public ResponseCopyFileApi copy(

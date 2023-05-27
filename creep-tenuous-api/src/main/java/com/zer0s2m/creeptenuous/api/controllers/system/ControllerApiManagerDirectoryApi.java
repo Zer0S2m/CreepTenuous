@@ -29,6 +29,16 @@ public class ControllerApiManagerDirectoryApi {
         this.serviceManagerDirectoryRedis = serviceManagerDirectoryRedis;
     }
 
+    /**
+     * Manager directory - get all directories by level
+     * @param level directory nesting
+     * @param parents real names directories
+     * @param systemParents parts of the system path - source
+     * @param accessToken raw JWT access token
+     * @return result manager build info in directory
+     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     * @throws NotValidLevelDirectoryException  invalid level directory
+     */
     @GetMapping("/directory")
     @ResponseStatus(code = HttpStatus.OK)
     public ResponseManagerDirectoryApi manager(
@@ -36,7 +46,7 @@ public class ControllerApiManagerDirectoryApi {
             final @RequestParam(value = "parents", defaultValue = "") List<String> parents,
             final @RequestParam(value = "systemParents", defaultValue = "") List<String> systemParents,
             @RequestHeader(name = "Authorization") String accessToken
-    ) throws IOException, NotValidLevelDirectoryException, NoSuchFieldException {
+    ) throws IOException, NotValidLevelDirectoryException {
         serviceManagerDirectoryRedis.setAccessToken(accessToken);
         serviceManagerDirectoryRedis.checkRights(parents, systemParents, null);
 

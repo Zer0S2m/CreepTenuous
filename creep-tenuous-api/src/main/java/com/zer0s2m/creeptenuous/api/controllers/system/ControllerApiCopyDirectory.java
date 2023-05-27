@@ -34,6 +34,19 @@ public class ControllerApiCopyDirectory {
         this.serviceCopyDirectoryRedis = serviceCopyDirectoryRedis;
     }
 
+    /**
+     * Copy directory
+     * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceCopyDirectoryImpl#copy(List, List, String, Integer)}</p>
+     * @param dataDirectory Directory copy data
+     * @param accessToken Raw JWT access token
+     * @return Result copy directory
+     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
+     * @throws InstantiationException Thrown when an application tries to create an instance of a class
+     * using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
+     * tries to reflectively create an instance
+     */
     @PostMapping("/directory/copy")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseCopyDirectoryApi copy(

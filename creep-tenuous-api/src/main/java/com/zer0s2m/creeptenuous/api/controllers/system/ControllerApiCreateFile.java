@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.FileAlreadyExistsException;
+import java.util.List;
 
 @V1APIRestController
 public class ControllerApiCreateFile {
@@ -33,6 +34,18 @@ public class ControllerApiCreateFile {
         this.serviceFileRedis = serviceFileRedis;
     }
 
+    /**
+     * Create file
+     * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceCreateFileImpl#create(List, String, Integer)}</p>
+     * @param file file create data
+     * @param accessToken raw JWT access token
+     * @return result create file
+     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
+     * @throws InstantiationException Thrown when an application tries to create an instance of a class
+     * using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
+     * tries to reflectively create an instance
+     */
     @PostMapping("/file/create")
     @ResponseStatus(code = HttpStatus.CREATED)
     public ResponseCreateFileApi createFile(

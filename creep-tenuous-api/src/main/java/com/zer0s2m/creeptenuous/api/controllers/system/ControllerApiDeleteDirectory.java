@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 @V1APIRestController
 public class ControllerApiDeleteDirectory {
@@ -28,6 +29,18 @@ public class ControllerApiDeleteDirectory {
         this.serviceDeleteDirectoryRedis = serviceDeleteDirectoryRedis;
     }
 
+    /**
+     * Delete directory
+     * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceDeleteDirectoryImpl#delete(List, String)}</p>
+     * @param directoryForm directory delete data
+     * @param accessToken raw JWT access token
+     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
+     * @throws InstantiationException Thrown when an application tries to create an instance of a class
+     * using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
+     * tries to reflectively create an instance
+     */
     @DeleteMapping("/directory/delete")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public final void deleteDirectory(

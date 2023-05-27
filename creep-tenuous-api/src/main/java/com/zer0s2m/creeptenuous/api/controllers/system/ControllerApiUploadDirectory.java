@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @V1APIRestController
 public class ControllerApiUploadDirectory {
@@ -32,6 +31,22 @@ public class ControllerApiUploadDirectory {
         this.serviceUploadDirectoryRedis = serviceUploadDirectoryRedis;
     }
 
+    /**
+     * Upload directory (zip archive)
+     * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceUploadDirectoryImpl#upload(Path, Path)}</p>
+     * @param parents real names directories
+     * @param systemParents parts of the system path - source
+     * @param zipFile raw zip archive
+     * @param accessToken raw JWT access token
+     * @return result upload directory (zip archive)
+     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
+     * @throws InstantiationException Thrown when an application tries to create an instance of a class
+     * using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
+     * tries to reflectively create an instance
+     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     */
     @PostMapping(path = "/directory/upload")
     @ResponseStatus(code = HttpStatus.CREATED)
     public final ResponseUploadDirectoryApi upload(
@@ -40,7 +55,7 @@ public class ControllerApiUploadDirectory {
             final @RequestPart("directory") MultipartFile zipFile,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws InvocationTargetException, NoSuchMethodException, InstantiationException,
-            IllegalAccessException, ExecutionException, InterruptedException, IOException {
+            IllegalAccessException, IOException {
         serviceUploadDirectoryRedis.setAccessToken(accessToken);
         serviceUploadDirectoryRedis.checkRights(parents, systemParents, null);
 

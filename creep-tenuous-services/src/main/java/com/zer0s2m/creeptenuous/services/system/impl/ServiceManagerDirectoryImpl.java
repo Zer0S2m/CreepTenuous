@@ -44,7 +44,7 @@ public class ServiceManagerDirectoryImpl implements ServiceManagerDirectory {
      */
     @Override
     public ContainerDataBuilderDirectory build(List<String> systemParents, Integer level)
-            throws NotValidLevelDirectoryException, IOException, NoSuchFieldException {
+            throws NotValidLevelDirectoryException, IOException {
         this.systemParents = systemParents;
 
         if (level != systemParents.toArray().length) {

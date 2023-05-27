@@ -34,6 +34,19 @@ public class ControllerApiMoveFile {
         this.serviceMoveFileRedis = serviceMoveFileRedis;
     }
 
+    /**
+     * Move file
+     * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceMoveFileImpl#move(String, List, List)}
+     * or {@link ServiceMoveFileImpl#move(List, List, List)}</p>
+     * @param file file move data
+     * @param accessToken raw JWT access token
+     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
+     * @throws InstantiationException Thrown when an application tries to create an instance of a class
+     * using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
+     * tries to reflectively create an instance
+     */
     @PostMapping("/file/move")
     @ResponseStatus(code = HttpStatus.CREATED)
     public void createFile(
