@@ -30,14 +30,15 @@ public class ServiceCopyFileRedisImpl extends BaseServiceFileSystemRedisImpl imp
      * @param target new system directory path
      * @param existingSystemNameFile existing system file names
      * @param newSystemFileName new system file names
+     * @return result copy file(s)
      */
     @Override
-    public void copy(List<Path> target, List<String> existingSystemNameFile, List<String> newSystemFileName) {
+    public List<FileRedis> copy(List<Path> target, List<String> existingSystemNameFile, List<String> newSystemFileName) {
         List<FileRedis> existingObjsRedis = (List<FileRedis>) fileRedisRepository.findAllById(existingSystemNameFile);
         List<FileRedis> newObjsRedis = new ArrayList<>();
 
         if (existingObjsRedis.size() == 0) {
-            return;
+            return new ArrayList<>();
         }
 
         for (int i = 0; i < newSystemFileName.size(); i++) {
@@ -53,6 +54,8 @@ public class ServiceCopyFileRedisImpl extends BaseServiceFileSystemRedisImpl imp
         }
 
         push(newObjsRedis);
+
+        return newObjsRedis;
     }
 
     @Override
