@@ -1,6 +1,5 @@
 package com.zer0s2m.creeptenuous.services.redis;
 
-import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
@@ -11,11 +10,8 @@ import com.zer0s2m.creeptenuous.services.ConfigServices;
 import com.zer0s2m.creeptenuous.services.helpers.TestTagServiceRedis;
 import com.zer0s2m.creeptenuous.services.helpers.User;
 import com.zer0s2m.creeptenuous.services.helpers.UtilsAuthAction;
-import com.zer0s2m.creeptenuous.services.redis.system.ServiceCopyDirectoryRedisImpl;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.Test;
+import com.zer0s2m.creeptenuous.services.redis.system.ServiceManagerDirectoryRedisImpl;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
@@ -29,16 +25,16 @@ import java.util.List;
         DirectoryRedisRepository.class,
         FileRedisRepository.class,
         JwtProvider.class,
-        ServiceCopyDirectoryRedisImpl.class
+        ServiceManagerDirectoryRedisImpl.class
 })
 @Transactional
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceRedis
 @ContextConfiguration(classes = { ConfigServices.class })
-public class ServiceCopyDirectoryRedisTests {
+public class ServiceManagerDirectoryRedisTests {
 
     @Autowired
-    private ServiceCopyDirectoryRedisImpl serviceCopyDirectoryRedis;
+    private ServiceManagerDirectoryRedisImpl serviceManagerDirectoryRedis;
 
     @Autowired
     private DirectoryRedisRepository directoryRedisRepository;
@@ -48,46 +44,42 @@ public class ServiceCopyDirectoryRedisTests {
 
     @BeforeEach
     void setUp() {
-        serviceCopyDirectoryRedis.setAccessToken(UtilsAuthAction.generateAccessToken());
+        serviceManagerDirectoryRedis.setAccessToken(UtilsAuthAction.generateAccessToken());
     }
 
     @Test
-    public void copy_success() {
-        String newSystemNameDirectory = Distribution.getUUID();
-        String newSystemNameFile = Distribution.getUUID();
-        final Path pathDirectory = Path.of(newSystemNameDirectory);
-        final Path pathFile = Path.of(newSystemNameFile);
-        List<ContainerInfoFileSystemObject> data = new ArrayList<>();
-        data.add(new ContainerInfoFileSystemObject(
-                pathDirectory,
-                pathDirectory,
-                newSystemNameDirectory,
-                false,
-                true
-        ));
-        data.add(new ContainerInfoFileSystemObject(
-                pathFile,
-                pathFile,
-                newSystemNameFile,
-                true,
-                false
-        ));
+    public void build_success() {
+        String systemNameDirectory = Distribution.getUUID();
+        String systemNameFile = Distribution.getUUID();
 
-        directoryRedisRepository.save(new DirectoryRedis(
+        DirectoryRedis directoryRedis = new DirectoryRedis(
                 User.LOGIN.get(),
                 User.ROLE_USER.get(),
                 "test_1",
-                newSystemNameDirectory,
-                pathDirectory.toString()
-        ));
-        fileRedisRepository.save(new FileRedis(
+                systemNameDirectory,
+                Path.of(systemNameDirectory).toString()
+        );
+        directoryRedisRepository.save(directoryRedis);
+        FileRedis fileRedis = new FileRedis(
                 User.LOGIN.get(),
                 User.ROLE_USER.get(),
-                "test_2",
-                newSystemNameFile,
-                pathFile.toString()
-        ));
+                "test_1",
+                systemNameFile,
+                Path.of(systemNameFile).toString()
+        );
+        fileRedisRepository.save(fileRedis);
 
-        serviceCopyDirectoryRedis.copy(data);
+        List<Object> dataBuild = serviceManagerDirectoryRedis.build(List.of(systemNameDirectory, systemNameFile));
+
+        Assertions.assertEquals(2, dataBuild.size());
+
+        directoryRedisRepository.delete(directoryRedis);
+        fileRedisRepository.delete(fileRedis);
+    }
+
+    @Test
+    public void buildNotObjects_fail() {
+        List<Object> dataBuild = serviceManagerDirectoryRedis.build(new ArrayList<>());
+        Assertions.assertEquals(0, dataBuild.size());
     }
 }
