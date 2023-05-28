@@ -11,7 +11,6 @@ import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystem
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,18 +35,10 @@ public class ServiceMoveDirectoryRedisImpl extends BaseServiceFileSystemRedisImp
 
     /**
      * Move directories in redis
-     * @param targetSystemPath target path
-     * @param sourceSystemPath source path
      * @param attachedSourceSystem info directory from source path
-     * @param systemNameDirectory system name directory
      */
     @Override
-    public void move(
-            Path targetSystemPath,
-            Path sourceSystemPath,
-            List<ContainerInfoFileSystemObject> attachedSourceSystem,
-            String systemNameDirectory
-    ) {
+    public void move(List<ContainerInfoFileSystemObject> attachedSourceSystem) {
         List<String> namesFilesIds = new ArrayList<>();
         List<String> namesDirectoriesIds = new ArrayList<>();
 
@@ -55,7 +46,7 @@ public class ServiceMoveDirectoryRedisImpl extends BaseServiceFileSystemRedisImp
             newPaths.put(attach.source().toString(), attach.target().toString());
             if (attach.isDirectory()) {
                 namesDirectoriesIds.add(attach.nameFileSystemObject());
-            } else if (attach.isFile()) {
+            } else {
                 namesFilesIds.add(attach.nameFileSystemObject());
             }
         });
