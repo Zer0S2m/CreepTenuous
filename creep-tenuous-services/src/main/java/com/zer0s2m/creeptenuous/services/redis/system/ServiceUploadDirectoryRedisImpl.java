@@ -63,7 +63,7 @@ public class ServiceUploadDirectoryRedisImpl extends BaseServiceFileSystemRedisI
         dataUploadFileList.forEach((objRedis) -> {
             if (objRedis.isDirectory()) {
                 directoryRedisList.add(buildDirectoryRedis(objRedis));
-            } else if (objRedis.isFile()) {
+            } else {
                 fileRedisList.add(buildFileRedis(objRedis));
             }
         });
