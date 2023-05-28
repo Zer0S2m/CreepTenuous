@@ -11,8 +11,8 @@ import java.time.ZoneId;
 import java.util.Date;
 
 public interface UtilsAuthAction {
-    String ROLE_USER = "ROLE_USER";
-    String LOGIN = "test_login";
+    String ROLE_USER = User.ROLE_USER.get();
+    String LOGIN = User.LOGIN.get();
 
     Key SECRET = Keys.hmacShaKeyFor(Decoders.BASE64.decode(
             "EnmtYa94dFCsSAc8iqMeR0JXPjNBrSydu6T02QOG4VxhpLv3DAZoU7fzHbIlK5wc1gkW"
