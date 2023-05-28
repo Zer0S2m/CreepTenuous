@@ -13,7 +13,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.io.IOException;
@@ -56,9 +57,9 @@ public class ControllerApiDownloadDirectory {
      * @throws IllegalAccessException An IllegalAccessException is thrown when an application
      * tries to reflectively create an instance
      */
-    @GetMapping(path = "/directory/download")
+    @PostMapping(path = "/directory/download")
     public final ResponseEntity<Resource> download(
-            final @Valid DataDownloadDirectoryApi data,
+            final @Valid @RequestBody DataDownloadDirectoryApi data,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws IOException, InvocationTargetException, NoSuchMethodException,
             InstantiationException, IllegalAccessException {
