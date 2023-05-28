@@ -91,4 +91,16 @@ public class ServiceJwtRedisTests {
         Assertions.assertEquals(data.getRefreshToken(), "");
         repository.deleteById(RECORD_1.login());
     }
+
+    @Test
+    public void updateAccessToken_success() {
+        service.save(RECORD_1);
+        logger.info("Create tokens in redis: " + RECORD_1);
+        service.updateAccessToken(RECORD_2);
+        Assertions.assertFalse(repository.findById(RECORD_2.login()).isEmpty());
+        JwtRedis data = repository.findById(RECORD_2.login()).get();
+        Assertions.assertEquals(data.getAccessToken(), RECORD_2.accessToken());
+        Assertions.assertEquals(data.getRefreshToken(), RECORD_1.refreshToken());
+        repository.deleteById(RECORD_2.login());
+    }
 }
