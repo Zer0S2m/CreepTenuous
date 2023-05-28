@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("service-manager-directory-redis")
@@ -54,7 +55,11 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
                 objRedis.getRealNameFile()
         ));
 
-        return data.toList();
+        if (data.length() > 0) {
+            return data.toList();
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     /**

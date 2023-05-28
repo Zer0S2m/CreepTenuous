@@ -11,17 +11,11 @@ public interface ServiceUploadFileRedis extends BaseServiceRedis<FileRedis> {
      * Push data in redis create file
      * @param dataCreatedFile data upload file
      */
-    void create(ContainerDataUploadFile dataCreatedFile);
+    FileRedis upload(ContainerDataUploadFile dataCreatedFile);
 
     /**
      * Push data in redis create file
      * @param dataCreatedFile data upload files
      */
-    default void create(List<ContainerDataUploadFile> dataCreatedFile) {
-        dataCreatedFile.forEach((data) -> {
-            if (data != null) {
-                create(data);
-            }
-        });
-    }
+    Iterable<FileRedis> upload(List<ContainerDataUploadFile> dataCreatedFile);
 }

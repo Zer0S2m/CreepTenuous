@@ -64,7 +64,7 @@ public class ControllerApiUploadFile {
                 files,
                 systemParents
         );
-        serviceUploadFileRedis.create(data
+        serviceUploadFileRedis.upload(data
                 .stream()
                 .map((obj) -> {
                     if (obj.success()) {

@@ -28,9 +28,10 @@ public class ServiceMoveFileRedisImpl extends BaseServiceFileSystemRedisImpl imp
      * Move file in redis
      * @param systemPath system path file
      * @param systemNameFile system name file
+     * @return result move file(s)
      */
     @Override
-    public void move(Path systemPath, String systemNameFile) {
+    public Optional<FileRedis> move(Path systemPath, String systemNameFile) {
         Optional<FileRedis> objRedis = fileRedisRepository.findById(systemNameFile);
 
         if (objRedis.isPresent()) {
@@ -39,18 +40,22 @@ public class ServiceMoveFileRedisImpl extends BaseServiceFileSystemRedisImpl imp
 
             push(readyObjRedis);
         }
+
+        return objRedis;
     }
 
     /**
      * Move files in redis
      * @param systemPath system path file
      * @param systemNameFile system names files
+     * @return result move file(s)
      */
     @Override
-    public void move(Path systemPath, List<String> systemNameFile) {
+    public Iterable<FileRedis> move(Path systemPath, List<String> systemNameFile) {
         Iterable<FileRedis> objsRedis = fileRedisRepository.findAllById(systemNameFile);
         objsRedis.forEach(objRedis -> objRedis.setPathFile(systemPath.toString()));
         push(objsRedis);
+        return objsRedis;
     }
 
     @Override

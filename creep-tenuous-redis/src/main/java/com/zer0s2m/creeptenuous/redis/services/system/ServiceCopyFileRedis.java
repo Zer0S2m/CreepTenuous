@@ -12,16 +12,18 @@ public interface ServiceCopyFileRedis extends BaseServiceRedis<FileRedis> {
      * @param target new system directory path
      * @param existingSystemNameFile existing system file names
      * @param newSystemFileName new system file names
+     * @return result copy file(s)
      */
-    void copy(List<Path> target, List<String> existingSystemNameFile, List<String> newSystemFileName);
+    List<FileRedis> copy(List<Path> target, List<String> existingSystemNameFile, List<String> newSystemFileName);
 
     /**
      * Copy file in redis
      * @param target new system directory path
      * @param existingSystemNameFile existing system file names
      * @param newSystemFileName new system file names
+     * @return result copy file(s)
      */
-    default void copy(Path target, String existingSystemNameFile, String newSystemFileName) {
-        copy(List.of(target), List.of(existingSystemNameFile), List.of(newSystemFileName));
+    default List<FileRedis> copy(Path target, String existingSystemNameFile, String newSystemFileName) {
+        return copy(List.of(target), List.of(existingSystemNameFile), List.of(newSystemFileName));
     }
 }

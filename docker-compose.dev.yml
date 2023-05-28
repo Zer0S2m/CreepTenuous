@@ -9,6 +9,7 @@ services:
       - data:/var/lib/postgresql/data
     env_file:
       - .env
+    command: postgres -c 'max_connections=250'
 
   redis:
     image: redis:6.2-alpine

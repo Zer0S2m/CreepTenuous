@@ -44,7 +44,7 @@ public class ServiceCopyDirectoryRedisImpl extends BaseServiceFileSystemRedisImp
         attached.forEach((attach) -> {
             if (attach.isDirectory()) {
                 systemNameDirectorySource.add(attach.source().getFileName().toString());
-            } else if (attach.isFile()) {
+            } else {
                 systemNameFileSource.add(attach.source().getFileName().toString());
             }
         });
@@ -71,7 +71,7 @@ public class ServiceCopyDirectoryRedisImpl extends BaseServiceFileSystemRedisImp
                         attach.nameFileSystemObject(),
                         attach.target().toString()
                 ));
-            } else if (attach.isFile()) {
+            } else {
                 fileRedisList.add(new FileRedis(
                         loginUser,
                         roleUser,
