@@ -10,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.io.IOException;
@@ -38,9 +39,9 @@ public class ControllerApiDownloadFile {
      * @return file
      * @throws IOException if an I/O error occurs or the parent directory does not exist
      */
-    @GetMapping(path = "/file/download")
+    @PostMapping(path = "/file/download")
     public ResponseEntity<Resource> download(
-            final @Valid DataDownloadFileApi data,
+            final @Valid @RequestBody DataDownloadFileApi data,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws IOException {
         serviceDownloadFileRedis.setAccessToken(accessToken);
