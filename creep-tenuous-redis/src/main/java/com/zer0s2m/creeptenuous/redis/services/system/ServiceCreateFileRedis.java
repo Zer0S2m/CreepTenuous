@@ -35,5 +35,5 @@ public interface ServiceCreateFileRedis extends BaseServiceRedis<FileRedis> {
         return data;
     }
 
-    void create(ContainerDataCreateFile dataCreatedFile);
+    FileRedis create(ContainerDataCreateFile dataCreatedFile);
 }

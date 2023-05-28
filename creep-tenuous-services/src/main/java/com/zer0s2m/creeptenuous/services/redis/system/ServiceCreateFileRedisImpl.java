@@ -22,7 +22,7 @@ public class ServiceCreateFileRedisImpl extends BaseServiceFileSystemRedisImpl i
     }
 
     @Override
-    public void create(ContainerDataCreateFile dataCreatedFile) {
+    public FileRedis create(ContainerDataCreateFile dataCreatedFile) {
         String loginUser = accessClaims.get("login", String.class);
         String roleUser = accessClaims.get("role", String.class);
 
@@ -35,6 +35,8 @@ public class ServiceCreateFileRedisImpl extends BaseServiceFileSystemRedisImpl i
         );
 
         push(objRedis);
+
+        return objRedis;
     }
 
     @Override
