@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiDeleteDirectoryDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteDirectoryApi;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
@@ -15,7 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @V1APIRestController
-public class ControllerApiDeleteDirectory {
+public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirectoryDoc {
     private final ServiceDeleteDirectoryImpl serviceDeleteDirectory;
 
     private final ServiceDeleteDirectoryRedisImpl serviceDeleteDirectoryRedis;
@@ -41,6 +42,7 @@ public class ControllerApiDeleteDirectory {
      * @throws IllegalAccessException An IllegalAccessException is thrown when an application
      * tries to reflectively create an instance
      */
+    @Override
     @DeleteMapping("/directory/delete")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public final void deleteDirectory(

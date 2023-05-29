@@ -63,14 +63,14 @@ public class ServiceDeleteFileTests {
     @Test
     public void deleteFile_success() throws IOException {
         Path pathTestFile = Paths.get(
-                buildDirectoryPath.build(RECORD_1.parents()), RECORD_1.nameFile()
+                buildDirectoryPath.build(RECORD_1.parents()), RECORD_1.fileName()
         );
         Files.createFile(pathTestFile);
         logger.info("Create file for tests: " + pathTestFile);
 
         Assertions.assertTrue(Files.exists(pathTestFile));
 
-        service.delete(RECORD_1.nameFile(), RECORD_1.parents());
+        service.delete(RECORD_1.fileName(), RECORD_1.parents());
 
         Assertions.assertFalse(Files.exists(pathTestFile));
 
@@ -83,14 +83,14 @@ public class ServiceDeleteFileTests {
     public void deleteFile_fail_fileNotIsExists() throws IOException {
         Path pathTestFile = Paths.get(
                 buildDirectoryPath.build(INVALID_RECORD_NOT_IS_EXISTS.systemParents()),
-                INVALID_RECORD_NOT_IS_EXISTS.systemNameFile()
+                INVALID_RECORD_NOT_IS_EXISTS.systemFileName()
         );
 
         Assertions.assertFalse(Files.exists(pathTestFile));
         Assertions.assertThrows(
                 NoSuchFileException.class,
                 () -> service.delete(
-                        INVALID_RECORD_NOT_IS_EXISTS.systemNameFile(),
+                        INVALID_RECORD_NOT_IS_EXISTS.systemFileName(),
                         INVALID_RECORD_NOT_IS_EXISTS.systemParents()
                 )
         );
@@ -108,7 +108,7 @@ public class ServiceDeleteFileTests {
         Assertions.assertThrows(
                 NoSuchFileException.class,
                 () -> service.delete(
-                        INVALID_RECORD_INVALID_PATH_DIRECTORY.systemNameFile(),
+                        INVALID_RECORD_INVALID_PATH_DIRECTORY.systemFileName(),
                         INVALID_RECORD_INVALID_PATH_DIRECTORY.systemParents()
                 )
         );

@@ -61,8 +61,9 @@ public interface ControllerApiCreateDirectoryDoc {
                                     schema = @Schema(implementation = ResponseCreateDirectoryApi.class)
                             )
                     ),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
                     @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden"),
-                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+                    @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFoundDirectory")
             }
     )
     ResponseCreateDirectoryApi createDirectory(
