@@ -10,7 +10,7 @@ public class ExceptionNotDirectoryMsg {
         this.message = message;
     }
 
-    public String getMassage() {
+    public String getMessage() {
         return message;
     }
 

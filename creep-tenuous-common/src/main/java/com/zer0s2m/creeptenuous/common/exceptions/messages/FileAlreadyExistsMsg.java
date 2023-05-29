@@ -10,7 +10,7 @@ public class FileAlreadyExistsMsg {
         this.message = message;
     }
 
-    public String getMassage() {
+    public String getMessage() {
         return message;
     }
 
