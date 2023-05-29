@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.api.helpers.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsAuthAction;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
+import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNotDirectoryMsg;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
@@ -15,11 +16,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.FileSystemUtils;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -45,6 +48,34 @@ public class ControllerApiDownloadDirectoryTests {
 
     List<String> DIRECTORIES_1 = List.of("test_folder1");
 
+    DataDownloadDirectoryApi VALID_DATA_1 = new DataDownloadDirectoryApi(
+            new ArrayList<>(),
+            new ArrayList<>(),
+            DIRECTORIES_1.get(0),
+            DIRECTORIES_1.get(0)
+    );
+
+    DataDownloadDirectoryApi INVALID_DATA_1 = new DataDownloadDirectoryApi(
+            new ArrayList<>(),
+            new ArrayList<>(),
+            null,
+            null
+    );
+
+    DataDownloadDirectoryApi INVALID_DATA_2 = new DataDownloadDirectoryApi(
+            null,
+            null,
+            DIRECTORIES_1.get(0),
+            DIRECTORIES_1.get(0)
+    );
+
+    DataDownloadDirectoryApi INVALID_DATA_3 = new DataDownloadDirectoryApi(
+            List.of("invalid", "path", "directory"),
+            List.of("invalid", "path", "directory"),
+            DIRECTORIES_1.get(0),
+            DIRECTORIES_1.get(0)
+    );
+
     @Test
     public void downloadDirectory_success() throws Exception {
         UtilsActionForFiles.preparePreliminaryFilesForCopyDirectories(
@@ -61,11 +92,9 @@ public class ControllerApiDownloadDirectoryTests {
         );
 
         this.mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/v1/directory/download")
-                        .queryParam("parents", "")
-                        .queryParam("systemParents", "")
-                        .queryParam("directory", DIRECTORIES_1.get(0))
-                        .queryParam("systemDirectory", DIRECTORIES_1.get(0))
+                MockMvcRequestBuilders.post("/api/v1/directory/download")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(VALID_DATA_1))
                         .header("Authorization",  accessToken)
         ).andExpect(status().isOk());
 
@@ -78,9 +107,9 @@ public class ControllerApiDownloadDirectoryTests {
     @Test
     public void downloadDirectory_fail_notValidNameDirectory() throws Exception {
         this.mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/v1/directory/download")
-                        .queryParam("parents", "")
-                        .queryParam("systemParents", "")
+                MockMvcRequestBuilders.post("/api/v1/directory/download")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(INVALID_DATA_1))
                         .header("Authorization",  accessToken)
         ).andExpect(status().isBadRequest());
     }
@@ -88,9 +117,9 @@ public class ControllerApiDownloadDirectoryTests {
     @Test
     public void downloadDirectory_fail_notValidParents() throws Exception {
         this.mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/v1/directory/download")
-                        .queryParam("directory", DIRECTORIES_1.get(0))
-                        .queryParam("systemDirectory", DIRECTORIES_1.get(0))
+                MockMvcRequestBuilders.post("/api/v1/directory/download")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(INVALID_DATA_2))
                         .header("Authorization",  accessToken)
         ).andExpect(status().isBadRequest());
     }
@@ -98,11 +127,9 @@ public class ControllerApiDownloadDirectoryTests {
     @Test
     public void downloadDirectory_fail_invalidPathDirectory() throws Exception {
         this.mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/v1/directory/download")
-                        .queryParam("parents", "invalid", "path", "directory")
-                        .queryParam("systemParents", "invalid", "path", "directory")
-                        .queryParam("directory", DIRECTORIES_1.get(0))
-                        .queryParam("systemDirectory", DIRECTORIES_1.get(0))
+                MockMvcRequestBuilders.post("/api/v1/directory/download")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(INVALID_DATA_3))
                         .header("Authorization",  accessToken)
                 )
                 .andExpect(status().isNotFound())
