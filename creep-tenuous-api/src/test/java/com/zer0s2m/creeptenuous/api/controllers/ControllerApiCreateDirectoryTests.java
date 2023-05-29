@@ -81,7 +81,7 @@ public class ControllerApiCreateDirectoryTests {
         ResponseCreateDirectoryApi response = new ObjectMapper().readValue(json, ResponseCreateDirectoryApi.class);
 
         Path newFolder = Path.of(serviceBuildDirectoryPath.build(
-                List.of(response.systemNameDirectory())
+                List.of(response.systemDirectoryName())
         ));
         Assertions.assertTrue(Files.exists(newFolder));
         UtilsActionForFiles.deleteFileAndWriteLog(newFolder, logger);

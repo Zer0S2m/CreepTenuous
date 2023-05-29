@@ -3,15 +3,15 @@ package com.zer0s2m.creeptenuous.security.jwt.exceptions.messages;
 import org.springframework.http.HttpStatus;
 
 public class UserNotFoundMsg {
-    private final String massage;
+    private final String message;
     private final Integer statusCode = HttpStatus.BAD_REQUEST.value();
 
-    public UserNotFoundMsg(String massage) {
-        this.massage = massage;
+    public UserNotFoundMsg(String message) {
+        this.message = message;
     }
 
     public String getMassage() {
-        return massage;
+        return message;
     }
 
     public Integer getStatusCode() {
