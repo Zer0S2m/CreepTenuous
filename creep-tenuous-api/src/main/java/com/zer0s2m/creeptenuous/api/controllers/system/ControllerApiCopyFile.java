@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCopyFileDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCopyFile;
 import com.zer0s2m.creeptenuous.common.data.DataCopyFileApi;
@@ -23,7 +24,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @V1APIRestController
-public class ControllerApiCopyFile {
+public class ControllerApiCopyFile implements ControllerApiCopyFileDoc {
     private final ServiceCopyFileImpl serviceCopyFile;
 
     private final ServiceCopyFileRedisImpl serviceCopyFileRedis;
@@ -52,6 +53,7 @@ public class ControllerApiCopyFile {
      * @throws IllegalAccessException An IllegalAccessException is thrown when an application
      * tries to reflectively create an instance
      */
+    @Override
     @PostMapping("/file/copy")
     @ResponseStatus(code = HttpStatus.CREATED)
     public ResponseCopyFileApi copy(
@@ -65,15 +67,15 @@ public class ControllerApiCopyFile {
                 file.systemToParents()
         );
         serviceCopyFileRedis.checkRights(file.parents(), mergeRealAndSystemParents, null);
-        if (file.systemNameFile() != null) {
-            serviceCopyFileRedis.checkRights(file.systemNameFile());
+        if (file.systemFileName() != null) {
+            serviceCopyFileRedis.checkRights(file.systemFileName());
             ContainerDataCopyFile containerData = AtomicSystemCallManager.call(
                     serviceCopyFile,
-                    file.systemNameFile(),
+                    file.systemFileName(),
                     file.systemParents(),
                     file.systemToParents()
             );
-            serviceCopyFileRedis.copy(containerData.target(), file.systemNameFile(), containerData.systemNameFile());
+            serviceCopyFileRedis.copy(containerData.target(), file.systemFileName(), containerData.systemFileName());
             return new ResponseCopyFileApi(List.of(containerData));
         } else {
             serviceCopyFileRedis.checkRights(file.systemNameFiles());
@@ -86,7 +88,7 @@ public class ControllerApiCopyFile {
             serviceCopyFileRedis.copy(
                     containersData.stream().map(ContainerDataCopyFile::target).collect(Collectors.toList()),
                     Objects.requireNonNull(file.systemNameFiles()),
-                    containersData.stream().map(ContainerDataCopyFile::systemNameFile).collect(Collectors.toList())
+                    containersData.stream().map(ContainerDataCopyFile::systemFileName).collect(Collectors.toList())
             );
             return new ResponseCopyFileApi(containersData);
         }

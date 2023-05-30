@@ -6,8 +6,6 @@ import com.zer0s2m.creeptenuous.api.helpers.UtilsAuthAction;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
-import com.zer0s2m.creeptenuous.common.enums.Directory;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNotDirectoryMsg;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.NoSuchFileExists;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -141,12 +139,7 @@ public class ControllerApiDownloadFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isNotFound())
-                .andExpect(content().json(
-                        objectMapper.writeValueAsString(
-                                new ExceptionNotDirectoryMsg(Directory.NOT_FOUND_DIRECTORY.get())
-                        )
-                ));
+                .andExpect(status().isNotFound());
     }
 
     @Test

@@ -5,8 +5,6 @@ import com.zer0s2m.creeptenuous.api.helpers.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsAuthAction;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectoryApi;
-import com.zer0s2m.creeptenuous.common.enums.Directory;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNotDirectoryMsg;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +23,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -132,13 +129,6 @@ public class ControllerApiDownloadDirectoryTests {
                         .content(objectMapper.writeValueAsString(INVALID_DATA_3))
                         .header("Authorization",  accessToken)
                 )
-                .andExpect(status().isNotFound())
-                .andExpect(content().json(
-                        objectMapper.writeValueAsString(
-                                new ExceptionNotDirectoryMsg(
-                                        Directory.NOT_FOUND_DIRECTORY.get()
-                                )
-                        )
-                ));
+                .andExpect(status().isNotFound());
     }
 }

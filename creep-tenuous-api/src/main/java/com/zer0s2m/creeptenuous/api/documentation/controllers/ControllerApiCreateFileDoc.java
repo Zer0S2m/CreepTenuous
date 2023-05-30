@@ -10,12 +10,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -34,8 +28,6 @@ public interface ControllerApiCreateFileDoc {
      * @throws IllegalAccessException An IllegalAccessException is thrown when an application
      * tries to reflectively create an instance
      */
-    @PostMapping("/file/create")
-    @ResponseStatus(code = HttpStatus.CREATED)
     @Operation(
             method = "POST",
             summary = "Creating a file",
@@ -64,7 +56,7 @@ public interface ControllerApiCreateFileDoc {
             }
     )
     ResponseCreateFileApi createFile(
-            final @Valid @RequestBody DataCreateFileApi file,
-            @Parameter(hidden = true) @RequestHeader(name = "Authorization") String accessToken
+            final DataCreateFileApi file,
+            @Parameter(hidden = true) String accessToken
     ) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException;
 }

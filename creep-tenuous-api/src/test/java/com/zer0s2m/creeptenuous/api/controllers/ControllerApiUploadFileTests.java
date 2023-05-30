@@ -56,8 +56,8 @@ public class ControllerApiUploadFileTests {
         MvcResult result = mockMvc.perform(
                 multipart("/api/v1/file/upload")
                         .file(getMockFile(nameTestFile1, targetStream))
-                        .queryParam("parents", "")
-                        .queryParam("systemParents", "")
+                        .param("parents", "")
+                        .param("systemParents", "")
                         .header("Authorization",  accessToken)
         )
                 .andExpect(status().isOk())
@@ -89,8 +89,8 @@ public class ControllerApiUploadFileTests {
                 multipart("/api/v1/file/upload")
                         .file(getMockFile(nameTestFile1, targetStream1))
                         .file(getMockFile(nameTestFile2, targetStream2))
-                        .queryParam("parents", "")
-                        .queryParam("systemParents", "")
+                        .param("parents", "")
+                        .param("systemParents", "")
                         .header("Authorization",  accessToken)
                 )
                 .andExpect(status().isOk())
@@ -132,8 +132,8 @@ public class ControllerApiUploadFileTests {
         mockMvc.perform(
                 multipart("/api/v1/file/upload")
                         .file(getMockFile(nameTestFile2, targetStream))
-                        .queryParam("parents", "invalid", "path", "directory")
-                        .queryParam("systemParents", "invalid", "path", "directory")
+                        .param("parents", "invalid", "path", "directory")
+                        .param("systemParents", "invalid", "path", "directory")
                         .header("Authorization",  accessToken)
                 )
                 .andExpect(status().isNotFound());

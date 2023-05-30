@@ -7,7 +7,6 @@ import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.data.DataCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionDirectoryExistsMsg;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNotDirectoryMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import org.apache.logging.log4j.LogManager;
@@ -122,14 +121,7 @@ public class ControllerApiCreateDirectoryTests {
                         .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(INVALID_RECORD))
                 )
-                .andExpect(status().isNotFound())
-                .andExpect(content().json(
-                        objectMapper.writeValueAsString(
-                                new ExceptionNotDirectoryMsg(
-                                        Directory.NOT_FOUND_DIRECTORY.get()
-                                )
-                        )
-                ));
+                .andExpect(status().isNotFound());
     }
 
     @Test

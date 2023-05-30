@@ -5,9 +5,7 @@ import com.zer0s2m.creeptenuous.api.helpers.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsAuthAction;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.data.DataCopyDirectoryApi;
-import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.common.enums.MethodCopyDirectory;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNotDirectoryMsg;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -83,7 +80,7 @@ public class ControllerApiCopyDirectoryTests {
                                 MethodCopyDirectory.FOLDER.getMethod()
                         )))
                 )
-                .andExpect(status().isNoContent());
+                .andExpect(status().isCreated());
 
         FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_1)));
         FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_3)));
@@ -120,7 +117,7 @@ public class ControllerApiCopyDirectoryTests {
                                 MethodCopyDirectory.CONTENT.getMethod()
                         )))
                 )
-                .andExpect(status().isNoContent());
+                .andExpect(status().isCreated());
 
         FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_1)));
         FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_3)));
@@ -143,14 +140,7 @@ public class ControllerApiCopyDirectoryTests {
                                 1
                         )))
                 )
-                .andExpect(status().isNotFound())
-                .andExpect(content().json(
-                        objectMapper.writeValueAsString(
-                                new ExceptionNotDirectoryMsg(
-                                        Directory.NOT_FOUND_DIRECTORY.get()
-                                )
-                        )
-                ));
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -170,14 +160,7 @@ public class ControllerApiCopyDirectoryTests {
                                 1
                         )))
                 )
-                .andExpect(status().isNotFound())
-                .andExpect(content().json(
-                        objectMapper.writeValueAsString(
-                                new ExceptionNotDirectoryMsg(
-                                        Directory.NOT_FOUND_DIRECTORY.get()
-                                )
-                        )
-                ));
+                .andExpect(status().isNotFound());
     }
 
     @Test

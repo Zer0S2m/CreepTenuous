@@ -7,9 +7,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -26,8 +23,6 @@ public interface ControllerApiDeleteFileDoc {
      * @throws IllegalAccessException An IllegalAccessException is thrown when an application
      * tries to reflectively create an instance
      */
-    @DeleteMapping("/file/delete")
-    @ResponseStatus(code = HttpStatus.NO_CONTENT)
     @Operation(
             method = "DELETE",
             summary = "Deleting a file",
@@ -55,8 +50,8 @@ public interface ControllerApiDeleteFileDoc {
             }
     )
     void deleteFile(
-            final @Valid @RequestBody DataDeleteFileApi file,
-            @Parameter(hidden = true) @RequestHeader(name = "Authorization") String accessToken
+            final DataDeleteFileApi file,
+            @Parameter(hidden = true) String accessToken
     ) throws InvocationTargetException, NoSuchMethodException,
             InstantiationException, IllegalAccessException;
 }

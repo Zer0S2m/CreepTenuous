@@ -8,7 +8,7 @@ import java.nio.file.NoSuchFileException;
 import java.util.List;
 
 @Service("service-build-directory-path")
-public final class ServiceBuildDirectoryPath {
+public final class ServiceBuildDirectoryPath implements CheckIsExistsDirectoryService {
     private final CollectRootPathImpl collectRootPath;
 
     @Autowired
