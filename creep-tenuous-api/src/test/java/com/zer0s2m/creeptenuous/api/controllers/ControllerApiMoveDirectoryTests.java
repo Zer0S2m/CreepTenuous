@@ -68,7 +68,7 @@ public class ControllerApiMoveDirectoryTests {
         );
 
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/directory/move")
+                MockMvcRequestBuilders.put("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization",  accessToken)
@@ -120,7 +120,7 @@ public class ControllerApiMoveDirectoryTests {
         );
 
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/directory/move")
+                MockMvcRequestBuilders.put("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization",  accessToken)
@@ -156,7 +156,7 @@ public class ControllerApiMoveDirectoryTests {
     @Test
     public void moveDirectory_fail_invalidPathDirectory() throws Exception {
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/directory/move")
+                MockMvcRequestBuilders.put("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization",  accessToken)
@@ -176,7 +176,7 @@ public class ControllerApiMoveDirectoryTests {
     @Test
     public void moveDirectory_fail_invalidToPathDirectory() throws Exception {
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/directory/move")
+                MockMvcRequestBuilders.put("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization",  accessToken)
