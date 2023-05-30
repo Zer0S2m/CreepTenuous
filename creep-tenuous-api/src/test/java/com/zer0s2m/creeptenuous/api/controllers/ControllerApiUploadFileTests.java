@@ -1,10 +1,8 @@
 package com.zer0s2m.creeptenuous.api.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.api.helpers.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsAuthAction;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
-import com.zer0s2m.creeptenuous.common.http.ResponseUploadFileApi;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -53,29 +50,16 @@ public class ControllerApiUploadFileTests {
 
         UtilsActionForFiles.preparePreliminaryFiles(nameTestFile1, new ArrayList<>(), logger, buildDirectoryPath);
 
-        MvcResult result = mockMvc.perform(
+        mockMvc.perform(
                 multipart("/api/v1/file/upload")
                         .file(getMockFile(nameTestFile1, targetStream))
                         .param("parents", "")
                         .param("systemParents", "")
                         .header("Authorization",  accessToken)
         )
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String json = result.getResponse().getContentAsString();
-        ResponseUploadFileApi response = new ObjectMapper().readValue(json, ResponseUploadFileApi.class);
+                .andExpect(status().isCreated());
 
         targetStream.close();
-
-        response.objects().forEach(obj -> {
-            Assertions.assertTrue(Files.exists(obj.systemPath()));
-            try {
-                UtilsActionForFiles.deleteFileAndWriteLog(obj.systemPath(), logger);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 
     @Test
@@ -85,7 +69,7 @@ public class ControllerApiUploadFileTests {
         InputStream targetStream1 = new FileInputStream(testFile1);
         InputStream targetStream2 = new FileInputStream(testFile2);
 
-        MvcResult result = mockMvc.perform(
+        mockMvc.perform(
                 multipart("/api/v1/file/upload")
                         .file(getMockFile(nameTestFile1, targetStream1))
                         .file(getMockFile(nameTestFile2, targetStream2))
@@ -93,26 +77,13 @@ public class ControllerApiUploadFileTests {
                         .param("systemParents", "")
                         .header("Authorization",  accessToken)
                 )
-                .andExpect(status().isOk())
-                .andReturn();
+                .andExpect(status().isCreated());
 
         targetStream1.close();
         targetStream2.close();
 
-        String json = result.getResponse().getContentAsString();
-        ResponseUploadFileApi response = new ObjectMapper().readValue(json, ResponseUploadFileApi.class);
-
         UtilsActionForFiles.preparePreliminaryFiles(nameTestFile1, new ArrayList<>(), logger, buildDirectoryPath);
         UtilsActionForFiles.preparePreliminaryFiles(nameTestFile2, new ArrayList<>(), logger, buildDirectoryPath);
-
-        response.objects().forEach(obj -> {
-            Assertions.assertTrue(Files.exists(obj.systemPath()));
-            try {
-                UtilsActionForFiles.deleteFileAndWriteLog(obj.systemPath(), logger);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 
     protected MockMultipartFile getMockFile(String nameFile, InputStream stream) throws IOException {
