@@ -1,12 +1,15 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiManagerDirectoryApiDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataBuilderDirectory;
+import com.zer0s2m.creeptenuous.common.data.DataManagerDirectoryApi;
 import com.zer0s2m.creeptenuous.common.exceptions.NotValidLevelDirectoryException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionBadLevelDirectoryMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseManagerDirectoryApi;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceManagerDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceManagerDirectoryImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 @V1APIRestController
-public class ControllerApiManagerDirectoryApi {
+public class ControllerApiManagerDirectoryApi implements ControllerApiManagerDirectoryApiDoc {
     private final ServiceManagerDirectoryImpl builderDirectory;
 
     private final ServiceManagerDirectoryRedisImpl serviceManagerDirectoryRedis;
@@ -31,29 +34,32 @@ public class ControllerApiManagerDirectoryApi {
 
     /**
      * Manager directory - get all directories by level
-     * @param level directory nesting
-     * @param parents real names directories
-     * @param systemParents parts of the system path - source
-     * @param accessToken raw JWT access token
+     * @param data data manager directory
      * @return result manager build info in directory
      * @throws IOException if an I/O error occurs or the parent directory does not exist
      * @throws NotValidLevelDirectoryException  invalid level directory
      */
-    @GetMapping("/directory")
+    @Override
+    @PostMapping("/directory")
     @ResponseStatus(code = HttpStatus.OK)
     public ResponseManagerDirectoryApi manager(
-            final @RequestParam(value = "level", defaultValue = "0") Integer level,
-            final @RequestParam(value = "parents", defaultValue = "") List<String> parents,
-            final @RequestParam(value = "systemParents", defaultValue = "") List<String> systemParents,
+            final @Valid @RequestBody DataManagerDirectoryApi data,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws IOException, NotValidLevelDirectoryException {
         serviceManagerDirectoryRedis.setAccessToken(accessToken);
-        serviceManagerDirectoryRedis.checkRights(parents, systemParents, null);
+        serviceManagerDirectoryRedis.checkRights(
+                data.parents(),
+                data.systemParents(),
+                null
+        );
 
-        ContainerDataBuilderDirectory rawData = builderDirectory.build(systemParents, level);
-        List<Object> data = serviceManagerDirectoryRedis.build(rawData.namesSystemFileObject());
+        ContainerDataBuilderDirectory rawData = builderDirectory.build(
+                data.systemParents(),
+                data.level()
+        );
+        List<Object> result = serviceManagerDirectoryRedis.build(rawData.namesSystemFileObject());
 
-        return new ResponseManagerDirectoryApi(systemParents, level, data);
+        return new ResponseManagerDirectoryApi(data.systemParents(), data.level(), result);
     }
 
     @ExceptionHandler(NotValidLevelDirectoryException.class)
