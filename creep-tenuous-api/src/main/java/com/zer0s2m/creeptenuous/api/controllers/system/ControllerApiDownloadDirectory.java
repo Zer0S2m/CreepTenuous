@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiDownloadDirectoryDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectoryApi;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @V1APIRestController
-public class ControllerApiDownloadDirectory {
+public class ControllerApiDownloadDirectory implements ControllerApiDownloadDirectoryDoc {
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     private final ServiceDownloadDirectoryImpl serviceDownloadDirectory;
@@ -57,6 +58,7 @@ public class ControllerApiDownloadDirectory {
      * @throws IllegalAccessException An IllegalAccessException is thrown when an application
      * tries to reflectively create an instance
      */
+    @Override
     @PostMapping(path = "/directory/download")
     public final ResponseEntity<Resource> download(
             final @Valid @RequestBody DataDownloadDirectoryApi data,
@@ -68,11 +70,11 @@ public class ControllerApiDownloadDirectory {
         serviceDownloadDirectoryRedis.checkRights(
                 CloneList.cloneOneLevel(data.parents()),
                 CloneList.cloneOneLevel(data.systemParents()),
-                data.systemDirectory()
+                data.systemDirectoryName()
         );
 
         List<String> cloneSystemParents = CloneList.cloneOneLevel(data.systemParents());
-        cloneSystemParents.add(data.systemDirectory());
+        cloneSystemParents.add(data.systemDirectoryName());
 
         HashMap<String, String> resource = serviceDownloadDirectoryRedis.getResource(
                 WalkDirectoryInfo.walkDirectory(Path.of(buildDirectoryPath.build(cloneSystemParents)))
@@ -86,7 +88,7 @@ public class ControllerApiDownloadDirectory {
         return AtomicSystemCallManager.call(
                 serviceDownloadDirectory,
                 data.systemParents(),
-                data.systemDirectory()
+                data.systemDirectoryName()
         );
     }
 }
