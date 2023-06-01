@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public class UserNotFoundMsg {
     private final String message;
-    private final Integer statusCode = HttpStatus.BAD_REQUEST.value();
+    private final Integer statusCode = HttpStatus.UNAUTHORIZED.value();
 
     public UserNotFoundMsg(String message) {
         this.message = message;

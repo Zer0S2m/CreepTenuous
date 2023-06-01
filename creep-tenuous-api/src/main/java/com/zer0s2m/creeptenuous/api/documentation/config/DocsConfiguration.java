@@ -23,6 +23,14 @@ public class DocsConfiguration {
 
     Schema schemaNotFound;
 
+    Schema schemaNotFoundUser;
+
+    Schema schemaInvalidPassword;
+
+    Schema schemaInvalidJwtRefreshToken;
+
+    Schema schemaUnauthorized;
+
     ApiResponse responseForbidden;
 
     ApiResponse responseNotFoundDirectory;
@@ -42,6 +50,10 @@ public class DocsConfiguration {
                         .addSchemas("NotFoundDirectory" , this.schemaNotFoundDirectory)
                         .addSchemas("NotFoundFile" , this.schemaNotFoundFile)
                         .addSchemas("NotFoundFileObjectSystem" , this.schemaNotFound)
+                        .addSchemas("NotFoundUser" , this.schemaNotFoundUser)
+                        .addSchemas("UserInvalidPassword" , this.schemaInvalidPassword)
+                        .addSchemas("InvalidJwtRefreshToken" , this.schemaInvalidJwtRefreshToken)
+                        .addSchemas("Unauthorized" , this.schemaUnauthorized)
                         .addResponses("Forbidden", this.responseForbidden)
                         .addResponses("NotFoundDirectory", this.responseNotFoundDirectory)
                         .addResponses("NotFoundFile", this.responseNotFoundFile)
@@ -71,6 +83,29 @@ public class DocsConfiguration {
                 .addOneOfItem(this.schemaNotFoundDirectory)
                 .addOneOfItem(this.schemaNotFoundFile);
         this.schemaNotFound.setTitle("NotFoundFileObjectSystem");
+
+        this.schemaNotFoundUser = new Schema<Map<String, Object>>()
+                .addProperty("message", new StringSchema().example("User is not found."))
+                .addProperty("statusCode", new IntegerSchema().example(401));
+        this.schemaNotFoundUser.setTitle("NotFoundUser");
+
+        this.schemaInvalidPassword = new Schema<Map<String, Object>>()
+                .addProperty("message", new StringSchema().example("Incorrect password."))
+                .addProperty("statusCode", new IntegerSchema().example(401));
+        this.schemaInvalidPassword.setTitle("UserInvalidPassword");
+
+        this.schemaInvalidJwtRefreshToken = new Schema<Map<String, Object>>()
+                .addProperty("message", new StringSchema().example("Invalid refresh token"))
+                .addProperty("statusCode", new IntegerSchema().example(401));
+        this.schemaInvalidJwtRefreshToken.setTitle("InvalidJwtRefreshToken");
+
+        this.schemaUnauthorized = new Schema<Map<String, Object>>()
+                .addProperty("message", new StringSchema().example("Unauthorized"))
+                .addProperty("statusCode", new IntegerSchema().example(401))
+                .addOneOfItem(this.schemaInvalidJwtRefreshToken)
+                .addOneOfItem(this.schemaInvalidPassword)
+                .addOneOfItem(this.schemaNotFoundUser);
+        this.schemaUnauthorized.setTitle("Unauthorized");
     }
 
     private void buildResponses() {
