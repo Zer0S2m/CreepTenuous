@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCopyDirectoryDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataCopyDirectoryApi;
@@ -20,7 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @V1APIRestController
-public class ControllerApiCopyDirectory {
+public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc {
     private final ServiceCopyDirectoryImpl serviceCopyDirectory;
 
     private final ServiceCopyDirectoryRedisImpl serviceCopyDirectoryRedis;
@@ -47,8 +48,9 @@ public class ControllerApiCopyDirectory {
      * @throws IllegalAccessException An IllegalAccessException is thrown when an application
      * tries to reflectively create an instance
      */
+    @Override
     @PostMapping("/directory/copy")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseCopyDirectoryApi copy(
             final @Valid @RequestBody DataCopyDirectoryApi dataDirectory,
             @RequestHeader(name = "Authorization") String accessToken
@@ -63,14 +65,14 @@ public class ControllerApiCopyDirectory {
         serviceCopyDirectoryRedis.checkRights(
                 dataDirectory.parents(),
                 mergeParents,
-                dataDirectory.systemNameDirectory()
+                dataDirectory.systemDirectoryName()
         );
 
         List<ContainerInfoFileSystemObject> attached = AtomicSystemCallManager.call(
                 serviceCopyDirectory,
                 dataDirectory.systemParents(),
                 dataDirectory.systemToParents(),
-                dataDirectory.systemNameDirectory(),
+                dataDirectory.systemDirectoryName(),
                 dataDirectory.method()
         );
         serviceCopyDirectoryRedis.copy(attached);

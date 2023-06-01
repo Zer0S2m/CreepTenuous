@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiDownloadFileDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataDownloadFile;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
@@ -18,7 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 @V1APIRestController
-public class ControllerApiDownloadFile {
+public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
     private final ServiceDownloadFileImpl serviceDownloadFile;
 
     private final ServiceDownloadFileRedisImpl serviceDownloadFileRedis;
@@ -39,6 +40,7 @@ public class ControllerApiDownloadFile {
      * @return file
      * @throws IOException if an I/O error occurs or the parent directory does not exist
      */
+    @Override
     @PostMapping(path = "/file/download")
     public ResponseEntity<Resource> download(
             final @Valid @RequestBody DataDownloadFileApi data,

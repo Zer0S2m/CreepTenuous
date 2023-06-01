@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiUploadDirectoryDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadDirectoryApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
@@ -17,7 +18,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 @V1APIRestController
-public class ControllerApiUploadDirectory {
+public class ControllerApiUploadDirectory implements ControllerApiUploadDirectoryDoc {
     private final ServiceUploadDirectoryImpl serviceUploadDirectory;
 
     private final ServiceUploadDirectoryRedisImpl serviceUploadDirectoryRedis;
@@ -47,6 +48,7 @@ public class ControllerApiUploadDirectory {
      * tries to reflectively create an instance
      * @throws IOException if an I/O error occurs or the parent directory does not exist
      */
+    @Override
     @PostMapping(path = "/directory/upload")
     @ResponseStatus(code = HttpStatus.CREATED)
     public final ResponseUploadDirectoryApi upload(

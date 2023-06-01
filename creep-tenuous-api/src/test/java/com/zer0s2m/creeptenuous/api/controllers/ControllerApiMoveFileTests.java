@@ -76,7 +76,7 @@ public class ControllerApiMoveFileTests {
     @Test
     public void moveOneFile_success() throws Exception {
         Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
-                RECORD_1.nameFile(), RECORD_1.parents(), logger, buildDirectoryPath
+                RECORD_1.fileName(), RECORD_1.parents(), logger, buildDirectoryPath
         );
         Path pathTestFolder = Paths.get(
                 rootPath.getRootPath(), RECORD_1.toParents().get(0)
@@ -89,16 +89,16 @@ public class ControllerApiMoveFileTests {
         Assertions.assertTrue(Files.exists(pathTestFolder));
 
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/file/move")
+                MockMvcRequestBuilders.put("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_1))
                         .header("Authorization",  accessToken)
                 )
-                .andExpect(status().isCreated());
+                .andExpect(status().isNoContent());
 
         Path newPathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
-                RECORD_1.nameFile(), RECORD_1.toParents(), logger, buildDirectoryPath
+                RECORD_1.fileName(), RECORD_1.toParents(), logger, buildDirectoryPath
         );
 
         Assertions.assertFalse(Files.exists(pathTestFile));
@@ -133,13 +133,13 @@ public class ControllerApiMoveFileTests {
         Assertions.assertTrue(Files.exists(pathTestFolder));
 
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/file/move")
+                MockMvcRequestBuilders.put("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_2))
                         .header("Authorization",  accessToken)
                 )
-                .andExpect(status().isCreated());
+                .andExpect(status().isNoContent());
 
         Path newPathTestFile1 = UtilsActionForFiles.preparePreliminaryFiles(
                 nameFiles.get(0), RECORD_2.toParents(), logger, buildDirectoryPath
@@ -162,7 +162,7 @@ public class ControllerApiMoveFileTests {
     @DisplayName("Failed moving file")
     public void moveFile_fail_notValidParents() throws Exception {
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/file/move")
+                MockMvcRequestBuilders.put("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization",  accessToken)
@@ -185,7 +185,7 @@ public class ControllerApiMoveFileTests {
     @Test
     @DisplayName("Failed moving multiple files")
     public void moveFiles_fail_fileNotIsExists() throws Exception {
-        MockHttpServletRequestBuilder builderRequest = MockMvcRequestBuilders.post("/api/v1/file/move")
+        MockHttpServletRequestBuilder builderRequest = MockMvcRequestBuilders.put("/api/v1/file/move")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization",  accessToken);
@@ -223,7 +223,7 @@ public class ControllerApiMoveFileTests {
     @Test
     public void deleteFile_fail_notValidParents() throws Exception {
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/file/move")
+                MockMvcRequestBuilders.put("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization",  accessToken)
@@ -246,7 +246,7 @@ public class ControllerApiMoveFileTests {
     @Test
     public void deleteFile_fail_notValidToParents() throws Exception {
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/file/move")
+                MockMvcRequestBuilders.put("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization",  accessToken)

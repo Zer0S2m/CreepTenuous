@@ -1,39 +1,48 @@
 package com.zer0s2m.creeptenuous.common.data;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public record DataMoveFileApi(
-        String nameFile,
+        @Schema(description = "Real file name")
+        String fileName,
 
-        String systemNameFile,
+        @Schema(description = "System file name")
+        String systemFileName,
 
+        @Schema(description = "Real file names")
         List<String> nameFiles,
 
+        @Schema(description = "System file names")
         List<String> systemNameFiles,
 
         @NotNull(message = "Please provide path current directory (Not NULL)")
+        @Schema(description = "Parts of real system paths (directories) - source")
         List<String> parents,
 
         @NotNull(message = "Please provide path current directory (system) (Not NULL)")
+        @Schema(description = "Parts of system paths (directories) - source")
         List<String> systemParents,
 
         @NotNull(message = "Please provide path new directory (Not NULL)")
+        @Schema(description = "Parts of real system paths (directories) - target")
         List<String> toParents,
 
         @NotNull(message = "Please provide path new directory (system) (Not NULL)")
+        @Schema(description = "Parts of system paths (directories) - target")
         List<String> systemToParents
 ) {
     @Override
-    public String nameFile() {
-        return nameFile != null ? nameFile.trim() : null;
+    public String fileName() {
+        return fileName != null ? fileName.trim() : null;
     }
 
     @Override
-    public String systemNameFile() {
-        return systemNameFile != null ? systemNameFile.trim() : null;
+    public String systemFileName() {
+        return systemFileName != null ? systemFileName.trim() : null;
     }
 
     @Override

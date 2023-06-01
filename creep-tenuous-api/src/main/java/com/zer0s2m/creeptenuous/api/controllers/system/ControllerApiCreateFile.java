@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCreateFileDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateFile;
 import com.zer0s2m.creeptenuous.common.data.DataCreateFileApi;
@@ -20,7 +21,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 
 @V1APIRestController
-public class ControllerApiCreateFile {
+public class ControllerApiCreateFile implements ControllerApiCreateFileDoc {
     private final ServiceCreateFileImpl serviceCreateFile;
 
     private final ServiceCreateFileRedisImpl serviceFileRedis;
@@ -46,6 +47,7 @@ public class ControllerApiCreateFile {
      * @throws IllegalAccessException An IllegalAccessException is thrown when an application
      * tries to reflectively create an instance
      */
+    @Override
     @PostMapping("/file/create")
     @ResponseStatus(code = HttpStatus.CREATED)
     public ResponseCreateFileApi createFile(
@@ -57,7 +59,7 @@ public class ControllerApiCreateFile {
         ContainerDataCreateFile dataCreatedFile = AtomicSystemCallManager.call(
                 this.serviceCreateFile,
                 file.systemParents(),
-                file.nameFile(),
+                file.fileName(),
                 file.typeFile()
         );
         serviceFileRedis.create(dataCreatedFile);

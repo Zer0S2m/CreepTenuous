@@ -94,7 +94,7 @@ public class ServiceCopyFileTests {
     @Test
     public void copyOneFile_Success() throws IOException {
         Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
-                RECORD_1.nameFile(), RECORD_1.parents(), logger, buildDirectoryPath
+                RECORD_1.fileName(), RECORD_1.parents(), logger, buildDirectoryPath
         );
         Path pathTestFolder = Paths.get(
                 rootPath.getRootPath(), RECORD_1.toParents().get(0)
@@ -108,7 +108,7 @@ public class ServiceCopyFileTests {
 
         logger.info("Create folder for tests: " + pathTestFolder);
 
-        ContainerDataCopyFile container = service.copy(RECORD_1.nameFile(), RECORD_1.parents(), RECORD_1.toParents());
+        ContainerDataCopyFile container = service.copy(RECORD_1.fileName(), RECORD_1.parents(), RECORD_1.toParents());
 
         UtilsActionForFiles.deleteFileAndWriteLog(container.target(), logger);
         UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile, logger);
@@ -151,7 +151,7 @@ public class ServiceCopyFileTests {
         Assertions.assertThrows(
                 NoSuchFileException.class,
                 () -> service.copy(
-                        INVALID_RECORD_NOT_IS_EXISTS_FILE.nameFile(),
+                        INVALID_RECORD_NOT_IS_EXISTS_FILE.fileName(),
                         INVALID_RECORD_NOT_IS_EXISTS_FILE.parents(),
                         INVALID_RECORD_NOT_IS_EXISTS_FILE.toParents()
                 )
@@ -163,7 +163,7 @@ public class ServiceCopyFileTests {
         Assertions.assertThrows(
                 NoSuchFileException.class,
                 () -> service.copy(
-                        INVALID_RECORD_INVALID_PATH_DIRECTORY.nameFile(),
+                        INVALID_RECORD_INVALID_PATH_DIRECTORY.fileName(),
                         INVALID_RECORD_INVALID_PATH_DIRECTORY.parents(),
                         INVALID_RECORD_INVALID_PATH_DIRECTORY.toParents()
                 )

@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiMoveDirectoryDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataMoveDirectory;
 import com.zer0s2m.creeptenuous.common.data.DataMoveDirectoryApi;
@@ -16,7 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @V1APIRestController
-public class ControllerApiMoveDirectory {
+public class ControllerApiMoveDirectory implements ControllerApiMoveDirectoryDoc {
     private final ServiceMoveDirectoryImpl serviceMoveDirectory;
 
     private final ServiceMoveDirectoryRedisImpl serviceMoveDirectoryRedis;
@@ -42,7 +43,8 @@ public class ControllerApiMoveDirectory {
      * @throws IllegalAccessException An IllegalAccessException is thrown when an application
      * tries to reflectively create an instance
      */
-    @PostMapping("/directory/move")
+    @Override
+    @PutMapping("/directory/move")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public final void move(
             final @Valid @RequestBody DataMoveDirectoryApi dataDirectory,
@@ -58,13 +60,13 @@ public class ControllerApiMoveDirectory {
         serviceMoveDirectoryRedis.checkRights(
                 dataDirectory.parents(),
                 mergeParents,
-                dataDirectory.systemNameDirectory()
+                dataDirectory.systemDirectoryName()
         );
         ContainerDataMoveDirectory infoMoving = AtomicSystemCallManager.call(
                 serviceMoveDirectory,
                 dataDirectory.systemParents(),
                 dataDirectory.systemToParents(),
-                dataDirectory.systemNameDirectory(),
+                dataDirectory.systemDirectoryName(),
                 dataDirectory.method()
         );
         serviceMoveDirectoryRedis.move(infoMoving);

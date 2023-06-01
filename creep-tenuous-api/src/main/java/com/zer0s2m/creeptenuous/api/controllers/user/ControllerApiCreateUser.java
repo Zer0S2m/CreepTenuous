@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.controllers.user;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCreateUserDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.exceptions.UserAlreadyExistException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.UserAlreadyExistMsg;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @V1APIRestController
-public class ControllerApiCreateUser {
+public class ControllerApiCreateUser implements ControllerApiCreateUserDoc {
     private final ServiceCreateUser createUser;
 
     @Autowired
@@ -21,6 +22,12 @@ public class ControllerApiCreateUser {
         this.createUser = createUser;
     }
 
+    /**
+     * Creating a user in the system
+     * @param user Data for creating a user in the system
+     * @throws UserAlreadyExistException user already exists
+     */
+    @Override
     @PostMapping("/user/create")
     @ResponseStatus(code = HttpStatus.CREATED)
     public void create(final @RequestBody User user) throws UserAlreadyExistException {

@@ -61,7 +61,7 @@ public class ServiceCreateFileTests {
     public void createFileType1_success() throws NotFoundTypeFileException, IOException {
         ContainerDataCreateFile container = service.create(
                 RECORD_1.parents(),
-                RECORD_1.nameFile(),
+                RECORD_1.fileName(),
                 RECORD_1.typeFile()
         );
 
@@ -74,7 +74,7 @@ public class ServiceCreateFileTests {
     public void createFileType2_success() throws NotFoundTypeFileException, IOException {
         ContainerDataCreateFile container = service.create(
                 RECORD_2.parents(),
-                RECORD_2.nameFile(),
+                RECORD_2.fileName(),
                 RECORD_2.typeFile()
         );
 
@@ -87,7 +87,7 @@ public class ServiceCreateFileTests {
     public void createFileType3_success() throws NotFoundTypeFileException, IOException {
         ContainerDataCreateFile container = service.create(
                 RECORD_3.parents(),
-                RECORD_3.nameFile(),
+                RECORD_3.fileName(),
                 RECORD_3.typeFile()
         );
 
@@ -102,7 +102,7 @@ public class ServiceCreateFileTests {
                 NotFoundTypeFileException.class,
                 () -> service.create(
                         INVALID_RECORD_TYPE_FILE.parents(),
-                        INVALID_RECORD_TYPE_FILE.nameFile(),
+                        INVALID_RECORD_TYPE_FILE.fileName(),
                         INVALID_RECORD_TYPE_FILE.typeFile()
                 )
         );
@@ -114,7 +114,7 @@ public class ServiceCreateFileTests {
                 NoSuchFileException.class,
                 () -> service.create(
                         INVALID_RECORD_PATH_DIRECTORY.parents(),
-                        INVALID_RECORD_PATH_DIRECTORY.nameFile(),
+                        INVALID_RECORD_PATH_DIRECTORY.fileName(),
                         INVALID_RECORD_PATH_DIRECTORY.typeFile()
                 )
         );

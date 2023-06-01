@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCreateDirectoryDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateDirectory;
 import com.zer0s2m.creeptenuous.common.data.DataCreateDirectoryApi;
@@ -18,7 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @V1APIRestController
-public class ControllerApiCreateDirectory {
+public class ControllerApiCreateDirectory implements ControllerApiCreateDirectoryDoc {
     private final ServiceCreateDirectoryImpl createDirectory;
 
     private final ServiceCreateDirectoryRedisImpl serviceDirectoryRedis;
@@ -46,6 +47,7 @@ public class ControllerApiCreateDirectory {
      * @throws IllegalAccessException An IllegalAccessException is thrown when an application
      * tries to reflectively create an instance
      */
+    @Override
     @PostMapping("/directory/create")
     @ResponseStatus(code = HttpStatus.CREATED)
     public final ResponseCreateDirectoryApi createDirectory(
@@ -54,11 +56,11 @@ public class ControllerApiCreateDirectory {
     ) throws FileAlreadyExistsException, InvocationTargetException,
             NoSuchMethodException, InstantiationException, IllegalAccessException {
         serviceDirectoryRedis.setAccessToken(accessToken);
-        serviceDirectoryRedis.checkRights(directoryForm.parents(), directoryForm.systemParents(), directoryForm.name());
+        serviceDirectoryRedis.checkRights(directoryForm.parents(), directoryForm.systemParents(), directoryForm.directoryName());
         ContainerDataCreateDirectory dataCreatedDirectory = AtomicSystemCallManager.call(
                 this.createDirectory,
                 directoryForm.systemParents(),
-                directoryForm.name()
+                directoryForm.directoryName()
         );
         serviceDirectoryRedis.create(dataCreatedDirectory);
         return new ResponseCreateDirectoryApi(

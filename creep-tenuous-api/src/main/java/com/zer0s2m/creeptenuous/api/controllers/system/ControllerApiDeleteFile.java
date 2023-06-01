@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiDeleteFileDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteFileApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.nio.file.Path;
 
 @V1APIRestController
-public class ControllerApiDeleteFile {
+public class ControllerApiDeleteFile implements ControllerApiDeleteFileDoc {
     private final ServiceDeleteFileImpl serviceDeleteFile;
 
     private final ServiceDeleteFileRedisImpl serviceDeleteFileRedis;
@@ -40,6 +41,7 @@ public class ControllerApiDeleteFile {
      * @throws IllegalAccessException An IllegalAccessException is thrown when an application
      * tries to reflectively create an instance
      */
+    @Override
     @DeleteMapping("/file/delete")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteFile(
@@ -49,12 +51,12 @@ public class ControllerApiDeleteFile {
             InstantiationException, IllegalAccessException {
         serviceDeleteFileRedis.setAccessToken(accessToken);
         serviceDeleteFileRedis.checkRights(file.parents(), file.systemParents(), null);
-        serviceDeleteFileRedis.checkRights(List.of(file.systemNameFile()));
+        serviceDeleteFileRedis.checkRights(List.of(file.systemFileName()));
         Path source = AtomicSystemCallManager.call(
                 serviceDeleteFile,
-                file.systemNameFile(),
+                file.systemFileName(),
                 file.systemParents()
         );
-        serviceDeleteFileRedis.delete(source, file.systemNameFile());
+        serviceDeleteFileRedis.delete(source, file.systemFileName());
     }
 }

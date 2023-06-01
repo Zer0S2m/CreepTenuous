@@ -74,7 +74,7 @@ public class ControllerApiDeleteFileTests {
     public void deleteFile_success() throws Exception {
         for (DataDeleteFileApi record : Arrays.asList(RECORD_1, RECORD_2)) {
             Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
-                    record.nameFile(), record.parents(), logger, buildDirectoryPath
+                    record.fileName(), record.parents(), logger, buildDirectoryPath
             );
             Files.createFile(pathTestFile);
 
@@ -124,7 +124,7 @@ public class ControllerApiDeleteFileTests {
                                 new NoSuchFileExists(
                                         rootPath.getRootPath() +
                                         "/" +
-                                        INVALID_RECORD_NOT_EXISTS_FILE.systemNameFile())
+                                        INVALID_RECORD_NOT_EXISTS_FILE.systemFileName())
                         )
                 ));
     }
