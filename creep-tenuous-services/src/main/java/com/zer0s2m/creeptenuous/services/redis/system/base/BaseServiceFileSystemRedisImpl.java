@@ -1,6 +1,6 @@
 package com.zer0s2m.creeptenuous.services.redis.system.base;
 
-import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsDirectoryException;
+import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
@@ -45,11 +45,11 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
      * @param parents Real names directory
      * @param systemParents System names directory
      * @param nameDirectory System name directory
-     * @throws NoRightsDirectoryException When the user has no execution rights
+     * @throws NoRightsRedisException When the user has no execution rights
      */
     @Override
     public void checkRights(List<String> parents, List<String> systemParents, String nameDirectory)
-            throws NoRightsDirectoryException {
+            throws NoRightsRedisException {
         String loginUser = accessClaims.get("login", String.class);
 
         if (enableCheckIsNameDirectory && nameDirectory != null) {
@@ -62,7 +62,7 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
 
         objsRedis.forEach((objRedis) -> {
             if (!Objects.equals(objRedis.getLogin(), loginUser)) {
-                throw new NoRightsDirectoryException();
+                throw new NoRightsRedisException();
             }
         });
     }
@@ -70,18 +70,18 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
     /**
      * Validate right user (files)
      * @param systemNameFiles system names files
-     * @throws NoRightsDirectoryException When the user has no execution right
+     * @throws NoRightsRedisException When the user has no execution right
      */
     @Override
     public void checkRights(List<String> systemNameFiles)
-            throws NoRightsDirectoryException {
+            throws NoRightsRedisException {
         String loginUser = accessClaims.get("login", String.class);
 
         Iterable<FileRedis> objsRedis = fileRedisRepository.findAllById(systemNameFiles);
 
         objsRedis.forEach((objRedis) -> {
             if (!Objects.equals(objRedis.getLogin(), loginUser)) {
-                throw new NoRightsDirectoryException();
+                throw new NoRightsRedisException();
             }
         });
     }

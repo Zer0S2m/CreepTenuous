@@ -2,11 +2,11 @@ package com.zer0s2m.creeptenuous.redis.exceptions.messages;
 
 import org.springframework.http.HttpStatus;
 
-public class ExceptionNoRightsDirectoryMsg {
+public class ExceptionNoRightsRedisMsg {
     private final String message;
     private final Integer statusCode = HttpStatus.FORBIDDEN.value();
 
-    public ExceptionNoRightsDirectoryMsg(String message) {
+    public ExceptionNoRightsRedisMsg(String message) {
         this.message = message;
     }
 
