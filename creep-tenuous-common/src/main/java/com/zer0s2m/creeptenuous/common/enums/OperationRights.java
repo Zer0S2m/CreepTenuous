@@ -1,4 +1,4 @@
-package com.zer0s2m.creeptenuous.redis.services.security;
+package com.zer0s2m.creeptenuous.common.enums;
 
 import java.util.List;
 

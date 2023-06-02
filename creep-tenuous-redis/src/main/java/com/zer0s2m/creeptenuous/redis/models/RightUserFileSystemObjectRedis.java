@@ -1,6 +1,6 @@
 package com.zer0s2m.creeptenuous.redis.models;
 
-import com.zer0s2m.creeptenuous.redis.services.security.OperationRights;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import jakarta.persistence.Column;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
