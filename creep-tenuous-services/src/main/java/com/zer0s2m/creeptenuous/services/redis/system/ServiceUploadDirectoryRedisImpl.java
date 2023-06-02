@@ -83,7 +83,8 @@ public class ServiceUploadDirectoryRedisImpl extends BaseServiceFileSystemRedisI
                 this.roleUser,
                 dataUploadFile.realName(),
                 dataUploadFile.systemName(),
-                dataUploadFile.systemPath().toString()
+                dataUploadFile.systemPath().toString(),
+                new ArrayList<>()
         );
     }
 
@@ -98,7 +99,8 @@ public class ServiceUploadDirectoryRedisImpl extends BaseServiceFileSystemRedisI
                 this.roleUser,
                 dataUploadFile.realName(),
                 dataUploadFile.systemName(),
-                dataUploadFile.systemPath().toString()
+                dataUploadFile.systemPath().toString(),
+                new ArrayList<>()
         );
     }
 }

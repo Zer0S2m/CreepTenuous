@@ -78,14 +78,16 @@ public class ServiceCopyDirectoryRedisTests {
                 User.ROLE_USER.get(),
                 "test_1",
                 newSystemNameDirectory,
-                pathDirectory.toString()
+                pathDirectory.toString(),
+                new ArrayList<>()
         ));
         fileRedisRepository.save(new FileRedis(
                 User.LOGIN.get(),
                 User.ROLE_USER.get(),
                 "test_2",
                 newSystemNameFile,
-                pathFile.toString()
+                pathFile.toString(),
+                new ArrayList<>()
         ));
 
         serviceCopyDirectoryRedis.copy(data);

@@ -8,6 +8,8 @@ import com.zer0s2m.creeptenuous.common.exceptions.FileAlreadyExistsException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionDirectoryExistsMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.redis.services.security.OperationRights;
+import com.zer0s2m.creeptenuous.services.redis.security.ServiceManagerRightsImpl;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceCreateDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateDirectoryImpl;
 import jakarta.validation.Valid;
@@ -20,17 +22,25 @@ import java.util.List;
 
 @V1APIRestController
 public class ControllerApiCreateDirectory implements ControllerApiCreateDirectoryDoc {
+
     private final ServiceCreateDirectoryImpl createDirectory;
 
     private final ServiceCreateDirectoryRedisImpl serviceDirectoryRedis;
 
+    /**
+     * Service for managing user rights for interacting with a target file system object
+     */
+    private final ServiceManagerRightsImpl serviceManagerRights;
+
     @Autowired
     public ControllerApiCreateDirectory(
             ServiceCreateDirectoryImpl createDirectory,
-            ServiceCreateDirectoryRedisImpl serviceDirectoryRedis
+            ServiceCreateDirectoryRedisImpl serviceDirectoryRedis,
+            ServiceManagerRightsImpl serviceManagerRights
     ) {
         this.createDirectory = createDirectory;
         this.serviceDirectoryRedis = serviceDirectoryRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -56,13 +66,27 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
     ) throws FileAlreadyExistsException, InvocationTargetException,
             NoSuchMethodException, InstantiationException, IllegalAccessException {
         serviceDirectoryRedis.setAccessToken(accessToken);
-        serviceDirectoryRedis.checkRights(directoryForm.parents(), directoryForm.systemParents(), directoryForm.directoryName());
+        serviceDirectoryRedis.checkRights(
+                directoryForm.parents(),
+                directoryForm.systemParents(),
+                directoryForm.directoryName()
+        );
+        serviceManagerRights.setAccessToken(accessToken);
+
         ContainerDataCreateDirectory dataCreatedDirectory = AtomicSystemCallManager.call(
                 this.createDirectory,
                 directoryForm.systemParents(),
                 directoryForm.directoryName()
         );
+
         serviceDirectoryRedis.create(dataCreatedDirectory);
+
+        serviceManagerRights.addRight(serviceManagerRights.buildObj(
+                dataCreatedDirectory.systemNameDirectory(),
+                serviceManagerRights.getLoginUser(),
+                OperationRights.ALL
+        ));
+
         return new ResponseCreateDirectoryApi(
                 dataCreatedDirectory.realNameDirectory(),
                 dataCreatedDirectory.systemNameDirectory()

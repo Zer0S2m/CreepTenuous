@@ -10,6 +10,8 @@ import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service("service-directory-redis")
 public class ServiceCreateDirectoryRedisImpl extends BaseServiceFileSystemRedisImpl
         implements ServiceCreateDirectoryRedis {
@@ -30,7 +32,8 @@ public class ServiceCreateDirectoryRedisImpl extends BaseServiceFileSystemRedisI
                 roleUser,
                 dataCreatedDirectory.realNameDirectory(),
                 dataCreatedDirectory.systemNameDirectory(),
-                dataCreatedDirectory.pathDirectory().toString()
+                dataCreatedDirectory.pathDirectory().toString(),
+                new ArrayList<>()
         );
         push(objRedis);
         return objRedis;

@@ -57,7 +57,8 @@ public class ServiceManagerDirectoryRedisTests {
                 User.ROLE_USER.get(),
                 "test_1",
                 systemNameDirectory,
-                Path.of(systemNameDirectory).toString()
+                Path.of(systemNameDirectory).toString(),
+                new ArrayList<>()
         );
         directoryRedisRepository.save(directoryRedis);
         FileRedis fileRedis = new FileRedis(
@@ -65,7 +66,8 @@ public class ServiceManagerDirectoryRedisTests {
                 User.ROLE_USER.get(),
                 "test_1",
                 systemNameFile,
-                Path.of(systemNameFile).toString()
+                Path.of(systemNameFile).toString(),
+                new ArrayList<>()
         );
         fileRedisRepository.save(fileRedis);
 

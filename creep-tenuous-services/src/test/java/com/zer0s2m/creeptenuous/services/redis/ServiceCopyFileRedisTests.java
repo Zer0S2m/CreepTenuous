@@ -17,6 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest(classes = {
@@ -52,7 +53,8 @@ public class ServiceCopyFileRedisTests {
                 User.ROLE_USER.get(),
                 "test_1",
                 systemName1,
-                path1.toString()
+                path1.toString(),
+                new ArrayList<>()
         ));
 
         List<FileRedis> fileRedisList = serviceCopyFileRedis.copy(
@@ -75,7 +77,8 @@ public class ServiceCopyFileRedisTests {
                 User.ROLE_USER.get(),
                 "test",
                 systemName1,
-                path1.toString()
+                path1.toString(),
+                new ArrayList<>()
         ));
 
         List<FileRedis> fileRedisList = serviceCopyFileRedis.copy(

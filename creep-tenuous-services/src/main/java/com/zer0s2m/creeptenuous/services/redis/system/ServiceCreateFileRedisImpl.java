@@ -10,6 +10,8 @@ import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystem
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service("service-file-redis")
 public class ServiceCreateFileRedisImpl extends BaseServiceFileSystemRedisImpl implements ServiceCreateFileRedis {
     @Autowired
@@ -31,7 +33,8 @@ public class ServiceCreateFileRedisImpl extends BaseServiceFileSystemRedisImpl i
                 roleUser,
                 dataCreatedFile.realNameFile(),
                 dataCreatedFile.systemNameFile(),
-                dataCreatedFile.systemPathFile().toString()
+                dataCreatedFile.systemPathFile().toString(),
+                new ArrayList<>()
         );
 
         push(objRedis);

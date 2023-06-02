@@ -17,6 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 @SpringBootTest(classes = {
         DirectoryRedisRepository.class,
@@ -49,7 +50,8 @@ public class ServiceDeleteDirectoryRedisTests {
                 User.ROLE_USER.get(),
                 "test",
                 systemName,
-                Path.of(systemName).toString()
+                Path.of(systemName).toString(),
+                new ArrayList<>()
         ));
 
         serviceDeleteDirectoryRedis.delete(systemName);
