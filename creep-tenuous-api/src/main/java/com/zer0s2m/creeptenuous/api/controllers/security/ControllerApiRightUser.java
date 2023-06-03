@@ -6,13 +6,28 @@ import com.zer0s2m.creeptenuous.common.data.DataCreateRightUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteRightUserApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateRightUserApi;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @V1APIRestController
 public class ControllerApiRightUser implements ControllerApiRightUserDoc {
+
+    private final ServiceManagerRights serviceManagerRights;
+
+    private final BaseServiceFileSystemRedis serviceFileSystemRedis;
+
+    @Autowired
+    public ControllerApiRightUser(
+            ServiceManagerRights serviceManagerRights,
+            BaseServiceFileSystemRedis baseServiceFileSystemRedis) {
+        this.serviceManagerRights = serviceManagerRights;
+        this.serviceFileSystemRedis = baseServiceFileSystemRedis;
+    }
 
     /**
      * Add rights for a user on a file system target
@@ -27,6 +42,9 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
             final @Valid @RequestBody @NotNull DataCreateRightUserApi data,
             @RequestHeader(name = "Authorization") String accessToken
     ) {
+        serviceFileSystemRedis.setAccessToken(accessToken);
+        serviceManagerRights.setAccessToken(accessToken);
+
         return new ResponseCreateRightUserApi(
                 data.systemName(), data.loginUser(), OperationRights.valueOf(data.right()));
     }
@@ -43,6 +61,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
             final @Valid @RequestBody DataDeleteRightUserApi data,
             @RequestHeader(name = "Authorization") String accessToken
     ) {
-
+        serviceFileSystemRedis.setAccessToken(accessToken);
+        serviceManagerRights.setAccessToken(accessToken);
     }
 }

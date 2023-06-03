@@ -17,6 +17,7 @@ import java.util.Objects;
 
 @Service
 public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedis {
+
     protected final DirectoryRedisRepository directoryRedisRepository;
 
     protected final FileRedisRepository fileRedisRepository;
@@ -30,7 +31,7 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
     private Boolean resetCheckIsNameDirectory = false;
 
     @Autowired
-    protected BaseServiceFileSystemRedisImpl(
+    public BaseServiceFileSystemRedisImpl(
             DirectoryRedisRepository directoryRedisRepository,
             FileRedisRepository fileRedisRepository,
             JwtProvider jwtProvider

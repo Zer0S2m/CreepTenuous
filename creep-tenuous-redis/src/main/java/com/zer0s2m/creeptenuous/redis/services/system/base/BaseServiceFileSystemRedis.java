@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
 import java.util.List;
 
 public interface BaseServiceFileSystemRedis {
+
     /**
      * Validate right user (directories)
      * @param parents Real names directory
@@ -21,6 +22,24 @@ public interface BaseServiceFileSystemRedis {
      * @throws NoRightsRedisException When the user has no execution right
      */
     void checkRights(List<String> systemNameFiles) throws NoRightsRedisException;
+
+    /**
+     * Set access token
+     * @param accessToken <b>JWT</b> access token
+     */
+    void setAccessToken(String accessToken);
+
+    /**
+     * Enable check right inclusive name directory
+     * @param enableCheckIsNameDirectory is enabled
+     */
+    void setEnableCheckIsNameDirectory(Boolean enableCheckIsNameDirectory);
+
+    /**
+     * Reset
+     * @param resetCheckIsNameDirectory is enabled
+     */
+    void setResetCheckIsNameDirectory(Boolean resetCheckIsNameDirectory);
 
     /**
      * Validate right user (file)
