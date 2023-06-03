@@ -10,7 +10,7 @@ public class ChangeRightsYourselfException extends Exception {
     }
 
     public ChangeRightsYourselfException() {
-        this("You cannot add rights to yourself");
+        this("You cannot change rights to yourself");
     }
 
 }

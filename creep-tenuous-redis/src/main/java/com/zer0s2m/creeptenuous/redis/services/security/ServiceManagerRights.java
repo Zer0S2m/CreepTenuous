@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.redis.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
+import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsRightException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import io.jsonwebtoken.Claims;
@@ -31,10 +32,21 @@ public interface ServiceManagerRights {
 
     /**
      * Create a user right on a file system object
-     * @param right Data right
-     * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
+     * @param right data right. Must not be {@literal null}.
+     * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
      */
     void addRight(RightUserFileSystemObjectRedis right) throws ChangeRightsYourselfException;
+
+    /**
+     * Delete a user right a file system object
+     * @param right data right. Must not be {@literal null}.
+     * @param operationRights type of transaction. Must not be {@literal null}.
+     * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
+     * @throws NoExistsRightException The right was not found in the database.
+     *                                Or is {@literal null} {@link NullPointerException}
+     */
+    void deleteRight(RightUserFileSystemObjectRedis right, OperationRights operationRights)
+            throws ChangeRightsYourselfException, NoExistsRightException;
 
     /**
      * Set access claims (resources), from raw access token
@@ -74,6 +86,16 @@ public interface ServiceManagerRights {
     void checkAddingRightsYourself(RightUserFileSystemObjectRedis right) throws ChangeRightsYourselfException;
 
     /**
+     * Checking for deleting rights to itself
+     * @param right must not be null.
+     * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
+     * @throws NoExistsRightException The right was not found in the database.
+     *                                Or is {@literal null} {@link NullPointerException}
+     */
+    void checkDeletingRightsYourself(RightUserFileSystemObjectRedis right)
+            throws ChangeRightsYourselfException, NoExistsRightException;
+
+    /**
      * Getting login user
      * @return login user
      */
@@ -83,6 +105,26 @@ public interface ServiceManagerRights {
      * Setting login user
      */
     void setLoginUser(String loginUser);
+
+    /**
+     * Set setting. Responsible for regulating validation prior to creating or deleting an object.
+     * Necessary to avoid exceptions - {@link ChangeRightsYourselfException}.
+     * @param isWillBeCreated whether the object will be created
+     */
+    void setIsWillBeCreated(boolean isWillBeCreated);
+
+    /**
+     * Get setting. Responsible for regulating validation prior to creating or deleting an object.
+     * @return whether the object will be created
+     */
+    boolean getIsWillBeCreated();
+
+    /**
+     * Get redis object - right
+     * @param fileSystemObject  file system object name. Must not be null.
+     * @return redis object
+     */
+    RightUserFileSystemObjectRedis getObj(String fileSystemObject);
 
     /**
      * Get right object to persist in {@literal Redis}

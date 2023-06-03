@@ -9,8 +9,10 @@ import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateRightUserApi;
 import com.zer0s2m.creeptenuous.redis.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
+import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsRightException;
 import com.zer0s2m.creeptenuous.redis.exceptions.messages.ExceptionAddRightsYourselfMsg;
 import com.zer0s2m.creeptenuous.redis.exceptions.messages.ExceptionNoExistsFileSystemObjectRedisMsg;
+import com.zer0s2m.creeptenuous.redis.exceptions.messages.ExceptionNoExistsRightMsg;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotFoundMsg;
@@ -50,10 +52,11 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
     public ResponseCreateRightUserApi add(
             final @Valid @RequestBody @NotNull DataCreateRightUserApi data,
             @RequestHeader(name = "Authorization") String accessToken
-) throws NoExistsFileSystemObjectRedisException, UserNotFoundException, ChangeRightsYourselfException {
+    ) throws NoExistsFileSystemObjectRedisException, UserNotFoundException, ChangeRightsYourselfException {
         serviceFileSystemRedis.setAccessToken(accessToken);
         serviceFileSystemRedis.checkRights(data.systemName());
 
+        serviceManagerRights.setIsWillBeCreated(false);
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.isExistsUser(data.loginUser());
         serviceManagerRights.isExistsFileSystemObject(data.systemName());
@@ -71,20 +74,28 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      * @param accessToken raw JWT access token
      * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database.
      * @throws UserNotFoundException the user does not exist in the system
+     * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
+     * @throws NoExistsRightException The right was not found in the database.
+     *                                Or is {@literal null} {@link NullPointerException}
      */
     @Override
     @DeleteMapping("/user/right")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void delete(
-            final @Valid @RequestBody DataDeleteRightUserApi data,
+            final @Valid @RequestBody @NotNull DataDeleteRightUserApi data,
             @RequestHeader(name = "Authorization") String accessToken
-    ) throws UserNotFoundException, NoExistsFileSystemObjectRedisException {
+    ) throws UserNotFoundException, NoExistsFileSystemObjectRedisException, ChangeRightsYourselfException,
+            NoExistsRightException {
         serviceFileSystemRedis.setAccessToken(accessToken);
         serviceFileSystemRedis.checkRights(data.systemName());
 
+        serviceManagerRights.setIsWillBeCreated(false);
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.isExistsUser(data.loginUser());
         serviceManagerRights.isExistsFileSystemObject(data.systemName());
+
+        serviceManagerRights.deleteRight(
+                serviceManagerRights.getObj(data.systemName()), OperationRights.valueOf(data.right()));
     }
 
     /**
@@ -95,7 +106,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
     @ExceptionHandler({NoExistsFileSystemObjectRedisException.class})
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ExceptionNoExistsFileSystemObjectRedisMsg handleExceptionNoExistsFileSystemObjectRedis(
-            NoExistsFileSystemObjectRedisException error) {
+            @NotNull NoExistsFileSystemObjectRedisException error) {
         return new ExceptionNoExistsFileSystemObjectRedisMsg(error.getMessage());
     }
 
@@ -106,8 +117,19 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      */
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public UserNotFoundMsg handleExceptionNotIsExistsUser(UserNotFoundException error) {
+    public UserNotFoundMsg handleExceptionNotIsExistsUser(@NotNull UserNotFoundException error) {
         return new UserNotFoundMsg(error.getMessage(), HttpStatus.NOT_FOUND.value());
+    }
+
+    /**
+     * Error handler
+     * @param error The right was not found in the database. Or is {@literal null} {@link NullPointerException}
+     * @return error message for user
+     */
+    @ExceptionHandler(NoExistsRightException.class)
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    public ExceptionNoExistsRightMsg handleExceptionNoExistsRight(@NotNull NoExistsRightException error) {
+        return new ExceptionNoExistsRightMsg(error.getMessage());
     }
 
     /**
@@ -117,7 +139,8 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      */
     @ExceptionHandler(ChangeRightsYourselfException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ExceptionAddRightsYourselfMsg handleExceptionNotIsExistsUser(ChangeRightsYourselfException error) {
+    public ExceptionAddRightsYourselfMsg handleExceptionNotIsExistsUser(@NotNull ChangeRightsYourselfException error) {
         return new ExceptionAddRightsYourselfMsg(error.getMessage());
     }
+
 }

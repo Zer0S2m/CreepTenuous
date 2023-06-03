@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.services.redis.security;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.redis.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
+import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsRightException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
@@ -36,6 +37,8 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     protected Claims accessClaims;
 
     private String loginUser;
+
+    private boolean isWillBeCreated = true;
 
     protected final DirectoryRedisRepository directoryRedisRepository;
 
@@ -78,12 +81,13 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
     /**
      * Create a user right on a file system object
-     * @param right Data right
-     * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
+     * @param right data right. Must not be {@literal null}.
+     * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
      */
     @Override
     public void addRight(RightUserFileSystemObjectRedis right) throws ChangeRightsYourselfException {
         checkAddingRightsYourself(right);
+
         Optional<RightUserFileSystemObjectRedis> existsRight = rightUserFileSystemObjectRedisRepository
                 .findById(right.getFileSystemObject());
         if (existsRight.isPresent()) {
@@ -104,10 +108,30 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     }
 
     /**
+     * Delete a user right a file system object
+     * @param right data right. Must not be {@literal null}.
+     * @param operationRights type of transaction. Must not be {@literal null}.
+     * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
+     * @throws NoExistsRightException The right was not found in the database.
+     *                                Or is {@literal null} {@link NullPointerException}
+     */
+    public void deleteRight(RightUserFileSystemObjectRedis right, OperationRights operationRights)
+            throws ChangeRightsYourselfException, NoExistsRightException {
+        checkDeletingRightsYourself(right);
+
+        List<OperationRights> operationRightsList = right.getRight();
+        if (operationRightsList != null && operationRightsList.remove(operationRights)) {
+            right.setRight(operationRightsList);
+            rightUserFileSystemObjectRedisRepository.save(right);
+        }
+    }
+
+    /**
      * Checking for the existence of a file system object in the database
      * @param nameFileSystemObject The system name of the file system object
      * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database.
      */
+    @Override
     public void isExistsFileSystemObject(String nameFileSystemObject) throws NoExistsFileSystemObjectRedisException {
         boolean isExistsDirectory = directoryRedisRepository.existsById(nameFileSystemObject);
         boolean isExistsFile = fileRedisRepository.existsById(nameFileSystemObject);
@@ -122,6 +146,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
      * @param loginUser login user
      * @throws UserNotFoundException the user does not exist in the system
      */
+    @Override
     public void isExistsUser(String loginUser) throws UserNotFoundException {
         boolean isExists = jwtRedisRepository.existsById(loginUser);
         if (!isExists) {
@@ -134,8 +159,33 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
      * @param right must not be null.
      * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
      */
+    @Override
     public void checkAddingRightsYourself(RightUserFileSystemObjectRedis right) throws ChangeRightsYourselfException {
-        if (right.getLogin().equals(getLoginUser())) {
+        checkChangeRightYourself(right);
+    }
+
+    /**
+     * Checking for deleting rights to itself
+     * @param right must not be null.
+     * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
+     */
+    @Override
+    public void checkDeletingRightsYourself(RightUserFileSystemObjectRedis right)
+            throws ChangeRightsYourselfException, NoExistsRightException {
+        if (right == null) {
+            throw new NoExistsRightException();
+        }
+        checkChangeRightYourself(right);
+    }
+
+    /**
+     * Checking for change rights to itself
+     * @param right must not be null.
+     * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
+     */
+    private void checkChangeRightYourself(@NotNull RightUserFileSystemObjectRedis right)
+            throws ChangeRightsYourselfException {
+        if (right.getLogin().equals(getLoginUser()) && !getIsWillBeCreated()) {
             throw new ChangeRightsYourselfException();
         }
     }
@@ -164,6 +214,36 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     @Override
     public void setLoginUser(String loginUser) {
         this.loginUser = loginUser;
+    }
+
+    /**
+     * Set setting. Responsible for regulating validation prior to creating or deleting an object.
+     * Necessary to avoid exceptions - {@link ChangeRightsYourselfException}.
+     * @param isWillBeCreated whether the object will be created
+     */
+    @Override
+    public void setIsWillBeCreated(boolean isWillBeCreated) {
+        this.isWillBeCreated = isWillBeCreated;
+    }
+
+    /**
+     * Get setting. Responsible for regulating validation prior to creating or deleting an object.
+     * @return whether the object will be created
+     */
+    @Override
+    public boolean getIsWillBeCreated() {
+        return isWillBeCreated;
+    }
+
+    /**
+     * Get redis object - right
+     * @param fileSystemObject  file system object name. Must not be null.
+     * @return redis object
+     */
+    public RightUserFileSystemObjectRedis getObj(String fileSystemObject) {
+        Optional<RightUserFileSystemObjectRedis> rightUserFileSystemObjectRedis =
+                rightUserFileSystemObjectRedisRepository.findById(fileSystemObject);
+        return rightUserFileSystemObjectRedis.orElse(null);
     }
 
     /**

@@ -8,9 +8,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.FileAlreadyExistsException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionDirectoryExistsMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
-import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.exceptions.ChangeRightsYourselfException;
-import com.zer0s2m.creeptenuous.services.redis.security.ServiceManagerRightsImpl;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceCreateDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateDirectoryImpl;
 import jakarta.validation.Valid;
@@ -28,20 +26,13 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
 
     private final ServiceCreateDirectoryRedisImpl serviceDirectoryRedis;
 
-    /**
-     * Service for managing user rights for interacting with a target file system object
-     */
-    private final ServiceManagerRightsImpl serviceManagerRights;
-
     @Autowired
     public ControllerApiCreateDirectory(
             ServiceCreateDirectoryImpl createDirectory,
-            ServiceCreateDirectoryRedisImpl serviceDirectoryRedis,
-            ServiceManagerRightsImpl serviceManagerRights
+            ServiceCreateDirectoryRedisImpl serviceDirectoryRedis
     ) {
         this.createDirectory = createDirectory;
         this.serviceDirectoryRedis = serviceDirectoryRedis;
-        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -72,7 +63,6 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
                 directoryForm.systemParents(),
                 directoryForm.directoryName()
         );
-        serviceManagerRights.setAccessToken(accessToken);
 
         ContainerDataCreateDirectory dataCreatedDirectory = AtomicSystemCallManager.call(
                 this.createDirectory,
@@ -81,12 +71,6 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
         );
 
         serviceDirectoryRedis.create(dataCreatedDirectory);
-
-        serviceManagerRights.addRight(serviceManagerRights.buildObj(
-                dataCreatedDirectory.systemNameDirectory(),
-                serviceManagerRights.getLoginUser(),
-                OperationRights.ALL
-        ));
 
         return new ResponseCreateDirectoryApi(
                 dataCreatedDirectory.realNameDirectory(),

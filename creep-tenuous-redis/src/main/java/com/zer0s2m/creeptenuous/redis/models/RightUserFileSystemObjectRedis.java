@@ -20,7 +20,6 @@ public class RightUserFileSystemObjectRedis {
     @Column(name = "login")
     private String login;
 
-    @Indexed
     @Column(name = "right")
     private List<OperationRights> right;
 
