@@ -4,7 +4,7 @@ import com.zer0s2m.creeptenuous.common.data.DataCreateRightUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteRightUserApi;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateRightUserApi;
-import com.zer0s2m.creeptenuous.redis.exceptions.AddRightsYourselfException;
+import com.zer0s2m.creeptenuous.redis.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,7 +24,7 @@ public interface ControllerApiRightUserDoc {
      * @return created data
      * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database.
      * @throws UserNotFoundException the user does not exist in the system
-     * @throws AddRightsYourselfException adding rights over the interaction of file system objects to itself
+     * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
      */
     @Operation(
             method = "POST",
@@ -84,7 +84,7 @@ public interface ControllerApiRightUserDoc {
             }
     )
     ResponseCreateRightUserApi add(final DataCreateRightUserApi data, @Parameter(hidden = true) String accessToken)
-            throws NoExistsFileSystemObjectRedisException, UserNotFoundException, AddRightsYourselfException;
+            throws NoExistsFileSystemObjectRedisException, UserNotFoundException, ChangeRightsYourselfException;
 
     /**
      * Delete rights for a user on a file system target
@@ -113,5 +113,5 @@ public interface ControllerApiRightUserDoc {
                     @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden")
             }
     )
-    void delete(final DataDeleteRightUserApi data, @Parameter(hidden = true) String accessToken);
+    void delete(final DataDeleteRightUserApi data, @Parameter(hidden = true) String accessToken) throws UserNotFoundException, NoExistsFileSystemObjectRedisException;
 }

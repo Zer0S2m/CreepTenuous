@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.services.redis.security;
 
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
-import com.zer0s2m.creeptenuous.redis.exceptions.AddRightsYourselfException;
+import com.zer0s2m.creeptenuous.redis.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
@@ -79,10 +79,10 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     /**
      * Create a user right on a file system object
      * @param right Data right
-     * @throws AddRightsYourselfException adding rights over the interaction of file system objects to itself
+     * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
      */
     @Override
-    public void addRight(RightUserFileSystemObjectRedis right) throws AddRightsYourselfException {
+    public void addRight(RightUserFileSystemObjectRedis right) throws ChangeRightsYourselfException {
         checkAddingRightsYourself(right);
         Optional<RightUserFileSystemObjectRedis> existsRight = rightUserFileSystemObjectRedisRepository
                 .findById(right.getFileSystemObject());
@@ -132,11 +132,11 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     /**
      * Checking for adding rights to itself
      * @param right must not be null.
-     * @throws AddRightsYourselfException adding rights over the interaction of file system objects to itself
+     * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
      */
-    public void checkAddingRightsYourself(RightUserFileSystemObjectRedis right) throws AddRightsYourselfException {
+    public void checkAddingRightsYourself(RightUserFileSystemObjectRedis right) throws ChangeRightsYourselfException {
         if (right.getLogin().equals(getLoginUser())) {
-            throw new AddRightsYourselfException();
+            throw new ChangeRightsYourselfException();
         }
     }
 

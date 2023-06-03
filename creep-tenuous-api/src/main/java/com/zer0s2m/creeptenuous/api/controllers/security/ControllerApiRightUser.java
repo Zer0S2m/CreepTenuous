@@ -7,7 +7,7 @@ import com.zer0s2m.creeptenuous.common.data.DataDeleteRightUserApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateRightUserApi;
-import com.zer0s2m.creeptenuous.redis.exceptions.AddRightsYourselfException;
+import com.zer0s2m.creeptenuous.redis.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.redis.exceptions.messages.ExceptionAddRightsYourselfMsg;
 import com.zer0s2m.creeptenuous.redis.exceptions.messages.ExceptionNoExistsFileSystemObjectRedisMsg;
@@ -42,7 +42,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      * @return created data
      * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database.
      * @throws UserNotFoundException the user does not exist in the system
-     * @throws AddRightsYourselfException adding rights over the interaction of file system objects to itself
+     * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
      */
     @Override
     @PostMapping("/user/right")
@@ -50,7 +50,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
     public ResponseCreateRightUserApi add(
             final @Valid @RequestBody @NotNull DataCreateRightUserApi data,
             @RequestHeader(name = "Authorization") String accessToken
-) throws NoExistsFileSystemObjectRedisException, UserNotFoundException, AddRightsYourselfException {
+) throws NoExistsFileSystemObjectRedisException, UserNotFoundException, ChangeRightsYourselfException {
         serviceFileSystemRedis.setAccessToken(accessToken);
         serviceFileSystemRedis.checkRights(data.systemName());
 
@@ -69,6 +69,8 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      * Delete rights for a user on a file system target
      * @param data data to delete
      * @param accessToken raw JWT access token
+     * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database.
+     * @throws UserNotFoundException the user does not exist in the system
      */
     @Override
     @DeleteMapping("/user/right")
@@ -76,11 +78,13 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
     public void delete(
             final @Valid @RequestBody DataDeleteRightUserApi data,
             @RequestHeader(name = "Authorization") String accessToken
-    ) {
+    ) throws UserNotFoundException, NoExistsFileSystemObjectRedisException {
         serviceFileSystemRedis.setAccessToken(accessToken);
         serviceFileSystemRedis.checkRights(data.systemName());
 
-        serviceManagerRights.setAccessToken(accessToken);
+        serviceManagerRights.setAccessClaims(accessToken);
+        serviceManagerRights.isExistsUser(data.loginUser());
+        serviceManagerRights.isExistsFileSystemObject(data.systemName());
     }
 
     /**
@@ -111,9 +115,9 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      * @param error adding rights over the interaction of file system objects to itself
      * @return error message for user
      */
-    @ExceptionHandler(AddRightsYourselfException.class)
+    @ExceptionHandler(ChangeRightsYourselfException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ExceptionAddRightsYourselfMsg handleExceptionNotIsExistsUser(AddRightsYourselfException error) {
+    public ExceptionAddRightsYourselfMsg handleExceptionNotIsExistsUser(ChangeRightsYourselfException error) {
         return new ExceptionAddRightsYourselfMsg(error.getMessage());
     }
 }

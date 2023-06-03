@@ -9,7 +9,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionDirectoryExi
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
-import com.zer0s2m.creeptenuous.redis.exceptions.AddRightsYourselfException;
+import com.zer0s2m.creeptenuous.redis.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.services.redis.security.ServiceManagerRightsImpl;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceCreateDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateDirectoryImpl;
@@ -65,7 +65,7 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
             final @Valid @RequestBody DataCreateDirectoryApi directoryForm,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws FileAlreadyExistsException, InvocationTargetException,
-            NoSuchMethodException, InstantiationException, IllegalAccessException, AddRightsYourselfException {
+            NoSuchMethodException, InstantiationException, IllegalAccessException, ChangeRightsYourselfException {
         serviceDirectoryRedis.setAccessToken(accessToken);
         serviceDirectoryRedis.checkRights(
                 directoryForm.parents(),

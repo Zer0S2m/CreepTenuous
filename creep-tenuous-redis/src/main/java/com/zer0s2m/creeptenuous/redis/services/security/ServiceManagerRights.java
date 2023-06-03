@@ -2,7 +2,7 @@ package com.zer0s2m.creeptenuous.redis.services.security;
 
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
-import com.zer0s2m.creeptenuous.redis.exceptions.AddRightsYourselfException;
+import com.zer0s2m.creeptenuous.redis.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
@@ -32,9 +32,9 @@ public interface ServiceManagerRights {
     /**
      * Create a user right on a file system object
      * @param right Data right
-     * @throws AddRightsYourselfException adding rights over the interaction of file system objects to itself
+     * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
      */
-    void addRight(RightUserFileSystemObjectRedis right) throws AddRightsYourselfException;
+    void addRight(RightUserFileSystemObjectRedis right) throws ChangeRightsYourselfException;
 
     /**
      * Set access claims (resources), from raw access token
@@ -69,9 +69,9 @@ public interface ServiceManagerRights {
     /**
      * Checking for adding rights to itself
      * @param right must not be null.
-     * @throws AddRightsYourselfException adding rights over the interaction of file system objects to itself
+     * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
      */
-    void checkAddingRightsYourself(RightUserFileSystemObjectRedis right) throws AddRightsYourselfException;
+    void checkAddingRightsYourself(RightUserFileSystemObjectRedis right) throws ChangeRightsYourselfException;
 
     /**
      * Getting login user
