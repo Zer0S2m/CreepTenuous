@@ -95,7 +95,9 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
         serviceManagerRights.isExistsFileSystemObject(data.systemName());
 
         serviceManagerRights.deleteRight(
-                serviceManagerRights.getObj(data.systemName()), OperationRights.valueOf(data.right()));
+                serviceManagerRights
+                        .getObj(data.systemName(), data.loginUser()),
+                OperationRights.valueOf(data.right()));
     }
 
     /**

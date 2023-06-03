@@ -17,6 +17,11 @@ import java.util.List;
 public interface ServiceManagerRights {
 
     /**
+     * Separator for creating a unique key (from the system name of the file system object and user login)
+     */
+    String SEPARATOR_UNIQUE_KEY = "__";
+
+    /**
      * Checking permissions to perform some action on a specific file object
      * @param operation type of transaction
      * @param fileSystemObjects file system objects
@@ -122,9 +127,10 @@ public interface ServiceManagerRights {
     /**
      * Get redis object - right
      * @param fileSystemObject  file system object name. Must not be null.
+     * @param loginUser login user
      * @return redis object
      */
-    RightUserFileSystemObjectRedis getObj(String fileSystemObject);
+    RightUserFileSystemObjectRedis getObj(String fileSystemObject, String loginUser);
 
     /**
      * Get right object to persist in {@literal Redis}
@@ -160,6 +166,25 @@ public interface ServiceManagerRights {
             return buildObj(fileSystemObject, login, OperationRights.baseOperations());
         }
         return buildObj(fileSystemObject, login, List.of(right));
+    }
+
+    /**
+     * Creating a unique key from the system name of the file system object and the user login
+     * @param systemName the system name of the file system object
+     * @param loginUser user login
+     * @return generated unique key
+     */
+    default String buildUniqueKey(String systemName, String loginUser) {
+        return systemName + SEPARATOR_UNIQUE_KEY + loginUser;
+    }
+
+    /**
+     * Unpack a unique name using a delimiter {@link ServiceManagerRights#SEPARATOR_UNIQUE_KEY}
+     * @param uniqueName a unique name that was created using a delimiter
+     * @return the system name of the file system object
+     */
+    default String unpackingUniqueKey(String uniqueName) {
+        return uniqueName.split(SEPARATOR_UNIQUE_KEY)[0];
     }
 
 }

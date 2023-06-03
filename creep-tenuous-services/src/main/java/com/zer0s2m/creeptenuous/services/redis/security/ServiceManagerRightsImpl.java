@@ -103,6 +103,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
             rightUserFileSystemObjectRedisRepository.save(existsRightReady);
         } else {
+            right.setFileSystemObject(buildUniqueKey(right.getFileSystemObject(), right.getLogin()));
             rightUserFileSystemObjectRedisRepository.save(right);
         }
     }
@@ -238,11 +239,13 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     /**
      * Get redis object - right
      * @param fileSystemObject  file system object name. Must not be null.
+     * @param loginUser login user
      * @return redis object
      */
-    public RightUserFileSystemObjectRedis getObj(String fileSystemObject) {
+    public RightUserFileSystemObjectRedis getObj(String fileSystemObject, String loginUser) {
         Optional<RightUserFileSystemObjectRedis> rightUserFileSystemObjectRedis =
-                rightUserFileSystemObjectRedisRepository.findById(fileSystemObject);
+                rightUserFileSystemObjectRedisRepository
+                        .findById(buildUniqueKey(fileSystemObject, loginUser));
         return rightUserFileSystemObjectRedis.orElse(null);
     }
 
