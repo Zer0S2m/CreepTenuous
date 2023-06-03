@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.common.data.DataCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.common.exceptions.FileAlreadyExistsException;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.redis.exceptions.AddRightsYourselfException;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateDirectoryImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -62,5 +63,5 @@ public interface ControllerApiCreateDirectoryDoc {
             final DataCreateDirectoryApi directoryForm,
             @Parameter(hidden = true) String accessToken
     ) throws FileAlreadyExistsException, InvocationTargetException,
-            NoSuchMethodException, InstantiationException, IllegalAccessException;
+            NoSuchMethodException, InstantiationException, IllegalAccessException, AddRightsYourselfException;
 }

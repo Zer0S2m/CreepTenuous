@@ -2,10 +2,14 @@ package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataCreateRightUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteRightUserApi;
+import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateRightUserApi;
+import com.zer0s2m.creeptenuous.redis.exceptions.AddRightsYourselfException;
+import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -15,9 +19,12 @@ public interface ControllerApiRightUserDoc {
 
     /**
      * Add rights for a user on a file system target
-     * @param data data to add
+     * @param data Data to add
      * @param accessToken raw JWT access token
      * @return created data
+     * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database.
+     * @throws UserNotFoundException the user does not exist in the system
+     * @throws AddRightsYourselfException adding rights over the interaction of file system objects to itself
      */
     @Operation(
             method = "POST",
@@ -41,11 +48,43 @@ public interface ControllerApiRightUserDoc {
                                     schema = @Schema(implementation = ResponseCreateRightUserApi.class)
                             )
                     ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Cannot add rights", value ="{" +
+                                                    "\"message\": \"You cannot add rights to yourself\"," +
+                                                    "\"statusCode\": 400" +
+                                                    "}"
+                                            )
+                                    })
+                    ),
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
-                    @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden")
+                    @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden"),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found system object", value ="{" +
+                                                    "\"message\": \"Not found file system object\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            ),
+                                            @ExampleObject(name = "Not found user", value = "{" +
+                                                    "\"message\": \"User is not found.\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                    ),
+                            })
+                    )
             }
     )
-    ResponseCreateRightUserApi add(final DataCreateRightUserApi data, @Parameter(hidden = true) String accessToken);
+    ResponseCreateRightUserApi add(final DataCreateRightUserApi data, @Parameter(hidden = true) String accessToken)
+            throws NoExistsFileSystemObjectRedisException, UserNotFoundException, AddRightsYourselfException;
 
     /**
      * Delete rights for a user on a file system target

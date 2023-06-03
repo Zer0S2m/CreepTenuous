@@ -1,11 +1,15 @@
 package com.zer0s2m.creeptenuous.services.redis.security;
 
+import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
+import com.zer0s2m.creeptenuous.redis.exceptions.AddRightsYourselfException;
+import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repositories.JwtRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
@@ -18,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +41,8 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
     protected final FileRedisRepository fileRedisRepository;
 
+    protected final JwtRedisRepository jwtRedisRepository;
+
     private final RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
     @Autowired
@@ -43,12 +50,14 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
             JwtProvider jwtProvider,
             DirectoryRedisRepository directoryRedisRepository,
             FileRedisRepository fileRedisRepository,
-            RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository
+            RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository,
+            JwtRedisRepository jwtRedisRepository
     ) {
         this.jwtProvider = jwtProvider;
         this.directoryRedisRepository = directoryRedisRepository;
         this.fileRedisRepository = fileRedisRepository;
         this.rightUserFileSystemObjectRedisRepository = rightUserFileSystemObjectRedisRepository;
+        this.jwtRedisRepository = jwtRedisRepository;
     }
 
     /**
@@ -70,10 +79,65 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     /**
      * Create a user right on a file system object
      * @param right Data right
+     * @throws AddRightsYourselfException adding rights over the interaction of file system objects to itself
      */
     @Override
-    public void addRight(RightUserFileSystemObjectRedis right) {
-        rightUserFileSystemObjectRedisRepository.save(right);
+    public void addRight(RightUserFileSystemObjectRedis right) throws AddRightsYourselfException {
+        checkAddingRightsYourself(right);
+        Optional<RightUserFileSystemObjectRedis> existsRight = rightUserFileSystemObjectRedisRepository
+                .findById(right.getFileSystemObject());
+        if (existsRight.isPresent()) {
+            RightUserFileSystemObjectRedis existsRightReady = existsRight.get();
+            List<OperationRights> operationRightsList = existsRightReady.getRight();
+            operationRightsList.addAll(right.getRight());
+
+            existsRightReady.setRight(operationRightsList
+                    .stream()
+                    .distinct()
+                    .collect(Collectors.toList())
+            );
+
+            rightUserFileSystemObjectRedisRepository.save(existsRightReady);
+        } else {
+            rightUserFileSystemObjectRedisRepository.save(right);
+        }
+    }
+
+    /**
+     * Checking for the existence of a file system object in the database
+     * @param nameFileSystemObject The system name of the file system object
+     * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database.
+     */
+    public void isExistsFileSystemObject(String nameFileSystemObject) throws NoExistsFileSystemObjectRedisException {
+        boolean isExistsDirectory = directoryRedisRepository.existsById(nameFileSystemObject);
+        boolean isExistsFile = fileRedisRepository.existsById(nameFileSystemObject);
+
+        if (!(isExistsDirectory || isExistsFile)) {
+            throw new NoExistsFileSystemObjectRedisException();
+        }
+    }
+
+    /**
+     * Checking for the existence of a user
+     * @param loginUser login user
+     * @throws UserNotFoundException the user does not exist in the system
+     */
+    public void isExistsUser(String loginUser) throws UserNotFoundException {
+        boolean isExists = jwtRedisRepository.existsById(loginUser);
+        if (!isExists) {
+            throw new UserNotFoundException();
+        }
+    }
+
+    /**
+     * Checking for adding rights to itself
+     * @param right must not be null.
+     * @throws AddRightsYourselfException adding rights over the interaction of file system objects to itself
+     */
+    public void checkAddingRightsYourself(RightUserFileSystemObjectRedis right) throws AddRightsYourselfException {
+        if (right.getLogin().equals(getLoginUser())) {
+            throw new AddRightsYourselfException();
+        }
     }
 
     /**
@@ -83,7 +147,6 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     @Override
     public void setAccessToken(String accessToken) {
         setAccessClaims(JwtUtils.getPureAccessToken(accessToken));
-        this.loginUser = accessClaims.get("login", String.class);
     }
 
     /**
@@ -93,6 +156,14 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     @Override
     public String getLoginUser() {
         return this.loginUser;
+    }
+
+    /**
+     * Setting login user
+     */
+    @Override
+    public void setLoginUser(String loginUser) {
+        this.loginUser = loginUser;
     }
 
     /**
@@ -209,7 +280,19 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
      * Bearer: token...
      * </pre>
      */
-    protected void setAccessClaims(String rawAccessToken) {
-        this.accessClaims = jwtProvider.getAccessClaims(rawAccessToken);
+    @Override
+    public void setAccessClaims(String rawAccessToken) {
+        this.accessClaims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(rawAccessToken));
+        this.setLoginUser(accessClaims.get("login", String.class));
+    }
+
+    /**
+     * Set access claims (resources)
+     * @param accessClaims This is ultimately a JSON map and any values can be added to it, but JWT standard
+     *                     names are provided as type-safe getters and setters for convenience.
+     */
+    @Override
+    public void setAccessClaims(Claims accessClaims) {
+        this.accessClaims = accessClaims;
     }
 }
