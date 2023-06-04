@@ -17,6 +17,16 @@ public interface BaseServiceFileSystemRedis {
             throws NoRightsRedisException;
 
     /**
+     * Validate right user (directories)
+     * @param parents Real names directory
+     * @param systemParents System names directory
+     * @param nameDirectory System name directory
+     * @param isException whether to raise an exception if there are no rights
+     * @return are there existing rights
+     */
+    boolean checkRights(List<String> parents, List<String> systemParents, String nameDirectory, boolean isException);
+
+    /**
      * Validate right user (files)
      * @param systemNameFiles system names files
      * @throws NoRightsRedisException When the user has no execution right
@@ -49,4 +59,5 @@ public interface BaseServiceFileSystemRedis {
      default void checkRights(String systemNameFile) {
          checkRights(List.of(systemNameFile));
      }
+
 }

@@ -4,11 +4,12 @@ import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCreat
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateDirectory;
 import com.zer0s2m.creeptenuous.common.data.DataCreateDirectoryApi;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.FileAlreadyExistsException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionDirectoryExistsMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
-import com.zer0s2m.creeptenuous.redis.exceptions.ChangeRightsYourselfException;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceCreateDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateDirectoryImpl;
 import jakarta.validation.Valid;
@@ -22,17 +23,23 @@ import java.util.List;
 @V1APIRestController
 public class ControllerApiCreateDirectory implements ControllerApiCreateDirectoryDoc {
 
+    static final OperationRights operationRights = OperationRights.CREATE;
+
     private final ServiceCreateDirectoryImpl createDirectory;
 
     private final ServiceCreateDirectoryRedisImpl serviceDirectoryRedis;
 
+    private final ServiceManagerRights serviceManagerRights;
+
     @Autowired
     public ControllerApiCreateDirectory(
             ServiceCreateDirectoryImpl createDirectory,
-            ServiceCreateDirectoryRedisImpl serviceDirectoryRedis
+            ServiceCreateDirectoryRedisImpl serviceDirectoryRedis,
+            ServiceManagerRights serviceManagerRights
     ) {
         this.createDirectory = createDirectory;
         this.serviceDirectoryRedis = serviceDirectoryRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -56,13 +63,19 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
             final @Valid @RequestBody DataCreateDirectoryApi directoryForm,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws FileAlreadyExistsException, InvocationTargetException,
-            NoSuchMethodException, InstantiationException, IllegalAccessException, ChangeRightsYourselfException {
+            NoSuchMethodException, InstantiationException, IllegalAccessException {
         serviceDirectoryRedis.setAccessToken(accessToken);
-        serviceDirectoryRedis.checkRights(
+        boolean isRights = serviceDirectoryRedis.checkRights(
                 directoryForm.parents(),
                 directoryForm.systemParents(),
-                directoryForm.directoryName()
+                directoryForm.directoryName(),
+                false
         );
+        if (!isRights) {
+            serviceManagerRights.setAccessClaims(accessToken);
+            serviceManagerRights.setIsWillBeCreated(false);
+            serviceManagerRights.checkRightsByOperation(operationRights, directoryForm.systemParents());
+        }
 
         ContainerDataCreateDirectory dataCreatedDirectory = AtomicSystemCallManager.call(
                 this.createDirectory,

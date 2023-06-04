@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -70,13 +69,19 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
      * @throws NoRightsRedisException Insufficient rights to perform the operation
      */
     @Override
-    public void checkRightByOperation(OperationRights operation, List<String> fileSystemObjects)
+    public void checkRightsByOperation(OperationRights operation, List<String> fileSystemObjects)
             throws NoRightsRedisException {
-        List<FileRedis> fileRedis = conductorFileRedisByLogin(getFileRedis(fileSystemObjects));
-        List<DirectoryRedis> directoryRedis = conductorDirectoryRedisByLogin(getDirectoryRedis(fileSystemObjects));
+        assert  getLoginUser() == null : "Option not set [loginUser]";
+
+        List<FileRedis> fileRedis = (List<FileRedis>) getFileRedis(fileSystemObjects);
+        List<DirectoryRedis> directoryRedis = (List<DirectoryRedis>) getDirectoryRedis(fileSystemObjects);
 
         List<FileRedis> fileRedisSorted = conductorOperationFileRedis(fileRedis, operation);
         List<DirectoryRedis> directoryRedisSorted = conductorOperationDirectoryRedis(directoryRedis, operation);
+
+        if (!(fileRedisSorted.size() != 0 || directoryRedisSorted.size() != 0)) {
+            throw new NoRightsRedisException();
+        }
     }
 
     /**
@@ -89,7 +94,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
         checkAddingRightsYourself(right);
 
         Optional<RightUserFileSystemObjectRedis> existsRight = rightUserFileSystemObjectRedisRepository
-                .findById(right.getFileSystemObject());
+                .findById(buildUniqueKey(right.getFileSystemObject(), right.getLogin()));
         if (existsRight.isPresent()) {
             RightUserFileSystemObjectRedis existsRightReady = existsRight.get();
             List<OperationRights> operationRightsList = existsRightReady.getRight();
@@ -268,36 +273,6 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     }
 
     /**
-     * Sort data by login user
-     * @param fileRedisData file data
-     * @return sorted file data
-     */
-    private @NotNull List<FileRedis> conductorFileRedisByLogin(@NotNull Iterable<FileRedis> fileRedisData) {
-        List<FileRedis> fileRedisList = new ArrayList<>();
-        fileRedisData.forEach(fileRedis -> {
-            if (fileRedis.getUserLogins().contains(loginUser)) {
-                fileRedisList.add(fileRedis);
-            }
-        });
-        return fileRedisList;
-    }
-
-    /**
-     * Sort data by login user
-     * @param directoryRedisData directory information
-     * @return sorted directory data
-     */
-    private @NotNull List<DirectoryRedis> conductorDirectoryRedisByLogin(@NotNull Iterable<DirectoryRedis> directoryRedisData) {
-        List<DirectoryRedis> directoryRedisList = new ArrayList<>();
-        directoryRedisData.forEach(directoryRedis -> {
-            if (directoryRedis.getUserLogins().contains(loginUser)) {
-                directoryRedisList.add(directoryRedis);
-            }
-        });
-        return directoryRedisList;
-    }
-
-    /**
      * Sort data by operation
      * @param fileRedisList files information
      * @param operation type of transaction
@@ -309,14 +284,14 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
         List<RightUserFileSystemObjectRedis> rightUserFileSystemObjectRedis = (List<RightUserFileSystemObjectRedis>)
                 rightUserFileSystemObjectRedisRepository
                         .findAllById(fileRedisList.stream()
-                                .map(FileRedis::getSystemNameFile)
+                                .map(obj -> buildUniqueKey(obj.getSystemNameFile(), getLoginUser()))
                                 .collect(Collectors.toList()));
 
         return fileRedisList
                 .stream()
                 .filter(obj -> {
                     for (RightUserFileSystemObjectRedis right : rightUserFileSystemObjectRedis) {
-                        if (obj.getSystemNameFile().equals(right.getFileSystemObject())
+                        if (obj.getSystemNameFile().equals(unpackingUniqueKey(right.getFileSystemObject()))
                                 && right.getRight().contains(operation)) {
                             return true;
                         }
@@ -339,14 +314,14 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
         List<RightUserFileSystemObjectRedis> rightUserFileSystemObjectRedis = (List<RightUserFileSystemObjectRedis>)
                 rightUserFileSystemObjectRedisRepository
                         .findAllById(directoryRedisList.stream()
-                                .map(DirectoryRedis::getSystemNameDirectory)
+                                .map(obj -> buildUniqueKey(obj.getSystemNameDirectory(), getLoginUser()))
                                 .collect(Collectors.toList()));
 
         return directoryRedisList
                 .stream()
                 .filter(obj -> {
                     for (RightUserFileSystemObjectRedis right : rightUserFileSystemObjectRedis) {
-                        if (obj.getSystemNameDirectory().equals(right.getFileSystemObject())
+                        if (obj.getSystemNameDirectory().equals(unpackingUniqueKey(right.getFileSystemObject()))
                                 && right.getRight().contains(operation)) {
                             return true;
                         }

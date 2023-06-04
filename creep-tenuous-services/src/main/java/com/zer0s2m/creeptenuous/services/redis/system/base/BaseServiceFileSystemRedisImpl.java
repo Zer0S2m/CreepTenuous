@@ -69,6 +69,30 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
     }
 
     /**
+     * Validate right user (directories)
+     * @param parents Real names directory
+     * @param systemParents System names directory
+     * @param nameDirectory System name directory
+     * @param isException whether to raise an exception if there are no rights
+     * @return are there existing rights
+     */
+    @Override
+    public boolean checkRights(List<String> parents, List<String> systemParents,
+                               String nameDirectory, boolean isException) {
+        if (isException) {
+            checkRights(parents, systemParents, nameDirectory);
+        } else {
+            try {
+                checkRights(parents, systemParents, nameDirectory);
+            } catch (NoRightsRedisException ignored) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Validate right user (files)
      * @param systemNameFiles system names files
      * @throws NoRightsRedisException When the user has no execution right

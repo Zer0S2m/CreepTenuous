@@ -8,6 +8,7 @@ import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsRightException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import io.jsonwebtoken.Claims;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -27,7 +28,8 @@ public interface ServiceManagerRights {
      * @param fileSystemObjects file system objects
      * @throws NoRightsRedisException Insufficient rights to perform the operation
      */
-    void checkRightByOperation(OperationRights operation, List<String> fileSystemObjects) throws NoRightsRedisException;
+    void checkRightsByOperation(OperationRights operation, List<String> fileSystemObjects)
+            throws NoRightsRedisException;
 
     /**
      * Set data from access token
@@ -142,7 +144,7 @@ public interface ServiceManagerRights {
     default RightUserFileSystemObjectRedis buildObj(
             String fileSystemObject,
             String login,
-            List<OperationRights> right
+            @NotNull List<OperationRights> right
     ) {
         if (right.contains(OperationRights.ALL)) {
             return new RightUserFileSystemObjectRedis(fileSystemObject, login, OperationRights.baseOperations());
@@ -160,7 +162,7 @@ public interface ServiceManagerRights {
     default RightUserFileSystemObjectRedis buildObj(
             String fileSystemObject,
             String login,
-            OperationRights right
+            @NotNull OperationRights right
     ) {
         if (right.equals(OperationRights.ALL)) {
             return buildObj(fileSystemObject, login, OperationRights.baseOperations());
@@ -183,7 +185,7 @@ public interface ServiceManagerRights {
      * @param uniqueName a unique name that was created using a delimiter
      * @return the system name of the file system object
      */
-    default String unpackingUniqueKey(String uniqueName) {
+    default String unpackingUniqueKey(@NotNull String uniqueName) {
         return uniqueName.split(SEPARATOR_UNIQUE_KEY)[0];
     }
 
