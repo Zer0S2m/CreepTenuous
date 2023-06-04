@@ -1,4 +1,4 @@
-package com.zer0s2m.creeptenuous.api.controllers.security;
+package com.zer0s2m.creeptenuous.api.core.security;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiRightUserDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
