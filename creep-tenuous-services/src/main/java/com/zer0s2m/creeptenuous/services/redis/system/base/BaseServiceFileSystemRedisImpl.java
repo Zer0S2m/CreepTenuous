@@ -67,7 +67,9 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
         objsRedis.forEach((objRedis) -> {
             if (!Objects.equals(objRedis.getLogin(), loginUser)) {
                 if (isException) {
-                    throw new NoRightsRedisException();
+                    if (getIsException()) {
+                        throw new NoRightsRedisException();
+                    }
                 }
             }
         });
