@@ -3,9 +3,11 @@ package com.zer0s2m.creeptenuous.api.controllers.system;
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiUploadFileDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFile;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.http.ResponseObjectUploadFileApi;
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadFileApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceUploadFileRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceUploadFileImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +21,24 @@ import java.util.stream.Collectors;
 
 @V1APIRestController
 public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
+
+    static final OperationRights operationRights = OperationRights.UPLOAD;
+
     private final ServiceUploadFileImpl serviceUploadFile;
 
     private final ServiceUploadFileRedisImpl serviceUploadFileRedis;
 
+    private final ServiceManagerRights serviceManagerRights;
+
     @Autowired
     public ControllerApiUploadFile(
             ServiceUploadFileImpl serviceUploadFile,
-            ServiceUploadFileRedisImpl serviceUploadFileRedis
+            ServiceUploadFileRedisImpl serviceUploadFileRedis,
+            ServiceManagerRights serviceManagerRights
     ) {
         this.serviceUploadFile = serviceUploadFile;
         this.serviceUploadFileRedis = serviceUploadFileRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -58,7 +67,12 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
     ) throws InvocationTargetException, NoSuchMethodException,
             InstantiationException, IllegalAccessException {
         serviceUploadFileRedis.setAccessToken(accessToken);
-        serviceUploadFileRedis.checkRights(parents, systemParents, null);
+        boolean isRights = serviceUploadFileRedis.checkRights(parents, systemParents, null, false);
+        if (!isRights) {
+            serviceManagerRights.setAccessClaims(accessToken);
+            serviceManagerRights.setIsWillBeCreated(false);
+            serviceManagerRights.checkRightsByOperation(operationRights, systemParents);
+        }
 
         List<ResponseObjectUploadFileApi> data = AtomicSystemCallManager.call(
                 serviceUploadFile,
