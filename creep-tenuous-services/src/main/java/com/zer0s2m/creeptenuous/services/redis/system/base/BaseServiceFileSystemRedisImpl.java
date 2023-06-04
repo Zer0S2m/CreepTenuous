@@ -14,9 +14,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedis {
+
+    private boolean isException = true;
 
     protected final DirectoryRedisRepository directoryRedisRepository;
 
@@ -63,7 +66,9 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
 
         objsRedis.forEach((objRedis) -> {
             if (!Objects.equals(objRedis.getLogin(), loginUser)) {
-                throw new NoRightsRedisException();
+                if (isException) {
+                    throw new NoRightsRedisException();
+                }
             }
         });
     }
@@ -95,20 +100,28 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
     /**
      * Validate right user (files)
      * @param systemNameFiles system names files
+     * @return is rights
      * @throws NoRightsRedisException When the user has no execution right
      */
     @Override
-    public void checkRights(List<String> systemNameFiles)
+    public boolean checkRights(List<String> systemNameFiles)
             throws NoRightsRedisException {
+        AtomicBoolean isRight = new AtomicBoolean(true);
+
         String loginUser = accessClaims.get("login", String.class);
 
         Iterable<FileRedis> objsRedis = fileRedisRepository.findAllById(systemNameFiles);
 
         objsRedis.forEach((objRedis) -> {
             if (!Objects.equals(objRedis.getLogin(), loginUser)) {
-                throw new NoRightsRedisException();
+                if (isException) {
+                    throw new NoRightsRedisException();
+                }
+                isRight.set(false);
             }
         });
+
+        return isRight.get();
     }
 
     /**
@@ -145,4 +158,21 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
     public void setResetCheckIsNameDirectory(Boolean resetCheckIsNameDirectory) {
         this.resetCheckIsNameDirectory = resetCheckIsNameDirectory;
     }
+
+    /**
+     * Setting whether to raise an exception
+     * @param isException whether to raise an exception if there are no rights
+     */
+    public void setIsException(boolean isException) {
+        this.isException = isException;
+    }
+
+    /**
+     * Getting whether to raise an exception
+     * @return whether to raise an exception if there are no rights
+     */
+    public boolean getIsException() {
+        return this.isException;
+    }
+
 }

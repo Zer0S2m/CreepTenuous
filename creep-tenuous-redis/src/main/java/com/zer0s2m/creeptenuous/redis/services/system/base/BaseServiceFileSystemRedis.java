@@ -29,9 +29,10 @@ public interface BaseServiceFileSystemRedis {
     /**
      * Validate right user (files)
      * @param systemNameFiles system names files
+     * @return is rights
      * @throws NoRightsRedisException When the user has no execution right
      */
-    void checkRights(List<String> systemNameFiles) throws NoRightsRedisException;
+    boolean checkRights(List<String> systemNameFiles) throws NoRightsRedisException;
 
     /**
      * Set access token
@@ -59,5 +60,17 @@ public interface BaseServiceFileSystemRedis {
      default void checkRights(String systemNameFile) {
          checkRights(List.of(systemNameFile));
      }
+
+    /**
+     * Setting whether to raise an exception
+     * @param isException whether to raise an exception if there are no rights
+     */
+    void setIsException(boolean isException);
+
+    /**
+     * Getting whether to raise an exception
+     * @return whether to raise an exception if there are no rights
+     */
+    boolean getIsException();
 
 }

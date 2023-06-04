@@ -32,6 +32,17 @@ public interface ServiceManagerRights {
             throws NoRightsRedisException;
 
     /**
+     * Checking permissions to perform some action on a specific file object
+     * @param operation type of transaction
+     * @param fileSystemObjects file system objects
+     * @throws NoRightsRedisException Insufficient rights to perform the operation
+     */
+    default void checkRightsByOperation(OperationRights operation, String fileSystemObjects)
+            throws NoRightsRedisException {
+        checkRightsByOperation(operation, List.of(fileSystemObjects));
+    }
+
+    /**
      * Set data from access token
      * @param accessToken <b>JWT</b> access token
      */
