@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,7 +72,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     @Override
     public void checkRightsByOperation(OperationRights operation, List<String> fileSystemObjects)
             throws NoRightsRedisException {
-        assert  getLoginUser() == null : "Option not set [loginUser]";
+        assert getLoginUser() == null : "Option not set [loginUser]";
 
         List<FileRedis> fileRedis = (List<FileRedis>) getFileRedis(fileSystemObjects);
         List<DirectoryRedis> directoryRedis = (List<DirectoryRedis>) getDirectoryRedis(fileSystemObjects);
@@ -79,7 +80,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
         List<FileRedis> fileRedisSorted = conductorOperationFileRedis(fileRedis, operation);
         List<DirectoryRedis> directoryRedisSorted = conductorOperationDirectoryRedis(directoryRedis, operation);
 
-        if (!(fileRedisSorted.size() != 0 || directoryRedisSorted.size() != 0)) {
+        if (!((fileRedisSorted.size() + directoryRedisSorted.size()) == fileSystemObjects.size())) {
             throw new NoRightsRedisException();
         }
     }
@@ -98,6 +99,9 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
         if (existsRight.isPresent()) {
             RightUserFileSystemObjectRedis existsRightReady = existsRight.get();
             List<OperationRights> operationRightsList = existsRightReady.getRight();
+            if (operationRightsList == null) {
+                operationRightsList = new ArrayList<>();
+            }
             operationRightsList.addAll(right.getRight());
 
             existsRightReady.setRight(operationRightsList
@@ -291,6 +295,9 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
                 .stream()
                 .filter(obj -> {
                     for (RightUserFileSystemObjectRedis right : rightUserFileSystemObjectRedis) {
+                        if (right.getRight() == null) {
+                            return false;
+                        }
                         if (obj.getSystemNameFile().equals(unpackingUniqueKey(right.getFileSystemObject()))
                                 && right.getRight().contains(operation)) {
                             return true;
