@@ -55,10 +55,11 @@ public interface BaseServiceFileSystemRedis {
     /**
      * Validate right user (file)
      * @param systemNameFile system name files
+     * @return is rights
      * @throws NoRightsRedisException When the user has no execution right
      */
-     default void checkRights(String systemNameFile) {
-         checkRights(List.of(systemNameFile));
+     default boolean checkRights(String systemNameFile) {
+         return checkRights(List.of(systemNameFile));
      }
 
     /**
