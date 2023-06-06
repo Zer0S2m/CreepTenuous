@@ -8,11 +8,13 @@ import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
+import com.zer0s2m.creeptenuous.redis.models.base.BaseRedis;
 import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.JwtRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
@@ -48,19 +50,23 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
     private final RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
+    private final ServiceRedisManagerResources serviceRedisManagerResources;
+
     @Autowired
     public ServiceManagerRightsImpl(
             JwtProvider jwtProvider,
             DirectoryRedisRepository directoryRedisRepository,
             FileRedisRepository fileRedisRepository,
             RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository,
-            JwtRedisRepository jwtRedisRepository
+            JwtRedisRepository jwtRedisRepository,
+            ServiceRedisManagerResources serviceRedisManagerResources
     ) {
         this.jwtProvider = jwtProvider;
         this.directoryRedisRepository = directoryRedisRepository;
         this.fileRedisRepository = fileRedisRepository;
         this.rightUserFileSystemObjectRedisRepository = rightUserFileSystemObjectRedisRepository;
         this.jwtRedisRepository = jwtRedisRepository;
+        this.serviceRedisManagerResources = serviceRedisManagerResources;
     }
 
     /**
@@ -256,6 +262,21 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
                 rightUserFileSystemObjectRedisRepository
                         .findById(buildUniqueKey(fileSystemObject, loginUser));
         return rightUserFileSystemObjectRedis.orElse(null);
+    }
+
+    /**
+     * Owner mapping when moving objects in Redis
+     * <p>The current user is taken from the JWT token, Redis services need to know
+     * the owner to not overwrite permissions</p>
+     * @param loginUser owner user login
+     * @param entities must not be {@literal null}. Must not contain {@literal null} elements.
+     *                 <p>The class needs a <b>login</b> field and a corresponding <b>getters</b> and <b>setters</b></p>
+     * @return objects with a set owner
+     */
+    public List<? extends BaseRedis> ownerMappingOnMove(String loginUser, @NotNull List<? extends BaseRedis> entities) {
+        return entities.stream()
+                .peek(entity -> entity.setLogin(loginUser))
+                .collect(Collectors.toList());
     }
 
     /**

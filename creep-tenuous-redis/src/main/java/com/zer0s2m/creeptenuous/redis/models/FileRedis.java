@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.redis.models;
 
+import com.zer0s2m.creeptenuous.redis.models.base.BaseRedis;
 import jakarta.persistence.Column;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Data
 @RedisHash("files")
-public class FileRedis {
+public class FileRedis implements BaseRedis {
     @Id
     private String systemNameFile;
 

@@ -7,6 +7,7 @@ import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisEx
 import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsRightException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
+import com.zer0s2m.creeptenuous.redis.models.base.BaseRedis;
 import io.jsonwebtoken.Claims;
 import org.jetbrains.annotations.NotNull;
 
@@ -144,6 +145,17 @@ public interface ServiceManagerRights {
      * @return redis object
      */
     RightUserFileSystemObjectRedis getObj(String fileSystemObject, String loginUser);
+
+    /**
+     * Owner mapping when moving objects in Redis
+     * <p>The current user is taken from the JWT token, Redis services need to know
+     * the owner to not overwrite permissions</p>
+     * @param loginUser owner user login
+     * @param entities must not be {@literal null}. Must not contain {@literal null} elements.
+     *                 <p>The class needs a <b>login</b> field and a corresponding <b>getters</b> and <b>setters</b></p>
+     * @return objects with a set owner
+     */
+    List<? extends BaseRedis> ownerMappingOnMove(String loginUser, List<? extends BaseRedis> entities);
 
     /**
      * Get right object to persist in {@literal Redis}
