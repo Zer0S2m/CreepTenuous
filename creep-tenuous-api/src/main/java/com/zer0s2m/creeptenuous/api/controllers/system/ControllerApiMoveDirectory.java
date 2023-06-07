@@ -4,11 +4,14 @@ import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiMoveD
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataMoveDirectory;
 import com.zer0s2m.creeptenuous.common.data.DataMoveDirectoryApi;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceMoveDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceMoveDirectoryImpl;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,17 +21,26 @@ import java.util.List;
 
 @V1APIRestController
 public class ControllerApiMoveDirectory implements ControllerApiMoveDirectoryDoc {
+
+    static final OperationRights operationRightsDirectory = OperationRights.SHOW;
+
+    static final OperationRights operationRights = OperationRights.SHOW;
+
     private final ServiceMoveDirectoryImpl serviceMoveDirectory;
 
     private final ServiceMoveDirectoryRedisImpl serviceMoveDirectoryRedis;
 
+    private final ServiceManagerRights serviceManagerRights;
+
     @Autowired
     public ControllerApiMoveDirectory(
             ServiceMoveDirectoryImpl serviceMoveDirectory,
-            ServiceMoveDirectoryRedisImpl serviceMoveDirectoryRedis
+            ServiceMoveDirectoryRedisImpl serviceMoveDirectoryRedis,
+            ServiceManagerRights serviceManagerRights
     ) {
         this.serviceMoveDirectory = serviceMoveDirectory;
         this.serviceMoveDirectoryRedis = serviceMoveDirectoryRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -47,21 +59,32 @@ public class ControllerApiMoveDirectory implements ControllerApiMoveDirectoryDoc
     @PutMapping("/directory/move")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public final void move(
-            final @Valid @RequestBody DataMoveDirectoryApi dataDirectory,
+            final @Valid @RequestBody @NotNull DataMoveDirectoryApi dataDirectory,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws InvocationTargetException, NoSuchMethodException,
             InstantiationException, IllegalAccessException {
+        serviceManagerRights.setAccessClaims(accessToken);
+        serviceManagerRights.setIsWillBeCreated(false);
+
+        serviceMoveDirectoryRedis.setAccessToken(accessToken);
+        serviceMoveDirectoryRedis.setEnableCheckIsNameDirectory(true);
+        serviceMoveDirectoryRedis.setIsException(false);
+
         List<String> mergeParents = CloneList.cloneOneLevel(
                 dataDirectory.systemParents(),
                 dataDirectory.systemToParents()
         );
-        serviceMoveDirectoryRedis.setAccessToken(accessToken);
-        serviceMoveDirectoryRedis.setEnableCheckIsNameDirectory(true);
-        serviceMoveDirectoryRedis.checkRights(
+        boolean isRights = serviceMoveDirectoryRedis.checkRights(
                 dataDirectory.parents(),
                 mergeParents,
-                dataDirectory.systemDirectoryName()
+                dataDirectory.systemDirectoryName(),
+                false
         );
+        if (!isRights) {
+            serviceManagerRights.checkRightsByOperation(operationRightsDirectory, mergeParents);
+            serviceManagerRights.checkRightsByOperation(operationRights, dataDirectory.systemDirectoryName());
+        }
+
         ContainerDataMoveDirectory infoMoving = AtomicSystemCallManager.call(
                 serviceMoveDirectory,
                 dataDirectory.systemParents(),
