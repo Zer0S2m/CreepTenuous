@@ -176,9 +176,52 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
         List<OperationRights> operationRightsList = right.getRight();
         if (operationRightsList != null && operationRightsList.remove(operationRights)) {
-            right.setRight(operationRightsList);
-            rightUserFileSystemObjectRedisRepository.save(right);
+            if (operationRightsList.size() == 0) {
+                deleteUserLoginsToRedisObj(unpackingUniqueKey(right.getFileSystemObject()), right.getLogin());
+                rightUserFileSystemObjectRedisRepository.delete(right);
+            } else {
+                right.setRight(operationRightsList);
+                rightUserFileSystemObjectRedisRepository.save(right);
+            }
         }
+    }
+
+    /**
+     * Removing a User Binding to an Object in Redis
+     * @param systemName filesystem object system name. Must not be {@literal null}.
+     * @param loginUser login user
+     */
+    private void deleteUserLoginsToRedisObj(@NotNull String systemName, @NotNull String loginUser) {
+        Optional<FileRedis> fileRedisOptional = fileRedisRepository.findById(systemName);
+        Optional<DirectoryRedis> directoryRedisOptional = directoryRedisRepository.findById(systemName);
+
+        if (fileRedisOptional.isPresent()) {
+            FileRedis fileRedis = fileRedisOptional.get();
+            if (delDataUserLoginsToRedisObj(fileRedis, loginUser)) {
+                fileRedisRepository.save(fileRedis);
+            }
+        }
+        if (directoryRedisOptional.isPresent()) {
+            DirectoryRedis directoryRedis = directoryRedisOptional.get();
+            if (delDataUserLoginsToRedisObj(directoryRedis, loginUser)) {
+                directoryRedisRepository.save(directoryRedis);
+            }
+        }
+    }
+
+    /**
+     * Del data for redis object
+     * @param obj redis object
+     * @param loginUser login user
+     * @return whether removed
+     */
+    private boolean delDataUserLoginsToRedisObj(@NotNull BaseRedis obj, @NotNull String loginUser) {
+        List<String> userLogins = obj.getUserLogins();
+        if (userLogins != null && userLogins.contains(loginUser) && userLogins.remove(loginUser)) {
+            obj.setUserLogins(userLogins);
+            return true;
+        }
+        return false;
     }
 
     /**
