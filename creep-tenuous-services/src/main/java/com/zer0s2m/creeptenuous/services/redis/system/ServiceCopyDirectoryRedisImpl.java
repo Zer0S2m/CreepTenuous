@@ -69,7 +69,8 @@ public class ServiceCopyDirectoryRedisImpl extends BaseServiceFileSystemRedisImp
                         roleUser,
                         realNameDirectorySource.get(attach.source().toString()),
                         attach.nameFileSystemObject(),
-                        attach.target().toString()
+                        attach.target().toString(),
+                        new ArrayList<>()
                 ));
             } else {
                 fileRedisList.add(new FileRedis(
@@ -77,7 +78,8 @@ public class ServiceCopyDirectoryRedisImpl extends BaseServiceFileSystemRedisImp
                         roleUser,
                         realNameFileSource.get(attach.source().toString()),
                         attach.nameFileSystemObject(),
-                        attach.target().toString()
+                        attach.target().toString(),
+                        new ArrayList<>()
                 ));
             }
         });

@@ -4,6 +4,8 @@ import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiDownl
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataDownloadFile;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceDownloadFileRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadFileImpl;
 import jakarta.validation.Valid;
@@ -20,17 +22,26 @@ import java.util.List;
 
 @V1APIRestController
 public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
+
+    static final OperationRights operationRightsDirectory = OperationRights.SHOW;
+
+    static final OperationRights operationRightsFile = OperationRights.DOWNLOAD;
+
     private final ServiceDownloadFileImpl serviceDownloadFile;
 
     private final ServiceDownloadFileRedisImpl serviceDownloadFileRedis;
 
+    private final ServiceManagerRights serviceManagerRights;
+
     @Autowired
     public ControllerApiDownloadFile(
             ServiceDownloadFileImpl serviceDownloadFile,
-            ServiceDownloadFileRedisImpl serviceDownloadFileRedis
+            ServiceDownloadFileRedisImpl serviceDownloadFileRedis,
+            ServiceManagerRights serviceManagerRights
     ) {
         this.serviceDownloadFile = serviceDownloadFile;
         this.serviceDownloadFileRedis = serviceDownloadFileRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -46,9 +57,22 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
             final @Valid @RequestBody DataDownloadFileApi data,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws IOException {
+        serviceManagerRights.setAccessClaims(accessToken);
+        serviceManagerRights.setIsWillBeCreated(false);
+
         serviceDownloadFileRedis.setAccessToken(accessToken);
-        serviceDownloadFileRedis.checkRights(data.parents(), data.systemParents(), null);
-        serviceDownloadFileRedis.checkRights(List.of(data.systemFileName()));
+        serviceDownloadFileRedis.setIsException(false);
+        boolean isRightsDirectory = serviceDownloadFileRedis.checkRights(data.parents(), data.systemParents(), null, false);
+
+        if (!isRightsDirectory) {
+            serviceManagerRights.checkRightsByOperation(operationRightsDirectory, data.systemParents());
+        }
+
+        boolean isRightsFile = serviceDownloadFileRedis.checkRights(List.of(data.systemFileName()));
+        if (!isRightsFile) {
+            serviceManagerRights.checkRightsByOperation(operationRightsFile, data.systemFileName());
+        }
+
         final ContainerDataDownloadFile<ByteArrayResource, String> dataFile = serviceDownloadFile.download(
                 data.systemParents(),
                 data.systemFileName()

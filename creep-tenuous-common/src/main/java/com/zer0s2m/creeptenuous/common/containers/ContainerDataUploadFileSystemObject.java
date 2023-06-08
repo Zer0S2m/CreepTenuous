@@ -17,7 +17,7 @@ public record ContainerDataUploadFileSystemObject(
         @Schema(description = "The system name of the object in the file system")
         String realName,
 
-        @Schema(description = "The real name of the object in the file system")
+        @Schema(description = "The system name of the object in the file system")
         String systemName,
 
         @JsonIgnore

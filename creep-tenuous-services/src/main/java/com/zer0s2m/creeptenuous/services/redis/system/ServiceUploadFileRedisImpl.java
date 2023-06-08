@@ -11,6 +11,7 @@ import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystem
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +40,8 @@ public class ServiceUploadFileRedisImpl extends BaseServiceFileSystemRedisImpl i
                 roleUser,
                 dataCreatedFile.realNameFile(),
                 dataCreatedFile.systemNameFile(),
-                dataCreatedFile.systemPathFile().toString()
+                dataCreatedFile.systemPathFile().toString(),
+                new ArrayList<>()
         );
 
         push(objRedis);
@@ -64,7 +66,8 @@ public class ServiceUploadFileRedisImpl extends BaseServiceFileSystemRedisImpl i
                         roleUser,
                         obj.realNameFile(),
                         obj.systemNameFile(),
-                        obj.systemPathFile().toString()
+                        obj.systemPathFile().toString(),
+                        new ArrayList<>()
                 ))
                 .collect(Collectors.toList());
 

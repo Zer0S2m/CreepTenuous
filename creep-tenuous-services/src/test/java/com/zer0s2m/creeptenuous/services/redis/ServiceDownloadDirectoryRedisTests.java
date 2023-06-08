@@ -18,6 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -56,14 +57,16 @@ public class ServiceDownloadDirectoryRedisTests {
                 User.ROLE_USER.get(),
                 "test_1",
                 systemNameDirectory,
-                Path.of(systemNameDirectory).toString()
+                Path.of(systemNameDirectory).toString(),
+                new ArrayList<>()
         ));
         FileRedis fileRedis = fileRedisRepository.save(new FileRedis(
                 User.LOGIN.get(),
                 User.ROLE_USER.get(),
                 "test_1",
                 systemNameFile,
-                Path.of(systemNameFile).toString()
+                Path.of(systemNameFile).toString(),
+                new ArrayList<>()
         ));
 
         HashMap<String, String> resource = serviceDownloadDirectoryRedis.getResource(

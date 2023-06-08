@@ -17,6 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,7 +53,8 @@ public class ServiceMoveFileRedisTests {
                 User.ROLE_USER.get(),
                 "test_1",
                 systemName,
-                Path.of(systemName).toString()
+                Path.of(systemName).toString(),
+                new ArrayList<>()
         ));
 
         Optional<FileRedis> fileRedis = serviceMoveFileRedis.move(newSystemPath, systemName);
@@ -76,7 +78,8 @@ public class ServiceMoveFileRedisTests {
                 User.ROLE_USER.get(),
                 "test_1",
                 systemName,
-                Path.of(systemName).toString()
+                Path.of(systemName).toString(),
+                new ArrayList<>()
         ));
 
         Iterable<FileRedis> fileRedis = serviceMoveFileRedis.move(newSystemPath, List.of(systemName));

@@ -1,6 +1,6 @@
 package com.zer0s2m.creeptenuous.services.redis.system.base;
 
-import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsDirectoryException;
+import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
@@ -14,9 +14,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedis {
+
+    private boolean isException = true;
+
     protected final DirectoryRedisRepository directoryRedisRepository;
 
     protected final FileRedisRepository fileRedisRepository;
@@ -30,7 +34,7 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
     private Boolean resetCheckIsNameDirectory = false;
 
     @Autowired
-    protected BaseServiceFileSystemRedisImpl(
+    public BaseServiceFileSystemRedisImpl(
             DirectoryRedisRepository directoryRedisRepository,
             FileRedisRepository fileRedisRepository,
             JwtProvider jwtProvider
@@ -45,11 +49,11 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
      * @param parents Real names directory
      * @param systemParents System names directory
      * @param nameDirectory System name directory
-     * @throws NoRightsDirectoryException When the user has no execution rights
+     * @throws NoRightsRedisException When the user has no execution rights
      */
     @Override
     public void checkRights(List<String> parents, List<String> systemParents, String nameDirectory)
-            throws NoRightsDirectoryException {
+            throws NoRightsRedisException {
         String loginUser = accessClaims.get("login", String.class);
 
         if (enableCheckIsNameDirectory && nameDirectory != null) {
@@ -62,28 +66,64 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
 
         objsRedis.forEach((objRedis) -> {
             if (!Objects.equals(objRedis.getLogin(), loginUser)) {
-                throw new NoRightsDirectoryException();
+                if (isException) {
+                    if (getIsException()) {
+                        throw new NoRightsRedisException();
+                    }
+                }
             }
         });
     }
 
     /**
-     * Validate right user (files)
-     * @param systemNameFiles system names files
-     * @throws NoRightsDirectoryException When the user has no execution right
+     * Validate right user (directories)
+     * @param parents Real names directory
+     * @param systemParents System names directory
+     * @param nameDirectory System name directory
+     * @param isException whether to raise an exception if there are no rights
+     * @return are there existing rights
      */
     @Override
-    public void checkRights(List<String> systemNameFiles)
-            throws NoRightsDirectoryException {
+    public boolean checkRights(List<String> parents, List<String> systemParents,
+                               String nameDirectory, boolean isException) {
+        if (isException) {
+            checkRights(parents, systemParents, nameDirectory);
+        } else {
+            try {
+                checkRights(parents, systemParents, nameDirectory);
+            } catch (NoRightsRedisException ignored) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate right user (files)
+     * @param systemNameFiles system names files
+     * @return is rights
+     * @throws NoRightsRedisException When the user has no execution right
+     */
+    @Override
+    public boolean checkRights(List<String> systemNameFiles)
+            throws NoRightsRedisException {
+        AtomicBoolean isRight = new AtomicBoolean(true);
+
         String loginUser = accessClaims.get("login", String.class);
 
         Iterable<FileRedis> objsRedis = fileRedisRepository.findAllById(systemNameFiles);
 
         objsRedis.forEach((objRedis) -> {
             if (!Objects.equals(objRedis.getLogin(), loginUser)) {
-                throw new NoRightsDirectoryException();
+                if (isException) {
+                    throw new NoRightsRedisException();
+                }
+                isRight.set(false);
             }
         });
+
+        return isRight.get();
     }
 
     /**
@@ -120,4 +160,21 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
     public void setResetCheckIsNameDirectory(Boolean resetCheckIsNameDirectory) {
         this.resetCheckIsNameDirectory = resetCheckIsNameDirectory;
     }
+
+    /**
+     * Setting whether to raise an exception
+     * @param isException whether to raise an exception if there are no rights
+     */
+    public void setIsException(boolean isException) {
+        this.isException = isException;
+    }
+
+    /**
+     * Getting whether to raise an exception
+     * @return whether to raise an exception if there are no rights
+     */
+    public boolean getIsException() {
+        return this.isException;
+    }
+
 }

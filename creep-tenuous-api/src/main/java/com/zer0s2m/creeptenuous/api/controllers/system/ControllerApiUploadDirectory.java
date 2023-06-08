@@ -2,8 +2,10 @@ package com.zer0s2m.creeptenuous.api.controllers.system;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiUploadDirectoryDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadDirectoryApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceUploadDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceUploadDirectoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +21,24 @@ import java.util.List;
 
 @V1APIRestController
 public class ControllerApiUploadDirectory implements ControllerApiUploadDirectoryDoc {
+
+    static final OperationRights operationRights = OperationRights.UPLOAD;
+
     private final ServiceUploadDirectoryImpl serviceUploadDirectory;
 
     private final ServiceUploadDirectoryRedisImpl serviceUploadDirectoryRedis;
 
+    private final ServiceManagerRights serviceManagerRights;
+
     @Autowired
     public ControllerApiUploadDirectory(
             ServiceUploadDirectoryImpl serviceUploadDirectory,
-            ServiceUploadDirectoryRedisImpl serviceUploadDirectoryRedis
+            ServiceUploadDirectoryRedisImpl serviceUploadDirectoryRedis,
+            ServiceManagerRights serviceManagerRights
     ) {
         this.serviceUploadDirectory = serviceUploadDirectory;
         this.serviceUploadDirectoryRedis = serviceUploadDirectoryRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -59,7 +68,12 @@ public class ControllerApiUploadDirectory implements ControllerApiUploadDirector
     ) throws InvocationTargetException, NoSuchMethodException, InstantiationException,
             IllegalAccessException, IOException {
         serviceUploadDirectoryRedis.setAccessToken(accessToken);
-        serviceUploadDirectoryRedis.checkRights(parents, systemParents, null);
+        boolean isRights = serviceUploadDirectoryRedis.checkRights(parents, systemParents, null, false);
+        if (!isRights) {
+            serviceManagerRights.setAccessClaims(accessToken);
+            serviceManagerRights.setIsWillBeCreated(false);
+            serviceManagerRights.checkRightsByOperation(operationRights, systemParents);
+        }
 
         Path systemPath = serviceUploadDirectory.getPath(systemParents);
 

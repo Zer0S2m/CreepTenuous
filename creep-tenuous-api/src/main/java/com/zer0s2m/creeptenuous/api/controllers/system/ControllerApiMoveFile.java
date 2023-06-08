@@ -3,11 +3,14 @@ package com.zer0s2m.creeptenuous.api.controllers.system;
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiMoveFileDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataMoveFileApi;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceMoveFileRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceMoveFileImpl;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,17 +25,26 @@ import java.util.List;
 
 @V1APIRestController
 public class ControllerApiMoveFile implements ControllerApiMoveFileDoc {
+
+    static final OperationRights operationRightsDirectory = OperationRights.SHOW;
+
+    static final OperationRights operationRights = OperationRights.MOVE;
+
     private final ServiceMoveFileImpl serviceMoveFile;
 
     private final ServiceMoveFileRedisImpl serviceMoveFileRedis;
 
+    private final ServiceManagerRights serviceManagerRights;
+
     @Autowired
     public ControllerApiMoveFile(
             ServiceMoveFileImpl serviceMoveFile,
-            ServiceMoveFileRedisImpl serviceMoveFileRedis
+            ServiceMoveFileRedisImpl serviceMoveFileRedis,
+            ServiceManagerRights serviceManagerRights
     ) {
         this.serviceMoveFile = serviceMoveFile;
         this.serviceMoveFileRedis = serviceMoveFileRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -52,18 +64,31 @@ public class ControllerApiMoveFile implements ControllerApiMoveFileDoc {
     @PutMapping("/file/move")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void move(
-            final @Valid @RequestBody DataMoveFileApi file,
+            final @Valid @RequestBody @NotNull DataMoveFileApi file,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        serviceManagerRights.setAccessClaims(accessToken);
+        serviceManagerRights.setIsWillBeCreated(false);
+
         serviceMoveFileRedis.setAccessToken(accessToken);
+        serviceMoveFileRedis.setIsException(false);
+
         List<String> mergeRealAndSystemParents = CloneList.cloneOneLevel(
                 file.systemParents(),
                 file.systemToParents()
         );
-        serviceMoveFileRedis.checkRights(file.parents(), mergeRealAndSystemParents, null);
+        boolean isRights = serviceMoveFileRedis.checkRights(
+                file.parents(), mergeRealAndSystemParents, null, false);
+        if (!isRights) {
+            serviceManagerRights.checkRightsByOperation(operationRightsDirectory, mergeRealAndSystemParents);
+        }
 
         if (file.systemFileName() != null) {
-            serviceMoveFileRedis.checkRights(List.of(file.systemFileName()));
+            boolean isRightFile = serviceMoveFileRedis.checkRights(List.of(file.systemFileName()));
+            if (!isRightFile) {
+                serviceManagerRights.checkRightsByOperation(operationRights, file.systemFileName());
+            }
+
             Path newPathFile = AtomicSystemCallManager.call(
                     serviceMoveFile,
                     file.systemFileName(),
@@ -72,7 +97,11 @@ public class ControllerApiMoveFile implements ControllerApiMoveFileDoc {
             );
             serviceMoveFileRedis.move(newPathFile, file.systemFileName());
         } else {
-            serviceMoveFileRedis.checkRights(file.systemNameFiles());
+            boolean isRightFile = serviceMoveFileRedis.checkRights(file.systemNameFiles());
+            if (!isRightFile) {
+                serviceManagerRights.checkRightsByOperation(operationRights, file.systemNameFiles());
+            }
+
             Path newPathsFile = AtomicSystemCallManager.call(
                     serviceMoveFile,
                     Objects.requireNonNull(file.systemNameFiles()),

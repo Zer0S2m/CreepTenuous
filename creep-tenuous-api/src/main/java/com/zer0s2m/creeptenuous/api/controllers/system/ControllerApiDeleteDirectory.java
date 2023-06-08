@@ -3,8 +3,10 @@ package com.zer0s2m.creeptenuous.api.controllers.system;
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiDeleteDirectoryDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteDirectoryApi;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceDeleteDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteDirectoryImpl;
 import jakarta.validation.Valid;
@@ -17,17 +19,26 @@ import java.util.List;
 
 @V1APIRestController
 public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirectoryDoc {
+
+    static final OperationRights operationRightsDirectoryShow = OperationRights.SHOW;
+
+    static final OperationRights operationRightsDirectoryDelete = OperationRights.DELETE;
+
     private final ServiceDeleteDirectoryImpl serviceDeleteDirectory;
 
     private final ServiceDeleteDirectoryRedisImpl serviceDeleteDirectoryRedis;
 
+    private final ServiceManagerRights serviceManagerRights;
+
     @Autowired
     public ControllerApiDeleteDirectory(
             ServiceDeleteDirectoryImpl serviceDeleteDirectory,
-            ServiceDeleteDirectoryRedisImpl serviceDeleteDirectoryRedis
+            ServiceDeleteDirectoryRedisImpl serviceDeleteDirectoryRedis,
+            ServiceManagerRights serviceManagerRights
     ) {
         this.serviceDeleteDirectory = serviceDeleteDirectory;
         this.serviceDeleteDirectoryRedis = serviceDeleteDirectoryRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -50,13 +61,27 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
             @RequestHeader(name = "Authorization") String accessToken
     ) throws InvocationTargetException, NoSuchMethodException,
             InstantiationException, IllegalAccessException {
+        serviceManagerRights.setAccessClaims(accessToken);
+        serviceManagerRights.setIsWillBeCreated(false);
+
         serviceDeleteDirectoryRedis.setAccessToken(accessToken);
         serviceDeleteDirectoryRedis.setEnableCheckIsNameDirectory(true);
-        serviceDeleteDirectoryRedis.checkRights(
+        serviceDeleteDirectoryRedis.setIsException(false);
+
+        boolean isRightsSystemParents = serviceDeleteDirectoryRedis.checkRights(
                 directoryForm.parents(),
                 CloneList.cloneOneLevel(directoryForm.systemParents()),
-                directoryForm.systemDirectoryName()
+                directoryForm.systemDirectoryName(),
+                false
         );
+        if (!isRightsSystemParents) {
+            serviceManagerRights.checkRightsByOperation(operationRightsDirectoryShow,
+                    CloneList.cloneOneLevel(directoryForm.systemParents(),
+                            List.of(directoryForm.systemDirectoryName())));
+            serviceManagerRights.checkRightsByOperation(operationRightsDirectoryDelete,
+                    directoryForm.systemDirectoryName());
+        }
+
         AtomicSystemCallManager.call(
                 serviceDeleteDirectory,
                 directoryForm.systemParents(),

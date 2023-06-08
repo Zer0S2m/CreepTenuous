@@ -4,9 +4,11 @@ import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCopyF
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCopyFile;
 import com.zer0s2m.creeptenuous.common.data.DataCopyFileApi;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.http.ResponseCopyFileApi;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceCopyFileRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCopyFileImpl;
 import jakarta.validation.Valid;
@@ -25,17 +27,26 @@ import java.util.stream.Collectors;
 
 @V1APIRestController
 public class ControllerApiCopyFile implements ControllerApiCopyFileDoc {
+
+    static final OperationRights operationRightsDirectory = OperationRights.SHOW;
+
+    static final OperationRights operationRights = OperationRights.COPY;
+
     private final ServiceCopyFileImpl serviceCopyFile;
 
     private final ServiceCopyFileRedisImpl serviceCopyFileRedis;
 
+    private final ServiceManagerRights serviceManagerRights;
+
     @Autowired
     public ControllerApiCopyFile(
             ServiceCopyFileImpl serviceCopyFile,
-            ServiceCopyFileRedisImpl serviceCopyFileRedis
+            ServiceCopyFileRedisImpl serviceCopyFileRedis,
+            ServiceManagerRights serviceManagerRights
     ) {
         this.serviceCopyFile = serviceCopyFile;
         this.serviceCopyFileRedis = serviceCopyFileRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -61,14 +72,29 @@ public class ControllerApiCopyFile implements ControllerApiCopyFileDoc {
             @RequestHeader(name = "Authorization") String accessToken
     ) throws IOException, InvocationTargetException, NoSuchMethodException,
             InstantiationException, IllegalAccessException {
+        serviceManagerRights.setAccessClaims(accessToken);
+        serviceManagerRights.setIsWillBeCreated(false);
+
+        serviceCopyFileRedis.setIsException(false);
         serviceCopyFileRedis.setAccessToken(accessToken);
         List<String> mergeRealAndSystemParents = CloneList.cloneOneLevel(
                 file.systemParents(),
                 file.systemToParents()
         );
-        serviceCopyFileRedis.checkRights(file.parents(), mergeRealAndSystemParents, null);
+        boolean isRightsDirectory = serviceCopyFileRedis.checkRights(file.parents(),
+                mergeRealAndSystemParents, null, false);
+
+        if (!isRightsDirectory) {
+            serviceManagerRights.checkRightsByOperation(operationRightsDirectory, file.systemParents());
+            serviceManagerRights.checkRightsByOperation(operationRightsDirectory, file.systemToParents());
+        }
+
         if (file.systemFileName() != null) {
-            serviceCopyFileRedis.checkRights(file.systemFileName());
+            boolean isRightsFile = serviceCopyFileRedis.checkRights(file.systemFileName());
+            if (!isRightsFile) {
+                serviceManagerRights.checkRightsByOperation(operationRights, file.systemFileName());
+            }
+
             ContainerDataCopyFile containerData = AtomicSystemCallManager.call(
                     serviceCopyFile,
                     file.systemFileName(),
@@ -78,7 +104,11 @@ public class ControllerApiCopyFile implements ControllerApiCopyFileDoc {
             serviceCopyFileRedis.copy(containerData.target(), file.systemFileName(), containerData.systemFileName());
             return new ResponseCopyFileApi(List.of(containerData));
         } else {
-            serviceCopyFileRedis.checkRights(file.systemNameFiles());
+            boolean isRightsFile = serviceCopyFileRedis.checkRights(file.systemNameFiles());
+            if (!isRightsFile) {
+                serviceManagerRights.checkRightsByOperation(operationRights, file.systemNameFiles());
+            }
+
             List<ContainerDataCopyFile> containersData = AtomicSystemCallManager.call(
                     serviceCopyFile,
                     Objects.requireNonNull(file.systemNameFiles()),

@@ -64,14 +64,16 @@ public class ServiceMoveDirectoryRedisTests {
                 User.ROLE_USER.get(),
                 "test_1",
                 systemNameDirectory,
-                pathSystemDirectory.toString()
+                pathSystemDirectory.toString(),
+                new ArrayList<>()
         ));
         fileRedisRepository.save(new FileRedis(
                 User.LOGIN.get(),
                 User.ROLE_USER.get(),
                 "test_2",
                 systemNameFile,
-                pathSystemFile.toString()
+                pathSystemFile.toString(),
+                new ArrayList<>()
         ));
 
         attached.add(new ContainerInfoFileSystemObject(

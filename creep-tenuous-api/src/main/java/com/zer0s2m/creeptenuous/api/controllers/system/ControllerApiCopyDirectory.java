@@ -4,9 +4,11 @@ import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCopyD
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataCopyDirectoryApi;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.http.ResponseCopyDirectoryApi;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceCopyDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCopyDirectoryImpl;
 import jakarta.validation.Valid;
@@ -22,17 +24,26 @@ import java.util.List;
 
 @V1APIRestController
 public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc {
+
+    static final OperationRights operationRightsDirectory = OperationRights.SHOW;
+
+    static final OperationRights operationRights = OperationRights.COPY;
+
     private final ServiceCopyDirectoryImpl serviceCopyDirectory;
 
     private final ServiceCopyDirectoryRedisImpl serviceCopyDirectoryRedis;
 
+    private final ServiceManagerRights serviceManagerRights;
+
     @Autowired
     public ControllerApiCopyDirectory(
             ServiceCopyDirectoryImpl serviceCopyDirectory,
-            ServiceCopyDirectoryRedisImpl serviceCopyDirectoryRedis
+            ServiceCopyDirectoryRedisImpl serviceCopyDirectoryRedis,
+            ServiceManagerRights serviceManagerRights
     ) {
         this.serviceCopyDirectory = serviceCopyDirectory;
         this.serviceCopyDirectoryRedis = serviceCopyDirectoryRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -56,17 +67,28 @@ public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc
             @RequestHeader(name = "Authorization") String accessToken
     ) throws InvocationTargetException, NoSuchMethodException,
             InstantiationException, IllegalAccessException {
+        serviceManagerRights.setAccessClaims(accessToken);
+        serviceManagerRights.setIsWillBeCreated(false);
+
         serviceCopyDirectoryRedis.setAccessToken(accessToken);
         serviceCopyDirectoryRedis.setEnableCheckIsNameDirectory(true);
+        serviceCopyDirectoryRedis.setIsException(false);
+
         List<String> mergeParents = CloneList.cloneOneLevel(
                 dataDirectory.systemParents(),
                 dataDirectory.systemToParents()
         );
-        serviceCopyDirectoryRedis.checkRights(
+        boolean isRightsDirectory = serviceCopyDirectoryRedis.checkRights(
                 dataDirectory.parents(),
                 mergeParents,
-                dataDirectory.systemDirectoryName()
+                dataDirectory.systemDirectoryName(),
+                false
         );
+        if (!isRightsDirectory) {
+            serviceManagerRights.checkRightsByOperation(operationRightsDirectory, CloneList.cloneOneLevel(
+                    mergeParents, List.of(dataDirectory.systemDirectoryName())));
+            serviceManagerRights.checkRightsByOperation(operationRights, dataDirectory.systemDirectoryName());
+        }
 
         List<ContainerInfoFileSystemObject> attached = AtomicSystemCallManager.call(
                 serviceCopyDirectory,
