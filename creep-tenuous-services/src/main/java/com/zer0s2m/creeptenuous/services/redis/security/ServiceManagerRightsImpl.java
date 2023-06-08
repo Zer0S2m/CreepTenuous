@@ -100,8 +100,9 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     public void addRight(RightUserFileSystemObjectRedis right) throws ChangeRightsYourselfException {
         checkAddingRightsYourself(right);
 
+        String systemName = right.getFileSystemObject();
         Optional<RightUserFileSystemObjectRedis> existsRight = rightUserFileSystemObjectRedisRepository
-                .findById(buildUniqueKey(right.getFileSystemObject(), right.getLogin()));
+                .findById(buildUniqueKey(systemName, right.getLogin()));
         if (existsRight.isPresent()) {
             RightUserFileSystemObjectRedis existsRightReady = existsRight.get();
             List<OperationRights> operationRightsList = existsRightReady.getRight();
@@ -121,6 +122,44 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
             right.setFileSystemObject(buildUniqueKey(right.getFileSystemObject(), right.getLogin()));
             rightUserFileSystemObjectRedisRepository.save(right);
         }
+
+        addUserLoginsToRedisObj(systemName, right.getLogin());
+    }
+
+    /**
+     * Binding a user to a file system object in Redis
+     * @param systemName filesystem object system name. Must not be {@literal null}.
+     * @param loginUser login user
+     */
+    private void addUserLoginsToRedisObj(@NotNull String systemName, String loginUser) {
+        Optional<FileRedis> fileRedisOptional = fileRedisRepository.findById(systemName);
+        Optional<DirectoryRedis> directoryRedisOptional = directoryRedisRepository.findById(systemName);
+
+        fileRedisOptional.ifPresent(fileRedis -> {
+            setDataUserLoginsToRedisObj(fileRedis, loginUser);
+            fileRedisRepository.save(fileRedis);
+        });
+        directoryRedisOptional.ifPresent(directoryRedis -> {
+            setDataUserLoginsToRedisObj(directoryRedis, loginUser);
+            directoryRedisRepository.save(directoryRedis);
+        });
+    }
+
+    /**
+     * Set data for redis object
+     * @param obj redis object
+     * @param loginUserOther login user
+     */
+    private void setDataUserLoginsToRedisObj(@NotNull BaseRedis obj, String loginUserOther) {
+        List<String> userLogins = obj.getUserLogins();
+        if (userLogins == null) {
+            obj.setUserLogins(List.of(loginUserOther));
+        } else {
+            if (!userLogins.contains(loginUserOther)) {
+                userLogins.add(loginUserOther);
+                obj.setUserLogins(userLogins);
+            }
+        }
     }
 
     /**
@@ -137,9 +176,52 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
         List<OperationRights> operationRightsList = right.getRight();
         if (operationRightsList != null && operationRightsList.remove(operationRights)) {
-            right.setRight(operationRightsList);
-            rightUserFileSystemObjectRedisRepository.save(right);
+            if (operationRightsList.size() == 0) {
+                deleteUserLoginsToRedisObj(unpackingUniqueKey(right.getFileSystemObject()), right.getLogin());
+                rightUserFileSystemObjectRedisRepository.delete(right);
+            } else {
+                right.setRight(operationRightsList);
+                rightUserFileSystemObjectRedisRepository.save(right);
+            }
         }
+    }
+
+    /**
+     * Removing a User Binding to an Object in Redis
+     * @param systemName filesystem object system name. Must not be {@literal null}.
+     * @param loginUser login user
+     */
+    private void deleteUserLoginsToRedisObj(@NotNull String systemName, @NotNull String loginUser) {
+        Optional<FileRedis> fileRedisOptional = fileRedisRepository.findById(systemName);
+        Optional<DirectoryRedis> directoryRedisOptional = directoryRedisRepository.findById(systemName);
+
+        if (fileRedisOptional.isPresent()) {
+            FileRedis fileRedis = fileRedisOptional.get();
+            if (delDataUserLoginsToRedisObj(fileRedis, loginUser)) {
+                fileRedisRepository.save(fileRedis);
+            }
+        }
+        if (directoryRedisOptional.isPresent()) {
+            DirectoryRedis directoryRedis = directoryRedisOptional.get();
+            if (delDataUserLoginsToRedisObj(directoryRedis, loginUser)) {
+                directoryRedisRepository.save(directoryRedis);
+            }
+        }
+    }
+
+    /**
+     * Del data for redis object
+     * @param obj redis object
+     * @param loginUser login user
+     * @return whether removed
+     */
+    private boolean delDataUserLoginsToRedisObj(@NotNull BaseRedis obj, @NotNull String loginUser) {
+        List<String> userLogins = obj.getUserLogins();
+        if (userLogins != null && userLogins.contains(loginUser) && userLogins.remove(loginUser)) {
+            obj.setUserLogins(userLogins);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -285,18 +367,21 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
      * @param right data right. Must not be {@literal null}.
      * @return sorted data.
      */
+    @Override
     public List<String> permissionFiltering(List<String> fileSystemObjects, OperationRights right) {
         List<String> readyFileSystemObjects = new ArrayList<>();
         Iterable<FileRedis> fileRedis = getFileRedis(fileSystemObjects);
         Iterable<DirectoryRedis> directoryRedis = getDirectoryRedis(fileSystemObjects);
 
         fileRedis.forEach(obj -> {
-            if (obj.getUserLogins().contains(getLoginUser())) {
+            if ((obj.getUserLogins() != null && obj.getUserLogins().contains(getLoginUser())) ||
+                    getLoginUser().equals(obj.getLogin())) {
                 readyFileSystemObjects.add(obj.getSystemNameFile());
             }
         });
         directoryRedis.forEach(obj -> {
-            if (obj.getUserLogins().contains(getLoginUser())) {
+            if ((obj.getUserLogins() != null && obj.getUserLogins().contains(getLoginUser())) ||
+                    getLoginUser().equals(obj.getLogin())) {
                 readyFileSystemObjects.add(obj.getSystemNameDirectory());
             }
         });
