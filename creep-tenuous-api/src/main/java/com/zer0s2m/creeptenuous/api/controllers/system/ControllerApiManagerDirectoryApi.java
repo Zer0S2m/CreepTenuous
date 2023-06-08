@@ -4,9 +4,12 @@ import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiManag
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataBuilderDirectory;
 import com.zer0s2m.creeptenuous.common.data.DataManagerDirectoryApi;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.NotValidLevelDirectoryException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionBadLevelDirectoryMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseManagerDirectoryApi;
+import com.zer0s2m.creeptenuous.common.utils.OptionalMutable;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceManagerDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceManagerDirectoryImpl;
 import jakarta.validation.Valid;
@@ -19,17 +22,24 @@ import java.util.List;
 
 @V1APIRestController
 public class ControllerApiManagerDirectoryApi implements ControllerApiManagerDirectoryApiDoc {
+
+    static final OperationRights operationRights = OperationRights.SHOW;
+
     private final ServiceManagerDirectoryImpl builderDirectory;
 
     private final ServiceManagerDirectoryRedisImpl serviceManagerDirectoryRedis;
 
+    private final ServiceManagerRights serviceManagerRights;
+
     @Autowired
     public ControllerApiManagerDirectoryApi(
             ServiceManagerDirectoryImpl builderDirectory,
-            ServiceManagerDirectoryRedisImpl serviceManagerDirectoryRedis
+            ServiceManagerDirectoryRedisImpl serviceManagerDirectoryRedis,
+            ServiceManagerRights serviceManagerRights
     ) {
         this.builderDirectory = builderDirectory;
         this.serviceManagerDirectoryRedis = serviceManagerDirectoryRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -47,17 +57,34 @@ public class ControllerApiManagerDirectoryApi implements ControllerApiManagerDir
             @RequestHeader(name = "Authorization") String accessToken
     ) throws IOException, NotValidLevelDirectoryException {
         serviceManagerDirectoryRedis.setAccessToken(accessToken);
-        serviceManagerDirectoryRedis.checkRights(
+        serviceManagerDirectoryRedis.setIsException(false);
+
+        serviceManagerRights.setAccessClaims(accessToken);
+        serviceManagerRights.setIsWillBeCreated(false);
+
+        OptionalMutable<ContainerDataBuilderDirectory> rawDataOptional = new OptionalMutable<>();
+        boolean isRights = serviceManagerDirectoryRedis.checkRights(
                 data.parents(),
                 data.systemParents(),
-                null
+                null,
+                false
         );
+        if (!isRights) {
+            serviceManagerRights.checkRightsByOperation(operationRights, data.systemParents());
+        }
 
-        ContainerDataBuilderDirectory rawData = builderDirectory.build(
+        rawDataOptional.setValue(builderDirectory.build(
                 data.systemParents(),
                 data.level()
-        );
-        List<Object> result = serviceManagerDirectoryRedis.build(rawData.namesSystemFileObject());
+        ));
+        rawDataOptional.setValue(new ContainerDataBuilderDirectory(
+                data.systemParents(),
+                data.level(),
+                serviceManagerRights.permissionFiltering(
+                        rawDataOptional.getValue().namesSystemFileObject(), operationRights)
+        ));
+
+        List<Object> result = serviceManagerDirectoryRedis.build(rawDataOptional.getValue().namesSystemFileObject());
 
         return new ResponseManagerDirectoryApi(data.systemParents(), data.level(), result);
     }

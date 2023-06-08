@@ -158,6 +158,14 @@ public interface ServiceManagerRights {
     List<? extends BaseRedis> ownerMappingOnMove(String loginUser, List<? extends BaseRedis> entities);
 
     /**
+     * Sort file system objects by permissions.
+     * @param fileSystemObjects file system objects.
+     * @param right data right. Must not be {@literal null}.
+     * @return sorted data.
+     */
+    List<String> permissionFiltering(List<String> fileSystemObjects, OperationRights right);
+
+    /**
      * Get right object to persist in {@literal Redis}
      * @param fileSystemObject file system object name. Must not be {@literal null}.
      * @param login login user. Must not be {@literal null}.

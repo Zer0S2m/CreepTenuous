@@ -280,6 +280,31 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     }
 
     /**
+     * Sort file system objects by permissions.
+     * @param fileSystemObjects file system objects.
+     * @param right data right. Must not be {@literal null}.
+     * @return sorted data.
+     */
+    public List<String> permissionFiltering(List<String> fileSystemObjects, OperationRights right) {
+        List<String> readyFileSystemObjects = new ArrayList<>();
+        Iterable<FileRedis> fileRedis = getFileRedis(fileSystemObjects);
+        Iterable<DirectoryRedis> directoryRedis = getDirectoryRedis(fileSystemObjects);
+
+        fileRedis.forEach(obj -> {
+            if (obj.getUserLogins().contains(getLoginUser())) {
+                readyFileSystemObjects.add(obj.getSystemNameFile());
+            }
+        });
+        directoryRedis.forEach(obj -> {
+            if (obj.getUserLogins().contains(getLoginUser())) {
+                readyFileSystemObjects.add(obj.getSystemNameDirectory());
+            }
+        });
+
+        return readyFileSystemObjects;
+    }
+
+    /**
      * Getting information about files from Redis
      * @param fileSystemObjects file system objects
      * @return data redis file
