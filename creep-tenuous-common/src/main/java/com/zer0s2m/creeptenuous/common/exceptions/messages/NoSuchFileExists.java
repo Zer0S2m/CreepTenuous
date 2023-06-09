@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public class NoSuchFileExists {
     private final String message;
-    private final Integer statusCode = HttpStatus.NOT_FOUND.value();
+    private final Integer status = HttpStatus.NOT_FOUND.value();
 
     public NoSuchFileExists(String message) {
         this.message = message;
@@ -14,7 +14,7 @@ public class NoSuchFileExists {
         return message;
     }
 
-    public Integer getStatusCode() {
-        return statusCode;
+    public Integer getStatus() {
+        return status;
     }
 }

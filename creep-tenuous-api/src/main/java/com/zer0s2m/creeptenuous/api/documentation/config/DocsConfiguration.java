@@ -64,44 +64,44 @@ public class DocsConfiguration {
     private void buildSchemas() {
         this.schemaForbidden = new Schema<Map<String, Object>>()
                 .addProperty("message", new StringSchema().example("Forbidden"))
-                .addProperty("statusCode", new IntegerSchema().example(403));
+                .addProperty("status", new IntegerSchema().example(403));
         this.schemaForbidden.setTitle("Forbidden");
 
         this.schemaNotFoundDirectory = new Schema<Map<String, Object>>()
                 .addProperty("message", new StringSchema().example(Directory.NOT_FOUND_DIRECTORY.get()))
-                .addProperty("statusCode", new IntegerSchema().example(404));
+                .addProperty("status", new IntegerSchema().example(404));
         this.schemaNotFoundDirectory.setTitle("NotFoundDirectory");
 
         this.schemaNotFoundFile = new Schema<Map<String, Object>>()
                 .addProperty("message", new StringSchema().example("/path/not/found/file"))
-                .addProperty("statusCode", new IntegerSchema().example(404));
+                .addProperty("status", new IntegerSchema().example(404));
         this.schemaNotFoundFile.setTitle("NotFoundFile");
 
         this.schemaNotFound = new Schema<Map<String, Object>>()
                 .addProperty("message", new StringSchema().example("File system object not found"))
-                .addProperty("statusCode", new IntegerSchema().example(404))
+                .addProperty("status", new IntegerSchema().example(404))
                 .addOneOfItem(this.schemaNotFoundDirectory)
                 .addOneOfItem(this.schemaNotFoundFile);
         this.schemaNotFound.setTitle("NotFoundFileObjectSystem");
 
         this.schemaNotFoundUser = new Schema<Map<String, Object>>()
                 .addProperty("message", new StringSchema().example("User is not found."))
-                .addProperty("statusCode", new IntegerSchema().example(401));
+                .addProperty("status", new IntegerSchema().example(401));
         this.schemaNotFoundUser.setTitle("NotFoundUser");
 
         this.schemaInvalidPassword = new Schema<Map<String, Object>>()
                 .addProperty("message", new StringSchema().example("Incorrect password."))
-                .addProperty("statusCode", new IntegerSchema().example(401));
+                .addProperty("status", new IntegerSchema().example(401));
         this.schemaInvalidPassword.setTitle("UserInvalidPassword");
 
         this.schemaInvalidJwtRefreshToken = new Schema<Map<String, Object>>()
                 .addProperty("message", new StringSchema().example("Invalid refresh token"))
-                .addProperty("statusCode", new IntegerSchema().example(401));
+                .addProperty("status", new IntegerSchema().example(401));
         this.schemaInvalidJwtRefreshToken.setTitle("InvalidJwtRefreshToken");
 
         this.schemaUnauthorized = new Schema<Map<String, Object>>()
                 .addProperty("message", new StringSchema().example("Unauthorized"))
-                .addProperty("statusCode", new IntegerSchema().example(401))
+                .addProperty("status", new IntegerSchema().example(401))
                 .addOneOfItem(this.schemaInvalidJwtRefreshToken)
                 .addOneOfItem(this.schemaInvalidPassword)
                 .addOneOfItem(this.schemaNotFoundUser);

@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public class NoValidJwtRefreshTokenMsg {
     private final String message;
-    private final Integer statusCode = HttpStatus.UNAUTHORIZED.value();
+    private final Integer status = HttpStatus.UNAUTHORIZED.value();
 
     public NoValidJwtRefreshTokenMsg(String message) {
         this.message = message;
@@ -14,7 +14,7 @@ public class NoValidJwtRefreshTokenMsg {
         return message;
     }
 
-    public Integer getStatusCode() {
-        return statusCode;
+    public Integer getStatus() {
+        return status;
     }
 }

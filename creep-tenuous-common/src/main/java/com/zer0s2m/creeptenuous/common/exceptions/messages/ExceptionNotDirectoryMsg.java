@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public class ExceptionNotDirectoryMsg {
     private final String message;
-    private final Integer statusCode = HttpStatus.NOT_FOUND.value();
+    private final Integer status = HttpStatus.NOT_FOUND.value();
 
     public ExceptionNotDirectoryMsg(String message) {
         this.message = message;
@@ -14,7 +14,7 @@ public class ExceptionNotDirectoryMsg {
         return message;
     }
 
-    public Integer getStatusCode() {
-        return statusCode;
+    public Integer getStatus() {
+        return status;
     }
 }

@@ -6,7 +6,7 @@ public class ExceptionAddRightsYourselfMsg {
 
     private final String message;
 
-    private final Integer statusCode = HttpStatus.BAD_REQUEST.value();
+    private final Integer status = HttpStatus.BAD_REQUEST.value();
 
     public ExceptionAddRightsYourselfMsg(String message) {
         this.message = message;
@@ -16,8 +16,8 @@ public class ExceptionAddRightsYourselfMsg {
         return message;
     }
 
-    public Integer getStatusCode() {
-        return statusCode;
+    public Integer getStatus() {
+        return status;
     }
 
 }
