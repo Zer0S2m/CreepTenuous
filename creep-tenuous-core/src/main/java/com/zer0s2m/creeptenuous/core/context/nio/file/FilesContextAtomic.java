@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.core.context.nio.file;
 
 import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +28,11 @@ public interface FilesContextAtomic {
     ContextAtomicFileSystem contextAtomicFileSystem = ContextAtomicFileSystem.getInstance();
 
     /**
+     * Getting the caller class object from a method
+     */
+    StackWalker stackWalker = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
+
+    /**
      * A directory made available for applications that need a place to create temporary files.
      * <a href="https://refspecs.linuxfoundation.org/FHS_3.0/fhs/ch03s18.html">Documentation <b>tmp</b></a>
      */
@@ -45,7 +51,7 @@ public interface FilesContextAtomic {
      * @throws IOException if an I/O error occurs or the parent directory does not exist
      */
     static Path createFile(Path path, FileAttribute<?>... attrs) throws IOException {
-        addOperationDataCreate(path);
+        addOperationDataCreate(path, stackWalker.getCallerClass().getCanonicalName());
         return Files.createFile(path, attrs);
     }
 
@@ -58,7 +64,7 @@ public interface FilesContextAtomic {
      * @throws IOException if an I/O error occurs or the parent directory does not exist
      */
     static Path createDirectory(Path dir, FileAttribute<?>... attrs) throws IOException {
-        addOperationDataCreate(dir);
+        addOperationDataCreate(dir, stackWalker.getCallerClass().getCanonicalName());
         return Files.createDirectory(dir, attrs);
     }
 
@@ -72,7 +78,7 @@ public interface FilesContextAtomic {
      * @throws IOException if an I/O error occurs
      */
     static Path move(Path source, Path target, CopyOption... options) throws IOException {
-        addOperationDataMove(source, target);
+        addOperationDataMove(source, target, stackWalker.getCallerClass().getCanonicalName());
         return Files.move(source, target, options);
     }
 
@@ -86,7 +92,7 @@ public interface FilesContextAtomic {
      * @throws IOException if an I/O error occurs
      */
     static Path copy(Path source, Path target, CopyOption... options) throws IOException {
-        addOperationDataCopy(target);
+        addOperationDataCopy(target, stackWalker.getCallerClass().getCanonicalName());
         return Files.copy(source, target, options);
     }
 
@@ -100,7 +106,7 @@ public interface FilesContextAtomic {
      * @throws IOException if an I/O error occurs when reading or writing
      */
     static long copy(InputStream in, Path target, CopyOption... options) throws IOException {
-        addOperationDataUpload(target);
+        addOperationDataUpload(target, stackWalker.getCallerClass().getCanonicalName());
         return Files.copy(in, target, options);
     }
 
@@ -112,7 +118,20 @@ public interface FilesContextAtomic {
     static void delete(Path path) throws IOException {
         boolean isDirectory = Files.isDirectory(path);
         boolean isFile = Files.isRegularFile(path);
-        addOperationDataDelete(path, transferToTmp(path), isDirectory, isFile);
+        addOperationDataDelete(path, transferToTmp(path), isDirectory, isFile,
+                stackWalker.getCallerClass().getCanonicalName());
+    }
+
+    /**
+     * Deletes a file. Add data in context {@link ContextAtomicFileSystem} of <b>atomic mode</b>
+     * @param path the path to the file to delete
+     * @param className caller class from method
+     * @throws IOException if an I/O error occurs
+     */
+    static private void delete(Path path, String className) throws IOException {
+        boolean isDirectory = Files.isDirectory(path);
+        boolean isFile = Files.isRegularFile(path);
+        addOperationDataDelete(path, transferToTmp(path), isDirectory, isFile, className);
     }
 
     /**
@@ -134,7 +153,7 @@ public interface FilesContextAtomic {
      */
     static void deleteNoException(File file) {
         try {
-            delete(file.toPath());
+            delete(file.toPath(), stackWalker.getCallerClass().getCanonicalName());
         } catch (RuntimeException | IOException ignored) {
         }
     }
@@ -142,12 +161,14 @@ public interface FilesContextAtomic {
     /**
      * Write operation data to atomic mode context
      * @param path the path
+     * @param className caller class from method
      */
-    private static void addOperationDataCreate(Path path) {
+    private static void addOperationDataCreate(@NotNull Path path, @NotNull String className) {
         HashMap<String, Object> operationData = new HashMap<>();
 
         String systemNameFile = path.getFileName().toString();
 
+        operationData.put("_class", className);
         operationData.put("operation", ContextAtomicFileSystem.Operations.CREATE);
         operationData.put("systemName", systemNameFile);
         operationData.put("systemPath", path);
@@ -159,12 +180,14 @@ public interface FilesContextAtomic {
      * Write operation data to atomic mode context
      * @param source the path source
      * @param target the path target
+     * @param className caller class from method
      */
-    private static void addOperationDataMove(Path source, Path target) {
+    private static void addOperationDataMove(Path source, @NotNull Path target, String className) {
         HashMap<String, Object> operationData = new HashMap<>();
 
         String systemNameFile = target.getFileName().toString();
 
+        operationData.put("_class", className);
         operationData.put("operation", ContextAtomicFileSystem.Operations.MOVE);
         operationData.put("sourcePath", source);
         operationData.put("targetPath", target);
@@ -175,10 +198,12 @@ public interface FilesContextAtomic {
     /**
      * Write operation data to atomic mode context
      * @param target the path target
+     * @param className caller class from method
      */
-    private static void addOperationDataCopy(Path target) {
+    private static void addOperationDataCopy(Path target, @NotNull String className) {
         HashMap<String, Object> operationData = new HashMap<>();
 
+        operationData.put("_class", className);
         operationData.put("operation", ContextAtomicFileSystem.Operations.COPY);
         operationData.put("targetPath", target);
 
@@ -191,12 +216,15 @@ public interface FilesContextAtomic {
      * @param target the path target
      * @param isDirectory the path is directory
      * @param isFile the path is file
+     * @param className caller class from method
      */
-    private static void addOperationDataDelete(Path source, Path target, boolean isDirectory, boolean isFile) {
+    private static void addOperationDataDelete(
+            Path source, @NotNull Path target, boolean isDirectory, boolean isFile, String className) {
         HashMap<String, Object> operationData = new HashMap<>();
 
         String systemNameFile = target.getFileName().toString();
 
+        operationData.put("_class", className);
         operationData.put("operation", ContextAtomicFileSystem.Operations.DELETE);
         operationData.put("sourcePath", source);
         operationData.put("targetPath", target);
@@ -209,12 +237,14 @@ public interface FilesContextAtomic {
     /**
      * Write operation data to atomic mode context
      * @param target the path target
+     * @param className caller class from method
      */
-    private static void addOperationDataUpload(Path target) {
+    private static void addOperationDataUpload(@NotNull Path target, String className) {
         HashMap<String, Object> operationData = new HashMap<>();
 
         String systemNameFile = target.getFileName().toString();
 
+        operationData.put("_class", className);
         operationData.put("operation", ContextAtomicFileSystem.Operations.UPLOAD);
         operationData.put("targetPath", target);
 

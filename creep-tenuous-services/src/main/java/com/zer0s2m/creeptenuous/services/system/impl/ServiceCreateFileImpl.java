@@ -79,6 +79,7 @@ public class ServiceCreateFileImpl implements ServiceCreateFile, AtomicServiceFi
             String newSystemNameFile
     ) {
         HashMap<String, Object> operationData = new HashMap<>();
+        operationData.put("_class", this.getClass().getCanonicalName());
         operationData.put("operation", ContextAtomicFileSystem.Operations.CREATE);
         operationData.put("realName", realNameFile);
         operationData.put("systemName", systemNameFile);

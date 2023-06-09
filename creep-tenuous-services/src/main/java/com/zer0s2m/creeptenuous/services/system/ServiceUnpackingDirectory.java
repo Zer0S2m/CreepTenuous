@@ -9,20 +9,25 @@ import java.nio.file.Path;
 import java.util.List;
 
 public interface ServiceUnpackingDirectory {
+
     /**
      * Unpacking zip file to directory
      * @param container data zip files
      * @param outputDirectory target path
+     * @param callClassName caller class from method
      */
-    default List<ContainerDataUploadFileSystemObject> unpacking(ContainerUploadFile container, Path outputDirectory)
+    default List<ContainerDataUploadFileSystemObject> unpacking(
+            ContainerUploadFile container, Path outputDirectory, String callClassName)
             throws InterruptedException {
         ThreadUnpackingDirectory threadUnpacking = new ThreadUnpackingDirectory(
                 Directory.THREAD_NAME_UNPACKING_DIRECTORY.get(),
                 container.getFiles(),
                 outputDirectory
         );
+        threadUnpacking.setCallClassName(callClassName);
         threadUnpacking.start();
         threadUnpacking.join();
         return threadUnpacking.getFinalData();
     }
+
 }
