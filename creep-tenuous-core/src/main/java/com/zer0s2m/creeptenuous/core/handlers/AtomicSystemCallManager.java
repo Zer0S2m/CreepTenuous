@@ -39,14 +39,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *          }
  *     )
  *     public Path method(Path dir) {
- *         return Files.createDirectory(dir);
+ *         return FilesContextAtomic.createDirectory(dir);
  *     }
  * }
  * }</pre>
  */
 public final class AtomicSystemCallManager {
 
-     private static final Logger logger = LoggerFactory.getLogger(AtomicSystemCallManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(AtomicSystemCallManager.class);
 
     /**
      * Context for working with the file system in <b>atomic mode</b>
@@ -129,12 +129,20 @@ public final class AtomicSystemCallManager {
             } else {
                 nameMethod = atomicFileSystem.name();
             }
+
+            String className = targetMethod.getDeclaringClass().getName();
+
             try {
                 logger.info(String.format(
                         "Call method [%s] in service [%s] from atomic system manager",
-                        nameMethod, targetMethod.getDeclaringClass().getName()
+                        nameMethod, className
                 ));
-                return (T) targetMethod.invoke(instance, args);
+
+                T result = (T) targetMethod.invoke(instance, args);
+
+                contextAtomicFileSystem.clearOperationsData();
+
+                return result;
             } catch (Throwable e) {
                 for (AtomicFileSystemExceptionHandler atomicFileSystemExceptionHandler: systemExceptionHandlers) {
                     if (e.getCause().getClass().equals(atomicFileSystemExceptionHandler.exception())) {
@@ -144,7 +152,7 @@ public final class AtomicSystemCallManager {
                                 .newInstance();
                         handler.handleException(
                                 e.getCause(),
-                                contextAtomicFileSystem.getOperationsData()
+                                contextAtomicFileSystem.getOperationsData(className)
                         );
                         ContextAtomicFileSystem.Operations operation = atomicFileSystemExceptionHandler.operation();
                         if (!operations.contains(operation)) {
@@ -152,11 +160,12 @@ public final class AtomicSystemCallManager {
                         }
                     }
                 }
+
+                operations.forEach(contextAtomicFileSystem::clearOperationsData);
+
                 throw e;
             }
         }
-
-        operations.forEach(contextAtomicFileSystem::clearOperationsData);
 
         return (T) targetMethod.invoke(instance, args);
     }

@@ -29,10 +29,11 @@ public interface CollectZipDirectory {
      * @param map info directory (get data - {@link ServiceDownloadDirectoryRedis#getResource(List)})
      *            <p><b>Key</b> - system name file object</p>
      *            <p><b>Value</b> - real name system file object</p>
+     * @param className caller class from method
      * @return path ready archive
      * @throws RuntimeException system error
      */
-    default Path collectZip(Path source, HashMap<String, String> map) throws RuntimeException {
+    default Path collectZip(Path source, HashMap<String, String> map, String className) throws RuntimeException {
         String pathToZip = source.getParent().toString();
         String realPathToZip;
 
@@ -47,7 +48,7 @@ public interface CollectZipDirectory {
         }
 
         final Path sourceZipFile = Paths.get(realPathToZip);
-        addOperationDataDownload(sourceZipFile);
+        addOperationDataDownload(sourceZipFile, className);
 
         try (
                 final FileOutputStream fosFile = new FileOutputStream(realPathToZip);
@@ -154,12 +155,14 @@ public interface CollectZipDirectory {
     /**
      * Write operation data to atomic mode context
      * @param source the path source
+     * @param className caller class from method
      */
-    private void addOperationDataDownload(Path source) {
+    private void addOperationDataDownload(Path source, String className) {
         HashMap<String, Object> operationData = new HashMap<>();
 
         String systemNameFile = source.getFileName().toString();
 
+        operationData.put("_class", className);
         operationData.put("operation", ContextAtomicFileSystem.Operations.DOWNLOAD);
         operationData.put("sourcePath", source);
 

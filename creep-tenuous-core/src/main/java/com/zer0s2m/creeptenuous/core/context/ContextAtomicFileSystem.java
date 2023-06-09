@@ -8,6 +8,8 @@ import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHan
 import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationDelete;
 import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationUpload;
 import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationDownload;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,12 +24,15 @@ public final class ContextAtomicFileSystem {
 
     Logger logger = LoggerFactory.getLogger(ContextAtomicFileSystem.class);
 
+    private final String keyClassName = "_class";
+
     /**
      * <p> File system interaction data</p>
      * <p>
      *     1) Used in handler {@link ServiceFileSystemExceptionHandlerOperationCreate}.
      *     Basic key names and value types for operation {@link ContextAtomicFileSystem.Operations#CREATE}:<br>
      *     <ul>
+     *         <li><b>_class</b> - {@link Class#getCanonicalName()} (<b><u>required</u></b>)</li>
      *         <li><b>operation</b> - {@link Operations} (<b><u>required</u></b>)</li>
      *         <li><b>systemName</b> - {@link String}</li>
      *         <li><b>systemPath</b> - {@link java.nio.file.Path}</li>
@@ -36,6 +41,7 @@ public final class ContextAtomicFileSystem {
      * Example:
      * <pre>{@code
      * HashMap<String, Object> operationData = new HashMap<>();
+     * operationData.put("_class", Class.class.getCanonicalName());
      * operationData.put("operation", Operations.CREATE);
      * operationData.put("systemName", systemNameFile);
      * operationData.put("systemPath", Path.of(uri));
@@ -46,6 +52,7 @@ public final class ContextAtomicFileSystem {
      *     2) Used in handler {@link ServiceFileSystemExceptionHandlerOperationMove}
      *     Basic key names and value types for operation {@link ContextAtomicFileSystem.Operations#MOVE}:<br>
      *     <ul>
+     *         <li><b>_class</b> - {@link Class#getCanonicalName()} (<b><u>required</u></b>)</li>
      *         <li><b>operation</b> - {@link Operations} (<b><u>required</u></b>)</li>
      *         <li><b>sourcePath</b> - {@link java.nio.file.Path}</li>
      *         <li><b>targetPath</b> - {@link java.nio.file.Path}</li>
@@ -54,6 +61,7 @@ public final class ContextAtomicFileSystem {
      * Example:
      * <pre>{@code
      * HashMap<String, Object> operationData = new HashMap<>();
+     * operationData.put("_class", Class.class.getCanonicalName());
      * operationData.put("operation", Operations.MOVE);
      * operationData.put("sourcePath", Path.of(uri));
      * operationData.put("targetPath", Path.of(uri));
@@ -64,6 +72,7 @@ public final class ContextAtomicFileSystem {
      *     3) Used in handler {@link ServiceFileSystemExceptionHandlerOperationCopy}
      *     Basic key names and value types for operation {@link ContextAtomicFileSystem.Operations#COPY}:<br>
      *     <ul>
+     *         <li><b>_class</b> - {@link Class#getCanonicalName()} (<b><u>required</u></b>)</li>
      *         <li><b>operation</b> - {@link Operations} (<b><u>required</u></b>)</li>
      *         <li><b>targetPath</b> - {@link java.nio.file.Path}</li>
      *     </ul>
@@ -71,6 +80,7 @@ public final class ContextAtomicFileSystem {
      * Example:
      * <pre>{@code
      * HashMap<String, Object> operationData = new HashMap<>();
+     * operationData.put("_class", Class.class.getCanonicalName());
      * operationData.put("operation", Operations.COPY);
      * operationData.put("targetPath", Path.of(uri));
      * contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
@@ -80,6 +90,7 @@ public final class ContextAtomicFileSystem {
      *     4) Used in handler {@link ServiceFileSystemExceptionHandlerOperationDelete}
      *     Basic key names and value types for operation {@link ContextAtomicFileSystem.Operations#DELETE}:<br>
      *     <ul>
+     *         <li><b>_class</b> - {@link Class#getCanonicalName()} (<b><u>required</u></b>)</li>
      *         <li><b>operation</b> - {@link Operations} (<b><u>required</u></b>)</li>
      *         <li><b>targetPath</b> - {@link java.nio.file.Path}</li>
      *         <li><b>sourcePath</b> - {@link java.nio.file.Path}</li>
@@ -90,6 +101,7 @@ public final class ContextAtomicFileSystem {
      * Example:
      * <pre>{@code
      * HashMap<String, Object> operationData = new HashMap<>();
+     * operationData.put("_class", Class.class.getCanonicalName());
      * operationData.put("operation", Operations.DELETE);
      * operationData.put("sourcePath", Path.of(uri));
      * operationData.put("targetPath", Path.of(uri));
@@ -102,6 +114,7 @@ public final class ContextAtomicFileSystem {
      *     5) Used in handler {@link ServiceFileSystemExceptionHandlerOperationUpload}
      *     Basic key names and value types for operation {@link ContextAtomicFileSystem.Operations#UPLOAD}:<br>
      *     <ul>
+     *         <li><b>_class</b> - {@link Class#getCanonicalName()} (<b><u>required</u></b>)</li>
      *         <li><b>operation</b> - {@link Operations} (<b><u>required</u></b>)</li>
      *         <li><b>targetPath</b> - {@link java.nio.file.Path}</li>
      *     </ul>
@@ -109,6 +122,7 @@ public final class ContextAtomicFileSystem {
      * Example:
      * <pre>{@code
      * HashMap<String, Object> operationData = new HashMap<>();
+     * operationData.put("_class", Class.class.getCanonicalName());
      * operationData.put("operation", Operations.UPLOAD);
      * operationData.put("targetPath", Path.of(uri));
      * contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
@@ -118,6 +132,7 @@ public final class ContextAtomicFileSystem {
      *     5) Used in handler {@link ServiceFileSystemExceptionHandlerOperationDownload}
      *     Basic key names and value types for operation {@link ContextAtomicFileSystem.Operations#DOWNLOAD}:<br>
      *     <ul>
+     *         <li><b>_class</b> - {@link Class#getCanonicalName()} (<b><u>required</u></b>)</li>
      *         <li><b>operation</b> - {@link Operations} (<b><u>required</u></b>)</li>
      *         <li><b>sourcePath</b> - {@link java.nio.file.Path}</li>
      *     </ul>
@@ -125,6 +140,7 @@ public final class ContextAtomicFileSystem {
      * Example:
      * <pre>{@code
      * HashMap<String, Object> operationData = new HashMap<>();
+     * operationData.put("_class", Class.class.getCanonicalName());
      * operationData.put("operation", Operations.DOWNLOAD);
      * operationData.put("targetPath", Path.of(uri));
      * contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
@@ -164,7 +180,7 @@ public final class ContextAtomicFileSystem {
      * @param key unique file system object name (uuid)
      * @param value custom data in file system object, example: {@link #operationsData}
      */
-    public void addOperationData(String key, HashMap<String, Object> value) {
+    public void addOperationData(String key, @NotNull HashMap<String, Object> value) {
         final String keyOperation = "operation";
 
         Class<?> clsEnumOperation = value.get(keyOperation).getClass();
@@ -180,7 +196,8 @@ public final class ContextAtomicFileSystem {
      * @param key unique file system object name (uuid
      * @return operation custom data (copied) {@link #operationsData}
      */
-    public HashMap<String, Object> getOperationData(String key) {
+    @Contract("_ -> new")
+    public @NotNull HashMap<String, Object> getOperationData(String key) {
         return new HashMap<>(operationsData.get(key));
     }
 
@@ -188,8 +205,25 @@ public final class ContextAtomicFileSystem {
      * Get data
      * @return operation custom data (copied) {@link #operationsData}
      */
-    public HashMap<String, HashMap<String, Object>> getOperationsData() {
+    @Contract(value = " -> new", pure = true)
+    public @NotNull HashMap<String, HashMap<String, Object>> getOperationsData() {
         return new HashMap<>(operationsData);
+    }
+
+    /**
+     * Get data
+     * @param className caller class from method
+     * @return operation custom data (copied) {@link #operationsData}
+     */
+    public @NotNull HashMap<String, HashMap<String, Object>> getOperationsData(String className) {
+        HashMap<String, HashMap<String, Object>> illusionOperationData = new HashMap<>();
+        operationsData.forEach((key, value) -> {
+            if (value.get(keyClassName).equals(className)) {
+                illusionOperationData.put(key, value);
+            }
+        });
+
+        return illusionOperationData;
     }
 
     /**
@@ -208,7 +242,7 @@ public final class ContextAtomicFileSystem {
      * @param operation operation handle
      * @param objectOperationData object data file system
      */
-    private void writeOperationDataLogger(Operations operation, String objectOperationData) {
+    private void writeOperationDataLogger(@NotNull Operations operation, String objectOperationData) {
         final String baseLog = "Run operation [%s] context atomic mode file system object [%s]";
         if (operation.equals(Operations.CREATE)) {
             logger.info(String.format(baseLog, "create", objectOperationData));
@@ -233,11 +267,22 @@ public final class ContextAtomicFileSystem {
         this.operationsData.remove(key);
     }
 
+    /**
+     * Clear context by operation type
+     * @param operation operation handle
+     */
     public void clearOperationsData(Operations operation) {
         this.operationsData.forEach((key, operationData) -> {
             if (operation.equals(operationData.get("operation"))) {
                 this.operationsData.remove(key);
             }
         });
+    }
+
+    /**
+     * Clear all context
+     */
+    public void clearOperationsData() {
+        operationsData.clear();
     }
 }
