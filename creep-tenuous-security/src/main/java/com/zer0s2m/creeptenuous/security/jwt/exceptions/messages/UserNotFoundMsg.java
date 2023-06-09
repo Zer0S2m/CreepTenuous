@@ -4,23 +4,23 @@ import org.springframework.http.HttpStatus;
 
 public class UserNotFoundMsg {
     private final String message;
-    private final Integer statusCode;
+    private final Integer status;
 
     public UserNotFoundMsg(String message) {
         this.message = message;
-        this.statusCode = HttpStatus.UNAUTHORIZED.value();
+        this.status = HttpStatus.UNAUTHORIZED.value();
     }
 
     public UserNotFoundMsg(String message, Integer statusCode) {
         this.message = message;
-        this.statusCode = statusCode;
+        this.status = statusCode;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public Integer getStatusCode() {
-        return statusCode;
+    public Integer getStatus() {
+        return status;
     }
 }

@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public class ExceptionNoRightsRedisMsg {
     private final String message;
-    private final Integer statusCode = HttpStatus.FORBIDDEN.value();
+    private final Integer status = HttpStatus.FORBIDDEN.value();
 
     public ExceptionNoRightsRedisMsg(String message) {
         this.message = message;
@@ -14,7 +14,7 @@ public class ExceptionNoRightsRedisMsg {
         return message;
     }
 
-    public Integer getStatusCode() {
-        return statusCode;
+    public Integer getStatus() {
+        return status;
     }
 }

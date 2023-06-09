@@ -6,7 +6,7 @@ public class ExceptionNoExistsRightMsg {
 
     private final String message;
 
-    private final Integer statusCode = HttpStatus.NOT_FOUND.value();
+    private final Integer status = HttpStatus.NOT_FOUND.value();
 
     public ExceptionNoExistsRightMsg(String message) {
         this.message = message;
@@ -16,8 +16,8 @@ public class ExceptionNoExistsRightMsg {
         return message;
     }
 
-    public Integer getStatusCode() {
-        return statusCode;
+    public Integer getStatus() {
+        return status;
     }
 
 }
