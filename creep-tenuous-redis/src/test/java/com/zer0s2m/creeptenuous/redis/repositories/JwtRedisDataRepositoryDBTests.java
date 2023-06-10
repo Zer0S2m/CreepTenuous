@@ -1,8 +1,8 @@
 package com.zer0s2m.creeptenuous.redis.repositories;
 
 import com.zer0s2m.creeptenuous.redis.ConfigRedis;
-import com.zer0s2m.creeptenuous.redis.helpers.TestTagRepository;
 import com.zer0s2m.creeptenuous.redis.models.JwtRedis;
+import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;

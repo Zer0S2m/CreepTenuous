@@ -140,7 +140,8 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      */
     @ExceptionHandler(ChangeRightsYourselfException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ExceptionAddRightsYourselfMsg handleExceptionNotIsExistsUser(@NotNull ChangeRightsYourselfException error) {
+    public ExceptionAddRightsYourselfMsg handleExceptionAddRightsYourself(
+            @NotNull ChangeRightsYourselfException error) {
         return new ExceptionAddRightsYourselfMsg(error.getMessage());
     }
 

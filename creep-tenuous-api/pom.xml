@@ -26,6 +26,7 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
@@ -71,6 +72,12 @@
       <artifactId>creep-tenuous-repository</artifactId>
       <version>0.0.3-SNAPSHOT</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-starter-test</artifactId>
+      <version>0.0.3-SNAPSHOT</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

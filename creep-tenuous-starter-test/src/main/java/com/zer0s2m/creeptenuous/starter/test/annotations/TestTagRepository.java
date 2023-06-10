@@ -1,4 +1,4 @@
-package com.zer0s2m.creeptenuous.api.helpers;
+package com.zer0s2m.creeptenuous.starter.test.annotations;
 
 import org.junit.jupiter.api.Tag;
 
@@ -7,8 +7,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Class serving tests with repositories
+ */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-@Tag("controller-api")
-public @interface TestTagControllerApi {
+@Tag("repository")
+public @interface TestTagRepository {
 }

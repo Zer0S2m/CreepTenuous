@@ -24,6 +24,7 @@
     <start-class>com.zer0s2m.creeptenuous.api.CreepTenuousApiApplication</start-class>
   </properties>
   <modules>
+    <module>creep-tenuous-starter-test</module>
     <module>creep-tenuous-common</module>
     <module>creep-tenuous-core</module>
     <module>creep-tenuous-api</module>

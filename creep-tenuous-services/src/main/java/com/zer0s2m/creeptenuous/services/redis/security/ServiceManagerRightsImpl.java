@@ -78,7 +78,6 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     @Override
     public void checkRightsByOperation(OperationRights operation, List<String> fileSystemObjects)
             throws NoRightsRedisException {
-        assert getLoginUser() == null : "Option not set [loginUser]";
 
         List<FileRedis> fileRedis = (List<FileRedis>) getFileRedis(fileSystemObjects);
         List<DirectoryRedis> directoryRedis = (List<DirectoryRedis>) getDirectoryRedis(fileSystemObjects);
