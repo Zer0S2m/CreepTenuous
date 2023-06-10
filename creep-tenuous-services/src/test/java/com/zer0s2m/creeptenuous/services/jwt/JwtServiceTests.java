@@ -11,9 +11,9 @@ import com.zer0s2m.creeptenuous.security.jwt.http.JwtResponse;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtUserRequest;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.services.ConfigServices;
-import com.zer0s2m.creeptenuous.services.helpers.TestTagService;
 import com.zer0s2m.creeptenuous.services.redis.jwt.ServiceJwtRedisImpl;
 import com.zer0s2m.creeptenuous.services.security.GeneratePasswordImpl;
+import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 @TestTagService
 @ContextConfiguration(classes = { ConfigServices.class })
 public class JwtServiceTests {
+
     Logger logger = LogManager.getLogger(JwtServiceTests.class);
 
     @Autowired
