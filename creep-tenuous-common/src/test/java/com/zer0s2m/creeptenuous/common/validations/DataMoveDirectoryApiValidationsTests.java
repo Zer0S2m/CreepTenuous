@@ -1,8 +1,8 @@
 package com.zer0s2m.creeptenuous.common.validations;
 
 import com.zer0s2m.creeptenuous.common.data.DataMoveDirectoryApi;
-import com.zer0s2m.creeptenuous.common.helpers.BaseValidationDataApi;
-import com.zer0s2m.creeptenuous.common.helpers.TestTagValidationApi;
+import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagValidationApi;
+import com.zer0s2m.creeptenuous.starter.test.helpers.BaseValidationDataApi;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
