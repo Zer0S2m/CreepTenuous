@@ -1,10 +1,13 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiDownloadDirectoryDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectoryApi;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceDownloadDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectoryImpl;
@@ -13,7 +16,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.io.IOException;
@@ -24,22 +28,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @V1APIRestController
-public class ControllerApiDownloadDirectory {
+public class ControllerApiDownloadDirectory implements ControllerApiDownloadDirectoryDoc {
+
+    static final OperationRights operationRightsShow = OperationRights.SHOW;
+
+    static final OperationRights operationRightsDownload = OperationRights.DOWNLOAD;
+
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     private final ServiceDownloadDirectoryImpl serviceDownloadDirectory;
 
     private final ServiceDownloadDirectoryRedisImpl serviceDownloadDirectoryRedis;
 
+    private final ServiceManagerRights serviceManagerRights;
+
     @Autowired
     public ControllerApiDownloadDirectory(
             ServiceBuildDirectoryPath buildDirectoryPath,
             ServiceDownloadDirectoryImpl serviceDownloadDirectory,
-            ServiceDownloadDirectoryRedisImpl serviceDownloadDirectoryRedis
+            ServiceDownloadDirectoryRedisImpl serviceDownloadDirectoryRedis,
+            ServiceManagerRights serviceManagerRights
     ) {
         this.buildDirectoryPath = buildDirectoryPath;
         this.serviceDownloadDirectory = serviceDownloadDirectory;
         this.serviceDownloadDirectoryRedis = serviceDownloadDirectoryRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -56,22 +69,32 @@ public class ControllerApiDownloadDirectory {
      * @throws IllegalAccessException An IllegalAccessException is thrown when an application
      * tries to reflectively create an instance
      */
-    @GetMapping(path = "/directory/download")
+    @Override
+    @PostMapping(path = "/directory/download")
     public final ResponseEntity<Resource> download(
-            final @Valid DataDownloadDirectoryApi data,
+            final @Valid @RequestBody DataDownloadDirectoryApi data,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws IOException, InvocationTargetException, NoSuchMethodException,
             InstantiationException, IllegalAccessException {
+        serviceManagerRights.setAccessClaims(accessToken);
+        serviceManagerRights.setIsWillBeCreated(false);
+
         serviceDownloadDirectoryRedis.setAccessToken(accessToken);
         serviceDownloadDirectoryRedis.setEnableCheckIsNameDirectory(true);
-        serviceDownloadDirectoryRedis.checkRights(
+        boolean isRightsShow = serviceDownloadDirectoryRedis.checkRights(
                 CloneList.cloneOneLevel(data.parents()),
                 CloneList.cloneOneLevel(data.systemParents()),
-                data.systemDirectory()
+                data.systemDirectoryName(),
+                false
         );
 
         List<String> cloneSystemParents = CloneList.cloneOneLevel(data.systemParents());
-        cloneSystemParents.add(data.systemDirectory());
+        cloneSystemParents.add(data.systemDirectoryName());
+
+        if (!isRightsShow) {
+            serviceManagerRights.checkRightsByOperation(operationRightsShow, cloneSystemParents);
+            serviceManagerRights.checkRightsByOperation(operationRightsDownload, data.systemDirectoryName());
+        }
 
         HashMap<String, String> resource = serviceDownloadDirectoryRedis.getResource(
                 WalkDirectoryInfo.walkDirectory(Path.of(buildDirectoryPath.build(cloneSystemParents)))
@@ -85,7 +108,7 @@ public class ControllerApiDownloadDirectory {
         return AtomicSystemCallManager.call(
                 serviceDownloadDirectory,
                 data.systemParents(),
-                data.systemDirectory()
+                data.systemDirectoryName()
         );
     }
 }

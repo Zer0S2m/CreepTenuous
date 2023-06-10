@@ -8,10 +8,10 @@ import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.services.ConfigServices;
-import com.zer0s2m.creeptenuous.services.helpers.TestTagServiceRedis;
 import com.zer0s2m.creeptenuous.services.helpers.User;
-import com.zer0s2m.creeptenuous.services.helpers.UtilsAuthAction;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceCopyDirectoryRedisImpl;
+import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceRedis;
+import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -78,14 +78,16 @@ public class ServiceCopyDirectoryRedisTests {
                 User.ROLE_USER.get(),
                 "test_1",
                 newSystemNameDirectory,
-                pathDirectory.toString()
+                pathDirectory.toString(),
+                new ArrayList<>()
         ));
         fileRedisRepository.save(new FileRedis(
                 User.LOGIN.get(),
                 User.ROLE_USER.get(),
                 "test_2",
                 newSystemNameFile,
-                pathFile.toString()
+                pathFile.toString(),
+                new ArrayList<>()
         ));
 
         serviceCopyDirectoryRedis.copy(data);

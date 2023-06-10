@@ -5,4 +5,4 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FileRedisRepository  extends CrudRepository<FileRedis, String> { }
+public interface FileRedisRepository extends CrudRepository<FileRedis, String> { }

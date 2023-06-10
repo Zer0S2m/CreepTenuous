@@ -32,6 +32,7 @@ import java.nio.file.Path;
 @CoreServiceFileSystem(method = "download")
 public class ServiceDownloadDirectoryImpl
         implements ServiceDownloadDirectory, CollectZipDirectory, AtomicServiceFileSystem {
+
     private final Logger logger = LogManager.getLogger(ServiceDownloadDirectoryImpl.class);
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
@@ -69,7 +70,7 @@ public class ServiceDownloadDirectoryImpl
     ) throws IOException {
         Path source = Paths.get(buildDirectoryPath.build(systemParents), systemNameDirectory);
 
-        Path pathToZip = collectZip(source, this.map);
+        Path pathToZip = collectZip(source, this.map, this.getClass().getCanonicalName());
         ByteArrayResource contentBytes = new ByteArrayResource(Files.readAllBytes(pathToZip));
 
         deleteFileZip(pathToZip);
@@ -118,4 +119,5 @@ public class ServiceDownloadDirectoryImpl
     public void setMap(HashMap<String, String> map) {
         this.map = map;
     }
+
 }

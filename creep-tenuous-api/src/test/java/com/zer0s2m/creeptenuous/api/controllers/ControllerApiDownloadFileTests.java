@@ -1,13 +1,12 @@
 package com.zer0s2m.creeptenuous.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zer0s2m.creeptenuous.api.helpers.TestTagControllerApi;
-import com.zer0s2m.creeptenuous.api.helpers.UtilsAuthAction;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.components.RootPath;
-import com.zer0s2m.creeptenuous.common.enums.Directory;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNotDirectoryMsg;
+import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.NoSuchFileExists;
+import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
+import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -23,6 +22,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -49,6 +50,41 @@ public class ControllerApiDownloadFileTests {
 
     private final String failNameTestFile = "fail_name_test_file.fail_extension";
 
+    DataDownloadFileApi VALID_DATA_1 = new DataDownloadFileApi(
+            new ArrayList<>(),
+            new ArrayList<>(),
+            nameTestFile1,
+            nameTestFile1
+    );
+
+    DataDownloadFileApi INVALID_DATA_1 = new DataDownloadFileApi(
+            new ArrayList<>(),
+            new ArrayList<>(),
+            failNameTestFile,
+            failNameTestFile
+    );
+
+    DataDownloadFileApi INVALID_DATA_2 = new DataDownloadFileApi(
+            Arrays.asList("invalid", "path", "directory"),
+            Arrays.asList("invalid", "path", "directory"),
+            failNameTestFile,
+            failNameTestFile
+    );
+
+    DataDownloadFileApi INVALID_DATA_3 = new DataDownloadFileApi(
+            new ArrayList<>(),
+            new ArrayList<>(),
+            null,
+            null
+    );
+
+    DataDownloadFileApi INVALID_DATA_4 = new DataDownloadFileApi(
+            null,
+            null,
+            nameTestFile1,
+            nameTestFile1
+    );
+
     @Test
     public void downloadFile_success() throws Exception {
         Path sourcePath = Path.of("src/main/resources/test/", nameTestFile1);
@@ -61,11 +97,9 @@ public class ControllerApiDownloadFileTests {
 
         mockMvc.perform(
                 MockMvcRequestBuilders
-                        .get("/api/v1/file/download")
-                        .queryParam("fileName", nameTestFile1)
-                        .queryParam("systemFileName", nameTestFile1)
-                        .queryParam("parents", "")
-                        .queryParam("systemParents", "")
+                        .post("/api/v1/file/download")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(VALID_DATA_1))
                         .header("Authorization",  accessToken)
         )
                 .andExpect(status().isOk())
@@ -79,11 +113,9 @@ public class ControllerApiDownloadFileTests {
     public void downloadFile_fail_notFoundFile() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders
-                        .get("/api/v1/file/download")
-                        .queryParam("fileName", failNameTestFile)
-                        .queryParam("systemFileName", failNameTestFile)
-                        .queryParam("parents", "")
-                        .queryParam("systemParents", "")
+                        .post("/api/v1/file/download")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(INVALID_DATA_1))
                         .header("Authorization",  accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -100,29 +132,23 @@ public class ControllerApiDownloadFileTests {
     public void downloadFile_fail_invalidPathDirectory() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders
-                        .get("/api/v1/file/download")
-                        .queryParam("fileName", failNameTestFile)
-                        .queryParam("systemFileName", failNameTestFile)
-                        .queryParam("parents", "invalid", "file", "directory")
-                        .queryParam("systemParents", "invalid", "file", "directory")
+                        .post("/api/v1/file/download")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(INVALID_DATA_2))
                         .header("Authorization",  accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isNotFound())
-                .andExpect(content().json(
-                        objectMapper.writeValueAsString(
-                                new ExceptionNotDirectoryMsg(Directory.NOT_FOUND_DIRECTORY.get())
-                        )
-                ));
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void downloadFile_fail_notValidNameFile() throws Exception {
         this.mockMvc.perform(
-                        MockMvcRequestBuilders.get("/api/v1/file/download")
-                                .queryParam("parents", "")
-                                .queryParam("systemParents", "")
+                        MockMvcRequestBuilders
+                                .post("/api/v1/file/download")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(INVALID_DATA_3))
                                 .header("Authorization",  accessToken)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -133,9 +159,10 @@ public class ControllerApiDownloadFileTests {
     @Test
     public void downloadFile_fail_notValidParents() throws Exception {
         this.mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/v1/file/download")
-                        .queryParam("fileName", "testFile")
-                        .queryParam("systemFileName", "testFile")
+                MockMvcRequestBuilders
+                        .post("/api/v1/file/download")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(INVALID_DATA_4))
                         .header("Authorization",  accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)

@@ -6,13 +6,13 @@ public enum ExceptionFile {
     FILE_NOT_EXISTS("File not found."),
     FILE_LARGE("File exceeds the maximum size.");
 
-    private final String massage;
+    private final String message;
 
-    ExceptionFile(String massage) {
-        this.massage = massage;
+    ExceptionFile(String message) {
+        this.message = message;
     }
 
     public final String get() {
-        return this.massage;
+        return this.message;
     }
 }

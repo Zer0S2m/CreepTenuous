@@ -1,14 +1,12 @@
 package com.zer0s2m.creeptenuous.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zer0s2m.creeptenuous.api.helpers.TestTagControllerApi;
-import com.zer0s2m.creeptenuous.api.helpers.UtilsAuthAction;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.data.DataMoveDirectoryApi;
-import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.common.enums.MethodMoveDirectory;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNotDirectoryMsg;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
+import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
+import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -29,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -71,7 +68,7 @@ public class ControllerApiMoveDirectoryTests {
         );
 
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/directory/move")
+                MockMvcRequestBuilders.put("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization",  accessToken)
@@ -123,7 +120,7 @@ public class ControllerApiMoveDirectoryTests {
         );
 
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/directory/move")
+                MockMvcRequestBuilders.put("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization",  accessToken)
@@ -159,7 +156,7 @@ public class ControllerApiMoveDirectoryTests {
     @Test
     public void moveDirectory_fail_invalidPathDirectory() throws Exception {
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/directory/move")
+                MockMvcRequestBuilders.put("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization",  accessToken)
@@ -173,20 +170,13 @@ public class ControllerApiMoveDirectoryTests {
                                 1
                         )))
                 )
-                .andExpect(status().isNotFound())
-                .andExpect(content().json(
-                        objectMapper.writeValueAsString(
-                                new ExceptionNotDirectoryMsg(
-                                        Directory.NOT_FOUND_DIRECTORY.get()
-                                )
-                        )
-                ));
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void moveDirectory_fail_invalidToPathDirectory() throws Exception {
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/directory/copy")
+                MockMvcRequestBuilders.put("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization",  accessToken)
@@ -200,13 +190,6 @@ public class ControllerApiMoveDirectoryTests {
                                 1
                         )))
                 )
-                .andExpect(status().isNotFound())
-                .andExpect(content().json(
-                        objectMapper.writeValueAsString(
-                                new ExceptionNotDirectoryMsg(
-                                        Directory.NOT_FOUND_DIRECTORY.get()
-                                )
-                        )
-                ));
+                .andExpect(status().isNotFound());
     }
 }

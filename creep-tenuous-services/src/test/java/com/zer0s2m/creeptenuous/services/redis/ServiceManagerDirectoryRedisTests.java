@@ -7,10 +7,10 @@ import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.services.ConfigServices;
-import com.zer0s2m.creeptenuous.services.helpers.TestTagServiceRedis;
 import com.zer0s2m.creeptenuous.services.helpers.User;
-import com.zer0s2m.creeptenuous.services.helpers.UtilsAuthAction;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceManagerDirectoryRedisImpl;
+import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceRedis;
+import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,7 +57,8 @@ public class ServiceManagerDirectoryRedisTests {
                 User.ROLE_USER.get(),
                 "test_1",
                 systemNameDirectory,
-                Path.of(systemNameDirectory).toString()
+                Path.of(systemNameDirectory).toString(),
+                new ArrayList<>()
         );
         directoryRedisRepository.save(directoryRedis);
         FileRedis fileRedis = new FileRedis(
@@ -65,7 +66,8 @@ public class ServiceManagerDirectoryRedisTests {
                 User.ROLE_USER.get(),
                 "test_1",
                 systemNameFile,
-                Path.of(systemNameFile).toString()
+                Path.of(systemNameFile).toString(),
+                new ArrayList<>()
         );
         fileRedisRepository.save(fileRedis);
 

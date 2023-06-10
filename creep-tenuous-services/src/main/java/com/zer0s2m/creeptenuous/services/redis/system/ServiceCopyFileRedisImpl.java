@@ -48,7 +48,8 @@ public class ServiceCopyFileRedisImpl extends BaseServiceFileSystemRedisImpl imp
                     existingObjRedis.getRole(),
                     existingObjRedis.getRealNameFile(),
                     newSystemFileName.get(i),
-                    target.get(i).toString()
+                    target.get(i).toString(),
+                    new ArrayList<>()
             );
             newObjsRedis.add(newObjRedis);
         }

@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public class FileUploadMaxSizeMsg {
     private final String message;
-    private final Integer statusCode = HttpStatus.BAD_REQUEST.value();
+    private final Integer status = HttpStatus.BAD_REQUEST.value();
 
     public FileUploadMaxSizeMsg(String message) {
         this.message = message;
@@ -14,7 +14,7 @@ public class FileUploadMaxSizeMsg {
         return message;
     }
 
-    public Integer getStatusCode() {
-        return statusCode;
+    public Integer getStatus() {
+        return status;
     }
 }

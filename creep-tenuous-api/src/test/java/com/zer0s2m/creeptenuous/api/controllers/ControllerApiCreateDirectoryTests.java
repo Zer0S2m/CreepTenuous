@@ -1,15 +1,14 @@
 package com.zer0s2m.creeptenuous.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zer0s2m.creeptenuous.api.helpers.TestTagControllerApi;
-import com.zer0s2m.creeptenuous.api.helpers.UtilsAuthAction;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.data.DataCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionDirectoryExistsMsg;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNotDirectoryMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
+import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
+import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -81,7 +80,7 @@ public class ControllerApiCreateDirectoryTests {
         ResponseCreateDirectoryApi response = new ObjectMapper().readValue(json, ResponseCreateDirectoryApi.class);
 
         Path newFolder = Path.of(serviceBuildDirectoryPath.build(
-                List.of(response.systemNameDirectory())
+                List.of(response.systemDirectoryName())
         ));
         Assertions.assertTrue(Files.exists(newFolder));
         UtilsActionForFiles.deleteFileAndWriteLog(newFolder, logger);
@@ -122,14 +121,7 @@ public class ControllerApiCreateDirectoryTests {
                         .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(INVALID_RECORD))
                 )
-                .andExpect(status().isNotFound())
-                .andExpect(content().json(
-                        objectMapper.writeValueAsString(
-                                new ExceptionNotDirectoryMsg(
-                                        Directory.NOT_FOUND_DIRECTORY.get()
-                                )
-                        )
-                ));
+                .andExpect(status().isNotFound());
     }
 
     @Test

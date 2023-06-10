@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.core.security.jwt;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiAuthDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotValidPasswordException;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @V1APIRestController
 @CrossOrigin
-public class ControllerApiAuth {
+public class ControllerApiAuth implements ControllerApiAuthDoc {
     private final JwtServiceImpl jwtService;
 
     @Autowired
@@ -26,6 +27,14 @@ public class ControllerApiAuth {
         this.jwtService = jwtService;
     }
 
+    /**
+     * User authorization
+     * @param user data for login
+     * @return JWT tokens
+     * @throws UserNotFoundException user not found
+     * @throws UserNotValidPasswordException invalid password
+     */
+    @Override
     @PostMapping(value = "/auth/login")
     public JwtResponse login(
             final @Valid @RequestBody JwtUserRequest user
@@ -33,6 +42,14 @@ public class ControllerApiAuth {
         return jwtService.login(user);
     }
 
+    /**
+     * Get JWT access token
+     * @param request JWT refresh token
+     * @return JWT tokens
+     * @throws UserNotFoundException user not found
+     * @throws NoValidJwtRefreshTokenException invalid JWT refresh token
+     */
+    @Override
     @PostMapping(value = "/auth/token")
     public JwtResponse access(
             final @Valid @RequestBody JwtRefreshTokenRequest request
@@ -40,6 +57,14 @@ public class ControllerApiAuth {
         return jwtService.getAccessToken(request.refreshToken());
     }
 
+    /**
+     * Get JWT refresh token
+     * @param request JWT refresh token
+     * @return JWT tokens
+     * @throws NoValidJwtRefreshTokenException invalid JWT refresh token
+     * @throws UserNotFoundException user not found
+     */
+    @Override
     @PostMapping(value = "/auth/refresh")
     public JwtResponse refresh(
             final @Valid @RequestBody JwtRefreshTokenRequest request

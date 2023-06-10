@@ -1,8 +1,11 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiDownloadFileDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataDownloadFile;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceDownloadFileRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadFileImpl;
 import jakarta.validation.Valid;
@@ -10,25 +13,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.io.IOException;
 import java.util.List;
 
 @V1APIRestController
-public class ControllerApiDownloadFile {
+public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
+
+    static final OperationRights operationRightsDirectory = OperationRights.SHOW;
+
+    static final OperationRights operationRightsFile = OperationRights.DOWNLOAD;
+
     private final ServiceDownloadFileImpl serviceDownloadFile;
 
     private final ServiceDownloadFileRedisImpl serviceDownloadFileRedis;
 
+    private final ServiceManagerRights serviceManagerRights;
+
     @Autowired
     public ControllerApiDownloadFile(
             ServiceDownloadFileImpl serviceDownloadFile,
-            ServiceDownloadFileRedisImpl serviceDownloadFileRedis
+            ServiceDownloadFileRedisImpl serviceDownloadFileRedis,
+            ServiceManagerRights serviceManagerRights
     ) {
         this.serviceDownloadFile = serviceDownloadFile;
         this.serviceDownloadFileRedis = serviceDownloadFileRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -38,14 +51,28 @@ public class ControllerApiDownloadFile {
      * @return file
      * @throws IOException if an I/O error occurs or the parent directory does not exist
      */
-    @GetMapping(path = "/file/download")
+    @Override
+    @PostMapping(path = "/file/download")
     public ResponseEntity<Resource> download(
-            final @Valid DataDownloadFileApi data,
+            final @Valid @RequestBody DataDownloadFileApi data,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws IOException {
+        serviceManagerRights.setAccessClaims(accessToken);
+        serviceManagerRights.setIsWillBeCreated(false);
+
         serviceDownloadFileRedis.setAccessToken(accessToken);
-        serviceDownloadFileRedis.checkRights(data.parents(), data.systemParents(), null);
-        serviceDownloadFileRedis.checkRights(List.of(data.systemFileName()));
+        serviceDownloadFileRedis.setIsException(false);
+        boolean isRightsDirectory = serviceDownloadFileRedis.checkRights(data.parents(), data.systemParents(), null, false);
+
+        if (!isRightsDirectory) {
+            serviceManagerRights.checkRightsByOperation(operationRightsDirectory, data.systemParents());
+        }
+
+        boolean isRightsFile = serviceDownloadFileRedis.checkRights(List.of(data.systemFileName()));
+        if (!isRightsFile) {
+            serviceManagerRights.checkRightsByOperation(operationRightsFile, data.systemFileName());
+        }
+
         final ContainerDataDownloadFile<ByteArrayResource, String> dataFile = serviceDownloadFile.download(
                 data.systemParents(),
                 data.systemFileName()

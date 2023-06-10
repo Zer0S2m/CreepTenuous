@@ -6,10 +6,10 @@ import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.services.ConfigServices;
-import com.zer0s2m.creeptenuous.services.helpers.TestTagServiceRedis;
 import com.zer0s2m.creeptenuous.services.helpers.User;
-import com.zer0s2m.creeptenuous.services.helpers.UtilsAuthAction;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceDeleteDirectoryRedisImpl;
+import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceRedis;
+import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 @SpringBootTest(classes = {
         DirectoryRedisRepository.class,
@@ -49,7 +50,8 @@ public class ServiceDeleteDirectoryRedisTests {
                 User.ROLE_USER.get(),
                 "test",
                 systemName,
-                Path.of(systemName).toString()
+                Path.of(systemName).toString(),
+                new ArrayList<>()
         ));
 
         serviceDeleteDirectoryRedis.delete(systemName);

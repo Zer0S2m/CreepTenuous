@@ -10,18 +10,13 @@
   </parent>
   <groupId>com.zer0s2m</groupId>
   <artifactId>creep-tenuous-redis</artifactId>
-  <version>0.0.3-SNAPSHOT</version>
+  <version>0.0.4-SNAPSHOT</version>
   <name>creep-tenuous-redis</name>
   <description>creep-tenuous-redis</description>
   <properties>
     <java.version>17</java.version>
   </properties>
   <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -43,8 +38,14 @@
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-security</artifactId>
-      <version>0.0.3-SNAPSHOT</version>
+      <version>0.0.4-SNAPSHOT</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-starter-test</artifactId>
+      <version>0.0.4-SNAPSHOT</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

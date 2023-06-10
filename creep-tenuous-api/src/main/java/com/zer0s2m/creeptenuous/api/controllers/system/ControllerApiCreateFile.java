@@ -1,13 +1,16 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCreateFileDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateFile;
 import com.zer0s2m.creeptenuous.common.data.DataCreateFileApi;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundTypeFileException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.FileAlreadyExistsMsg;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.NotFoundTypeFileMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateFileApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceCreateFileRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateFileImpl;
 import jakarta.validation.Valid;
@@ -20,18 +23,25 @@ import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 
 @V1APIRestController
-public class ControllerApiCreateFile {
+public class ControllerApiCreateFile implements ControllerApiCreateFileDoc {
+
+    static final OperationRights operationRights = OperationRights.CREATE;
+
     private final ServiceCreateFileImpl serviceCreateFile;
 
     private final ServiceCreateFileRedisImpl serviceFileRedis;
 
+    private final ServiceManagerRights serviceManagerRights;
+
     @Autowired
     public ControllerApiCreateFile(
             ServiceCreateFileImpl serviceCreateFile,
-            ServiceCreateFileRedisImpl serviceFileRedis
+            ServiceCreateFileRedisImpl serviceFileRedis,
+            ServiceManagerRights serviceManagerRights
     ) {
         this.serviceCreateFile = serviceCreateFile;
         this.serviceFileRedis = serviceFileRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -46,6 +56,7 @@ public class ControllerApiCreateFile {
      * @throws IllegalAccessException An IllegalAccessException is thrown when an application
      * tries to reflectively create an instance
      */
+    @Override
     @PostMapping("/file/create")
     @ResponseStatus(code = HttpStatus.CREATED)
     public ResponseCreateFileApi createFile(
@@ -53,11 +64,18 @@ public class ControllerApiCreateFile {
             @RequestHeader(name = "Authorization") String accessToken
     ) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
         serviceFileRedis.setAccessToken(accessToken);
-        serviceFileRedis.checkRights(file.parents(), file.systemParents(), null);
+        boolean isRights = serviceFileRedis.checkRights(file.parents(), file.systemParents(), null, false);
+
+        if (!isRights) {
+            serviceManagerRights.setAccessClaims(accessToken);
+            serviceManagerRights.setIsWillBeCreated(false);
+            serviceManagerRights.checkRightsByOperation(operationRights, file.systemParents());
+        }
+
         ContainerDataCreateFile dataCreatedFile = AtomicSystemCallManager.call(
                 this.serviceCreateFile,
                 file.systemParents(),
-                file.nameFile(),
+                file.fileName(),
                 file.typeFile()
         );
         serviceFileRedis.create(dataCreatedFile);

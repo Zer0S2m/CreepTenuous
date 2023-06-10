@@ -1,17 +1,18 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiUploadFileDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFile;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.http.ResponseObjectUploadFileApi;
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadFileApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceUploadFileRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceUploadFileImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.lang.reflect.InvocationTargetException;
@@ -19,18 +20,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @V1APIRestController
-public class ControllerApiUploadFile {
+public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
+
+    static final OperationRights operationRights = OperationRights.UPLOAD;
+
     private final ServiceUploadFileImpl serviceUploadFile;
 
     private final ServiceUploadFileRedisImpl serviceUploadFileRedis;
 
+    private final ServiceManagerRights serviceManagerRights;
+
     @Autowired
     public ControllerApiUploadFile(
             ServiceUploadFileImpl serviceUploadFile,
-            ServiceUploadFileRedisImpl serviceUploadFileRedis
+            ServiceUploadFileRedisImpl serviceUploadFileRedis,
+            ServiceManagerRights serviceManagerRights
     ) {
         this.serviceUploadFile = serviceUploadFile;
         this.serviceUploadFileRedis = serviceUploadFileRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -48,7 +56,9 @@ public class ControllerApiUploadFile {
      * @throws IllegalAccessException An IllegalAccessException is thrown when an application
      * tries to reflectively create an instance
      */
+    @Override
     @PostMapping(value = "/file/upload")
+    @ResponseStatus(code = HttpStatus.CREATED)
     public ResponseUploadFileApi upload(
             final @RequestPart("files") List<MultipartFile> files,
             final @RequestParam("parents") List<String> parents,
@@ -57,7 +67,12 @@ public class ControllerApiUploadFile {
     ) throws InvocationTargetException, NoSuchMethodException,
             InstantiationException, IllegalAccessException {
         serviceUploadFileRedis.setAccessToken(accessToken);
-        serviceUploadFileRedis.checkRights(parents, systemParents, null);
+        boolean isRights = serviceUploadFileRedis.checkRights(parents, systemParents, null, false);
+        if (!isRights) {
+            serviceManagerRights.setAccessClaims(accessToken);
+            serviceManagerRights.setIsWillBeCreated(false);
+            serviceManagerRights.checkRightsByOperation(operationRights, systemParents);
+        }
 
         List<ResponseObjectUploadFileApi> data = AtomicSystemCallManager.call(
                 serviceUploadFile,

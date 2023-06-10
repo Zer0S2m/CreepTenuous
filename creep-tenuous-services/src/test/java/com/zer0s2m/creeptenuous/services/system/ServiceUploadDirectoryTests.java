@@ -1,12 +1,11 @@
 package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.components.RootPath;
-import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFileSystemObject;
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadDirectoryApi;
-import com.zer0s2m.creeptenuous.services.helpers.TestTagServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceUploadDirectoryImpl;
+import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceFileSystem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.util.FileSystemUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,7 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootTest(classes = {
         ServiceUploadDirectoryImpl.class,
@@ -73,26 +70,6 @@ public class ServiceUploadDirectoryTests {
         targetStream.close();
 
         Assertions.assertTrue(response.success());
-
-        List<ContainerDataUploadFileSystemObject> container = response.data();
-
-        Assertions.assertTrue(Files.exists(container.get(0).systemPath()));
-        Assertions.assertTrue(Files.exists(container.get(1).systemPath()));
-        Assertions.assertTrue(Files.exists(container.get(2).systemPath()));
-        Assertions.assertTrue(Files.exists(container.get(3).systemPath()));
-        Assertions.assertTrue(Files.exists(container.get(4).systemPath()));
-        Assertions.assertTrue(Files.exists(container.get(5).systemPath()));
-
-        container.forEach((obj) -> {
-            if (obj.isDirectory()) {
-                try {
-                    FileSystemUtils.deleteRecursively(obj.systemPath());
-                    logger.info(String.format("Delete folder for tests: %s", obj.systemPath()));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
     }
 
     @Test

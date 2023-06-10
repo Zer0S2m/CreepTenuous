@@ -27,7 +27,9 @@ import java.util.List;
 @CoreServiceFileSystem(method = "upload")
 public class ServiceUploadDirectoryImpl
         implements ServiceUploadDirectory, ServiceUnpackingDirectory, AtomicServiceFileSystem {
+
     private final Logger logger = LogManager.getLogger(ServiceUploadDirectory.class);
+
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
@@ -58,7 +60,8 @@ public class ServiceUploadDirectoryImpl
 
         try {
             container.setFile(source);
-            final List<ContainerDataUploadFileSystemObject> finalData = unpacking(container, systemPath);
+            final List<ContainerDataUploadFileSystemObject> finalData = unpacking(
+                    container, systemPath, this.getClass().getCanonicalName());
             return new ResponseUploadDirectoryApi(true, finalData);
         } catch (InterruptedException e) {
             logger.error(e);
@@ -87,4 +90,5 @@ public class ServiceUploadDirectoryImpl
     public Path getPath(List<String> systemParents) throws NoSuchFileException {
         return Path.of(buildDirectoryPath.build(systemParents));
     }
+
 }

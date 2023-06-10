@@ -15,6 +15,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class ThreadUnpackingDirectory extends Thread {
+
     private final Logger logger = LogManager.getLogger(ThreadUnpackingDirectory.class);
 
     private final List<Path> files;
@@ -26,6 +27,8 @@ public class ThreadUnpackingDirectory extends Thread {
     private final List<ContainerDataUploadFileSystemObject> finalData = new ArrayList<>();
 
     private final TreeNode<String> map = new TreeNode<>();
+
+    private String callClassName;
 
     /**
      * Context for working with the file system in <b>atomic mode</b>
@@ -129,6 +132,7 @@ public class ThreadUnpackingDirectory extends Thread {
         Path target = file.toPath();
         String systemNameFile = target.getFileName().toString();
 
+        operationData.put("_class", getCallClassName());
         operationData.put("operation", ContextAtomicFileSystem.Operations.UPLOAD);
         operationData.put("targetPath", target);
 
@@ -196,4 +200,21 @@ public class ThreadUnpackingDirectory extends Thread {
     public List<ContainerDataUploadFileSystemObject> getFinalData() {
         return this.finalData;
     }
+
+    /**
+     * Set caller class from method
+     * @param callClassName caller class from method
+     */
+    public void setCallClassName(String callClassName) {
+        this.callClassName = callClassName;
+    }
+
+    /**
+     * Get caller class from method
+     * @return caller class from method
+     */
+    public String getCallClassName() {
+        return callClassName;
+    }
+
 }

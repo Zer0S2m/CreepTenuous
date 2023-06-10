@@ -12,10 +12,12 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Documented
 public @interface CoreServiceFileSystem {
+
     /**
      * The name of the method that should be called in the <b>system manager</b> {@link AtomicSystemCallManager}
      * <p>to handle errors and push them up</p>
      * @return name method
      */
     String method();
+
 }

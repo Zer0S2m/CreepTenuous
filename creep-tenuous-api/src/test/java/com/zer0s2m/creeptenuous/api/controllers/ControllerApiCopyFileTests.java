@@ -1,13 +1,12 @@
 package com.zer0s2m.creeptenuous.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zer0s2m.creeptenuous.api.helpers.TestTagControllerApi;
-import com.zer0s2m.creeptenuous.api.helpers.UtilsAuthAction;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.data.DataCopyFileApi;
-import com.zer0s2m.creeptenuous.common.http.ResponseCopyFileApi;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
+import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
+import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -19,10 +18,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.FileSystemUtils;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -81,7 +79,7 @@ public class ControllerApiCopyFileTests {
     @Test
     public void copyOneFile_success() throws Exception {
         Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
-                RECORD_1.nameFile(), RECORD_1.parents(), logger, buildDirectoryPath
+                RECORD_1.fileName(), RECORD_1.parents(), logger, buildDirectoryPath
         );
         Path pathTestFolder = Paths.get(
                 rootPath.getRootPath(), RECORD_1.toParents().get(0)
@@ -94,30 +92,17 @@ public class ControllerApiCopyFileTests {
         Assertions.assertTrue(Files.exists(pathTestFile));
         Assertions.assertTrue(Files.exists(pathTestFolder));
 
-        MvcResult result = this.mockMvc.perform(
+        this.mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/v1/file/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_1))
                         .header("Authorization",  accessToken)
                 )
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        String json = result.getResponse().getContentAsString();
-        ResponseCopyFileApi response = objectMapper.readValue(json, ResponseCopyFileApi.class);
-
-        response.files().forEach(obj -> {
-            Assertions.assertTrue(Files.exists(obj.target()));
-            try {
-                UtilsActionForFiles.deleteFileAndWriteLog(obj.target(), logger);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+                .andExpect(status().isCreated());
 
         UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile, logger);
-        UtilsActionForFiles.deleteFileAndWriteLog(pathTestFolder, logger);
+        FileSystemUtils.deleteRecursively(pathTestFolder);
     }
 
     @Test
@@ -144,15 +129,14 @@ public class ControllerApiCopyFileTests {
         Assertions.assertTrue(Files.exists(pathTestFile2));
         Assertions.assertTrue(Files.exists(pathTestFolder));
 
-        MvcResult result = this.mockMvc.perform(
+        this.mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/v1/file/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_2))
                         .header("Authorization",  accessToken)
                 )
-                .andExpect(status().isCreated())
-                .andReturn();
+                .andExpect(status().isCreated());
 
         UtilsActionForFiles.preparePreliminaryFiles(
                 nameFiles.get(0), RECORD_2.toParents(), logger, buildDirectoryPath
@@ -161,24 +145,12 @@ public class ControllerApiCopyFileTests {
                 nameFiles.get(1), RECORD_2.toParents(), logger, buildDirectoryPath
         );
 
-        String json = result.getResponse().getContentAsString();
-        ResponseCopyFileApi response = objectMapper.readValue(json, ResponseCopyFileApi.class);
-
-        response.files().forEach(obj -> {
-            Assertions.assertTrue(Files.exists(obj.target()));
-            try {
-                UtilsActionForFiles.deleteFileAndWriteLog(obj.target(), logger);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
         Assertions.assertTrue(Files.exists(pathTestFile1));
         Assertions.assertTrue(Files.exists(pathTestFile2));
 
         UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile1, logger);
         UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile2, logger);
-        UtilsActionForFiles.deleteFileAndWriteLog(pathTestFolder, logger);
+        FileSystemUtils.deleteRecursively(pathTestFolder);
     }
 
     @Test

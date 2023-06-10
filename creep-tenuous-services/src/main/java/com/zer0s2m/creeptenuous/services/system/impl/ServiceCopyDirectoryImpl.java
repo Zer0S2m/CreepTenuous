@@ -34,11 +34,6 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicSer
     private Path target;
 
     /**
-     * Context for working with the file system in <b>atomic mode</b>
-     */
-    private final ContextAtomicFileSystem contextAtomicFileSystem = ContextAtomicFileSystem.getInstance();
-
-    /**
      * <p>Parts of source paths on target</p>
      * <b>Key</b> - old source system path<br>
      * <b>Value</b> - new target system path
@@ -85,8 +80,6 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicSer
             this.target = Paths.get(buildDirectoryPath.build(systemToParents));
         }
 
-        List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(source, this.target);
-
         try (Stream<Path> stream = Files.walk(source)) {
             stream.forEach(targetWalk -> {
                 try {
@@ -106,7 +99,7 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicSer
             });
         }
 
-        return attached;
+        return WalkDirectoryInfo.walkDirectory(this.target);
     }
 
     /**

@@ -1,8 +1,6 @@
 package com.zer0s2m.creeptenuous.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zer0s2m.creeptenuous.api.helpers.TestTagControllerApi;
-import com.zer0s2m.creeptenuous.api.helpers.UtilsAuthAction;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteFileApi;
@@ -10,6 +8,8 @@ import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNotDirectoryMsg;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.NoSuchFileExists;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
+import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
+import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -74,7 +74,7 @@ public class ControllerApiDeleteFileTests {
     public void deleteFile_success() throws Exception {
         for (DataDeleteFileApi record : Arrays.asList(RECORD_1, RECORD_2)) {
             Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
-                    record.nameFile(), record.parents(), logger, buildDirectoryPath
+                    record.fileName(), record.parents(), logger, buildDirectoryPath
             );
             Files.createFile(pathTestFile);
 
@@ -124,7 +124,7 @@ public class ControllerApiDeleteFileTests {
                                 new NoSuchFileExists(
                                         rootPath.getRootPath() +
                                         "/" +
-                                        INVALID_RECORD_NOT_EXISTS_FILE.systemNameFile())
+                                        INVALID_RECORD_NOT_EXISTS_FILE.systemFileName())
                         )
                 ));
     }

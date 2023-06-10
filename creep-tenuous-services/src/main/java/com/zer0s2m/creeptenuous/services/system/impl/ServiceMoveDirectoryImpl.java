@@ -63,6 +63,7 @@ public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory, AtomicSer
     ) throws IOException {
         Path currentPathParents = Paths.get(buildDirectoryPath.build(systemParents));
         Path currentPath = Path.of(currentPathParents.toString(), systemNameDirectory);
+        buildDirectoryPath.checkDirectory(currentPath);
         Path createdNewPath = builderDirectory(systemToParents, systemNameDirectory, method);
         List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(currentPath, createdNewPath);
         return new ContainerDataMoveDirectory(

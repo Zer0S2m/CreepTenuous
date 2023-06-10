@@ -1,11 +1,14 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCopyDirectoryDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataCopyDirectoryApi;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.http.ResponseCopyDirectoryApi;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceCopyDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCopyDirectoryImpl;
 import jakarta.validation.Valid;
@@ -20,18 +23,27 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @V1APIRestController
-public class ControllerApiCopyDirectory {
+public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc {
+
+    static final OperationRights operationRightsDirectory = OperationRights.SHOW;
+
+    static final OperationRights operationRights = OperationRights.COPY;
+
     private final ServiceCopyDirectoryImpl serviceCopyDirectory;
 
     private final ServiceCopyDirectoryRedisImpl serviceCopyDirectoryRedis;
 
+    private final ServiceManagerRights serviceManagerRights;
+
     @Autowired
     public ControllerApiCopyDirectory(
             ServiceCopyDirectoryImpl serviceCopyDirectory,
-            ServiceCopyDirectoryRedisImpl serviceCopyDirectoryRedis
+            ServiceCopyDirectoryRedisImpl serviceCopyDirectoryRedis,
+            ServiceManagerRights serviceManagerRights
     ) {
         this.serviceCopyDirectory = serviceCopyDirectory;
         this.serviceCopyDirectoryRedis = serviceCopyDirectoryRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -47,30 +59,42 @@ public class ControllerApiCopyDirectory {
      * @throws IllegalAccessException An IllegalAccessException is thrown when an application
      * tries to reflectively create an instance
      */
+    @Override
     @PostMapping("/directory/copy")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseCopyDirectoryApi copy(
             final @Valid @RequestBody DataCopyDirectoryApi dataDirectory,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws InvocationTargetException, NoSuchMethodException,
             InstantiationException, IllegalAccessException {
+        serviceManagerRights.setAccessClaims(accessToken);
+        serviceManagerRights.setIsWillBeCreated(false);
+
         serviceCopyDirectoryRedis.setAccessToken(accessToken);
         serviceCopyDirectoryRedis.setEnableCheckIsNameDirectory(true);
+        serviceCopyDirectoryRedis.setIsException(false);
+
         List<String> mergeParents = CloneList.cloneOneLevel(
                 dataDirectory.systemParents(),
                 dataDirectory.systemToParents()
         );
-        serviceCopyDirectoryRedis.checkRights(
+        boolean isRightsDirectory = serviceCopyDirectoryRedis.checkRights(
                 dataDirectory.parents(),
                 mergeParents,
-                dataDirectory.systemNameDirectory()
+                dataDirectory.systemDirectoryName(),
+                false
         );
+        if (!isRightsDirectory) {
+            serviceManagerRights.checkRightsByOperation(operationRightsDirectory, CloneList.cloneOneLevel(
+                    mergeParents, List.of(dataDirectory.systemDirectoryName())));
+            serviceManagerRights.checkRightsByOperation(operationRights, dataDirectory.systemDirectoryName());
+        }
 
         List<ContainerInfoFileSystemObject> attached = AtomicSystemCallManager.call(
                 serviceCopyDirectory,
                 dataDirectory.systemParents(),
                 dataDirectory.systemToParents(),
-                dataDirectory.systemNameDirectory(),
+                dataDirectory.systemDirectoryName(),
                 dataDirectory.method()
         );
         serviceCopyDirectoryRedis.copy(attached);
