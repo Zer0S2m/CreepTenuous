@@ -3,7 +3,7 @@ package com.zer0s2m.creeptenuous.repository.user;
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.repository.ConfigRepository;
-import com.zer0s2m.creeptenuous.repository.helpers.TestTagRepository;
+import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -19,6 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 @TestTagRepository
 @ContextConfiguration(classes = { ConfigRepository.class })
 public class UserRepositoryDBTests {
+
     @Autowired
     private UserRepository userRepository;
 
