@@ -1,12 +1,12 @@
 package com.zer0s2m.creeptenuous.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zer0s2m.creeptenuous.api.helpers.MockUserModel;
-import com.zer0s2m.creeptenuous.api.helpers.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.common.enums.UserAlready;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.UserAlreadyExistMsg;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
+import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
+import com.zer0s2m.creeptenuous.starter.test.mock.MockUserModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
