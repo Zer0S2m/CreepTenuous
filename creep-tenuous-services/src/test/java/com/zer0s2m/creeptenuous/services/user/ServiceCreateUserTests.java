@@ -6,6 +6,7 @@ import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.services.ConfigServices;
 import com.zer0s2m.creeptenuous.services.security.GeneratePasswordImpl;
+import com.zer0s2m.creeptenuous.services.user.impl.ServiceCreateUserImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

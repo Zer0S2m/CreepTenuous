@@ -14,15 +14,19 @@ import java.util.List;
 import java.util.stream.Stream;
 import java.util.function.Supplier;
 
+/**
+ * Service for collecting information about the directory and its objects
+ */
 @ServiceFileSystem("service-collect-directory")
 public class ServiceCollectDirectoryImpl implements ServiceCollectDirectory {
+
     /**
      * Collect children in directory
      * @param path system source path
      * @return data: directories and files
      */
     @Override
-    public ArrayList<List<Path>> collect(String path) {
+    public List<List<Path>> collect(String path) {
         Path source = Paths.get(path);
         Supplier<Stream<Path>> stream = () -> {
             try {
@@ -36,9 +40,10 @@ public class ServiceCollectDirectoryImpl implements ServiceCollectDirectory {
             }
         };
 
-        ArrayList<List<Path>> paths = new ArrayList<>();
+        List<List<Path>> paths = new ArrayList<>();
         paths.add(stream.get().filter(Files::isRegularFile).toList());
         paths.add(stream.get().filter(Files::isDirectory).toList());
         return paths;
     }
+
 }

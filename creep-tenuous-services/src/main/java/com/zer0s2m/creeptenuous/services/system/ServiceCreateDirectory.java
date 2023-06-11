@@ -7,7 +7,11 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.List;
 
+/**
+ * Service to serve the creation of directories
+ */
 public interface ServiceCreateDirectory {
+
     /**
      * Create directory in system
      * @param systemParents parts of the system path - source
@@ -28,4 +32,5 @@ public interface ServiceCreateDirectory {
             throw new FileAlreadyExistsException(Directory.DIRECTORY_EXISTS.get());
         }
     }
+
 }

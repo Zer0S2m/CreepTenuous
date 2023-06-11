@@ -7,6 +7,7 @@ import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceManagerDirectoryRedis;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisImpl;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +16,16 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service for viewing file system objects in Redis
+ */
 @Service("service-manager-directory-redis")
 public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedisImpl
         implements ServiceManagerDirectoryRedis {
+
     @Autowired
-    public ServiceManagerDirectoryRedisImpl(
-            DirectoryRedisRepository directoryRedisRepository,
-            FileRedisRepository fileRedisRepository,
-            JwtProvider jwtProvider
-    ) {
+    public ServiceManagerDirectoryRedisImpl(DirectoryRedisRepository directoryRedisRepository,
+                                            FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
         super(directoryRedisRepository, fileRedisRepository, jwtProvider);
     }
 
@@ -71,7 +73,7 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
      * @param realName real name file system object
      */
     private void buildJSON(
-            JSONArray data,
+            @NotNull JSONArray data,
             String systemName,
             Boolean isFile,
             Boolean isDirectory,
@@ -86,4 +88,5 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
 
         data.put(obj);
     }
+
 }

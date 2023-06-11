@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.services.system;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectoryRedis;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,6 +17,9 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * Interface for servicing the assembly of a catalog into a zip archive
+ */
 public interface CollectZipDirectory {
 
     /**
@@ -33,7 +37,8 @@ public interface CollectZipDirectory {
      * @return path ready archive
      * @throws RuntimeException system error
      */
-    default Path collectZip(Path source, HashMap<String, String> map, String className) throws RuntimeException {
+    default Path collectZip(@NotNull Path source, HashMap<String, String> map, String className)
+            throws RuntimeException {
         String pathToZip = source.getParent().toString();
         String realPathToZip;
 
@@ -72,12 +77,8 @@ public interface CollectZipDirectory {
      *            <p><b>Value</b> - real name system file object</p>
      * @throws IOException system error
      */
-    private void collectZipFile(
-            File newFileZip,
-            String filenameZip,
-            ZipOutputStream fosZip,
-            HashMap<String, String> map
-    ) throws IOException {
+    private void collectZipFile(@NotNull File newFileZip, String filenameZip, ZipOutputStream fosZip,
+                                HashMap<String, String> map) throws IOException {
         if (newFileZip.isHidden()) {
             return;
         }
@@ -157,7 +158,7 @@ public interface CollectZipDirectory {
      * @param source the path source
      * @param className caller class from method
      */
-    private void addOperationDataDownload(Path source, String className) {
+    private void addOperationDataDownload(@NotNull Path source, String className) {
         HashMap<String, Object> operationData = new HashMap<>();
 
         String systemNameFile = source.getFileName().toString();
@@ -168,4 +169,5 @@ public interface CollectZipDirectory {
 
         contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
     }
+
 }

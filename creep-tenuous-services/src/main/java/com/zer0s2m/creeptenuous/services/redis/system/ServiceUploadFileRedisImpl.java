@@ -8,6 +8,7 @@ import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateFileRedis;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceUploadFileRedis;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisImpl;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +16,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service for loading file system objects and writing to Redis
+ */
 @Service("service-upload-file-redis")
 public class ServiceUploadFileRedisImpl extends BaseServiceFileSystemRedisImpl implements ServiceUploadFileRedis {
+
     @Autowired
-    public ServiceUploadFileRedisImpl(
-            DirectoryRedisRepository directoryRedisRepository,
-            FileRedisRepository fileRedisRepository,
-            JwtProvider jwtProvider
-    ) {
+    public ServiceUploadFileRedisImpl(DirectoryRedisRepository directoryRedisRepository,
+                                      FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
         super(directoryRedisRepository, fileRedisRepository, jwtProvider);
     }
 
@@ -31,7 +33,7 @@ public class ServiceUploadFileRedisImpl extends BaseServiceFileSystemRedisImpl i
      * @param dataCreatedFile data upload file
      */
     @Override
-    public FileRedis upload(ContainerDataUploadFile dataCreatedFile) {
+    public FileRedis upload(@NotNull ContainerDataUploadFile dataCreatedFile) {
         String loginUser = accessClaims.get("login", String.class);
         String roleUser = accessClaims.get("role", String.class);
 
@@ -55,7 +57,7 @@ public class ServiceUploadFileRedisImpl extends BaseServiceFileSystemRedisImpl i
      * @param dataCreatedFile data upload files
      */
     @Override
-    public Iterable<FileRedis> upload(List<ContainerDataUploadFile> dataCreatedFile) {
+    public Iterable<FileRedis> upload(@NotNull List<ContainerDataUploadFile> dataCreatedFile) {
         String loginUser = accessClaims.get("login", String.class);
         String roleUser = accessClaims.get("role", String.class);
 
@@ -74,8 +76,13 @@ public class ServiceUploadFileRedisImpl extends BaseServiceFileSystemRedisImpl i
         return fileRedisRepository.saveAll(fileRedisList);
     }
 
+    /**
+     * Push in redis one object
+     * @param objRedis must not be {@literal null}.
+     */
     @Override
     public void push(FileRedis objRedis) {
         fileRedisRepository.save(objRedis);
     }
+
 }

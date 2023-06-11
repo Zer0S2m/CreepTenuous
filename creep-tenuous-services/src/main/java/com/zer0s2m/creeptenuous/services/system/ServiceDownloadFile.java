@@ -8,7 +8,11 @@ import org.springframework.http.HttpHeaders;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * File download service
+ */
 public interface ServiceDownloadFile {
+
     /**
      * Get resource for download file
      * @param systemParents system path part directories
@@ -22,5 +26,11 @@ public interface ServiceDownloadFile {
             String systemNameFile
     ) throws IOException, NoSuchFileExistsException;
 
+    /**
+     * Collect headers for request
+     * @param data download file information
+     * @return ready-made headers for the request
+     */
     HttpHeaders collectHeaders(ContainerDataDownloadFile<ByteArrayResource, String> data);
+
 }

@@ -16,7 +16,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Service
+/**
+ * Basic service for serving file system objects in Redis.
+ * <ul>
+ *     <li>Checking Ownership of an Object</li>
+ * </ul>
+ */
+@Service("service-file-system-redis")
 public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedis {
 
     private boolean isException = true;
@@ -34,11 +40,8 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
     private Boolean resetCheckIsNameDirectory = false;
 
     @Autowired
-    public BaseServiceFileSystemRedisImpl(
-            DirectoryRedisRepository directoryRedisRepository,
-            FileRedisRepository fileRedisRepository,
-            JwtProvider jwtProvider
-    ) {
+    public BaseServiceFileSystemRedisImpl(DirectoryRedisRepository directoryRedisRepository,
+                                          FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
         this.directoryRedisRepository = directoryRedisRepository;
         this.fileRedisRepository = fileRedisRepository;
         this.jwtProvider = jwtProvider;

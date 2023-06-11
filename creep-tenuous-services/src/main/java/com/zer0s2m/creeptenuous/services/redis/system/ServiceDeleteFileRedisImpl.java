@@ -12,14 +12,15 @@ import org.springframework.stereotype.Service;
 import java.nio.file.Path;
 import java.util.Optional;
 
+/**
+ * Service for deleting file system objects from Redis
+ */
 @Service("service-delete-file-redis")
 public class ServiceDeleteFileRedisImpl extends BaseServiceFileSystemRedisImpl implements ServiceDeleteFileRedis {
+
     @Autowired
-    public ServiceDeleteFileRedisImpl(
-            DirectoryRedisRepository directoryRedisRepository,
-            FileRedisRepository fileRedisRepository,
-            JwtProvider jwtProvider
-    ) {
+    public ServiceDeleteFileRedisImpl(DirectoryRedisRepository directoryRedisRepository,
+                                      FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
         super(directoryRedisRepository, fileRedisRepository, jwtProvider);
     }
 
@@ -34,8 +35,13 @@ public class ServiceDeleteFileRedisImpl extends BaseServiceFileSystemRedisImpl i
         objRedis.ifPresent(this::push);
     }
 
+    /**
+     * Push in redis one object
+     * @param objRedis must not be {@literal null}.
+     */
     @Override
     public void push(FileRedis objRedis) {
         fileRedisRepository.delete(objRedis);
     }
+
 }

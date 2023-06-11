@@ -6,7 +6,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * Maintenance service file deletion
+ */
 public interface ServiceDeleteFile {
+
     /**
      * Delete file from file system
      * @param systemNameFile system name file
@@ -16,4 +20,5 @@ public interface ServiceDeleteFile {
      * @throws NoSuchFileExistsException when no file in file system
      */
     Path delete(String systemNameFile, List<String> systemParents) throws IOException, NoSuchFileExistsException;
+
 }

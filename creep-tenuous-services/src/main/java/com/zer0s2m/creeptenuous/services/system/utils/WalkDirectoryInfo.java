@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.services.system.utils;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,7 +24,7 @@ public interface WalkDirectoryInfo {
      * @return info attached files and directories
      * @throws IOException error system
      */
-    static List<ContainerInfoFileSystemObject> walkDirectory(Path source, Path target) throws IOException {
+    static @NotNull List<ContainerInfoFileSystemObject> walkDirectory(Path source, Path target) throws IOException {
         List<ContainerInfoFileSystemObject> attached = new ArrayList<>();
         try (Stream<Path> paths = Files.walk(source)) {
             paths
@@ -46,7 +47,7 @@ public interface WalkDirectoryInfo {
      * @return info attached files and directories
      * @throws IOException error system
      */
-    static List<ContainerInfoFileSystemObject> walkDirectory(Path source) throws IOException {
+    static @NotNull List<ContainerInfoFileSystemObject> walkDirectory(Path source) throws IOException {
         return walkDirectory(source, null);
     }
 

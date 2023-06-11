@@ -15,6 +15,7 @@ import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.ServiceMoveDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.utils.WalkDirectoryInfo;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -22,9 +23,13 @@ import java.nio.file.*;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Service to serve the movement of directories
+ */
 @ServiceFileSystem("service-move-directory")
 @CoreServiceFileSystem(method = "move")
 public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory, AtomicServiceFileSystem {
+
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     private final RootPath rootPath;
@@ -55,12 +60,8 @@ public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory, AtomicSer
                     )
             }
     )
-    public ContainerDataMoveDirectory move(
-            List<String> systemParents,
-            List<String> systemToParents,
-            String systemNameDirectory,
-            Integer method
-    ) throws IOException {
+    public ContainerDataMoveDirectory move(List<String> systemParents, List<String> systemToParents,
+                                           String systemNameDirectory, Integer method) throws IOException {
         Path currentPathParents = Paths.get(buildDirectoryPath.build(systemParents));
         Path currentPath = Path.of(currentPathParents.toString(), systemNameDirectory);
         buildDirectoryPath.checkDirectory(currentPath);
@@ -82,11 +83,8 @@ public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory, AtomicSer
      * @return ready system path
      * @throws IOException error system
      */
-    protected Path builderDirectory(
-            List<String> systemToParents,
-            String systemNameDirectory,
-            Integer method
-    ) throws IOException {
+    protected Path builderDirectory(@NotNull List<String> systemToParents, String systemNameDirectory, Integer method)
+            throws IOException {
         Path newPathDirectory = Path.of(rootPath.getRootPath());
         for (String partPath : systemToParents) {
             newPathDirectory = Path.of(newPathDirectory.toString(), partPath);
@@ -101,4 +99,5 @@ public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory, AtomicSer
 
         return newPathDirectory;
     }
+
 }

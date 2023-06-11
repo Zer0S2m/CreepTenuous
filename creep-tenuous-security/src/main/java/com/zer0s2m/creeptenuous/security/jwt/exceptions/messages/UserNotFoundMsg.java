@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.security.jwt.exceptions.messages;
 import org.springframework.http.HttpStatus;
 
 public class UserNotFoundMsg {
+
     private final String message;
     private final Integer status;
 
@@ -23,4 +24,5 @@ public class UserNotFoundMsg {
     public Integer getStatus() {
         return status;
     }
+
 }

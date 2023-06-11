@@ -4,15 +4,19 @@ import com.zer0s2m.creeptenuous.redis.models.JwtRedis;
 import com.zer0s2m.creeptenuous.redis.repositories.JwtRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.jwt.ServiceJwtRedis;
 import com.zer0s2m.creeptenuous.security.jwt.domain.JwtRedisData;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Service for maintaining JW tokens in the Redis database
+ */
 @Service("service-jwt-redis")
 @AllArgsConstructor
 public class ServiceJwtRedisImpl implements ServiceJwtRedis {
+
     private final JwtRedisRepository repository;
 
     /**
@@ -59,7 +63,7 @@ public class ServiceJwtRedisImpl implements ServiceJwtRedis {
      * @param data data tokens
      */
     @Override
-    public void updateTokens(JwtRedisData data) {
+    public void updateTokens(@NotNull JwtRedisData data) {
         Optional<JwtRedis> currentData = getByLogin(data.login());
         if (currentData.isPresent()) {
             JwtRedis readyJwtRedis = currentData.get();
@@ -74,7 +78,7 @@ public class ServiceJwtRedisImpl implements ServiceJwtRedis {
      * @param data access token
      */
     @Override
-    public void updateAccessToken(JwtRedisData data) {
+    public void updateAccessToken(@NotNull JwtRedisData data) {
         Optional<JwtRedis> currentData = getByLogin(data.login());
         if (currentData.isPresent()) {
             JwtRedis readyJwtRedis = currentData.get();
@@ -82,4 +86,5 @@ public class ServiceJwtRedisImpl implements ServiceJwtRedis {
             repository.save(readyJwtRedis);
         }
     }
+
 }

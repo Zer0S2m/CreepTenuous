@@ -4,9 +4,9 @@ import com.zer0s2m.creeptenuous.common.enums.UserException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotValidPasswordException;
 import com.zer0s2m.creeptenuous.models.user.User;
+import com.zer0s2m.creeptenuous.redis.services.jwt.ServiceJwtRedis;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
-import com.zer0s2m.creeptenuous.services.redis.jwt.ServiceJwtRedisImpl;
-import com.zer0s2m.creeptenuous.services.security.GeneratePasswordImpl;
+import com.zer0s2m.creeptenuous.security.services.GeneratePassword;
 import com.zer0s2m.creeptenuous.redis.models.JwtRedis;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.NoValidJwtRefreshTokenException;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtResponse;
@@ -18,25 +18,38 @@ import com.zer0s2m.creeptenuous.security.jwt.domain.JwtRedisData;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Service for maintenance of JW tokens
+ */
 @Service("jwt-service")
 @AllArgsConstructor
 public class JwtServiceImpl implements JwtService {
+
     final private JwtProvider jwtProvider;
 
     final private UserRepository userRepository;
 
-    final private GeneratePasswordImpl generatePassword;
+    final private GeneratePassword generatePassword;
 
-    final private ServiceJwtRedisImpl redisService;
+    final private ServiceJwtRedis redisService;
 
+    /**
+     * Login user in system
+     * @param user data request user
+     * @return tokens for login
+     * @throws UserNotFoundException not user in system
+     * @throws UserNotValidPasswordException invalid password
+     */
     @Override
-    public JwtResponse login(JwtUserRequest user) throws UserNotFoundException, UserNotValidPasswordException {
+    public JwtResponse login(@NotNull JwtUserRequest user) throws UserNotFoundException,
+            UserNotValidPasswordException {
         User currentUser = userRepository.findByLogin(user.login());
         if (currentUser == null) {
             throw new UserNotFoundException(UserException.USER_NOT_IS_EXISTS.get());
@@ -62,10 +75,16 @@ public class JwtServiceImpl implements JwtService {
         );
     }
 
+    /**
+     * Generate access JWT token
+     * @param refreshToken refresh token
+     * @return access token
+     * @throws UserNotFoundException not user in system
+     * @throws NoValidJwtRefreshTokenException invalid refresh token
+     */
     @Override
-    public JwtResponse getAccessToken(
-            @NonNull String refreshToken
-    ) throws UserNotFoundException, NoValidJwtRefreshTokenException {
+    public JwtResponse getAccessToken(@NonNull String refreshToken) throws UserNotFoundException,
+            NoValidJwtRefreshTokenException {
         if (jwtProvider.validateRefreshToken(refreshToken)) {
             final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
             final String login = claims.getSubject();
@@ -96,10 +115,16 @@ public class JwtServiceImpl implements JwtService {
         return new JwtResponse(null, null);
     }
 
+    /**
+     * Generate refresh JWT token
+     * @param refreshToken refresh token
+     * @return refresh token
+     * @throws NoValidJwtRefreshTokenException invalid refresh token
+     * @throws UserNotFoundException not user in system
+     */
     @Override
-    public JwtResponse getRefreshToken(
-            @NonNull String refreshToken
-    ) throws NoValidJwtRefreshTokenException, UserNotFoundException {
+    public JwtResponse getRefreshToken(@NonNull String refreshToken) throws NoValidJwtRefreshTokenException,
+            UserNotFoundException {
         if (jwtProvider.validateRefreshToken(refreshToken)) {
             final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
             final String login = claims.getSubject();
@@ -133,7 +158,12 @@ public class JwtServiceImpl implements JwtService {
         throw new NoValidJwtRefreshTokenException("No valid refresh token");
     }
 
+    /**
+     * Get user info from token
+     * @return user info
+     */
     public JwtAuthentication getAuthInfo() {
         return (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
     }
+
 }

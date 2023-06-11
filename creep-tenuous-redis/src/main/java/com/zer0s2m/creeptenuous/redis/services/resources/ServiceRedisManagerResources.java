@@ -43,4 +43,5 @@ public interface ServiceRedisManagerResources {
     default List<DirectoryRedis> getResourcesDirectoriesForMove(String id) {
         return getResourcesDirectoriesForMove(List.of(id));
     }
+
 }

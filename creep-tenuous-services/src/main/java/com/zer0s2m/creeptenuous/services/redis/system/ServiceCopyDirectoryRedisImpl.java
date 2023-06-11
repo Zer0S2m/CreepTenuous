@@ -8,6 +8,7 @@ import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCopyDirectoryRedis;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisImpl;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +16,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Service for copying file system objects by writing to Redis
+ */
 @Service("service-copy-directory-redis")
 public class ServiceCopyDirectoryRedisImpl extends BaseServiceFileSystemRedisImpl implements ServiceCopyDirectoryRedis {
+
     @Autowired
-    public ServiceCopyDirectoryRedisImpl(
-            DirectoryRedisRepository directoryRedisRepository,
-            FileRedisRepository fileRedisRepository,
-            JwtProvider jwtProvider
-    ) {
+    public ServiceCopyDirectoryRedisImpl(DirectoryRedisRepository directoryRedisRepository,
+                                         FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
         super(directoryRedisRepository, fileRedisRepository, jwtProvider);
     }
 
@@ -31,7 +33,7 @@ public class ServiceCopyDirectoryRedisImpl extends BaseServiceFileSystemRedisImp
      * @param attached info directory from source path
      */
     @Override
-    public void copy(final List<ContainerInfoFileSystemObject> attached) {
+    public void copy(final @NotNull List<ContainerInfoFileSystemObject> attached) {
         final String loginUser = accessClaims.get("login", String.class);
         final String roleUser = accessClaims.get("role", String.class);
 
@@ -103,4 +105,5 @@ public class ServiceCopyDirectoryRedisImpl extends BaseServiceFileSystemRedisImp
     public void saveAllFileRedis(Iterable<FileRedis> entities) {
         fileRedisRepository.saveAll(entities);
     }
+
 }

@@ -10,9 +10,11 @@ import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionDirectoryExi
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
-import com.zer0s2m.creeptenuous.services.redis.system.ServiceCreateDirectoryRedisImpl;
+import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateDirectoryRedis;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateDirectoryImpl;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -27,16 +29,14 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
 
     private final ServiceCreateDirectoryImpl createDirectory;
 
-    private final ServiceCreateDirectoryRedisImpl serviceDirectoryRedis;
+    private final ServiceCreateDirectoryRedis serviceDirectoryRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiCreateDirectory(
-            ServiceCreateDirectoryImpl createDirectory,
-            ServiceCreateDirectoryRedisImpl serviceDirectoryRedis,
-            ServiceManagerRights serviceManagerRights
-    ) {
+    public ControllerApiCreateDirectory(ServiceCreateDirectoryImpl createDirectory,
+                                        ServiceCreateDirectoryRedis serviceDirectoryRedis,
+                                        ServiceManagerRights serviceManagerRights) {
         this.createDirectory = createDirectory;
         this.serviceDirectoryRedis = serviceDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
@@ -45,25 +45,26 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
     /**
      * Create directory
      * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceCreateDirectoryImpl#create(List, String)}</p>
+     *
      * @param directoryForm directory create data
-     * @param accessToken raw JWT access token
+     * @param accessToken   raw JWT access token
      * @return result create directory
      * @throws FileAlreadyExistsException file already exists
-     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
-     * @throws InstantiationException Thrown when an application tries to create an instance of a class
-     * using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
-     * tries to reflectively create an instance
+     * @throws InvocationTargetException  Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException      Thrown when a particular method cannot be found.
+     * @throws InstantiationException     Thrown when an application tries to create an instance of a class
+     *                                    using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException     An IllegalAccessException is thrown when an application
+     *                                    tries to reflectively create an instance
      */
+    @Contract("_, _ -> new")
     @Override
     @PostMapping("/directory/create")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public final ResponseCreateDirectoryApi createDirectory(
-            final @Valid @RequestBody DataCreateDirectoryApi directoryForm,
-            @RequestHeader(name = "Authorization") String accessToken
-    ) throws FileAlreadyExistsException, InvocationTargetException,
-            NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public final @NotNull ResponseCreateDirectoryApi createDirectory(
+            final @Valid @RequestBody @NotNull DataCreateDirectoryApi directoryForm,
+            @RequestHeader(name = "Authorization") String accessToken) throws FileAlreadyExistsException,
+            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         serviceDirectoryRedis.setAccessToken(accessToken);
         boolean isRights = serviceDirectoryRedis.checkRights(
                 directoryForm.parents(),
@@ -93,7 +94,8 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
 
     @ExceptionHandler({FileAlreadyExistsException.class, java.nio.file.FileAlreadyExistsException.class})
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ExceptionDirectoryExistsMsg handleExceptionDirectoryExists(FileAlreadyExistsException error) {
+    public ExceptionDirectoryExistsMsg handleExceptionDirectoryExists(@NotNull FileAlreadyExistsException error) {
         return new ExceptionDirectoryExistsMsg(error.getMessage());
     }
+
 }

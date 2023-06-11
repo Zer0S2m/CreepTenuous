@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateFile;
 import com.zer0s2m.creeptenuous.common.enums.ExceptionFile;
 import com.zer0s2m.creeptenuous.common.enums.TypeFile;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundTypeFileException;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -12,14 +13,39 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Service for serving the creation of files of different formats.
+ * <ul>
+ *     <li>txt format</li>
+ *     <li>xlsx format</li>
+ *     <li>docx format</li>
+ * </ul>
+ */
 public interface ServiceCreateFile extends ServiceCreateFileExcel, ServiceCreateFileDocx {
+
     String txt = "txt";
+
     String document = "docx";
+
     String excel = "xlsx";
 
+    /**
+     * Create file with specific format
+     * @param parents system path part directories
+     * @param nameFile file name
+     * @param typeFile type file {@link TypeFile}
+     * @return information about the created file
+     * @throws NotFoundTypeFileException file format not found to generate it
+     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     */
     ContainerDataCreateFile create(List<String> parents, String nameFile, Integer typeFile)
             throws NotFoundTypeFileException, IOException;
 
+    /**
+     * Checking for the existence of a file format
+     * @param typeFile type file {@link TypeFile}
+     * @throws NotFoundTypeFileException file format not found to generate it
+     */
     default void checkTypeFile(Integer typeFile) throws NotFoundTypeFileException {
         List<Integer> types = TypeFile.getTypesCode();
         if (!types.contains(typeFile)) {
@@ -27,7 +53,14 @@ public interface ServiceCreateFile extends ServiceCreateFileExcel, ServiceCreate
         }
     }
 
-    default void conductor(Path path, String nameFile, Integer typeFile) throws IOException {
+    /**
+     * Conductor for creating a file of a specific format
+     * @param path target path
+     * @param nameFile file name
+     * @param typeFile type file {@link TypeFile}
+     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     */
+    default void conductor(@NotNull Path path, String nameFile, Integer typeFile) throws IOException {
         String typeFileStr = TypeFile.getExtension(typeFile);
         String newNameFile = nameFile + "." + typeFileStr;
         Path newPathFile = Path.of(path.toString(), newNameFile);
@@ -44,4 +77,5 @@ public interface ServiceCreateFile extends ServiceCreateFileExcel, ServiceCreate
             createFileDocx(newPathFile);
         }
     }
+
 }

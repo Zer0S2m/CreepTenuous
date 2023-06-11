@@ -23,6 +23,7 @@ import java.lang.annotation.*;
 @Documented
 @Component
 public @interface ServiceFileSystem {
+
     /**
      * The value may indicate a suggestion for a logical component name,
      * to be turned into a Spring bean in case of an autodetected component.
@@ -30,4 +31,5 @@ public @interface ServiceFileSystem {
      */
     @AliasFor(annotation = Component.class)
     String value() default "";
+
 }

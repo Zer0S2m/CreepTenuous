@@ -11,18 +11,23 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Service for deleting file system objects from Redis
+ */
 @Service("delete-directory-redis")
 public class ServiceDeleteDirectoryRedisImpl extends BaseServiceFileSystemRedisImpl
         implements ServiceDeleteDirectoryRedis {
+
     @Autowired
-    public ServiceDeleteDirectoryRedisImpl(
-            DirectoryRedisRepository redisRepository,
-            FileRedisRepository fileRedisRepository,
-            JwtProvider jwtProvider
-    ) {
+    public ServiceDeleteDirectoryRedisImpl(DirectoryRedisRepository redisRepository,
+                                           FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
         super(redisRepository, fileRedisRepository, jwtProvider);
     }
 
+    /**
+     * Push in redis one object
+     * @param objRedis must not be {@literal null}.
+     */
     @Override
     public void push(DirectoryRedis objRedis) {
         directoryRedisRepository.delete(objRedis);
@@ -37,4 +42,5 @@ public class ServiceDeleteDirectoryRedisImpl extends BaseServiceFileSystemRedisI
         Optional<DirectoryRedis> objRedis = directoryRedisRepository.findById(systemNameDirectory);
         objRedis.ifPresent(this::push);
     }
+
 }

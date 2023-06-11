@@ -7,7 +7,11 @@ import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.List;
 
+/**
+ * A service for servicing all information and operations on file system objects. Use in end endpoints
+ */
 public interface ServiceManagerDirectory {
+
     /**
      * Get directory
      * @return source path (string)
@@ -37,4 +41,5 @@ public interface ServiceManagerDirectory {
      */
     ContainerDataBuilderDirectory build(List<String> systemParents, Integer level)
             throws IOException, NotValidLevelDirectoryException;
+
 }

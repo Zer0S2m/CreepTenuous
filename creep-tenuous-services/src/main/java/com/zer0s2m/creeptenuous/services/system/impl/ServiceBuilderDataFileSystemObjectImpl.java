@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.services.system.impl;
 import com.zer0s2m.creeptenuous.common.annotations.ServiceFileSystem;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataSystemFileObject;
 import com.zer0s2m.creeptenuous.services.system.ServiceBuilderDataFileSystemObject;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
@@ -11,15 +12,19 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service for collecting information about the directory and its objects
+ */
 @ServiceFileSystem("service-build-data-file-system-object")
 public class ServiceBuilderDataFileSystemObjectImpl implements ServiceBuilderDataFileSystemObject {
+
     /**
      * Get data system file objects
      * @param paths source directories
      * @return data system file objects
      */
     @Override
-    public ContainerDataSystemFileObject build(ArrayList<List<Path>> paths) {
+    public ContainerDataSystemFileObject build(@NotNull List<List<Path>> paths) {
         JSONArray readyFiles = new JSONArray();
         List<String> pathsDirectory = new ArrayList<>();
 
@@ -43,7 +48,7 @@ public class ServiceBuilderDataFileSystemObjectImpl implements ServiceBuilderDat
      * @param isFile is file
      * @param isDirectory is directory
      */
-    private void buildJSON(Path path, JSONArray readyFiles, boolean isFile, boolean isDirectory) {
+    private void buildJSON(@NotNull Path path, JSONArray readyFiles, boolean isFile, boolean isDirectory) {
         JSONObject obj = new JSONObject();
         obj.put("fileName", path.getFileName().toString());
         obj.put("isFile", isFile);
@@ -60,4 +65,5 @@ public class ServiceBuilderDataFileSystemObjectImpl implements ServiceBuilderDat
 
         readyFiles.put(obj);
     }
+
 }

@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.common.annotations.ServiceFileSystem;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataDownloadFile;
 import com.zer0s2m.creeptenuous.services.system.ServiceDownloadFile;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ContentDisposition;
@@ -16,9 +17,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ * File download service
+ */
 @ServiceFileSystem("service-download-file")
 public class ServiceDownloadFileImpl implements ServiceDownloadFile {
+
     private final ServiceBuildDirectoryPath buildDirectoryPath;
+
     private final ConfigurableMimeFileTypeMap fileTypeMap = new ConfigurableMimeFileTypeMap();
 
     @Autowired
@@ -47,8 +53,13 @@ public class ServiceDownloadFileImpl implements ServiceDownloadFile {
         );
     }
 
+    /**
+     * Collect headers for request
+     * @param data download file information
+     * @return ready-made headers for the request
+     */
     @Override
-    public HttpHeaders collectHeaders(ContainerDataDownloadFile<ByteArrayResource, String> data) {
+    public HttpHeaders collectHeaders(@NotNull ContainerDataDownloadFile<ByteArrayResource, String> data) {
         final HttpHeaders headers = new HttpHeaders();
 
         headers.add(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
@@ -65,4 +76,5 @@ public class ServiceDownloadFileImpl implements ServiceDownloadFile {
 
         return headers;
     }
+
 }
