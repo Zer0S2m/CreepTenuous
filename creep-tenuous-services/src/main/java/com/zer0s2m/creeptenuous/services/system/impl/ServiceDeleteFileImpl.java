@@ -17,9 +17,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ * Maintenance service file deletion
+ */
 @ServiceFileSystem("service-delete-file")
 @CoreServiceFileSystem(method = "delete")
 public class ServiceDeleteFileImpl implements ServiceDeleteFile, AtomicServiceFileSystem {
+
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
@@ -50,4 +54,5 @@ public class ServiceDeleteFileImpl implements ServiceDeleteFile, AtomicServiceFi
         FilesContextAtomic.delete(pathFile);
         return pathFile;
     }
+
 }

@@ -14,6 +14,7 @@ import com.zer0s2m.creeptenuous.services.system.ServiceDownloadDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -28,12 +29,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.nio.file.Path;
 
+/**
+ * Service for servicing the download of a catalog in a zip archive
+ */
 @ServiceFileSystem("service-download-directory")
 @CoreServiceFileSystem(method = "download")
 public class ServiceDownloadDirectoryImpl
         implements ServiceDownloadDirectory, CollectZipDirectory, AtomicServiceFileSystem {
 
     private final Logger logger = LogManager.getLogger(ServiceDownloadDirectoryImpl.class);
+
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     /**
@@ -87,7 +92,7 @@ public class ServiceDownloadDirectoryImpl
      * @return headers
      */
     @Override
-    public HttpHeaders collectHeaders(Path path, ByteArrayResource data) {
+    public HttpHeaders collectHeaders(@NotNull Path path, @NotNull ByteArrayResource data) {
         HttpHeaders headers = new HttpHeaders();
 
         headers.add(HttpHeaders.EXPIRES, "1");
@@ -107,7 +112,7 @@ public class ServiceDownloadDirectoryImpl
      * Delete zip archive
      * @param source source zip archive
      */
-    private void deleteFileZip(Path source) {
+    private void deleteFileZip(@NotNull Path source) {
         boolean isDeleted = source.toFile().delete();
         logger.info("Is deleted zip file: " + isDeleted);
     }

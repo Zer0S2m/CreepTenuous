@@ -7,9 +7,14 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Service for servicing the download of a catalog in a zip archive
+ */
 public interface ServiceDownloadDirectory {
+
      /**
       * Download directory archive zip
       * @param systemParents parts of the system path - source
@@ -29,4 +34,11 @@ public interface ServiceDownloadDirectory {
       * @return headers
       */
      HttpHeaders collectHeaders(Path path, ByteArrayResource data);
+
+     /**
+      * Set resource for archiving directory
+      * @param map data
+      */
+     void setMap(HashMap<String, String> map);
+
 }

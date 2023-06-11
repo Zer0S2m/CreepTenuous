@@ -1,12 +1,17 @@
 package com.zer0s2m.creeptenuous.redis.services.system;
 
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
 import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceRedis;
 
 import java.nio.file.Path;
 import java.util.List;
 
-public interface ServiceCopyFileRedis extends BaseServiceRedis<FileRedis> {
+/**
+ * Service for copying file system objects by writing to Redis
+ */
+public interface ServiceCopyFileRedis extends BaseServiceRedis<FileRedis>, BaseServiceFileSystemRedis {
+
     /**
      * Copy files in redis
      * @param target new system directory path
@@ -26,4 +31,5 @@ public interface ServiceCopyFileRedis extends BaseServiceRedis<FileRedis> {
     default List<FileRedis> copy(Path target, String existingSystemNameFile, String newSystemFileName) {
         return copy(List.of(target), List.of(existingSystemNameFile), List.of(newSystemFileName));
     }
+
 }

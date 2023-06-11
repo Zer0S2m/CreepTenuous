@@ -6,9 +6,10 @@ import com.zer0s2m.creeptenuous.common.containers.ContainerDataDownloadFile;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
-import com.zer0s2m.creeptenuous.services.redis.system.ServiceDownloadFileRedisImpl;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadFileImpl;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -29,46 +30,44 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
 
     private final ServiceDownloadFileImpl serviceDownloadFile;
 
-    private final ServiceDownloadFileRedisImpl serviceDownloadFileRedis;
+    private final BaseServiceFileSystemRedis baseServiceFileSystemRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiDownloadFile(
-            ServiceDownloadFileImpl serviceDownloadFile,
-            ServiceDownloadFileRedisImpl serviceDownloadFileRedis,
-            ServiceManagerRights serviceManagerRights
-    ) {
+    public ControllerApiDownloadFile(ServiceDownloadFileImpl serviceDownloadFile,
+                                     BaseServiceFileSystemRedis baseServiceFileSystemRedis,
+                                     ServiceManagerRights serviceManagerRights) {
         this.serviceDownloadFile = serviceDownloadFile;
-        this.serviceDownloadFileRedis = serviceDownloadFileRedis;
+        this.baseServiceFileSystemRedis = baseServiceFileSystemRedis;
         this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
      * Download file
-     * @param data file download data
+     *
+     * @param data        file download data
      * @param accessToken raw JWT access token
      * @return file
      * @throws IOException if an I/O error occurs or the parent directory does not exist
      */
     @Override
     @PostMapping(path = "/file/download")
-    public ResponseEntity<Resource> download(
-            final @Valid @RequestBody DataDownloadFileApi data,
-            @RequestHeader(name = "Authorization") String accessToken
-    ) throws IOException {
+    public ResponseEntity<Resource> download(final @Valid @RequestBody @NotNull DataDownloadFileApi data,
+                                             @RequestHeader(name = "Authorization") String accessToken)
+            throws IOException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
 
-        serviceDownloadFileRedis.setAccessToken(accessToken);
-        serviceDownloadFileRedis.setIsException(false);
-        boolean isRightsDirectory = serviceDownloadFileRedis.checkRights(data.parents(), data.systemParents(), null, false);
+        baseServiceFileSystemRedis.setAccessToken(accessToken);
+        baseServiceFileSystemRedis.setIsException(false);
+        boolean isRightsDirectory = baseServiceFileSystemRedis.checkRights(data.parents(), data.systemParents(), null, false);
 
         if (!isRightsDirectory) {
             serviceManagerRights.checkRightsByOperation(operationRightsDirectory, data.systemParents());
         }
 
-        boolean isRightsFile = serviceDownloadFileRedis.checkRights(List.of(data.systemFileName()));
+        boolean isRightsFile = baseServiceFileSystemRedis.checkRights(List.of(data.systemFileName()));
         if (!isRightsFile) {
             serviceManagerRights.checkRightsByOperation(operationRightsFile, data.systemFileName());
         }
@@ -80,6 +79,7 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
         return ResponseEntity.ok()
                 .headers(serviceDownloadFile.collectHeaders(dataFile))
                 .body(dataFile.byteContent()
-        );
+                );
     }
+
 }

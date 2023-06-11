@@ -4,7 +4,11 @@ import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.List;
 
+/**
+ * Maintenance service directory removal
+ */
 public interface ServiceDeleteDirectory {
+
     /**
      * Delete directory from system
      * @param systemParents parts of the system path - source
@@ -12,4 +16,5 @@ public interface ServiceDeleteDirectory {
      * @throws IOException system error
      */
     void delete(List<String> systemParents, String systemName) throws IOException;
+
 }

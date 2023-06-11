@@ -15,6 +15,7 @@ import com.zer0s2m.creeptenuous.services.system.ServiceUploadDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,10 +24,13 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * Service for servicing directory uploads
+ */
 @ServiceFileSystem("service-upload-service")
 @CoreServiceFileSystem(method = "upload")
-public class ServiceUploadDirectoryImpl
-        implements ServiceUploadDirectory, ServiceUnpackingDirectory, AtomicServiceFileSystem {
+public class ServiceUploadDirectoryImpl implements ServiceUploadDirectory, ServiceUnpackingDirectory,
+        AtomicServiceFileSystem {
 
     private final Logger logger = LogManager.getLogger(ServiceUploadDirectory.class);
 
@@ -75,7 +79,7 @@ public class ServiceUploadDirectoryImpl
      * @param zipFile zip archive
      * @return source zip file
      */
-    public Path getNewPathZipFile(Path path, MultipartFile zipFile) throws IOException {
+    public Path getNewPathZipFile(Path path, @NotNull MultipartFile zipFile) throws IOException {
         Path newPathZipFile = Path.of(String.valueOf(path), zipFile.getOriginalFilename());
         zipFile.transferTo(newPathZipFile);
         return newPathZipFile;

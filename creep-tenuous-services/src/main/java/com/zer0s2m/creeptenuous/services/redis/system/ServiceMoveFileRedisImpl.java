@@ -13,14 +13,15 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.List;
 
+/**
+ * Service for servicing the movement of file system objects in Redis
+ */
 @Service("service-move-file-redis")
 public class ServiceMoveFileRedisImpl extends BaseServiceFileSystemRedisImpl implements ServiceMoveFileRedis {
+
     @Autowired
-    public ServiceMoveFileRedisImpl(
-            DirectoryRedisRepository directoryRedisRepository,
-            FileRedisRepository fileRedisRepository,
-            JwtProvider jwtProvider
-    ) {
+    public ServiceMoveFileRedisImpl(DirectoryRedisRepository directoryRedisRepository,
+                                    FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
         super(directoryRedisRepository, fileRedisRepository, jwtProvider);
     }
 
@@ -58,12 +59,21 @@ public class ServiceMoveFileRedisImpl extends BaseServiceFileSystemRedisImpl imp
         return objsRedis;
     }
 
+    /**
+     * Push in redis one object
+     * @param objRedis must not be {@literal null}.
+     */
     @Override
     public void push(FileRedis objRedis) {
         fileRedisRepository.save(objRedis);
     }
 
+    /**
+     * Push in redis one object
+     * @param entities must not be {@literal null}.
+     */
     public void push(Iterable<FileRedis> entities) {
         fileRedisRepository.saveAll(entities);
     }
+
 }

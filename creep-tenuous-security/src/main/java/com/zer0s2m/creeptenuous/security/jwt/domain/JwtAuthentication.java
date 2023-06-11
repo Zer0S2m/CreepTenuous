@@ -12,9 +12,13 @@ import java.util.Collection;
 @Getter
 @Setter
 public class JwtAuthentication implements Authentication {
+
     private boolean authenticated;
+
     private String login;
+
     private String name;
+
     private Set<UserRole> roles;
 
     @Override
@@ -51,4 +55,5 @@ public class JwtAuthentication implements Authentication {
     public String getName() {
         return name;
     }
+
 }

@@ -3,10 +3,15 @@ package com.zer0s2m.creeptenuous.redis.services.system;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFileSystemObject;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
 
 import java.util.List;
 
-public interface ServiceUploadDirectoryRedis {
+/**
+ * Service for loading file system objects and writing to Redis
+ */
+public interface ServiceUploadDirectoryRedis extends BaseServiceFileSystemRedis {
+
     /**
      * Save data directories
      * @param dataRedis entities must not be {@literal null} nor must it contain {@literal null}.
@@ -48,4 +53,5 @@ public interface ServiceUploadDirectoryRedis {
     default void upload(ContainerDataUploadFileSystemObject dataUploadFile) {
         upload(List.of(dataUploadFile));
     }
+
 }

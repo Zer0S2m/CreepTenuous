@@ -10,6 +10,7 @@ import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHan
 import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.ServiceMoveFile;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -20,9 +21,13 @@ import java.util.List;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
+/**
+ * File move service
+ */
 @ServiceFileSystem("service-move-file")
 @CoreServiceFileSystem(method = "move")
 public class ServiceMoveFileImpl implements ServiceMoveFile, AtomicServiceFileSystem {
+
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
@@ -76,7 +81,7 @@ public class ServiceMoveFileImpl implements ServiceMoveFile, AtomicServiceFileSy
                     )
             }
     )
-    public Path move(List<String> systemNameFiles, List<String> systemParents, List<String> systemToParents)
+    public Path move(@NotNull List<String> systemNameFiles, List<String> systemParents, List<String> systemToParents)
             throws IOException {
         List<Path> paths = new ArrayList<>();
         for (String nameFile : systemNameFiles) {
@@ -106,4 +111,5 @@ public class ServiceMoveFileImpl implements ServiceMoveFile, AtomicServiceFileSy
     public Path move(Path source, Path target) throws IOException {
         return FilesContextAtomic.move(source, target, ATOMIC_MOVE, REPLACE_EXISTING);
     }
+
 }

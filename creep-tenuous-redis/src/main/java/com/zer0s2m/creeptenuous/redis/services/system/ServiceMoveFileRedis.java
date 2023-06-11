@@ -1,13 +1,18 @@
 package com.zer0s2m.creeptenuous.redis.services.system;
 
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
 import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceRedis;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
-public interface ServiceMoveFileRedis extends BaseServiceRedis<FileRedis> {
+/**
+ * Service for servicing the movement of file system objects in Redis
+ */
+public interface ServiceMoveFileRedis extends BaseServiceRedis<FileRedis>, BaseServiceFileSystemRedis {
+
     /**
      * Move file in redis
      * @param systemPath system path file
@@ -23,4 +28,5 @@ public interface ServiceMoveFileRedis extends BaseServiceRedis<FileRedis> {
      * @return result move file(s)
      */
     Iterable<FileRedis> move(Path systemPath, List<String> systemNameFile);
+
 }

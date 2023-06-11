@@ -17,6 +17,7 @@ import com.zer0s2m.creeptenuous.services.system.ServiceCopyDirectory;
 import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.utils.UtilsFiles;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -24,9 +25,13 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
 
+/**
+ * Directory copy service
+ */
 @ServiceFileSystem("service-copy-directory")
 @CoreServiceFileSystem(method = "copy")
 public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicServiceFileSystem {
+
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     private final String rootPath;
@@ -41,7 +46,7 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicSer
     private final HashMap<String, String> paths = new HashMap<>();
 
     @Autowired
-    public ServiceCopyDirectoryImpl(ServiceBuildDirectoryPath buildDirectoryPath, RootPath rootPath) {
+    public ServiceCopyDirectoryImpl(ServiceBuildDirectoryPath buildDirectoryPath, @NotNull RootPath rootPath) {
         this.buildDirectoryPath = buildDirectoryPath;
         this.rootPath = rootPath.getRootPath();
     }
@@ -66,12 +71,8 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicSer
                     )
             }
     )
-    public List<ContainerInfoFileSystemObject> copy(
-            List<String> systemParents,
-            List<String> systemToParents,
-            String systemNameDirectory,
-            Integer method
-    ) throws IOException {
+    public List<ContainerInfoFileSystemObject> copy(List<String> systemParents, List<String> systemToParents,
+                                                    String systemNameDirectory, Integer method) throws IOException {
         Path source = Paths.get(buildDirectoryPath.build(systemParents), systemNameDirectory);
 
         if (Objects.equals(method, MethodCopyDirectory.FOLDER.getMethod())) {
@@ -106,7 +107,7 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicSer
      * Building paths {@link ServiceCopyDirectoryImpl#paths}
      * @param source source system file object
      */
-    private void buildingPaths(Path source) {
+    private void buildingPaths(@NotNull Path source) {
         String sourceStr = source.toString().replace(rootPath + Directory.SEPARATOR.get(), "");
         List<String> splitSource = Arrays.asList(sourceStr.split(Directory.SEPARATOR.get()));
 
@@ -126,7 +127,7 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicSer
      * @param source source system file object
      * @return parts system names for building path
      */
-    private Path getTarget(Path source, Integer method) {
+    private @NotNull Path getTarget(@NotNull Path source, @NotNull Integer method) {
         List<String> parts = new ArrayList<>();
         String sourceStr = source.toString().replace(rootPath + Directory.SEPARATOR.get(), "");
         List<String> splitSource = Arrays.asList(sourceStr.split(Directory.SEPARATOR.get()));
@@ -139,4 +140,5 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicSer
 
         return Paths.get(String.valueOf(this.target), String.join(Directory.SEPARATOR.get(), parts));
     }
+
 }

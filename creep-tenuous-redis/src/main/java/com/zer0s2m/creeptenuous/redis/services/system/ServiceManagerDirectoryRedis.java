@@ -2,10 +2,15 @@ package com.zer0s2m.creeptenuous.redis.services.system;
 
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
 
 import java.util.List;
 
-public interface ServiceManagerDirectoryRedis {
+/**
+ * Service for viewing file system objects in Redis
+ */
+public interface ServiceManagerDirectoryRedis extends BaseServiceFileSystemRedis {
+
     /**
      * Get data file system object
      * @param systemNamesFileSystemObject system path object ids {@link DirectoryRedis#getRealNameDirectory()}
@@ -13,4 +18,5 @@ public interface ServiceManagerDirectoryRedis {
      * @return json array
      */
     List<Object> build(List<String> systemNamesFileSystemObject);
+
 }

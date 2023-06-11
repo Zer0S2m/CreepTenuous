@@ -8,7 +8,7 @@ import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
-import com.zer0s2m.creeptenuous.services.redis.system.ServiceMoveDirectoryRedisImpl;
+import com.zer0s2m.creeptenuous.redis.services.system.ServiceMoveDirectoryRedis;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceMoveDirectoryImpl;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
@@ -28,16 +28,14 @@ public class ControllerApiMoveDirectory implements ControllerApiMoveDirectoryDoc
 
     private final ServiceMoveDirectoryImpl serviceMoveDirectory;
 
-    private final ServiceMoveDirectoryRedisImpl serviceMoveDirectoryRedis;
+    private final ServiceMoveDirectoryRedis serviceMoveDirectoryRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiMoveDirectory(
-            ServiceMoveDirectoryImpl serviceMoveDirectory,
-            ServiceMoveDirectoryRedisImpl serviceMoveDirectoryRedis,
-            ServiceManagerRights serviceManagerRights
-    ) {
+    public ControllerApiMoveDirectory(ServiceMoveDirectoryImpl serviceMoveDirectory,
+                                      ServiceMoveDirectoryRedis serviceMoveDirectoryRedis,
+                                      ServiceManagerRights serviceManagerRights) {
         this.serviceMoveDirectory = serviceMoveDirectory;
         this.serviceMoveDirectoryRedis = serviceMoveDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
@@ -46,23 +44,22 @@ public class ControllerApiMoveDirectory implements ControllerApiMoveDirectoryDoc
     /**
      * Move directory
      * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceMoveDirectoryImpl#move(List, List, String, Integer)}</p>
+     *
      * @param dataDirectory directory move data
-     * @param accessToken raw JWT access token
+     * @param accessToken   raw JWT access token
      * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
-     * @throws InstantiationException Thrown when an application tries to create an instance of a class
-     * using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
-     * tries to reflectively create an instance
+     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
+     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
+     *                                   using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
+     *                                   tries to reflectively create an instance
      */
     @Override
     @PutMapping("/directory/move")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public final void move(
-            final @Valid @RequestBody @NotNull DataMoveDirectoryApi dataDirectory,
-            @RequestHeader(name = "Authorization") String accessToken
-    ) throws InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException {
+    public final void move(final @Valid @RequestBody @NotNull DataMoveDirectoryApi dataDirectory,
+                           @RequestHeader(name = "Authorization") String accessToken)
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
 
@@ -94,4 +91,5 @@ public class ControllerApiMoveDirectory implements ControllerApiMoveDirectoryDoc
         );
         serviceMoveDirectoryRedis.move(infoMoving);
     }
+
 }

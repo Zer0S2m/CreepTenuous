@@ -2,11 +2,16 @@ package com.zer0s2m.creeptenuous.security.jwt.services;
 
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotValidPasswordException;
+import com.zer0s2m.creeptenuous.security.jwt.domain.JwtAuthentication;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.NoValidJwtRefreshTokenException;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtResponse;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtUserRequest;
 
+/**
+ * Service for maintenance of JW tokens
+ */
 public interface JwtService {
+
     /**
      * Login user in system
      * @param user data request user
@@ -33,4 +38,11 @@ public interface JwtService {
      * @throws UserNotFoundException not user in system
      */
     JwtResponse getRefreshToken(String refreshToken) throws NoValidJwtRefreshTokenException, UserNotFoundException;
+
+    /**
+     * Get user info from token
+     * @return user info
+     */
+    JwtAuthentication getAuthInfo();
+
 }

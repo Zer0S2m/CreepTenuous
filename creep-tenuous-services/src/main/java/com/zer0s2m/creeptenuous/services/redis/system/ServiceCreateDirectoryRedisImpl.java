@@ -7,23 +7,32 @@ import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateDirectoryRedis;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+/**
+ * Service for servicing the creation of file system objects by writing to Redis
+ */
 @Service("service-directory-redis")
 public class ServiceCreateDirectoryRedisImpl extends BaseServiceFileSystemRedisImpl
         implements ServiceCreateDirectoryRedis {
+
     @Autowired
-    public ServiceCreateDirectoryRedisImpl(
-            DirectoryRedisRepository redisRepository,
-            FileRedisRepository fileRedisRepository,
-            JwtProvider jwtProvider) {
+    public ServiceCreateDirectoryRedisImpl(DirectoryRedisRepository redisRepository,
+                                           FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
         super(redisRepository, fileRedisRepository, jwtProvider);
     }
 
-    public DirectoryRedis create(ContainerDataCreateDirectory dataCreatedDirectory) {
+    /**
+     * Creating a file system object in Redis
+     * @param dataCreatedDirectory data to create
+     * @return Redis object
+     */
+    @Override
+    public DirectoryRedis create(@NotNull ContainerDataCreateDirectory dataCreatedDirectory) {
         String loginUser = accessClaims.get("login", String.class);
         String roleUser = accessClaims.get("role", String.class);
 
@@ -39,8 +48,13 @@ public class ServiceCreateDirectoryRedisImpl extends BaseServiceFileSystemRedisI
         return objRedis;
     }
 
+    /**
+     * Push in redis one object
+     * @param objRedis must not be {@literal null}.
+     */
     @Override
     public void push(DirectoryRedis objRedis) {
         directoryRedisRepository.save(objRedis);
     }
+
 }

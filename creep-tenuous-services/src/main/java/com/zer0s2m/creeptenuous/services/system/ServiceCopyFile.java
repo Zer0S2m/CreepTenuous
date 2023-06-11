@@ -6,7 +6,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * File copy service
+ */
 public interface ServiceCopyFile {
+
     /**
      * Copy file
      * @param systemNameFile system name file
@@ -26,11 +30,8 @@ public interface ServiceCopyFile {
      * @return info copy files
      * @throws IOException system error
      */
-    List<ContainerDataCopyFile> copy(
-            List<String> systemNameFiles,
-            List<String> systemParents,
-            List<String> systemToParents
-    ) throws IOException;
+    List<ContainerDataCopyFile> copy(List<String> systemNameFiles, List<String> systemParents,
+                                     List<String> systemToParents) throws IOException;
 
     /**
      * Copy file
@@ -40,4 +41,5 @@ public interface ServiceCopyFile {
      * @throws IOException system error
      */
     ContainerDataCopyFile copy(Path source, Path target) throws IOException;
+
 }

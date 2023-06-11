@@ -16,4 +16,5 @@ public class ServiceRedisConfig {
             JwtProvider jwtProvider) {
         return new BaseServiceFileSystemRedisImpl(directoryRedisRepository, fileRedisRepository, jwtProvider);
     }
+
 }

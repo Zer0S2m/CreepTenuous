@@ -14,6 +14,7 @@ import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.utils.UtilsFiles;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,9 +25,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * File upload service
+ */
 @ServiceFileSystem("service-upload-file")
 @CoreServiceFileSystem(method = "upload")
 public class ServiceUploadFileImpl implements ServiceUploadFile, AtomicServiceFileSystem {
+
     Logger logger = LogManager.getLogger(ServiceUploadFileImpl.class);
 
     private final ServiceBuildDirectoryPath buildDirectoryPath;
@@ -54,10 +59,8 @@ public class ServiceUploadFileImpl implements ServiceUploadFile, AtomicServiceFi
                     )
             }
     )
-    public List<ResponseObjectUploadFileApi> upload(
-            List<MultipartFile> files,
-            List<String> systemParents
-    ) throws IOException {
+    public List<ResponseObjectUploadFileApi> upload(@NotNull List<MultipartFile> files, List<String> systemParents)
+            throws IOException {
         Path path = Paths.get(buildDirectoryPath.build(systemParents));
         return files
                 .stream()
@@ -95,4 +98,5 @@ public class ServiceUploadFileImpl implements ServiceUploadFile, AtomicServiceFi
                 })
                 .collect(Collectors.toList());
     }
+
 }

@@ -6,7 +6,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * File upload service
+ */
 public interface ServiceUploadFile {
+
     /**
      * Upload files
      * @param files files
@@ -15,4 +19,5 @@ public interface ServiceUploadFile {
      * @throws IOException system error
      */
     List<ResponseObjectUploadFileApi> upload(List<MultipartFile> files, List<String> systemParents) throws IOException;
+
 }

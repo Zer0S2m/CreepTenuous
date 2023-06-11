@@ -14,7 +14,6 @@ import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.JwtRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
-import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
@@ -50,23 +49,19 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
     private final RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
-    private final ServiceRedisManagerResources serviceRedisManagerResources;
-
     @Autowired
     public ServiceManagerRightsImpl(
             JwtProvider jwtProvider,
             DirectoryRedisRepository directoryRedisRepository,
             FileRedisRepository fileRedisRepository,
             RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository,
-            JwtRedisRepository jwtRedisRepository,
-            ServiceRedisManagerResources serviceRedisManagerResources
+            JwtRedisRepository jwtRedisRepository
     ) {
         this.jwtProvider = jwtProvider;
         this.directoryRedisRepository = directoryRedisRepository;
         this.fileRedisRepository = fileRedisRepository;
         this.rightUserFileSystemObjectRedisRepository = rightUserFileSystemObjectRedisRepository;
         this.jwtRedisRepository = jwtRedisRepository;
-        this.serviceRedisManagerResources = serviceRedisManagerResources;
     }
 
     /**
@@ -490,4 +485,5 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     public void setAccessClaims(Claims accessClaims) {
         this.accessClaims = accessClaims;
     }
+
 }

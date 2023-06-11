@@ -7,7 +7,7 @@ import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
-import com.zer0s2m.creeptenuous.services.redis.system.ServiceMoveFileRedisImpl;
+import com.zer0s2m.creeptenuous.redis.services.system.ServiceMoveFileRedis;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceMoveFileImpl;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
@@ -32,16 +32,13 @@ public class ControllerApiMoveFile implements ControllerApiMoveFileDoc {
 
     private final ServiceMoveFileImpl serviceMoveFile;
 
-    private final ServiceMoveFileRedisImpl serviceMoveFileRedis;
+    private final ServiceMoveFileRedis serviceMoveFileRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiMoveFile(
-            ServiceMoveFileImpl serviceMoveFile,
-            ServiceMoveFileRedisImpl serviceMoveFileRedis,
-            ServiceManagerRights serviceManagerRights
-    ) {
+    public ControllerApiMoveFile(ServiceMoveFileImpl serviceMoveFile, ServiceMoveFileRedis serviceMoveFileRedis,
+                                 ServiceManagerRights serviceManagerRights) {
         this.serviceMoveFile = serviceMoveFile;
         this.serviceMoveFileRedis = serviceMoveFileRedis;
         this.serviceManagerRights = serviceManagerRights;
@@ -51,21 +48,21 @@ public class ControllerApiMoveFile implements ControllerApiMoveFileDoc {
      * Move file
      * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceMoveFileImpl#move(String, List, List)}
      * or {@link ServiceMoveFileImpl#move(List, List, List)}</p>
-     * @param file file move data
+     *
+     * @param file        file move data
      * @param accessToken raw JWT access token
      * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
-     * @throws InstantiationException Thrown when an application tries to create an instance of a class
-     * using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
-     * tries to reflectively create an instance
+     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
+     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
+     *                                   using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
+     *                                   tries to reflectively create an instance
      */
     @Override
     @PutMapping("/file/move")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void move(
-            final @Valid @RequestBody @NotNull DataMoveFileApi file,
-            @RequestHeader(name = "Authorization") String accessToken
+    public void move(final @Valid @RequestBody @NotNull DataMoveFileApi file,
+                     @RequestHeader(name = "Authorization") String accessToken
     ) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
@@ -111,4 +108,5 @@ public class ControllerApiMoveFile implements ControllerApiMoveFileDoc {
             serviceMoveFileRedis.move(newPathsFile, file.systemNameFiles());
         }
     }
+
 }

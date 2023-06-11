@@ -8,25 +8,28 @@ import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceUploadDirectoryRedis;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisImpl;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service for loading file system objects and writing to Redis
+ */
 @Service("service-upload-directory-redis")
 public class ServiceUploadDirectoryRedisImpl extends BaseServiceFileSystemRedisImpl
         implements ServiceUploadDirectoryRedis {
+
     private String loginUser;
 
     private String roleUser;
 
     @Autowired
-    public ServiceUploadDirectoryRedisImpl(
-            DirectoryRedisRepository directoryRedisRepository,
-            FileRedisRepository fileRedisRepository,
-            JwtProvider jwtProvider
-    ) {
+    public ServiceUploadDirectoryRedisImpl(DirectoryRedisRepository directoryRedisRepository,
+                                           FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
         super(directoryRedisRepository, fileRedisRepository, jwtProvider);
     }
 
@@ -53,7 +56,7 @@ public class ServiceUploadDirectoryRedisImpl extends BaseServiceFileSystemRedisI
      * @param dataUploadFileList data upload file system objects
      */
     @Override
-    public void upload(List<ContainerDataUploadFileSystemObject> dataUploadFileList) {
+    public void upload(@NotNull List<ContainerDataUploadFileSystemObject> dataUploadFileList) {
         this.loginUser = accessClaims.get("login", String.class);
         this.roleUser = accessClaims.get("role", String.class);
 
@@ -77,7 +80,8 @@ public class ServiceUploadDirectoryRedisImpl extends BaseServiceFileSystemRedisI
      * @param dataUploadFile data
      * @return object in redis entity
      */
-    private DirectoryRedis buildDirectoryRedis(ContainerDataUploadFileSystemObject dataUploadFile) {
+    @Contract("_ -> new")
+    private @NotNull DirectoryRedis buildDirectoryRedis(@NotNull ContainerDataUploadFileSystemObject dataUploadFile) {
         return new DirectoryRedis(
                 this.loginUser,
                 this.roleUser,
@@ -93,7 +97,8 @@ public class ServiceUploadDirectoryRedisImpl extends BaseServiceFileSystemRedisI
      * @param dataUploadFile data
      * @return object in redis entity
      */
-    private FileRedis buildFileRedis(ContainerDataUploadFileSystemObject dataUploadFile) {
+    @Contract("_ -> new")
+    private @NotNull FileRedis buildFileRedis(@NotNull ContainerDataUploadFileSystemObject dataUploadFile) {
         return new FileRedis(
                 this.loginUser,
                 this.roleUser,
@@ -103,4 +108,5 @@ public class ServiceUploadDirectoryRedisImpl extends BaseServiceFileSystemRedisI
                 new ArrayList<>()
         );
     }
+
 }

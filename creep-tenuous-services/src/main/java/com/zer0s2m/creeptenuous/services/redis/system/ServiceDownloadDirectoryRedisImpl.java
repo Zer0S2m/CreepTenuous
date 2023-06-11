@@ -13,15 +13,17 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Service for downloading file system objects from Redis.
+ * <p>Getting resources</p>
+ */
 @Service("service-download-directory-redis")
 public class ServiceDownloadDirectoryRedisImpl extends BaseServiceFileSystemRedisImpl
         implements ServiceDownloadDirectoryRedis {
+
     @Autowired
-    public ServiceDownloadDirectoryRedisImpl(
-            DirectoryRedisRepository directoryRedisRepository,
-            FileRedisRepository fileRedisRepository,
-            JwtProvider jwtProvider
-    ) {
+    public ServiceDownloadDirectoryRedisImpl(DirectoryRedisRepository directoryRedisRepository,
+                                             FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
         super(directoryRedisRepository, fileRedisRepository, jwtProvider);
     }
 
@@ -44,4 +46,5 @@ public class ServiceDownloadDirectoryRedisImpl extends BaseServiceFileSystemRedi
 
         return map;
     }
+
 }

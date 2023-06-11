@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.security.jwt.filters.JwtFilter;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -22,10 +23,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @AllArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
+
     private final JwtProvider jwtProvider;
 
     @Bean
-    SecurityFilterChain springWebFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain springWebFilterChain(@NotNull HttpSecurity http) throws Exception {
         return http
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
@@ -53,14 +55,14 @@ public class SecurityConfig {
     }
 
     @Bean
-    UserDetailsService customUserDetailsService(final UserRepository users) {
+    UserDetailsService customUserDetailsService(final @NotNull UserRepository users) {
         return users::findByLogin;
     }
 
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration
-    ) throws Exception {
+            @NotNull AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
 }

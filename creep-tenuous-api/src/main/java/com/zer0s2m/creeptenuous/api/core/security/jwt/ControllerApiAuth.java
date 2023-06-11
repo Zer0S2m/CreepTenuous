@@ -11,8 +11,9 @@ import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotValidPas
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtRefreshTokenRequest;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtResponse;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtUserRequest;
-import com.zer0s2m.creeptenuous.services.jwt.JwtServiceImpl;
+import com.zer0s2m.creeptenuous.security.jwt.services.JwtService;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +21,11 @@ import org.springframework.web.bind.annotation.*;
 @V1APIRestController
 @CrossOrigin
 public class ControllerApiAuth implements ControllerApiAuthDoc {
-    private final JwtServiceImpl jwtService;
+
+    private final JwtService jwtService;
 
     @Autowired
-    public ControllerApiAuth(JwtServiceImpl jwtService) {
+    public ControllerApiAuth(JwtService jwtService) {
         this.jwtService = jwtService;
     }
 
@@ -36,9 +38,8 @@ public class ControllerApiAuth implements ControllerApiAuthDoc {
      */
     @Override
     @PostMapping(value = "/auth/login")
-    public JwtResponse login(
-            final @Valid @RequestBody JwtUserRequest user
-    ) throws UserNotFoundException, UserNotValidPasswordException {
+    public JwtResponse login(final @Valid @RequestBody JwtUserRequest user) throws UserNotFoundException,
+            UserNotValidPasswordException {
         return jwtService.login(user);
     }
 
@@ -51,9 +52,8 @@ public class ControllerApiAuth implements ControllerApiAuthDoc {
      */
     @Override
     @PostMapping(value = "/auth/token")
-    public JwtResponse access(
-            final @Valid @RequestBody JwtRefreshTokenRequest request
-    ) throws UserNotFoundException, NoValidJwtRefreshTokenException {
+    public JwtResponse access(final @Valid @RequestBody @NotNull JwtRefreshTokenRequest request)
+            throws UserNotFoundException, NoValidJwtRefreshTokenException {
         return jwtService.getAccessToken(request.refreshToken());
     }
 
@@ -66,27 +66,28 @@ public class ControllerApiAuth implements ControllerApiAuthDoc {
      */
     @Override
     @PostMapping(value = "/auth/refresh")
-    public JwtResponse refresh(
-            final @Valid @RequestBody JwtRefreshTokenRequest request
-    ) throws NoValidJwtRefreshTokenException, UserNotFoundException {
+    public JwtResponse refresh(final @Valid @RequestBody @NotNull JwtRefreshTokenRequest request)
+            throws NoValidJwtRefreshTokenException, UserNotFoundException {
         return jwtService.getRefreshToken(request.refreshToken());
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-    public UserNotFoundMsg handleExceptionNotIsExistsUser(UserNotFoundException error) {
+    public UserNotFoundMsg handleExceptionNotIsExistsUser(@NotNull UserNotFoundException error) {
         return new UserNotFoundMsg(error.getMessage());
     }
 
     @ExceptionHandler(UserNotValidPasswordException.class)
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-    public UserNotValidPasswordMsg handleExceptionNotValidPasswordUser(UserNotValidPasswordException error) {
+    public UserNotValidPasswordMsg handleExceptionNotValidPasswordUser(@NotNull UserNotValidPasswordException error) {
         return new UserNotValidPasswordMsg(error.getMessage());
     }
 
     @ExceptionHandler(NoValidJwtRefreshTokenException.class)
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-    public NoValidJwtRefreshTokenMsg handleExceptionNotValidPasswordUser(NoValidJwtRefreshTokenException error) {
+    public NoValidJwtRefreshTokenMsg handleExceptionNotValidPasswordUser(
+            @NotNull NoValidJwtRefreshTokenException error) {
         return new NoValidJwtRefreshTokenMsg(error.getMessage());
     }
+
 }
