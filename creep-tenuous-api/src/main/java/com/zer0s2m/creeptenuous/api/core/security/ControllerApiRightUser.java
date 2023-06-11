@@ -49,10 +49,9 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
     @Override
     @PostMapping("/user/right")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public ResponseCreateRightUserApi add(
-            final @Valid @RequestBody @NotNull DataCreateRightUserApi data,
-            @RequestHeader(name = "Authorization") String accessToken
-    ) throws NoExistsFileSystemObjectRedisException, UserNotFoundException, ChangeRightsYourselfException {
+    public ResponseCreateRightUserApi add(final @Valid @RequestBody @NotNull DataCreateRightUserApi data,
+                                          @RequestHeader(name = "Authorization") String accessToken)
+            throws NoExistsFileSystemObjectRedisException, UserNotFoundException, ChangeRightsYourselfException {
         serviceFileSystemRedis.setAccessToken(accessToken);
         serviceFileSystemRedis.checkRights(data.systemName());
 

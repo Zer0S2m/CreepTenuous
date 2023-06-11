@@ -10,9 +10,10 @@ import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionBadLevelDire
 import com.zer0s2m.creeptenuous.common.http.ResponseManagerDirectoryApi;
 import com.zer0s2m.creeptenuous.common.utils.OptionalMutable;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
-import com.zer0s2m.creeptenuous.services.redis.system.ServiceManagerDirectoryRedisImpl;
+import com.zer0s2m.creeptenuous.redis.services.system.ServiceManagerDirectoryRedis;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceManagerDirectoryImpl;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -27,16 +28,14 @@ public class ControllerApiManagerDirectoryApi implements ControllerApiManagerDir
 
     private final ServiceManagerDirectoryImpl builderDirectory;
 
-    private final ServiceManagerDirectoryRedisImpl serviceManagerDirectoryRedis;
+    private final ServiceManagerDirectoryRedis serviceManagerDirectoryRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiManagerDirectoryApi(
-            ServiceManagerDirectoryImpl builderDirectory,
-            ServiceManagerDirectoryRedisImpl serviceManagerDirectoryRedis,
-            ServiceManagerRights serviceManagerRights
-    ) {
+    public ControllerApiManagerDirectoryApi(ServiceManagerDirectoryImpl builderDirectory,
+                                            ServiceManagerDirectoryRedis serviceManagerDirectoryRedis,
+                                            ServiceManagerRights serviceManagerRights) {
         this.builderDirectory = builderDirectory;
         this.serviceManagerDirectoryRedis = serviceManagerDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
@@ -44,18 +43,18 @@ public class ControllerApiManagerDirectoryApi implements ControllerApiManagerDir
 
     /**
      * Manager directory - get all directories by level
+     *
      * @param data data manager directory
      * @return result manager build info in directory
-     * @throws IOException if an I/O error occurs or the parent directory does not exist
-     * @throws NotValidLevelDirectoryException  invalid level directory
+     * @throws IOException                     if an I/O error occurs or the parent directory does not exist
+     * @throws NotValidLevelDirectoryException invalid level directory
      */
     @Override
     @PostMapping("/directory")
     @ResponseStatus(code = HttpStatus.OK)
-    public ResponseManagerDirectoryApi manager(
-            final @Valid @RequestBody DataManagerDirectoryApi data,
-            @RequestHeader(name = "Authorization") String accessToken
-    ) throws IOException, NotValidLevelDirectoryException {
+    public ResponseManagerDirectoryApi manager(final @Valid @RequestBody @NotNull DataManagerDirectoryApi data,
+                                               @RequestHeader(name = "Authorization") String accessToken)
+            throws IOException, NotValidLevelDirectoryException {
         serviceManagerDirectoryRedis.setAccessToken(accessToken);
         serviceManagerDirectoryRedis.setIsException(false);
 
@@ -91,7 +90,8 @@ public class ControllerApiManagerDirectoryApi implements ControllerApiManagerDir
 
     @ExceptionHandler(NotValidLevelDirectoryException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ExceptionBadLevelDirectoryMsg handleExceptionBadLevel(NotValidLevelDirectoryException error) {
+    public ExceptionBadLevelDirectoryMsg handleExceptionBadLevel(@NotNull NotValidLevelDirectoryException error) {
         return new ExceptionBadLevelDirectoryMsg(error.getMessage());
     }
+
 }

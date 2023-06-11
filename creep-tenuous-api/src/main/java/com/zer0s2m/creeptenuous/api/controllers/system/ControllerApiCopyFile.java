@@ -9,9 +9,10 @@ import com.zer0s2m.creeptenuous.common.http.ResponseCopyFileApi;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
-import com.zer0s2m.creeptenuous.services.redis.system.ServiceCopyFileRedisImpl;
+import com.zer0s2m.creeptenuous.redis.services.system.ServiceCopyFileRedis;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCopyFileImpl;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,16 +35,13 @@ public class ControllerApiCopyFile implements ControllerApiCopyFileDoc {
 
     private final ServiceCopyFileImpl serviceCopyFile;
 
-    private final ServiceCopyFileRedisImpl serviceCopyFileRedis;
+    private final ServiceCopyFileRedis serviceCopyFileRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiCopyFile(
-            ServiceCopyFileImpl serviceCopyFile,
-            ServiceCopyFileRedisImpl serviceCopyFileRedis,
-            ServiceManagerRights serviceManagerRights
-    ) {
+    public ControllerApiCopyFile(ServiceCopyFileImpl serviceCopyFile, ServiceCopyFileRedis serviceCopyFileRedis,
+                                 ServiceManagerRights serviceManagerRights) {
         this.serviceCopyFile = serviceCopyFile;
         this.serviceCopyFileRedis = serviceCopyFileRedis;
         this.serviceManagerRights = serviceManagerRights;
@@ -53,25 +51,25 @@ public class ControllerApiCopyFile implements ControllerApiCopyFileDoc {
      * Copy file(s)
      * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceCopyFileImpl#copy(String, List, List)}
      * or {@link ServiceCopyFileImpl#copy(List, List, List)}</p>
-     * @param file copy data file
+     *
+     * @param file        copy data file
      * @param accessToken raw JWT access token
      * @return result copy file(s)
-     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     * @throws IOException               if an I/O error occurs or the parent directory does not exist
      * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
-     * @throws InstantiationException Thrown when an application tries to create an instance of a class
-     * using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
-     * tries to reflectively create an instance
+     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
+     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
+     *                                   using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
+     *                                   tries to reflectively create an instance
      */
     @Override
     @PostMapping("/file/copy")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public ResponseCopyFileApi copy(
-            final @Valid @RequestBody DataCopyFileApi file,
-            @RequestHeader(name = "Authorization") String accessToken
-    ) throws IOException, InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException {
+    public ResponseCopyFileApi copy(final @Valid @RequestBody @NotNull DataCopyFileApi file,
+                                    @RequestHeader(name = "Authorization") String accessToken)
+            throws IOException, InvocationTargetException, NoSuchMethodException, InstantiationException,
+            IllegalAccessException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
 
@@ -123,4 +121,5 @@ public class ControllerApiCopyFile implements ControllerApiCopyFileDoc {
             return new ResponseCopyFileApi(containersData);
         }
     }
+
 }

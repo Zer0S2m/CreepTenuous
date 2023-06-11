@@ -8,6 +8,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
 public class AsyncConfig implements AsyncConfigurer {
+
     @Bean("taskExecutor")
     @Override
     public AsyncTaskExecutor getAsyncExecutor() {
@@ -18,4 +19,5 @@ public class AsyncConfig implements AsyncConfigurer {
         executor.initialize();
         return executor;
     }
+
 }

@@ -8,11 +8,12 @@ import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
-import com.zer0s2m.creeptenuous.services.redis.system.ServiceDownloadDirectoryRedisImpl;
+import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectoryRedis;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectoryImpl;
 import com.zer0s2m.creeptenuous.services.system.utils.WalkDirectoryInfo;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
     private final ServiceDownloadDirectoryImpl serviceDownloadDirectory;
 
-    private final ServiceDownloadDirectoryRedisImpl serviceDownloadDirectoryRedis;
+    private final ServiceDownloadDirectoryRedis serviceDownloadDirectoryRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
@@ -46,7 +47,7 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
     public ControllerApiDownloadDirectory(
             ServiceBuildDirectoryPath buildDirectoryPath,
             ServiceDownloadDirectoryImpl serviceDownloadDirectory,
-            ServiceDownloadDirectoryRedisImpl serviceDownloadDirectoryRedis,
+            ServiceDownloadDirectoryRedis serviceDownloadDirectoryRedis,
             ServiceManagerRights serviceManagerRights
     ) {
         this.buildDirectoryPath = buildDirectoryPath;
@@ -58,24 +59,24 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
     /**
      * Download directory
      * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceDownloadDirectoryImpl#download(List, String)}</p>
-     * @param data directory download data
+     *
+     * @param data        directory download data
      * @param accessToken raw JWT access token
      * @return zip file
-     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     * @throws IOException               if an I/O error occurs or the parent directory does not exist
      * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
-     * @throws InstantiationException Thrown when an application tries to create an instance of a class
-     * using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
-     * tries to reflectively create an instance
+     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
+     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
+     *                                   using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
+     *                                   tries to reflectively create an instance
      */
     @Override
     @PostMapping(path = "/directory/download")
-    public final ResponseEntity<Resource> download(
-            final @Valid @RequestBody DataDownloadDirectoryApi data,
-            @RequestHeader(name = "Authorization") String accessToken
-    ) throws IOException, InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException {
+    public final ResponseEntity<Resource> download(final @Valid @RequestBody @NotNull DataDownloadDirectoryApi data,
+                                                   @RequestHeader(name = "Authorization") String accessToken)
+            throws IOException, InvocationTargetException, NoSuchMethodException, InstantiationException,
+            IllegalAccessException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
 
@@ -111,4 +112,5 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
                 data.systemDirectoryName()
         );
     }
+
 }

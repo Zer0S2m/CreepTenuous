@@ -2,13 +2,14 @@ package com.zer0s2m.creeptenuous.redis.services.system;
 
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
 
 import java.util.List;
 
 /**
  * Service for viewing file system objects in Redis
  */
-public interface ServiceManagerDirectoryRedis {
+public interface ServiceManagerDirectoryRedis extends BaseServiceFileSystemRedis {
 
     /**
      * Get data file system object

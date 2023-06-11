@@ -6,9 +6,10 @@ import com.zer0s2m.creeptenuous.common.data.DataDeleteFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
-import com.zer0s2m.creeptenuous.services.redis.system.ServiceDeleteFileRedisImpl;
+import com.zer0s2m.creeptenuous.redis.services.system.ServiceDeleteFileRedis;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteFileImpl;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -26,16 +27,14 @@ public class ControllerApiDeleteFile implements ControllerApiDeleteFileDoc {
 
     private final ServiceDeleteFileImpl serviceDeleteFile;
 
-    private final ServiceDeleteFileRedisImpl serviceDeleteFileRedis;
+    private final ServiceDeleteFileRedis serviceDeleteFileRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiDeleteFile(
-            ServiceDeleteFileImpl serviceDeleteFile,
-            ServiceDeleteFileRedisImpl serviceDeleteFileRedis,
-            ServiceManagerRights serviceManagerRights
-    ) {
+    public ControllerApiDeleteFile(ServiceDeleteFileImpl serviceDeleteFile,
+                                   ServiceDeleteFileRedis serviceDeleteFileRedis,
+                                   ServiceManagerRights serviceManagerRights) {
         this.serviceDeleteFile = serviceDeleteFile;
         this.serviceDeleteFileRedis = serviceDeleteFileRedis;
         this.serviceManagerRights = serviceManagerRights;
@@ -43,22 +42,22 @@ public class ControllerApiDeleteFile implements ControllerApiDeleteFileDoc {
 
     /**
      * Delete file
-     * @param file file delete data
+     *
+     * @param file        file delete data
      * @param accessToken raw JWT access token
      * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
-     * @throws InstantiationException Thrown when an application tries to create an instance of a class
-     * using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
-     * tries to reflectively create an instance
+     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
+     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
+     *                                   using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
+     *                                   tries to reflectively create an instance
      */
     @Override
     @DeleteMapping("/file/delete")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void deleteFile(
-            final @Valid @RequestBody DataDeleteFileApi file,
-            @RequestHeader(name = "Authorization") String accessToken
-    ) throws InvocationTargetException, NoSuchMethodException,
+    public void deleteFile(final @Valid @RequestBody @NotNull DataDeleteFileApi file,
+                           @RequestHeader(name = "Authorization") String accessToken)
+            throws InvocationTargetException, NoSuchMethodException,
             InstantiationException, IllegalAccessException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
@@ -84,4 +83,5 @@ public class ControllerApiDeleteFile implements ControllerApiDeleteFileDoc {
         );
         serviceDeleteFileRedis.delete(source, file.systemFileName());
     }
+
 }

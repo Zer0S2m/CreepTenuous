@@ -9,9 +9,10 @@ import com.zer0s2m.creeptenuous.common.http.ResponseCopyDirectoryApi;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
-import com.zer0s2m.creeptenuous.services.redis.system.ServiceCopyDirectoryRedisImpl;
+import com.zer0s2m.creeptenuous.redis.services.system.ServiceCopyDirectoryRedis;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCopyDirectoryImpl;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,16 +32,14 @@ public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc
 
     private final ServiceCopyDirectoryImpl serviceCopyDirectory;
 
-    private final ServiceCopyDirectoryRedisImpl serviceCopyDirectoryRedis;
+    private final ServiceCopyDirectoryRedis serviceCopyDirectoryRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiCopyDirectory(
-            ServiceCopyDirectoryImpl serviceCopyDirectory,
-            ServiceCopyDirectoryRedisImpl serviceCopyDirectoryRedis,
-            ServiceManagerRights serviceManagerRights
-    ) {
+    public ControllerApiCopyDirectory(ServiceCopyDirectoryImpl serviceCopyDirectory,
+                                      ServiceCopyDirectoryRedis serviceCopyDirectoryRedis,
+                                      ServiceManagerRights serviceManagerRights) {
         this.serviceCopyDirectory = serviceCopyDirectory;
         this.serviceCopyDirectoryRedis = serviceCopyDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
@@ -49,24 +48,23 @@ public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc
     /**
      * Copy directory
      * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceCopyDirectoryImpl#copy(List, List, String, Integer)}</p>
+     *
      * @param dataDirectory Directory copy data
-     * @param accessToken Raw JWT access token
+     * @param accessToken   Raw JWT access token
      * @return Result copy directory
      * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
-     * @throws InstantiationException Thrown when an application tries to create an instance of a class
-     * using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
-     * tries to reflectively create an instance
+     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
+     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
+     *                                   using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
+     *                                   tries to reflectively create an instance
      */
     @Override
     @PostMapping("/directory/copy")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseCopyDirectoryApi copy(
-            final @Valid @RequestBody DataCopyDirectoryApi dataDirectory,
-            @RequestHeader(name = "Authorization") String accessToken
-    ) throws InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException {
+    public ResponseCopyDirectoryApi copy(final @Valid @RequestBody @NotNull DataCopyDirectoryApi dataDirectory,
+                                         @RequestHeader(name = "Authorization") String accessToken)
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
 
@@ -101,4 +99,5 @@ public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc
 
         return new ResponseCopyDirectoryApi(attached);
     }
+
 }

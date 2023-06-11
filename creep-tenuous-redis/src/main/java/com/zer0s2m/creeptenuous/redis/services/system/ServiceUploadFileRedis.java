@@ -2,6 +2,7 @@ package com.zer0s2m.creeptenuous.redis.services.system;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFile;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
 import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceRedis;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * Service for loading file system objects and writing to Redis
  */
-public interface ServiceUploadFileRedis extends BaseServiceRedis<FileRedis> {
+public interface ServiceUploadFileRedis extends BaseServiceRedis<FileRedis>, BaseServiceFileSystemRedis {
 
     /**
      * Push data in redis create file
