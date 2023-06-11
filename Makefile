@@ -29,4 +29,4 @@ build-scip-tests:
 	mvn clean install -Dmaven.test.skip
 
 run:
-	java -jar creep-tenuous-api/target/creep-tenuous-api-0.0.3-SNAPSHOT.jar
+	java -jar creep-tenuous-api/target/creep-tenuous-api-0.0.4-SNAPSHOT.jar
