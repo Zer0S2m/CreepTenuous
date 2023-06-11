@@ -6,7 +6,11 @@ import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 
 import java.util.List;
 
+/**
+ * Service for loading file system objects and writing to Redis
+ */
 public interface ServiceUploadDirectoryRedis {
+
     /**
      * Save data directories
      * @param dataRedis entities must not be {@literal null} nor must it contain {@literal null}.
@@ -48,4 +52,5 @@ public interface ServiceUploadDirectoryRedis {
     default void upload(ContainerDataUploadFileSystemObject dataUploadFile) {
         upload(List.of(dataUploadFile));
     }
+
 }

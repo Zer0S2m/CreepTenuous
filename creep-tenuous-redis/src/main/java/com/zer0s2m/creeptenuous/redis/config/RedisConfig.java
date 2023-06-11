@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 @Configuration
 public class RedisConfig {
+
     @Bean
     LettuceConnectionFactory redisConnectionFactory() {
         return new LettuceConnectionFactory();
@@ -20,4 +21,5 @@ public class RedisConfig {
         template.setConnectionFactory(redisConnectionFactory);
         return template;
     }
+
 }

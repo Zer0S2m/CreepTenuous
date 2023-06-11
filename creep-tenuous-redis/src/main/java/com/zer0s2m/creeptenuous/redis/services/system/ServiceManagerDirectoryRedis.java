@@ -5,7 +5,11 @@ import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 
 import java.util.List;
 
+/**
+ * Service for viewing file system objects in Redis
+ */
 public interface ServiceManagerDirectoryRedis {
+
     /**
      * Get data file system object
      * @param systemNamesFileSystemObject system path object ids {@link DirectoryRedis#getRealNameDirectory()}
@@ -13,4 +17,5 @@ public interface ServiceManagerDirectoryRedis {
      * @return json array
      */
     List<Object> build(List<String> systemNamesFileSystemObject);
+
 }

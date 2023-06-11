@@ -14,14 +14,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service for copying file system objects by writing to Redis
+ */
 @Service("service-copy-file-redis")
 public class ServiceCopyFileRedisImpl extends BaseServiceFileSystemRedisImpl implements ServiceCopyFileRedis {
+
     @Autowired
-    public ServiceCopyFileRedisImpl(
-            DirectoryRedisRepository directoryRedisRepository,
-            FileRedisRepository fileRedisRepository,
-            JwtProvider jwtProvider
-    ) {
+    public ServiceCopyFileRedisImpl(DirectoryRedisRepository directoryRedisRepository,
+                                    FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
         super(directoryRedisRepository, fileRedisRepository, jwtProvider);
     }
 
@@ -59,6 +60,10 @@ public class ServiceCopyFileRedisImpl extends BaseServiceFileSystemRedisImpl imp
         return newObjsRedis;
     }
 
+    /**
+     * Push in redis one object
+     * @param objRedis must not be {@literal null}.
+     */
     @Override
     public void push(FileRedis objRedis) {
         fileRedisRepository.save(objRedis);
@@ -71,4 +76,5 @@ public class ServiceCopyFileRedisImpl extends BaseServiceFileSystemRedisImpl imp
     public void push(List<FileRedis> entities) {
         fileRedisRepository.saveAll(entities);
     }
+
 }

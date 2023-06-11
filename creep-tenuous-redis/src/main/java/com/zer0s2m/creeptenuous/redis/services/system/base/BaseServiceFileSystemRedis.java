@@ -4,6 +4,12 @@ import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
 
 import java.util.List;
 
+/**
+ * Basic service for serving file system objects in Redis.
+ * <ul>
+ *     <li>Checking Ownership of an Object</li>
+ * </ul>
+ */
 public interface BaseServiceFileSystemRedis {
 
     /**

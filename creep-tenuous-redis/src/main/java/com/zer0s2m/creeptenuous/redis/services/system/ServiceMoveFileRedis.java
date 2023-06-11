@@ -7,7 +7,11 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service for servicing the movement of file system objects in Redis
+ */
 public interface ServiceMoveFileRedis extends BaseServiceRedis<FileRedis> {
+
     /**
      * Move file in redis
      * @param systemPath system path file
@@ -23,4 +27,5 @@ public interface ServiceMoveFileRedis extends BaseServiceRedis<FileRedis> {
      * @return result move file(s)
      */
     Iterable<FileRedis> move(Path systemPath, List<String> systemNameFile);
+
 }

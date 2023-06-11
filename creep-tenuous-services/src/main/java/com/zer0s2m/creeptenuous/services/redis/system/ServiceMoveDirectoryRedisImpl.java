@@ -8,6 +8,7 @@ import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceMoveDirectoryRedis;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisImpl;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +16,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Service for servicing the movement of file system objects in Redis
+ */
 @Service("service-move-directory-redis")
 public class ServiceMoveDirectoryRedisImpl extends BaseServiceFileSystemRedisImpl
         implements ServiceMoveDirectoryRedis {
+
     /**
      * <b>Key</b> - old source system path<br>
      * <b>Value</b> - new target system path
@@ -25,11 +30,8 @@ public class ServiceMoveDirectoryRedisImpl extends BaseServiceFileSystemRedisImp
     private final HashMap<String, String> newPaths = new HashMap<>();
 
     @Autowired
-    public ServiceMoveDirectoryRedisImpl(
-            DirectoryRedisRepository directoryRedisRepository,
-            FileRedisRepository fileRedisRepository,
-            JwtProvider jwtProvider
-    ) {
+    public ServiceMoveDirectoryRedisImpl(DirectoryRedisRepository directoryRedisRepository,
+                                         FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
         super(directoryRedisRepository, fileRedisRepository, jwtProvider);
     }
 
@@ -38,7 +40,7 @@ public class ServiceMoveDirectoryRedisImpl extends BaseServiceFileSystemRedisImp
      * @param attachedSourceSystem info directory from source path
      */
     @Override
-    public void move(List<ContainerInfoFileSystemObject> attachedSourceSystem) {
+    public void move(@NotNull List<ContainerInfoFileSystemObject> attachedSourceSystem) {
         List<String> namesFilesIds = new ArrayList<>();
         List<String> namesDirectoriesIds = new ArrayList<>();
 
@@ -84,4 +86,5 @@ public class ServiceMoveDirectoryRedisImpl extends BaseServiceFileSystemRedisImp
     public void pushFileRedis(Iterable<FileRedis> fileRedisList) {
         fileRedisRepository.saveAll(fileRedisList);
     }
+
 }
