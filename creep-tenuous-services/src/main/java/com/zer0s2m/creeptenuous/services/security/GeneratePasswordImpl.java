@@ -5,8 +5,12 @@ import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for creating and verifying passwords for users in the system
+ */
 @Service("generate-password")
 public class GeneratePasswordImpl implements GeneratePassword {
+
     private final Argon2 generate;
 
     public GeneratePasswordImpl() {
@@ -33,4 +37,5 @@ public class GeneratePasswordImpl implements GeneratePassword {
     public final Boolean verify(String password, String hashPassword) {
         return this.generate.verify(hashPassword, password.toCharArray());
     }
+
 }

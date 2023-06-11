@@ -5,7 +5,11 @@ import com.zer0s2m.creeptenuous.security.jwt.domain.JwtRedisData;
 
 import java.util.Optional;
 
+/**
+ * Service for maintaining JW tokens in the Redis database
+ */
 public interface ServiceJwtRedis {
+
     /**
      * Save data tokens in redis
      * @param data data tokens
@@ -36,4 +40,5 @@ public interface ServiceJwtRedis {
      * @param data access token
      */
     void updateAccessToken(JwtRedisData data);
+
 }

@@ -1,24 +1,29 @@
-package com.zer0s2m.creeptenuous.services.user;
+package com.zer0s2m.creeptenuous.services.user.impl;
 
 import com.zer0s2m.creeptenuous.common.exceptions.UserAlreadyExistException;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.models.user.User;
-import com.zer0s2m.creeptenuous.services.security.GeneratePasswordImpl;
+import com.zer0s2m.creeptenuous.security.services.GeneratePassword;
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import com.zer0s2m.creeptenuous.common.enums.UserAlready;
+import com.zer0s2m.creeptenuous.services.user.ServiceCreateUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * {@link User} model maintenance service
+ */
 @Service("service-create-user")
 public class ServiceCreateUserImpl implements ServiceCreateUser {
+
     private final UserRepository userRepository;
 
-    private final GeneratePasswordImpl generatePassword;
+    private final GeneratePassword generatePassword;
 
     @Autowired
-    public ServiceCreateUserImpl(UserRepository userRepository, GeneratePasswordImpl generatePassword) {
+    public ServiceCreateUserImpl(UserRepository userRepository, GeneratePassword generatePassword) {
         this.userRepository = userRepository;
         this.generatePassword = generatePassword;
     }
@@ -53,4 +58,5 @@ public class ServiceCreateUserImpl implements ServiceCreateUser {
         userRepository.save(user);
         return user.getId();
     }
+
 }

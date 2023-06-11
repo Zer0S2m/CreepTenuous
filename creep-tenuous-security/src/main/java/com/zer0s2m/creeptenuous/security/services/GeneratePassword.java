@@ -1,6 +1,10 @@
 package com.zer0s2m.creeptenuous.security.services;
 
+/**
+ * Service for creating and verifying passwords for users in the system
+ */
 public interface GeneratePassword {
+
     /**
      * Generate password
      * @param password raw password
@@ -15,4 +19,5 @@ public interface GeneratePassword {
      * @return is valid
      */
     Boolean verify(String password, String hashPassword);
+
 }

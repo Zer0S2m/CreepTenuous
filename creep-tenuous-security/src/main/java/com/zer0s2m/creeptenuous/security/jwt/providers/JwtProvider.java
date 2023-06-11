@@ -2,7 +2,7 @@ package com.zer0s2m.creeptenuous.security.jwt.providers;
 
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtUserRequest;
-import org.springframework.lang.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import javax.crypto.SecretKey;
 import io.jsonwebtoken.Claims;
@@ -17,21 +17,31 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.security.Key;
 
+/**
+ * Provider for the generation and verification of JWT tokens
+ */
 @Service("jwt-provider")
 public class JwtProvider {
+
     private final SecretKey jwtAccessSecret;
+
     private final SecretKey jwtRefreshSecret;
 
     public JwtProvider(
-            final @Value("${jwt.secret.access}") String jwtAccessSecret,
-            final @Value("${jwt.secret.refresh}") String jwtRefreshSecret
+            final @Value("${jwt.secret.access}") @NotNull String jwtAccessSecret,
+            final @Value("${jwt.secret.refresh}") @NotNull String jwtRefreshSecret
     ) {
         this.jwtAccessSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret.trim()));
         this.jwtRefreshSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtRefreshSecret.trim()));
     }
 
-    @NonNull
-    public String generateAccessToken(@NonNull JwtUserRequest user, @NonNull UserRole role) {
+    /**
+     * Get to generate a JWT access token
+     * @param user user data
+     * @param role user role
+     * @return JWT access token
+     */
+    public String generateAccessToken(@NotNull JwtUserRequest user, @NotNull UserRole role) {
         final LocalDateTime now = LocalDateTime.now();
         final int validityInMsAccess = 10 * 10;
         final Instant accessExpirationInstant = now
@@ -48,8 +58,12 @@ public class JwtProvider {
                 .compact();
     }
 
-    @NonNull
-    public String generateRefreshToken(@NonNull JwtUserRequest user) {
+    /**
+     * Get to generate a JWT refresh token
+     * @param user user data
+     * @return JWT refresh token
+     */
+    public String generateRefreshToken(@NotNull JwtUserRequest user) {
         final LocalDateTime now = LocalDateTime.now();
         final int validityInDaysRefresh = 30;
         final Instant refreshExpirationInstant = now
@@ -64,18 +78,31 @@ public class JwtProvider {
                 .compact();
     }
 
-    @NonNull
-    public Boolean validateAccessToken(@NonNull String accessToken) {
+    /**
+     * Validation for JWT access token
+     * @param accessToken JWT access token
+     * @return is it valid
+     */
+    public Boolean validateAccessToken(String accessToken) {
         return validateToken(accessToken, jwtAccessSecret);
     }
 
-    @NonNull
-    public Boolean validateRefreshToken(@NonNull String refreshToken) {
+    /**
+     * Validation for JWT refresh token
+     * @param refreshToken JWT refresh token
+     * @return is it valid
+     */
+    public Boolean validateRefreshToken(String refreshToken) {
         return validateToken(refreshToken, jwtRefreshSecret);
     }
 
-    @NonNull
-    private boolean validateToken(@NonNull String token, @NonNull Key secret) {
+    /**
+     * Validation for JWT token
+     * @param token JWT token
+     * @param secret the secret key
+     * @return is it valid
+     */
+    private boolean validateToken(String token, Key secret) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(secret)
@@ -87,19 +114,36 @@ public class JwtProvider {
         }
     }
 
-    public Claims getAccessClaims(@NonNull String token) {
+    /**
+     * Get JWT access token claims
+     * @param token JWT access token
+     * @return JWT token claims
+     */
+    public Claims getAccessClaims(String token) {
         return getClaims(token, jwtAccessSecret);
     }
 
-    public Claims getRefreshClaims(@NonNull String token) {
+    /**
+     * Get JWT refresh token claims
+     * @param token JWT refresh token
+     * @return JWT token claims
+     */
+    public Claims getRefreshClaims(String token) {
         return getClaims(token, jwtRefreshSecret);
     }
 
-    private Claims getClaims(@NonNull String token, @NonNull Key secret) {
+    /**
+     * JWT token claims
+     * @param token JWT token
+     * @param secret the secret key
+     * @return JWT token claims
+     */
+    private Claims getClaims(String token, Key secret) {
         return Jwts.parserBuilder()
                 .setSigningKey(secret)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
+
 }

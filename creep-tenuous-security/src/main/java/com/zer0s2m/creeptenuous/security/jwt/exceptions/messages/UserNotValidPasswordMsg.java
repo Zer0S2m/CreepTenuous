@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.security.jwt.exceptions.messages;
 import org.springframework.http.HttpStatus;
 
 public class UserNotValidPasswordMsg {
+
     private final String message;
     private final Integer status = HttpStatus.BAD_REQUEST.value();
 
@@ -17,4 +18,5 @@ public class UserNotValidPasswordMsg {
     public Integer getStatus() {
         return status;
     }
+
 }

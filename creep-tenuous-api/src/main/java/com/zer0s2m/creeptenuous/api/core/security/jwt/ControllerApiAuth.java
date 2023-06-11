@@ -11,7 +11,7 @@ import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotValidPas
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtRefreshTokenRequest;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtResponse;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtUserRequest;
-import com.zer0s2m.creeptenuous.services.jwt.JwtServiceImpl;
+import com.zer0s2m.creeptenuous.security.jwt.services.JwtService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,10 +20,11 @@ import org.springframework.web.bind.annotation.*;
 @V1APIRestController
 @CrossOrigin
 public class ControllerApiAuth implements ControllerApiAuthDoc {
-    private final JwtServiceImpl jwtService;
+
+    private final JwtService jwtService;
 
     @Autowired
-    public ControllerApiAuth(JwtServiceImpl jwtService) {
+    public ControllerApiAuth(JwtService jwtService) {
         this.jwtService = jwtService;
     }
 
@@ -89,4 +90,5 @@ public class ControllerApiAuth implements ControllerApiAuthDoc {
     public NoValidJwtRefreshTokenMsg handleExceptionNotValidPasswordUser(NoValidJwtRefreshTokenException error) {
         return new NoValidJwtRefreshTokenMsg(error.getMessage());
     }
+
 }
