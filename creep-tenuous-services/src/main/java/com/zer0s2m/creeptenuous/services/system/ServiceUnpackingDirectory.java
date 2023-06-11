@@ -4,10 +4,14 @@ import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFileSystemO
 import com.zer0s2m.creeptenuous.common.containers.ContainerUploadFile;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.services.system.utils.ThreadUnpackingDirectory;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * Service to start unzipping a zip archive when uploading a directory (zip archive)
+ */
 public interface ServiceUnpackingDirectory {
 
     /**
@@ -17,7 +21,7 @@ public interface ServiceUnpackingDirectory {
      * @param callClassName caller class from method
      */
     default List<ContainerDataUploadFileSystemObject> unpacking(
-            ContainerUploadFile container, Path outputDirectory, String callClassName)
+            @NotNull ContainerUploadFile container, Path outputDirectory, String callClassName)
             throws InterruptedException {
         ThreadUnpackingDirectory threadUnpacking = new ThreadUnpackingDirectory(
                 Directory.THREAD_NAME_UNPACKING_DIRECTORY.get(),

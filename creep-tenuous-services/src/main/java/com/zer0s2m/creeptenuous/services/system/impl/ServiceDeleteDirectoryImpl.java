@@ -20,9 +20,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Maintenance service directory removal
+ */
 @ServiceFileSystem("delete-directory")
 @CoreServiceFileSystem(method = "delete")
 public class ServiceDeleteDirectoryImpl implements ServiceDeleteDirectory, AtomicServiceFileSystem {
+
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
@@ -47,10 +51,7 @@ public class ServiceDeleteDirectoryImpl implements ServiceDeleteDirectory, Atomi
                     )
             }
     )
-    public void delete(
-            List<String> systemParents,
-            String systemName
-    ) throws IOException {
+    public void delete(List<String> systemParents, String systemName) throws IOException {
         Path path = Paths.get(buildDirectoryPath.build(systemParents), systemName);
 
         if (Files.isDirectory(path)) {
@@ -62,4 +63,5 @@ public class ServiceDeleteDirectoryImpl implements ServiceDeleteDirectory, Atomi
             }
         }
     }
+
 }

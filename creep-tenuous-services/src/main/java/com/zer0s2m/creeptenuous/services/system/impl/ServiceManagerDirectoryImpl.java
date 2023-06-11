@@ -6,14 +6,19 @@ import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.common.exceptions.NotValidLevelDirectoryException;
 import com.zer0s2m.creeptenuous.services.system.ServiceManagerDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.List;
 
+/**
+ * A service for servicing all information and operations on file system objects. Use in end endpoints
+ */
 @ServiceFileSystem("service-manager-directory")
 public class ServiceManagerDirectoryImpl implements ServiceManagerDirectory {
+
     private List<String> systemParents;
     
     private final ServiceCollectDirectoryImpl collectDirectory;
@@ -23,11 +28,9 @@ public class ServiceManagerDirectoryImpl implements ServiceManagerDirectory {
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     @Autowired
-    public ServiceManagerDirectoryImpl(
-            ServiceCollectDirectoryImpl collectDirectory,
-            ServiceBuilderDataFileSystemObjectImpl builderDataFile,
-            ServiceBuildDirectoryPath buildDirectoryPath
-    ) {
+    public ServiceManagerDirectoryImpl(ServiceCollectDirectoryImpl collectDirectory,
+                                       ServiceBuilderDataFileSystemObjectImpl builderDataFile,
+                                       ServiceBuildDirectoryPath buildDirectoryPath) {
         this.collectDirectory = collectDirectory;
         this.builderDataFile = builderDataFile;
         this.buildDirectoryPath = buildDirectoryPath;
@@ -42,7 +45,7 @@ public class ServiceManagerDirectoryImpl implements ServiceManagerDirectory {
      * @throws NotValidLevelDirectoryException invalid param directory level
      */
     @Override
-    public ContainerDataBuilderDirectory build(List<String> systemParents, Integer level)
+    public ContainerDataBuilderDirectory build(@NotNull List<String> systemParents, Integer level)
             throws NotValidLevelDirectoryException, IOException {
         this.systemParents = systemParents;
 
@@ -74,7 +77,7 @@ public class ServiceManagerDirectoryImpl implements ServiceManagerDirectory {
      * @throws NoSuchFileException not exists directory
      */
     @Override
-    public final String getDirectory() throws NoSuchFileException {
+    public final @NotNull String getDirectory() throws NoSuchFileException {
         return buildDirectoryPath.build(this.systemParents);
     }
 
@@ -86,4 +89,5 @@ public class ServiceManagerDirectoryImpl implements ServiceManagerDirectory {
     public final List<String> getSystemParents() {
         return this.systemParents;
     }
+
 }

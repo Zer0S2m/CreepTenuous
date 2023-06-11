@@ -4,7 +4,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * File move service
+ */
 public interface ServiceMoveFile {
+
     /**
      * Move file
      * @param systemNameFile system name file
@@ -34,4 +38,5 @@ public interface ServiceMoveFile {
      * @throws IOException system error
      */
     Path move(Path source, Path target) throws IOException;
+
 }

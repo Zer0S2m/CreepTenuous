@@ -6,7 +6,11 @@ import com.zer0s2m.creeptenuous.common.enums.MethodCopyDirectory;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Directory copy service
+ */
 public interface ServiceCopyDirectory {
+
     /**
      * Copy directory
      * @param systemParents system path part directories
@@ -16,10 +20,7 @@ public interface ServiceCopyDirectory {
      * @return information about copied file system objects
      * @throws IOException error system
      */
-    List<ContainerInfoFileSystemObject> copy(
-            List<String> systemParents,
-            List<String> systemToParents,
-            String systemNameDirectory,
-            Integer method
-    ) throws IOException;
+    List<ContainerInfoFileSystemObject> copy(List<String> systemParents, List<String> systemToParents,
+                                             String systemNameDirectory, Integer method) throws IOException;
+
 }

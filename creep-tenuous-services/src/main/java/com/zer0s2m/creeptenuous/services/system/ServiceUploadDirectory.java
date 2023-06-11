@@ -5,7 +5,11 @@ import com.zer0s2m.creeptenuous.common.http.ResponseUploadDirectoryApi;
 import java.io.IOException;
 import java.nio.file.Path;
 
+/**
+ * Service for servicing directory uploading
+ */
 public interface ServiceUploadDirectory {
+
     /**
      * Run thread for unpacking zip archive
      * @param systemPath system path from part directories
@@ -14,4 +18,5 @@ public interface ServiceUploadDirectory {
      * @throws IOException system error
      */
     ResponseUploadDirectoryApi upload(Path systemPath, Path source) throws IOException;
+
 }

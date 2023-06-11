@@ -2,6 +2,9 @@ package com.zer0s2m.creeptenuous.services.system.utils;
 
 import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.core.services.Distribution;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface UtilsFiles {
 
@@ -10,7 +13,8 @@ public interface UtilsFiles {
      * @param nameFile name file
      * @return extension
      */
-    static String getExtensionFile(String nameFile) {
+    @Contract(pure = true)
+    static @Nullable String getExtensionFile(@NotNull String nameFile) {
         String[] partFileName = nameFile.split("\\.");
         if (partFileName.length == 1) {
             return null;
@@ -37,7 +41,7 @@ public interface UtilsFiles {
      * @param rawNameFile Raw name file (path)
      * @return file name
      */
-    static String getNameFileRawStr(String rawNameFile) {
+    static String getNameFileRawStr(@NotNull String rawNameFile) {
         String newRawNameFile;
         if (rawNameFile.substring(rawNameFile.length() - 1).equals(Directory.SEPARATOR.get())) {
             newRawNameFile = rawNameFile.substring(0, rawNameFile.length() - 1);
@@ -47,4 +51,5 @@ public interface UtilsFiles {
         String[] parts = newRawNameFile.split(Directory.SEPARATOR.get());
         return parts[parts.length - 1];
     }
+
 }

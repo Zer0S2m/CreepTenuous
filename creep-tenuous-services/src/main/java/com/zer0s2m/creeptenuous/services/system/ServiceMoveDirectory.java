@@ -6,7 +6,11 @@ import com.zer0s2m.creeptenuous.common.enums.MethodMoveDirectory;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Service to serve the movement of directories
+ */
 public interface ServiceMoveDirectory {
+
     /**
      * Move directory
      * @param systemParents system path part directories
@@ -16,10 +20,7 @@ public interface ServiceMoveDirectory {
      * @return info target and source path
      * @throws IOException error system
      */
-    ContainerDataMoveDirectory move(
-            List<String> systemParents,
-            List<String> systemToParents,
-            String systemNameDirectory,
-            Integer method
-    ) throws IOException;
+    ContainerDataMoveDirectory move(List<String> systemParents, List<String> systemToParents,
+                                    String systemNameDirectory, Integer method) throws IOException;
+
 }
