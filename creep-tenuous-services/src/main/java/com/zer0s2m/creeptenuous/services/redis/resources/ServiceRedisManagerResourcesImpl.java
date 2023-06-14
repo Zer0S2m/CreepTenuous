@@ -40,7 +40,7 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
      * @return result
      */
     public List<FileRedis> getResourcesFilesForMove(List<String> ids) {
-        return getResourcesForMove(fileRedisRepository.findAllById(ids));
+        return getResourcesForOperation(fileRedisRepository.findAllById(ids));
     }
 
     /**
@@ -49,7 +49,25 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
      * @return result
      */
     public List<DirectoryRedis> getResourcesDirectoriesForMove(List<String> ids) {
-        return getResourcesForMove(directoryRedisRepository.findAllById(ids));
+        return getResourcesForOperation(directoryRedisRepository.findAllById(ids));
+    }
+
+    /**
+     * Get data about object to delete
+     * @param ids must not be {@literal null} nor contain any {@literal null} values.
+     * @return result
+     */
+    public List<FileRedis> getResourcesFileForDelete(List<String> ids) {
+        return getResourcesForOperation(fileRedisRepository.findAllById(ids));
+    }
+
+    /**
+     * Get data about object to delete
+     * @param ids must not be {@literal null} nor contain any {@literal null} values.
+     * @return result
+     */
+    public List<DirectoryRedis> getResourcesDirectoryForDelete(List<String> ids) {
+        return getResourcesForOperation(directoryRedisRepository.findAllById(ids));
     }
 
     /**
@@ -58,7 +76,7 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
      * @return data array
      * @param <T> the type of elements returned by the iterator
      */
-    private <T> List<T> getResourcesForMove(final @NotNull Iterable<T> iterable) {
+    private <T> List<T> getResourcesForOperation(final @NotNull Iterable<T> iterable) {
         return StreamSupport
                 .stream(Spliterators.spliteratorUnknownSize(iterable.iterator(), Spliterator.ORDERED), false)
                 .collect(Collectors.toList());

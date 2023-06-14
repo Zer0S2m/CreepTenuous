@@ -44,4 +44,36 @@ public interface ServiceRedisManagerResources {
         return getResourcesDirectoriesForMove(List.of(id));
     }
 
+    /**
+     * Get data about object to delete
+     * @param ids must not be {@literal null} nor contain any {@literal null} values.
+     * @return result
+     */
+    List<FileRedis> getResourcesFileForDelete(List<String> ids);
+
+    /**
+     * Get data about object to delete
+     * @param id must not be {@literal null}.
+     * @return result
+     */
+    default List<FileRedis> getResourcesFileForDelete(String id) {
+        return getResourcesFileForDelete(List.of(id));
+    }
+
+    /**
+     * Get data about object to delete
+     * @param ids must not be {@literal null} nor contain any {@literal null} values.
+     * @return result
+     */
+    List<DirectoryRedis> getResourcesDirectoryForDelete(List<String> ids);
+
+    /**
+     * Get data about object to delete
+     * @param id must not be {@literal null}.
+     * @return result
+     */
+    default List<DirectoryRedis> getResourcesDirectoryForDelete(String id) {
+        return getResourcesDirectoryForDelete(List.of(id));
+    }
+
 }
