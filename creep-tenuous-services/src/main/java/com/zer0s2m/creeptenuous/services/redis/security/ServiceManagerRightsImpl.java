@@ -106,13 +106,36 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights, ServiceMa
      */
     @Override
     public void checkRightByOperationDelete(String fileSystemObject) throws IOException, NoRightsRedisException {
+        checkRightByOperationDirectory(fileSystemObject, OperationRights.DELETE);
+    }
+
+    /**
+     * Checking permissions to perform some actions on a certain file object - operation {@link OperationRights#MOVE}
+     * @param fileSystemObject file system object
+     * @throws IOException signals that an I/O exception of some sort has occurred
+     * @throws NoRightsRedisException Insufficient rights to perform the operation
+     */
+    @Override
+    public void checkRightByOperationMove(String fileSystemObject) throws IOException, NoRightsRedisException {
+        checkRightByOperationDirectory(fileSystemObject, OperationRights.MOVE);
+    }
+
+    /**
+     * Checking permissions to perform some actions on a certain file object
+     * @param fileSystemObject file system object
+     * @param operation type of transaction
+     * @throws IOException signals that an I/O exception of some sort has occurred
+     * @throws NoRightsRedisException Insufficient rights to perform the operation
+     */
+    private void checkRightByOperationDirectory(String fileSystemObject, OperationRights operation)
+            throws IOException, NoRightsRedisException {
         List<DirectoryRedis> directoryRedisCurrent = Streamable.of(getDirectoryRedis(List.of(fileSystemObject)))
                 .stream()
                 .toList();
 
         if (getIsDirectory() && directoryRedisCurrent.size() != 0 && directoryRedisCurrent.get(0).getIsDirectory()) {
             List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(
-                    Path.of(directoryRedisCurrent.get(0).getPathDirectory()));
+                    Path.of(directoryRedisCurrent.get(0).getPathDirectory().replace("76785e20-66aa-4bf7-9716-7c2785e78cb1/", "")));
             List<String> namesFileSystemObject = attached
                     .stream()
                     .map(ContainerInfoFileSystemObject::nameFileSystemObject)
@@ -120,12 +143,11 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights, ServiceMa
             List<DirectoryRedis> directoryRedisResource = serviceRedisManagerResources.getResourcesDirectoryForDelete(
                     namesFileSystemObject, getLoginUser());
             List<FileRedis> fileRedisResource = serviceRedisManagerResources.getResourcesFileForDelete(
-                namesFileSystemObject, getLoginUser());
+                    namesFileSystemObject, getLoginUser());
 
             if (namesFileSystemObject.size() != (directoryRedisResource.size() + fileRedisResource.size())) {
                 throw new NoRightsRedisException();
             } else {
-                OperationRights operation = OperationRights.DELETE;
                 List<DirectoryRedis> directoryRedisSorted = conductorOperationDirectoryRedis(directoryRedisResource,
                         operation);
                 List<FileRedis> fileRedisSorted = conductorOperationFileRedis(fileRedisResource, operation);

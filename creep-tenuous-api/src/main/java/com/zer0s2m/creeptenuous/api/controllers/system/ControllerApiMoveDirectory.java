@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -23,8 +24,6 @@ import java.util.List;
 public class ControllerApiMoveDirectory implements ControllerApiMoveDirectoryDoc {
 
     static final OperationRights operationRightsDirectory = OperationRights.SHOW;
-
-    static final OperationRights operationRights = OperationRights.SHOW;
 
     private final ServiceMoveDirectoryImpl serviceMoveDirectory;
 
@@ -53,43 +52,54 @@ public class ControllerApiMoveDirectory implements ControllerApiMoveDirectoryDoc
      *                                   using the newInstance method in class {@code Class}.
      * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
      *                                   tries to reflectively create an instance
+     * @throws IOException               signals that an I/O exception of some sort has occurred
      */
     @Override
     @PutMapping("/directory/move")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public final void move(final @Valid @RequestBody @NotNull DataMoveDirectoryApi dataDirectory,
                            @RequestHeader(name = "Authorization") String accessToken)
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException,
+            IllegalAccessException, IOException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
+        serviceManagerRights.setIsDirectory(true);
 
         serviceMoveDirectoryRedis.setAccessToken(accessToken);
-        serviceMoveDirectoryRedis.setEnableCheckIsNameDirectory(true);
         serviceMoveDirectoryRedis.setIsException(false);
+        serviceMoveDirectoryRedis.setResetCheckIsNameDirectory(true);
 
-        List<String> mergeParents = CloneList.cloneOneLevel(
-                dataDirectory.systemParents(),
-                dataDirectory.systemToParents()
-        );
-        boolean isRights = serviceMoveDirectoryRedis.checkRights(
+        serviceMoveDirectoryRedis.setEnableCheckIsNameDirectory(true);
+        boolean isRightsSource = serviceMoveDirectoryRedis.checkRights(
                 dataDirectory.parents(),
-                mergeParents,
-                dataDirectory.systemDirectoryName(),
-                false
-        );
-        if (!isRights) {
-            serviceManagerRights.checkRightsByOperation(operationRightsDirectory, mergeParents);
-            serviceManagerRights.checkRightsByOperation(operationRights, dataDirectory.systemDirectoryName());
+                CloneList.cloneOneLevel(dataDirectory.systemParents()),
+                dataDirectory.systemDirectoryName());
+        serviceMoveDirectoryRedis.setEnableCheckIsNameDirectory(false);
+        boolean isRightTarget = serviceMoveDirectoryRedis.checkRights(
+                dataDirectory.toParents(),
+                dataDirectory.systemToParents(),
+                null);
+        if (!isRightsSource || !isRightTarget) {
+            if (!isRightsSource) {
+                serviceManagerRights.checkRightsByOperation(operationRightsDirectory,
+                        CloneList.cloneOneLevel(dataDirectory.systemParents(),
+                                List.of(dataDirectory.systemDirectoryName())));
+            }
+            if (!isRightTarget) {
+                serviceManagerRights.checkRightsByOperation(operationRightsDirectory,
+                        dataDirectory.systemToParents());
+            }
+            serviceManagerRights.checkRightByOperationMove(dataDirectory.systemDirectoryName());
         }
 
-        ContainerDataMoveDirectory infoMoving = AtomicSystemCallManager.call(
-                serviceMoveDirectory,
-                dataDirectory.systemParents(),
-                dataDirectory.systemToParents(),
-                dataDirectory.systemDirectoryName(),
-                dataDirectory.method()
-        );
-        serviceMoveDirectoryRedis.move(infoMoving);
+//        ContainerDataMoveDirectory infoMoving = AtomicSystemCallManager.call(
+//                serviceMoveDirectory,
+//                dataDirectory.systemParents(),
+//                dataDirectory.systemToParents(),
+//                dataDirectory.systemDirectoryName(),
+//                dataDirectory.method()
+//        );
+//        serviceMoveDirectoryRedis.move(infoMoving);
     }
 
 }
