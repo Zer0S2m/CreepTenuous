@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Service for managing user rights for interacting with a target file system object
  */
-public interface ServiceManagerRights {
+public interface ServiceManagerRights extends ServiceManagerRightsExtended {
 
     /**
      * Separator for creating a unique key (from the system name of the file system object and user login)

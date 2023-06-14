@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -22,8 +23,6 @@ import java.util.List;
 public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirectoryDoc {
 
     static final OperationRights operationRightsDirectoryShow = OperationRights.SHOW;
-
-    static final OperationRights operationRightsDirectoryDelete = OperationRights.DELETE;
 
     private final ServiceDeleteDirectoryImpl serviceDeleteDirectory;
 
@@ -52,6 +51,7 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
      *                                   using the newInstance method in class {@code Class}.
      * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
      *                                   tries to reflectively create an instance
+     * @throws IOException               signals that an I/O exception of some sort has occurred
      */
     @Override
     @DeleteMapping("/directory/delete")
@@ -59,9 +59,10 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
     public final void deleteDirectory(final @Valid @RequestBody @NotNull DataDeleteDirectoryApi directoryForm,
                                       @RequestHeader(name = "Authorization") String accessToken)
             throws InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException {
+            InstantiationException, IllegalAccessException, IOException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
+        serviceManagerRights.setIsDirectory(true);
 
         serviceDeleteDirectoryRedis.setAccessToken(accessToken);
         serviceDeleteDirectoryRedis.setEnableCheckIsNameDirectory(true);
@@ -70,15 +71,13 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
         boolean isRightsSystemParents = serviceDeleteDirectoryRedis.checkRights(
                 directoryForm.parents(),
                 CloneList.cloneOneLevel(directoryForm.systemParents()),
-                directoryForm.systemDirectoryName(),
-                false
+                directoryForm.systemDirectoryName()
         );
         if (!isRightsSystemParents) {
             serviceManagerRights.checkRightsByOperation(operationRightsDirectoryShow,
                     CloneList.cloneOneLevel(directoryForm.systemParents(),
                             List.of(directoryForm.systemDirectoryName())));
-            serviceManagerRights.checkRightsByOperation(operationRightsDirectoryDelete,
-                    directoryForm.systemDirectoryName());
+            serviceManagerRights.checkRightByOperationDelete(directoryForm.systemDirectoryName());
         }
 
         AtomicSystemCallManager.call(

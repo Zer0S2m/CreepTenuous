@@ -39,6 +39,7 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
      * @param ids must not be {@literal null} nor contain any {@literal null} values.
      * @return result
      */
+    @Override
     public List<FileRedis> getResourcesFilesForMove(List<String> ids) {
         return getResourcesForOperation(fileRedisRepository.findAllById(ids));
     }
@@ -48,6 +49,7 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
      * @param ids must not be {@literal null} nor contain any {@literal null} values.
      * @return result
      */
+    @Override
     public List<DirectoryRedis> getResourcesDirectoriesForMove(List<String> ids) {
         return getResourcesForOperation(directoryRedisRepository.findAllById(ids));
     }
@@ -55,19 +57,29 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
     /**
      * Get data about object to delete
      * @param ids must not be {@literal null} nor contain any {@literal null} values.
+     * @param userLogin Login of a third-party user who has rights to the object .must not be {@literal null}.
      * @return result
      */
-    public List<FileRedis> getResourcesFileForDelete(List<String> ids) {
-        return getResourcesForOperation(fileRedisRepository.findAllById(ids));
+    @Override
+    public List<FileRedis> getResourcesFileForDelete(List<String> ids, String userLogin) {
+        return getResourcesForOperation(fileRedisRepository.findAllById(ids))
+                .stream()
+                .filter(entity -> entity.getUserLogins() != null && entity.getUserLogins().contains(userLogin))
+                .collect(Collectors.toList());
     }
 
     /**
      * Get data about object to delete
      * @param ids must not be {@literal null} nor contain any {@literal null} values.
+     * @param userLogin Login of a third-party user who has rights to the object .must not be {@literal null}.
      * @return result
      */
-    public List<DirectoryRedis> getResourcesDirectoryForDelete(List<String> ids) {
-        return getResourcesForOperation(directoryRedisRepository.findAllById(ids));
+    @Override
+    public List<DirectoryRedis> getResourcesDirectoryForDelete(List<String> ids, String userLogin) {
+        return getResourcesForOperation(directoryRedisRepository.findAllById(ids))
+                .stream()
+                .filter(entity -> entity.getUserLogins() != null && entity.getUserLogins().contains(userLogin))
+                .collect(Collectors.toList());
     }
 
     /**
