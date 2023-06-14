@@ -89,17 +89,17 @@ public class ControllerApiMoveDirectory implements ControllerApiMoveDirectoryDoc
                 serviceManagerRights.checkRightsByOperation(operationRightsDirectory,
                         dataDirectory.systemToParents());
             }
-            serviceManagerRights.checkRightByOperationMove(dataDirectory.systemDirectoryName());
+            serviceManagerRights.checkRightByOperationMoveDirectory(dataDirectory.systemDirectoryName());
         }
 
-//        ContainerDataMoveDirectory infoMoving = AtomicSystemCallManager.call(
-//                serviceMoveDirectory,
-//                dataDirectory.systemParents(),
-//                dataDirectory.systemToParents(),
-//                dataDirectory.systemDirectoryName(),
-//                dataDirectory.method()
-//        );
-//        serviceMoveDirectoryRedis.move(infoMoving);
+        ContainerDataMoveDirectory infoMoving = AtomicSystemCallManager.call(
+                serviceMoveDirectory,
+                dataDirectory.systemParents(),
+                dataDirectory.systemToParents(),
+                dataDirectory.systemDirectoryName(),
+                dataDirectory.method()
+        );
+        serviceMoveDirectoryRedis.move(infoMoving);
     }
 
 }

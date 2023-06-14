@@ -77,7 +77,7 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
             serviceManagerRights.checkRightsByOperation(operationRightsDirectoryShow,
                     CloneList.cloneOneLevel(directoryForm.systemParents(),
                             List.of(directoryForm.systemDirectoryName())));
-            serviceManagerRights.checkRightByOperationDelete(directoryForm.systemDirectoryName());
+            serviceManagerRights.checkRightByOperationDeleteDirectory(directoryForm.systemDirectoryName());
         }
 
         AtomicSystemCallManager.call(

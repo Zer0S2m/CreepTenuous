@@ -17,7 +17,7 @@ public interface ServiceManagerRightsExtended {
      * @throws IOException signals that an I/O exception of some sort has occurred
      * @throws NoRightsRedisException Insufficient rights to perform the operation
      */
-    void checkRightByOperationDelete(String fileSystemObject) throws IOException, NoRightsRedisException;
+    void checkRightByOperationDeleteDirectory(String fileSystemObject) throws IOException, NoRightsRedisException;
 
     /**
      * Checking permissions to perform some actions on a certain file object - operation {@link OperationRights#MOVE}
@@ -25,7 +25,7 @@ public interface ServiceManagerRightsExtended {
      * @throws IOException signals that an I/O exception of some sort has occurred
      * @throws NoRightsRedisException Insufficient rights to perform the operation
      */
-    void checkRightByOperationMove(String fileSystemObject) throws IOException, NoRightsRedisException;
+    void checkRightByOperationMoveDirectory(String fileSystemObject) throws IOException, NoRightsRedisException;
 
     /**
      * Set the parameter responsible for the type of file system object, file or directory
