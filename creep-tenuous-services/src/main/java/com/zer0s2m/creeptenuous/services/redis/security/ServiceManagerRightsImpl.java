@@ -135,6 +135,19 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights, ServiceMa
     }
 
     /**
+     * Checking permissions to perform some actions on a certain file object - operation
+     * {@link OperationRights#DOWNLOAD}
+     * @param fileSystemObject file system object
+     * @throws IOException signals that an I/O exception of some sort has occurred
+     * @throws NoRightsRedisException Insufficient rights to perform the operation
+     */
+    @Override
+    public void checkRightByOperationDownloadDirectory(String fileSystemObject)
+            throws IOException, NoRightsRedisException {
+        checkRightByOperationDirectory(fileSystemObject, OperationRights.DOWNLOAD);
+    }
+
+    /**
      * Checking permissions to perform some actions on a certain file object
      * @param fileSystemObject file system object
      * @param operation type of transaction

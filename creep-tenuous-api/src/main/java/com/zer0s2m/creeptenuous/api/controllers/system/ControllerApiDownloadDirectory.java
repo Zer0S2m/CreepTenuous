@@ -33,8 +33,6 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
     static final OperationRights operationRightsShow = OperationRights.SHOW;
 
-    static final OperationRights operationRightsDownload = OperationRights.DOWNLOAD;
-
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     private final ServiceDownloadDirectoryImpl serviceDownloadDirectory;
@@ -82,19 +80,17 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
         serviceDownloadDirectoryRedis.setAccessToken(accessToken);
         serviceDownloadDirectoryRedis.setEnableCheckIsNameDirectory(true);
-        boolean isRightsShow = serviceDownloadDirectoryRedis.checkRights(
+        boolean isRightsSource = serviceDownloadDirectoryRedis.checkRights(
                 CloneList.cloneOneLevel(data.parents()),
                 CloneList.cloneOneLevel(data.systemParents()),
-                data.systemDirectoryName(),
-                false
-        );
+                data.systemDirectoryName());
 
         List<String> cloneSystemParents = CloneList.cloneOneLevel(data.systemParents());
         cloneSystemParents.add(data.systemDirectoryName());
 
-        if (!isRightsShow) {
+        if (!isRightsSource) {
             serviceManagerRights.checkRightsByOperation(operationRightsShow, cloneSystemParents);
-            serviceManagerRights.checkRightsByOperation(operationRightsDownload, data.systemDirectoryName());
+            serviceManagerRights.checkRightByOperationDownloadDirectory(data.systemDirectoryName());
         }
 
         HashMap<String, String> resource = serviceDownloadDirectoryRedis.getResource(

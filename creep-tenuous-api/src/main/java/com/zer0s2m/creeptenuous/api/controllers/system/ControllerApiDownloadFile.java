@@ -74,12 +74,10 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
 
         final ContainerDataDownloadFile<ByteArrayResource, String> dataFile = serviceDownloadFile.download(
                 data.systemParents(),
-                data.systemFileName()
-        );
+                data.systemFileName());
         return ResponseEntity.ok()
                 .headers(serviceDownloadFile.collectHeaders(dataFile))
-                .body(dataFile.byteContent()
-                );
+                .body(dataFile.byteContent());
     }
 
 }
