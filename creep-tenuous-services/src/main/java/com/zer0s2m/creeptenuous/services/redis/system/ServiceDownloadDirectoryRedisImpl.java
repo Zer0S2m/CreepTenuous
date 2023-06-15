@@ -6,7 +6,7 @@ import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectoryRedis;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
-import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisImpl;
+import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisManagerRightsAccessImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ import java.util.List;
  * <p>Getting resources</p>
  */
 @Service("service-download-directory-redis")
-public class ServiceDownloadDirectoryRedisImpl extends BaseServiceFileSystemRedisImpl
+public class ServiceDownloadDirectoryRedisImpl extends BaseServiceFileSystemRedisManagerRightsAccessImpl
         implements ServiceDownloadDirectoryRedis {
 
     @Autowired

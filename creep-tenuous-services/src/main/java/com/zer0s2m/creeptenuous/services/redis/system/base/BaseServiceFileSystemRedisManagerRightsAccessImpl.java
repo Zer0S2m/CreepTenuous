@@ -5,7 +5,7 @@ import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
-import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
@@ -23,7 +23,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * </ul>
  */
 @Service("service-file-system-redis")
-public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedis {
+public class BaseServiceFileSystemRedisManagerRightsAccessImpl
+        implements BaseServiceFileSystemRedisManagerRightsAccess {
 
     private boolean isException = true;
 
@@ -42,8 +43,8 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
     private String loginUser;
 
     @Autowired
-    public BaseServiceFileSystemRedisImpl(DirectoryRedisRepository directoryRedisRepository,
-                                          FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
+    public BaseServiceFileSystemRedisManagerRightsAccessImpl(DirectoryRedisRepository directoryRedisRepository,
+                                                             FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
         this.directoryRedisRepository = directoryRedisRepository;
         this.fileRedisRepository = fileRedisRepository;
         this.jwtProvider = jwtProvider;
@@ -196,7 +197,7 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
     }
 
     /**
-     * Reset parameter - {@link BaseServiceFileSystemRedisImpl#enableCheckIsNameDirectory}
+     * Reset parameter - {@link BaseServiceFileSystemRedisManagerRightsAccessImpl#enableCheckIsNameDirectory}
      * @param resetCheckIsNameDirectory is enabled
      */
     public void setResetCheckIsNameDirectory(Boolean resetCheckIsNameDirectory) {

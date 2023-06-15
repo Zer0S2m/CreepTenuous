@@ -14,7 +14,7 @@ import com.zer0s2m.creeptenuous.redis.exceptions.messages.ExceptionAddRightsYour
 import com.zer0s2m.creeptenuous.redis.exceptions.messages.ExceptionNoExistsFileSystemObjectRedisMsg;
 import com.zer0s2m.creeptenuous.redis.exceptions.messages.ExceptionNoExistsRightMsg;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
-import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotFoundMsg;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
@@ -27,12 +27,12 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
 
     private final ServiceManagerRights serviceManagerRights;
 
-    private final BaseServiceFileSystemRedis serviceFileSystemRedis;
+    private final BaseServiceFileSystemRedisManagerRightsAccess serviceFileSystemRedis;
 
     @Autowired
     public ControllerApiRightUser(
             ServiceManagerRights serviceManagerRights,
-            BaseServiceFileSystemRedis baseServiceFileSystemRedis) {
+            BaseServiceFileSystemRedisManagerRightsAccess baseServiceFileSystemRedis) {
         this.serviceManagerRights = serviceManagerRights;
         this.serviceFileSystemRedis = baseServiceFileSystemRedis;
     }

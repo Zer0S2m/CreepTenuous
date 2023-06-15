@@ -5,7 +5,7 @@ import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDeleteFileRedis;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
-import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisImpl;
+import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisManagerRightsAccessImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ import java.util.Optional;
  * Service for deleting file system objects from Redis
  */
 @Service("service-delete-file-redis")
-public class ServiceDeleteFileRedisImpl extends BaseServiceFileSystemRedisImpl implements ServiceDeleteFileRedis {
+public class ServiceDeleteFileRedisImpl extends BaseServiceFileSystemRedisManagerRightsAccessImpl implements ServiceDeleteFileRedis {
 
     @Autowired
     public ServiceDeleteFileRedisImpl(DirectoryRedisRepository directoryRedisRepository,

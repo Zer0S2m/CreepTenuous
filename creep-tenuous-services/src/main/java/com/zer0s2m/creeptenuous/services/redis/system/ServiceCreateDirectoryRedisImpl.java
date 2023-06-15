@@ -1,6 +1,6 @@
 package com.zer0s2m.creeptenuous.services.redis.system;
 
-import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisImpl;
+import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisManagerRightsAccessImpl;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateDirectory;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * Service for servicing the creation of file system objects by writing to Redis
  */
 @Service("service-directory-redis")
-public class ServiceCreateDirectoryRedisImpl extends BaseServiceFileSystemRedisImpl
+public class ServiceCreateDirectoryRedisImpl extends BaseServiceFileSystemRedisManagerRightsAccessImpl
         implements ServiceCreateDirectoryRedis {
 
     @Autowired

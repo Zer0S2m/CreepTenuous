@@ -2,7 +2,7 @@ package com.zer0s2m.creeptenuous.redis.services.system;
 
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
-import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  * Service for downloading file system objects from Redis.
  * <p>Getting resources</p>
  */
-public interface ServiceDownloadDirectoryRedis extends BaseServiceFileSystemRedis {
+public interface ServiceDownloadDirectoryRedis extends BaseServiceFileSystemRedisManagerRightsAccess {
 
     /**
      * Get info directory for download directory

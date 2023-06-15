@@ -6,7 +6,7 @@ import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceManagerDirectoryRedis;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
-import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisImpl;
+import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisManagerRightsAccessImpl;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,7 +20,7 @@ import java.util.List;
  * Service for viewing file system objects in Redis
  */
 @Service("service-manager-directory-redis")
-public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedisImpl
+public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedisManagerRightsAccessImpl
         implements ServiceManagerDirectoryRedis {
 
     @Autowired

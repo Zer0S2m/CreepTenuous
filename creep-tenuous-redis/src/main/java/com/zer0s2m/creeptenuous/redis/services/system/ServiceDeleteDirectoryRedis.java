@@ -1,14 +1,14 @@
 package com.zer0s2m.creeptenuous.redis.services.system;
 
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
-import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
 
 import java.util.List;
 
 /**
  * Service for deleting file system objects from Redis
  */
-public interface ServiceDeleteDirectoryRedis extends BaseServiceFileSystemRedis {
+public interface ServiceDeleteDirectoryRedis extends BaseServiceFileSystemRedisManagerRightsAccess {
 
     /**
      * Delete object in redis

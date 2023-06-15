@@ -7,7 +7,7 @@ import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateFileRedis;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceUploadFileRedis;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
-import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisImpl;
+import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisManagerRightsAccessImpl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * Service for loading file system objects and writing to Redis
  */
 @Service("service-upload-file-redis")
-public class ServiceUploadFileRedisImpl extends BaseServiceFileSystemRedisImpl implements ServiceUploadFileRedis {
+public class ServiceUploadFileRedisImpl extends BaseServiceFileSystemRedisManagerRightsAccessImpl implements ServiceUploadFileRedis {
 
     @Autowired
     public ServiceUploadFileRedisImpl(DirectoryRedisRepository directoryRedisRepository,

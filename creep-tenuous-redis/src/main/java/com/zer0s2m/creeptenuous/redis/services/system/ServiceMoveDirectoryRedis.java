@@ -2,7 +2,7 @@ package com.zer0s2m.creeptenuous.redis.services.system;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataMoveDirectory;
-import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Service for servicing the movement of file system objects in Redis
  */
-public interface ServiceMoveDirectoryRedis extends BaseServiceFileSystemRedis {
+public interface ServiceMoveDirectoryRedis extends BaseServiceFileSystemRedisManagerRightsAccess {
 
     /**
      * Move directories in redis

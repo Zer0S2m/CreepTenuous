@@ -6,7 +6,7 @@ import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateFileRedis;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
-import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisImpl;
+import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisManagerRightsAccessImpl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * Service for servicing the creation of file system objects by writing to Redis
  */
 @Service("service-file-redis")
-public class ServiceCreateFileRedisImpl extends BaseServiceFileSystemRedisImpl implements ServiceCreateFileRedis {
+public class ServiceCreateFileRedisImpl extends BaseServiceFileSystemRedisManagerRightsAccessImpl implements ServiceCreateFileRedis {
 
     @Autowired
     public ServiceCreateFileRedisImpl(DirectoryRedisRepository directoryRedisRepository,

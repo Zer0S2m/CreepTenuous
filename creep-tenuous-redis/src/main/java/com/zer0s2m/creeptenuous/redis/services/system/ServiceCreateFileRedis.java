@@ -2,7 +2,7 @@ package com.zer0s2m.creeptenuous.redis.services.system;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateFile;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
-import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
 import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceRedis;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Service for servicing the creation of file system objects by writing to Redis
  */
-public interface ServiceCreateFileRedis extends BaseServiceRedis<FileRedis>, BaseServiceFileSystemRedis {
+public interface ServiceCreateFileRedis extends BaseServiceRedis<FileRedis>, BaseServiceFileSystemRedisManagerRightsAccess {
 
     /**
      * Instantiating a Redis Object File

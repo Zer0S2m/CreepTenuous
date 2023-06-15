@@ -3,14 +3,14 @@ package com.zer0s2m.creeptenuous.redis.services.system;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFileSystemObject;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
-import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
 
 import java.util.List;
 
 /**
  * Service for loading file system objects and writing to Redis
  */
-public interface ServiceUploadDirectoryRedis extends BaseServiceFileSystemRedis {
+public interface ServiceUploadDirectoryRedis extends BaseServiceFileSystemRedisManagerRightsAccess {
 
     /**
      * Save data directories

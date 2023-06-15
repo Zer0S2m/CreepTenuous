@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.services.system.utils;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -12,7 +13,7 @@ import java.util.stream.Stream;
 
 /**
  * Directory scanning utilities.
- * <p>Required for Redis services {@link com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis} that copy file system objects</p>
+ * <p>Required for Redis services {@link BaseServiceFileSystemRedisManagerRightsAccess} that copy file system objects</p>
  */
 public interface WalkDirectoryInfo {
 

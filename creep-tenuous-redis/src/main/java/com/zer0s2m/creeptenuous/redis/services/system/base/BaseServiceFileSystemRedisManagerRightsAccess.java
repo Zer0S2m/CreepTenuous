@@ -11,7 +11,7 @@ import java.util.List;
  *     <li>Checking Ownership of an Object</li>
  * </ul>
  */
-public interface BaseServiceFileSystemRedis extends BaseServiceManagerRightsAccess {
+public interface BaseServiceFileSystemRedisManagerRightsAccess extends BaseServiceManagerRightsAccess {
 
     /**
      * Validate right user (directories)

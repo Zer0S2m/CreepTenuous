@@ -7,7 +7,7 @@ import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCopyDirectoryRedis;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
-import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisImpl;
+import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisManagerRightsAccessImpl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.List;
  * Service for copying file system objects by writing to Redis
  */
 @Service("service-copy-directory-redis")
-public class ServiceCopyDirectoryRedisImpl extends BaseServiceFileSystemRedisImpl implements ServiceCopyDirectoryRedis {
+public class ServiceCopyDirectoryRedisImpl extends BaseServiceFileSystemRedisManagerRightsAccessImpl implements ServiceCopyDirectoryRedis {
 
     @Autowired
     public ServiceCopyDirectoryRedisImpl(DirectoryRedisRepository directoryRedisRepository,
