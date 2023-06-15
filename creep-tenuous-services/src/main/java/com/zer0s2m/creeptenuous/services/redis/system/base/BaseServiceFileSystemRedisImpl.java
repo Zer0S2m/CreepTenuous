@@ -39,6 +39,8 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
 
     private Boolean resetCheckIsNameDirectory = false;
 
+    private String loginUser;
+
     @Autowired
     public BaseServiceFileSystemRedisImpl(DirectoryRedisRepository directoryRedisRepository,
                                           FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
@@ -117,8 +119,6 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
             throws NoRightsRedisException {
         AtomicBoolean isRight = new AtomicBoolean(true);
 
-        String loginUser = accessClaims.get("login", String.class);
-
         Iterable<FileRedis> objsRedis = fileRedisRepository.findAllById(systemNameFiles);
 
         objsRedis.forEach((objRedis) -> {
@@ -137,8 +137,29 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
      * Set access token
      * @param accessToken <b>JWT</b> access token
      */
+    @Override
     public void setAccessToken(String accessToken) {
         setAccessClaims(JwtUtils.getPureAccessToken(accessToken));
+    }
+
+    /**
+     * Getting login user
+     *
+     * @return login user
+     */
+    @Override
+    public String getLoginUser() {
+        return this.loginUser;
+    }
+
+    /**
+     * Setting login user
+     *
+     * @param loginUser login user
+     */
+    @Override
+    public void setLoginUser(String loginUser) {
+        this.loginUser = loginUser;
     }
 
     /**
@@ -148,8 +169,22 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
      * Bearer: token...
      * </pre>
      */
-    protected void setAccessClaims(String rawAccessToken) {
+    @Override
+    public void setAccessClaims(String rawAccessToken) {
         this.accessClaims = jwtProvider.getAccessClaims(rawAccessToken);
+        this.loginUser = accessClaims.get("login", String.class);
+    }
+
+    /**
+     * Set access claims (resources)
+     *
+     * @param accessClaims This is ultimately a JSON map and any values can be added to it, but JWT standard
+     *                     names are provided as type-safe getters and setters for convenience.
+     */
+    @Override
+    public void setAccessClaims(Claims accessClaims) {
+        this.accessClaims = accessClaims;
+        this.loginUser = accessClaims.get("login", String.class);
     }
 
     /**

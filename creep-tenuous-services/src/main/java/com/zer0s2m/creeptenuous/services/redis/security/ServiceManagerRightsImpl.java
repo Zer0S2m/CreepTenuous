@@ -17,7 +17,6 @@ import com.zer0s2m.creeptenuous.redis.repositories.RightUserFileSystemObjectRedi
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
-import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRightsExtended;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
 import com.zer0s2m.creeptenuous.services.system.utils.WalkDirectoryInfo;
@@ -38,7 +37,7 @@ import java.util.stream.Collectors;
  * Service for managing user rights for interacting with a target file system object
  */
 @Service("service-manager-rights")
-public class ServiceManagerRightsImpl implements ServiceManagerRights, ServiceManagerRightsExtended {
+public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
     protected final JwtProvider jwtProvider;
 

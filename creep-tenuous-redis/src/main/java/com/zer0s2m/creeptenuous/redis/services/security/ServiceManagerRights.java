@@ -8,7 +8,6 @@ import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsRightException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.base.BaseRedis;
-import io.jsonwebtoken.Claims;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.List;
 /**
  * Service for managing user rights for interacting with a target file system object
  */
-public interface ServiceManagerRights extends ServiceManagerRightsExtended {
+public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, ServiceManagerRightsExtended {
 
     /**
      * Separator for creating a unique key (from the system name of the file system object and user login)
@@ -44,12 +43,6 @@ public interface ServiceManagerRights extends ServiceManagerRightsExtended {
     }
 
     /**
-     * Set data from access token
-     * @param accessToken <b>JWT</b> access token
-     */
-    void setAccessToken(String accessToken);
-
-    /**
      * Create a user right on a file system object
      * @param right data right. Must not be {@literal null}.
      * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
@@ -66,22 +59,6 @@ public interface ServiceManagerRights extends ServiceManagerRightsExtended {
      */
     void deleteRight(RightUserFileSystemObjectRedis right, OperationRights operationRights)
             throws ChangeRightsYourselfException, NoExistsRightException;
-
-    /**
-     * Set access claims (resources), from raw access token
-     * @param rawAccessToken <b>JWT</b> raw access token, example (string):
-     * <pre>
-     * Bearer: token...
-     * </pre>
-     */
-    void setAccessClaims(String rawAccessToken);
-
-    /**
-     * Set access claims (resources)
-     * @param accessClaims This is ultimately a JSON map and any values can be added to it, but JWT standard
-     *                     names are provided as type-safe getters and setters for convenience.
-     */
-    void setAccessClaims(Claims accessClaims);
 
     /**
      * Checking for the existence of a file system object in the database
@@ -113,17 +90,6 @@ public interface ServiceManagerRights extends ServiceManagerRightsExtended {
      */
     void checkDeletingRightsYourself(RightUserFileSystemObjectRedis right)
             throws ChangeRightsYourselfException, NoExistsRightException;
-
-    /**
-     * Getting login user
-     * @return login user
-     */
-    String getLoginUser();
-
-    /**
-     * Setting login user
-     */
-    void setLoginUser(String loginUser);
 
     /**
      * Set setting. Responsible for regulating validation prior to creating or deleting an object.
