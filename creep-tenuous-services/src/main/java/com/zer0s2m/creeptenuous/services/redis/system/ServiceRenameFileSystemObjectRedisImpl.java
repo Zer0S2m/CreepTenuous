@@ -1,6 +1,6 @@
 package com.zer0s2m.creeptenuous.services.redis.system;
 
-import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
+import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;

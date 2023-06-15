@@ -1,6 +1,6 @@
 package com.zer0s2m.creeptenuous.services.redis.system.base;
 
-import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
+import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
 import com.example.creeptenuous.redis.models.base.BaseRedis;
 import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;

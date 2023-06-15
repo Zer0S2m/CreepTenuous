@@ -2,8 +2,8 @@ package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataRenameFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.http.ResponseRenameFileSystemObjectDoc;
-import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
-import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
+import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
+import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

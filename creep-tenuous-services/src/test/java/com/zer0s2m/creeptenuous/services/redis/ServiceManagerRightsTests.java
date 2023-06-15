@@ -2,9 +2,9 @@ package com.zer0s2m.creeptenuous.services.redis;
 
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
-import com.zer0s2m.creeptenuous.redis.exceptions.ChangeRightsYourselfException;
-import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
-import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
+import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
+import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
+import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.models.JwtRedis;
