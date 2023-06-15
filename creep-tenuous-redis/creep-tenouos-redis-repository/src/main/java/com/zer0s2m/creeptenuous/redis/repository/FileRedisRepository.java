@@ -1,4 +1,4 @@
-package com.zer0s2m.creeptenuous.redis.repositories;
+package com.zer0s2m.creeptenuous.redis.repository;
 
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import org.springframework.data.repository.CrudRepository;
