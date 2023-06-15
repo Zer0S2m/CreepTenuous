@@ -9,7 +9,7 @@ import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystem
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 /**
  * Service for deleting file system objects from Redis
@@ -25,22 +25,13 @@ public class ServiceDeleteDirectoryRedisImpl extends BaseServiceFileSystemRedisI
     }
 
     /**
-     * Push in redis one object
-     * @param objRedis must not be {@literal null}.
-     */
-    @Override
-    public void push(DirectoryRedis objRedis) {
-        directoryRedisRepository.delete(objRedis);
-    }
-
-    /**
      * Delete object in redis
-     * @param systemNameDirectory system name directory id {@link DirectoryRedis#getRealNameDirectory()}
+     * @param namesFileSystemObject system name directory id {@link DirectoryRedis#getRealNameDirectory()}
      */
     @Override
-    public void delete(String systemNameDirectory) {
-        Optional<DirectoryRedis> objRedis = directoryRedisRepository.findById(systemNameDirectory);
-        objRedis.ifPresent(this::push);
+    public void delete(List<String> namesFileSystemObject) {
+        directoryRedisRepository.deleteAllById(namesFileSystemObject);
+        fileRedisRepository.deleteAllById(namesFileSystemObject);
     }
 
 }
