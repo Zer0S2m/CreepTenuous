@@ -9,7 +9,7 @@ import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
-import com.zer0s2m.creeptenuous.redis.models.base.BaseRedis;
+import com.example.creeptenuous.redis.models.base.BaseRedis;
 import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.JwtRedisRepository;
