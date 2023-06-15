@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.services.redis.system.base;
 
 import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
+import com.zer0s2m.creeptenuous.redis.models.base.BaseRedis;
 import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
@@ -9,6 +10,7 @@ import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystem
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,28 +63,15 @@ public class BaseServiceFileSystemRedisManagerRightsAccessImpl
     @Override
     public boolean checkRights(List<String> parents, List<String> systemParents, String nameDirectory)
             throws NoRightsRedisException {
-        AtomicBoolean isRight = new AtomicBoolean(true);
-
-        String loginUser = accessClaims.get("login", String.class);
-
         if (enableCheckIsNameDirectory && nameDirectory != null) {
             systemParents.add(nameDirectory);
         }
         if (resetCheckIsNameDirectory) {
             setEnableCheckIsNameDirectory(false);
         }
-        Iterable<DirectoryRedis> objsRedis = directoryRedisRepository.findAllById(systemParents);
+        Iterable<DirectoryRedis> directoryRedisIterable = directoryRedisRepository.findAllById(systemParents);
 
-        objsRedis.forEach((objRedis) -> {
-            if (!Objects.equals(objRedis.getLogin(), loginUser)) {
-                isRight.set(false);
-                if (getIsException()) {
-                    throw new NoRightsRedisException();
-                }
-            }
-        });
-
-        return isRight.get();
+        return check(directoryRedisIterable);
     }
 
     /**
@@ -110,27 +99,37 @@ public class BaseServiceFileSystemRedisManagerRightsAccessImpl
     }
 
     /**
-     * Validate right user (files)
-     * @param systemNameFiles system names files
+     * Validate right user (files and directories)
+     * @param systemName system name file system object
      * @return is rights
      * @throws NoRightsRedisException When the user has no execution right
      */
     @Override
-    public boolean checkRights(List<String> systemNameFiles)
+    public boolean checkRights(List<String> systemName)
             throws NoRightsRedisException {
+        Iterable<FileRedis> fileRedisIterable = fileRedisRepository.findAllById(systemName);
+        Iterable<DirectoryRedis> directoryRedisIterable = directoryRedisRepository.findAllById(systemName);
+        boolean isRightFiles = check(fileRedisIterable);
+        boolean isRightDirectory = check(directoryRedisIterable);
+
+        return isRightFiles == isRightDirectory;
+    }
+
+    /**
+     * Validate right user
+     * @param entity entities must not be {@literal null} nor must it contain {@literal null}.
+     * @return is rights
+     */
+    private boolean check(@NotNull Iterable<? extends BaseRedis> entity) {
         AtomicBoolean isRight = new AtomicBoolean(true);
-
-        Iterable<FileRedis> objsRedis = fileRedisRepository.findAllById(systemNameFiles);
-
-        objsRedis.forEach((objRedis) -> {
-            if (!Objects.equals(objRedis.getLogin(), loginUser)) {
-                if (isException) {
+        entity.forEach((objRedis) -> {
+            if (!Objects.equals(objRedis.getLogin(), getLoginUser())) {
+                isRight.set(false);
+                if (getIsException()) {
                     throw new NoRightsRedisException();
                 }
-                isRight.set(false);
             }
         });
-
         return isRight.get();
     }
 
@@ -172,8 +171,8 @@ public class BaseServiceFileSystemRedisManagerRightsAccessImpl
      */
     @Override
     public void setAccessClaims(String rawAccessToken) {
-        this.accessClaims = jwtProvider.getAccessClaims(rawAccessToken);
-        this.loginUser = accessClaims.get("login", String.class);
+        this.accessClaims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(rawAccessToken));
+        this.setLoginUser(accessClaims.get("login", String.class));
     }
 
     /**
@@ -183,7 +182,7 @@ public class BaseServiceFileSystemRedisManagerRightsAccessImpl
      *                     names are provided as type-safe getters and setters for convenience.
      */
     @Override
-    public void setAccessClaims(Claims accessClaims) {
+    public void setAccessClaims(@NotNull Claims accessClaims) {
         this.accessClaims = accessClaims;
         this.loginUser = accessClaims.get("login", String.class);
     }
