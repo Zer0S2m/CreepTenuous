@@ -2,6 +2,8 @@ package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataRenameFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.http.ResponseRenameFileSystemObjectDoc;
+import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
+import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,6 +13,15 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 public interface ControllerApiRenameFileSystemObjectDoc {
 
+    /**
+     * Rename file system object
+     *
+     * @param data        data to rename
+     * @param accessToken raw JWT access token
+     * @return new name
+     * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database.
+     * @throws NoRightsRedisException When the user has no execution right
+     */
     @Operation(
             method = "PUT",
             summary = "Renaming file system object",
@@ -39,6 +50,6 @@ public interface ControllerApiRenameFileSystemObjectDoc {
             }
     )
     ResponseRenameFileSystemObjectDoc rename(
-            final DataRenameFileSystemObjectApi data, @Parameter(hidden = true) String accessToken);
+            final DataRenameFileSystemObjectApi data, @Parameter(hidden = true) String accessToken) throws NoExistsFileSystemObjectRedisException;
 
 }

@@ -35,12 +35,12 @@ public interface BaseServiceFileSystemRedisManagerRightsAccess extends BaseServi
     boolean checkRights(List<String> parents, List<String> systemParents, String nameDirectory, boolean isException);
 
     /**
-     * Validate right user (files)
-     * @param systemNameFiles system names files
+     * Validate right user (files and directories)
+     * @param systemName system name file system object
      * @return is rights
      * @throws NoRightsRedisException When the user has no execution right
      */
-    boolean checkRights(List<String> systemNameFiles) throws NoRightsRedisException;
+    boolean checkRights(List<String> systemName) throws NoRightsRedisException;
 
     /**
      * Enable check right inclusive name directory
