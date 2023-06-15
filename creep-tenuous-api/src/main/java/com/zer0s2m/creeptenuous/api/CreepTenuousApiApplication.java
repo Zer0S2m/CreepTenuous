@@ -21,10 +21,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
 })
 @EntityScan({
         "com.zer0s2m.creeptenuous.models",
-        "com.zer0s2m.creeptenuous.redis"
+        "com.zer0s2m.creeptenuous.redis.models"
 })
 @EnableJpaRepositories("com.zer0s2m.creeptenuous.repository")
-@EnableRedisRepositories("com.zer0s2m.creeptenuous.redis")
+@EnableRedisRepositories("com.zer0s2m.creeptenuous.redis.repository")
 @EnableAsync(proxyTargetClass = true)
 public class CreepTenuousApiApplication {
     public static void main(String[] args) {

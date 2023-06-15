@@ -9,10 +9,10 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>com.zer0s2m</groupId>
-  <artifactId>creep-tenouos-redis-repository</artifactId>
+  <artifactId>creep-tenuous-redis-repository</artifactId>
   <version>0.0.5-SNAPSHOT</version>
-  <name>creep-tenouos-redis-repository</name>
-  <description>creep-tenouos-redis-repository</description>
+  <name>creep-tenuous-redis-repository</name>
+  <description>creep-tenuous-redis-repository</description>
   <properties>
     <java.version>17</java.version>
   </properties>

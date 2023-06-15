@@ -2,12 +2,12 @@ package com.zer0s2m.creeptenuous.redis.services.security;
 
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
-import com.zer0s2m.creeptenuous.redis.exceptions.ChangeRightsYourselfException;
-import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
-import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsRightException;
-import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
+import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
+import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
+import com.zer0s2m.creeptenuous.common.exceptions.NoExistsRightException;
+import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
-import com.example.creeptenuous.redis.models.base.BaseRedis;
+import com.zer0s2m.creeptenuous.redis.models.base.BaseRedis;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
