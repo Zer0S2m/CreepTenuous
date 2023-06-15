@@ -77,7 +77,7 @@ public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc
 
         boolean isRightsDirectorySource = serviceCopyDirectoryRedis.checkRights(
                 dataDirectory.parents(),
-                dataDirectory.systemParents(),
+                CloneList.cloneOneLevel(dataDirectory.systemParents()),
                 dataDirectory.systemDirectoryName());
         boolean isRightsDirectoryTarget = serviceCopyDirectoryRedis.checkRights(
                 dataDirectory.toParents(),
