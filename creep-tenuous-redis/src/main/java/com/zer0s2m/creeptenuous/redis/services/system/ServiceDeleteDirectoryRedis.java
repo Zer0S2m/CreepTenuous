@@ -2,7 +2,6 @@ package com.zer0s2m.creeptenuous.redis.services.system;
 
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
-import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceRedis;
 
 import java.util.List;
 
