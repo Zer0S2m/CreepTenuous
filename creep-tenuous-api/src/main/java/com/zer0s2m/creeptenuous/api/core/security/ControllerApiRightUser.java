@@ -47,7 +47,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
      */
     @Override
-    @PostMapping("/user/right")
+    @PostMapping("/user/global/right")
     @ResponseStatus(code = HttpStatus.CREATED)
     public ResponseCreateRightUserApi add(final @Valid @RequestBody @NotNull DataCreateRightUserApi data,
                                           @RequestHeader(name = "Authorization") String accessToken)
@@ -78,7 +78,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      *                                Or is {@literal null} {@link NullPointerException}
      */
     @Override
-    @DeleteMapping("/user/right")
+    @DeleteMapping("/user/global/right")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void delete(
             final @Valid @RequestBody @NotNull DataDeleteRightUserApi data,
