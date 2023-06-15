@@ -11,7 +11,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
         "com.zer0s2m.creeptenuous.redis"
 })
 @EnableJpaRepositories("com.zer0s2m.creeptenuous.repository")
-@EnableRedisRepositories("com.zer0s2m.creeptenuous.redis")
+@EnableRedisRepositories("com.zer0s2m.creeptenuous.redis.repository")
 public class ConfigServices {
 }
 
