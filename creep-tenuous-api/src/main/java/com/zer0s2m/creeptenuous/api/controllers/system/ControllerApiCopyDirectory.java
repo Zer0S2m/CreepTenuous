@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -27,8 +28,6 @@ import java.util.List;
 public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc {
 
     static final OperationRights operationRightsDirectory = OperationRights.SHOW;
-
-    static final OperationRights operationRights = OperationRights.COPY;
 
     private final ServiceCopyDirectoryImpl serviceCopyDirectory;
 
@@ -58,34 +57,43 @@ public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc
      *                                   using the newInstance method in class {@code Class}.
      * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
      *                                   tries to reflectively create an instance
+     * @throws IOException               signals that an I/O exception of some sort has occurred
      */
     @Override
     @PostMapping("/directory/copy")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseCopyDirectoryApi copy(final @Valid @RequestBody @NotNull DataCopyDirectoryApi dataDirectory,
                                          @RequestHeader(name = "Authorization") String accessToken)
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException,
+            IllegalAccessException, IOException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
+        serviceManagerRights.setIsDirectory(true);
 
         serviceCopyDirectoryRedis.setAccessToken(accessToken);
         serviceCopyDirectoryRedis.setEnableCheckIsNameDirectory(true);
+        serviceCopyDirectoryRedis.setResetCheckIsNameDirectory(true);
         serviceCopyDirectoryRedis.setIsException(false);
 
-        List<String> mergeParents = CloneList.cloneOneLevel(
-                dataDirectory.systemParents(),
-                dataDirectory.systemToParents()
-        );
-        boolean isRightsDirectory = serviceCopyDirectoryRedis.checkRights(
+        boolean isRightsDirectorySource = serviceCopyDirectoryRedis.checkRights(
                 dataDirectory.parents(),
-                mergeParents,
-                dataDirectory.systemDirectoryName(),
-                false
-        );
-        if (!isRightsDirectory) {
-            serviceManagerRights.checkRightsByOperation(operationRightsDirectory, CloneList.cloneOneLevel(
-                    mergeParents, List.of(dataDirectory.systemDirectoryName())));
-            serviceManagerRights.checkRightsByOperation(operationRights, dataDirectory.systemDirectoryName());
+                dataDirectory.systemParents(),
+                dataDirectory.systemDirectoryName());
+        boolean isRightsDirectoryTarget = serviceCopyDirectoryRedis.checkRights(
+                dataDirectory.toParents(),
+                dataDirectory.systemToParents(),
+                null);
+        if (!isRightsDirectorySource || !isRightsDirectoryTarget) {
+            if (!isRightsDirectorySource) {
+                serviceManagerRights.checkRightsByOperation(
+                        operationRightsDirectory, CloneList.cloneOneLevel(dataDirectory.systemParents(),
+                                List.of(dataDirectory.systemDirectoryName())));
+            }
+            if (!isRightsDirectoryTarget) {
+                serviceManagerRights.checkRightsByOperation(operationRightsDirectory,
+                        dataDirectory.systemToParents());
+            }
+            serviceManagerRights.checkRightByOperationCopyDirectory(dataDirectory.systemDirectoryName());
         }
 
         List<ContainerInfoFileSystemObject> attached = AtomicSystemCallManager.call(

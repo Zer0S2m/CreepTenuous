@@ -105,7 +105,8 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights, ServiceMa
      * @throws NoRightsRedisException Insufficient rights to perform the operation
      */
     @Override
-    public void checkRightByOperationDeleteDirectory(String fileSystemObject) throws IOException, NoRightsRedisException {
+    public void checkRightByOperationDeleteDirectory(String fileSystemObject)
+            throws IOException, NoRightsRedisException {
         checkRightByOperationDirectory(fileSystemObject, OperationRights.DELETE);
     }
 
@@ -116,8 +117,21 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights, ServiceMa
      * @throws NoRightsRedisException Insufficient rights to perform the operation
      */
     @Override
-    public void checkRightByOperationMoveDirectory(String fileSystemObject) throws IOException, NoRightsRedisException {
+    public void checkRightByOperationMoveDirectory(String fileSystemObject)
+            throws IOException, NoRightsRedisException {
         checkRightByOperationDirectory(fileSystemObject, OperationRights.MOVE);
+    }
+
+    /**
+     * Checking permissions to perform some actions on a certain file object - operation {@link OperationRights#COPY}
+     * @param fileSystemObject file system object
+     * @throws IOException signals that an I/O exception of some sort has occurred
+     * @throws NoRightsRedisException Insufficient rights to perform the operation
+     */
+    @Override
+    public void checkRightByOperationCopyDirectory(String fileSystemObject)
+            throws IOException, NoRightsRedisException {
+        checkRightByOperationDirectory(fileSystemObject, OperationRights.COPY);
     }
 
     /**

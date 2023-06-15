@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -19,15 +20,17 @@ public interface ControllerApiCopyDirectoryDoc {
     /**
      * Copy directory
      * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceCopyDirectoryImpl#copy(List, List, String, Integer)}</p>
+     *
      * @param dataDirectory Directory copy data
-     * @param accessToken Raw JWT access token
+     * @param accessToken   Raw JWT access token
      * @return Result copy directory
      * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
-     * @throws InstantiationException Thrown when an application tries to create an instance of a class
-     * using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
-     * tries to reflectively create an instance
+     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
+     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
+     *                                   using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
+     *                                   tries to reflectively create an instance
+     * @throws IOException               signals that an I/O exception of some sort has occurred
      */
     @Operation(
             method = "POST",
@@ -60,5 +63,5 @@ public interface ControllerApiCopyDirectoryDoc {
             DataCopyDirectoryApi dataDirectory,
             @Parameter(hidden = true) String accessToken
     ) throws InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException;
+            InstantiationException, IllegalAccessException, IOException;
 }
