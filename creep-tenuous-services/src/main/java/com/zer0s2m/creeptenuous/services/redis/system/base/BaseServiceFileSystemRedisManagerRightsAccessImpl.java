@@ -182,7 +182,7 @@ public class BaseServiceFileSystemRedisManagerRightsAccessImpl
      *                     names are provided as type-safe getters and setters for convenience.
      */
     @Override
-    public void setAccessClaims(Claims accessClaims) {
+    public void setAccessClaims(@NotNull Claims accessClaims) {
         this.accessClaims = accessClaims;
         this.loginUser = accessClaims.get("login", String.class);
     }

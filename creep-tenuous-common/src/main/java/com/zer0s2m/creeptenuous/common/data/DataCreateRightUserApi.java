@@ -21,7 +21,7 @@ public record DataCreateRightUserApi(
         @EnumValidator(enumClass = OperationRights.class, message = "Please enter right")
         @Schema(
                 description = "The name of the operation to resolve the interaction",
-                allowableValues = { "MOVE", "COPY", "UPLOAD", "DOWNLOAD", "CREATE", "DELETE", "SHOW", "ALL" }
+                allowableValues = { "MOVE", "COPY", "UPLOAD", "DOWNLOAD", "CREATE", "DELETE", "SHOW", "RENAME", "ALL" }
         )
         String right
 

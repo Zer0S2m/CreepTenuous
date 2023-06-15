@@ -45,6 +45,11 @@ public enum OperationRights {
     SHOW,
 
     /**
+     * Renaming file objects
+     */
+    RENAME,
+
+    /**
      * Rights to all basic operations
      */
     ALL;
@@ -54,6 +59,6 @@ public enum OperationRights {
      * @return basic operations
      */
     static public List<OperationRights> baseOperations() {
-        return List.of(MOVE, COPY, UPLOAD, DOWNLOAD, CREATE, DELETE, SHOW);
+        return List.of(MOVE, COPY, UPLOAD, DOWNLOAD, CREATE, DELETE, SHOW, RENAME);
     }
 }

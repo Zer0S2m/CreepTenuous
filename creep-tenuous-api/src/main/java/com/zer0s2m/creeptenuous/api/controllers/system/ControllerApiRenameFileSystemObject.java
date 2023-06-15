@@ -3,9 +3,11 @@ package com.zer0s2m.creeptenuous.api.controllers.system;
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiRenameFileSystemObjectDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataRenameFileSystemObjectApi;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.http.ResponseRenameFileSystemObjectDoc;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceRenameFileSystemObjectRedis;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
@@ -16,12 +18,18 @@ import org.springframework.web.bind.annotation.*;
 @V1APIRestController
 public class ControllerApiRenameFileSystemObject implements ControllerApiRenameFileSystemObjectDoc {
 
+    public static final OperationRights operationRights = OperationRights.RENAME;
+
     private final ServiceRenameFileSystemObjectRedis serviceRenameFileSystemObjectRedis;
+
+    private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
     public ControllerApiRenameFileSystemObject(
-            ServiceRenameFileSystemObjectRedis serviceRenameFileSystemObjectRedis) {
+            ServiceRenameFileSystemObjectRedis serviceRenameFileSystemObjectRedis,
+            ServiceManagerRights serviceManagerRights) {
         this.serviceRenameFileSystemObjectRedis = serviceRenameFileSystemObjectRedis;
+        this.serviceManagerRights = serviceManagerRights;
     }
 
     /**
@@ -41,9 +49,16 @@ public class ControllerApiRenameFileSystemObject implements ControllerApiRenameF
             @RequestHeader(name = "Authorization") String accessToken)
             throws NoExistsFileSystemObjectRedisException, NoRightsRedisException {
         serviceRenameFileSystemObjectRedis.setAccessClaims(accessToken);
-        serviceRenameFileSystemObjectRedis.setIsException(true);
+        serviceRenameFileSystemObjectRedis.setIsException(false);
 
-        serviceRenameFileSystemObjectRedis.checkRights(data.systemName());
+        serviceManagerRights.setAccessToken(accessToken);
+        serviceManagerRights.setIsDirectory(false);
+        serviceManagerRights.setIsWillBeCreated(false);
+
+        boolean isRight = serviceRenameFileSystemObjectRedis.checkRights(data.systemName());
+        if (!isRight) {
+            serviceManagerRights.checkRightsByOperation(operationRights, data.systemName());
+        }
 
         serviceRenameFileSystemObjectRedis.rename(data.systemName(), data.newRealName());
 
