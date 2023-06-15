@@ -2,8 +2,8 @@ package com.zer0s2m.creeptenuous.services.redis.resources;
 
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
-import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
-import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import org.jetbrains.annotations.NotNull;
