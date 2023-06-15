@@ -17,9 +17,10 @@ public interface BaseServiceFileSystemRedis {
      * @param parents Real names directory
      * @param systemParents System names directory
      * @param nameDirectory System name directory
+     * @return are there existing rights
      * @throws NoRightsRedisException When the user has no execution rights
      */
-    void checkRights(List<String> parents, List<String> systemParents, String nameDirectory)
+    boolean checkRights(List<String> parents, List<String> systemParents, String nameDirectory)
             throws NoRightsRedisException;
 
     /**

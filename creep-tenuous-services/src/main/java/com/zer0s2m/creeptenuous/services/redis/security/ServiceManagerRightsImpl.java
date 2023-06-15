@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.services.redis.security;
 
+import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.redis.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
@@ -14,14 +15,20 @@ import com.zer0s2m.creeptenuous.redis.repositories.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.JwtRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repositories.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
+import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRightsExtended;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
+import com.zer0s2m.creeptenuous.services.system.utils.WalkDirectoryInfo;
 import io.jsonwebtoken.Claims;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +38,7 @@ import java.util.stream.Collectors;
  * Service for managing user rights for interacting with a target file system object
  */
 @Service("service-manager-rights")
-public class ServiceManagerRightsImpl implements ServiceManagerRights {
+public class ServiceManagerRightsImpl implements ServiceManagerRights, ServiceManagerRightsExtended {
 
     protected final JwtProvider jwtProvider;
 
@@ -41,6 +48,8 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
     private boolean isWillBeCreated = true;
 
+    private boolean isDirectory = true;
+
     protected final DirectoryRedisRepository directoryRedisRepository;
 
     protected final FileRedisRepository fileRedisRepository;
@@ -49,19 +58,23 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
     private final RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
+    private final ServiceRedisManagerResources serviceRedisManagerResources;
+
     @Autowired
     public ServiceManagerRightsImpl(
             JwtProvider jwtProvider,
             DirectoryRedisRepository directoryRedisRepository,
             FileRedisRepository fileRedisRepository,
             RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository,
-            JwtRedisRepository jwtRedisRepository
+            JwtRedisRepository jwtRedisRepository,
+            ServiceRedisManagerResources serviceRedisManagerResources
     ) {
         this.jwtProvider = jwtProvider;
         this.directoryRedisRepository = directoryRedisRepository;
         this.fileRedisRepository = fileRedisRepository;
         this.rightUserFileSystemObjectRedisRepository = rightUserFileSystemObjectRedisRepository;
         this.jwtRedisRepository = jwtRedisRepository;
+        this.serviceRedisManagerResources = serviceRedisManagerResources;
     }
 
     /**
@@ -82,6 +95,94 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
         if (!((fileRedisSorted.size() + directoryRedisSorted.size()) == fileSystemObjects.size())) {
             throw new NoRightsRedisException();
+        }
+    }
+
+    /**
+     * Checking permissions to perform some actions on a certain file object - operation {@link OperationRights#DELETE}
+     * @param fileSystemObject file system object
+     * @throws IOException signals that an I/O exception of some sort has occurred
+     * @throws NoRightsRedisException Insufficient rights to perform the operation
+     */
+    @Override
+    public void checkRightByOperationDeleteDirectory(String fileSystemObject)
+            throws IOException, NoRightsRedisException {
+        checkRightByOperationDirectory(fileSystemObject, OperationRights.DELETE);
+    }
+
+    /**
+     * Checking permissions to perform some actions on a certain file object - operation {@link OperationRights#MOVE}
+     * @param fileSystemObject file system object
+     * @throws IOException signals that an I/O exception of some sort has occurred
+     * @throws NoRightsRedisException Insufficient rights to perform the operation
+     */
+    @Override
+    public void checkRightByOperationMoveDirectory(String fileSystemObject)
+            throws IOException, NoRightsRedisException {
+        checkRightByOperationDirectory(fileSystemObject, OperationRights.MOVE);
+    }
+
+    /**
+     * Checking permissions to perform some actions on a certain file object - operation {@link OperationRights#COPY}
+     * @param fileSystemObject file system object
+     * @throws IOException signals that an I/O exception of some sort has occurred
+     * @throws NoRightsRedisException Insufficient rights to perform the operation
+     */
+    @Override
+    public void checkRightByOperationCopyDirectory(String fileSystemObject)
+            throws IOException, NoRightsRedisException {
+        checkRightByOperationDirectory(fileSystemObject, OperationRights.COPY);
+    }
+
+    /**
+     * Checking permissions to perform some actions on a certain file object - operation
+     * {@link OperationRights#DOWNLOAD}
+     * @param fileSystemObject file system object
+     * @throws IOException signals that an I/O exception of some sort has occurred
+     * @throws NoRightsRedisException Insufficient rights to perform the operation
+     */
+    @Override
+    public void checkRightByOperationDownloadDirectory(String fileSystemObject)
+            throws IOException, NoRightsRedisException {
+        checkRightByOperationDirectory(fileSystemObject, OperationRights.DOWNLOAD);
+    }
+
+    /**
+     * Checking permissions to perform some actions on a certain file object
+     * @param fileSystemObject file system object
+     * @param operation type of transaction
+     * @throws IOException signals that an I/O exception of some sort has occurred
+     * @throws NoRightsRedisException Insufficient rights to perform the operation
+     */
+    private void checkRightByOperationDirectory(String fileSystemObject, OperationRights operation)
+            throws IOException, NoRightsRedisException {
+        List<DirectoryRedis> directoryRedisCurrent = Streamable.of(getDirectoryRedis(List.of(fileSystemObject)))
+                .stream()
+                .toList();
+
+        if (getIsDirectory() && directoryRedisCurrent.size() != 0 && directoryRedisCurrent.get(0).getIsDirectory()) {
+            List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(
+                    Path.of(directoryRedisCurrent.get(0).getPathDirectory().replace("76785e20-66aa-4bf7-9716-7c2785e78cb1/", "")));
+            List<String> namesFileSystemObject = attached
+                    .stream()
+                    .map(ContainerInfoFileSystemObject::nameFileSystemObject)
+                    .toList();
+            List<DirectoryRedis> directoryRedisResource = serviceRedisManagerResources.getResourcesDirectoryForDelete(
+                    namesFileSystemObject, getLoginUser());
+            List<FileRedis> fileRedisResource = serviceRedisManagerResources.getResourcesFileForDelete(
+                    namesFileSystemObject, getLoginUser());
+
+            if (namesFileSystemObject.size() != (directoryRedisResource.size() + fileRedisResource.size())) {
+                throw new NoRightsRedisException();
+            } else {
+                List<DirectoryRedis> directoryRedisSorted = conductorOperationDirectoryRedis(directoryRedisResource,
+                        operation);
+                List<FileRedis> fileRedisSorted = conductorOperationFileRedis(fileRedisResource, operation);
+
+                if (!((fileRedisSorted.size() + directoryRedisSorted.size()) == namesFileSystemObject.size())) {
+                    throw new NoRightsRedisException();
+                }
+            }
         }
     }
 
@@ -325,6 +426,24 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     @Override
     public boolean getIsWillBeCreated() {
         return isWillBeCreated;
+    }
+
+    /**
+     * Set the parameter responsible for the type of file system object, file or directory
+     * @param isDirectory is directory
+     */
+    @Override
+    public void setIsDirectory(boolean isDirectory) {
+        this.isDirectory = isDirectory;
+    }
+
+    /**
+     * Get the parameter responsible for the file system object type, file or directory
+     * @return is directory
+     */
+    @Override
+    public boolean getIsDirectory() {
+        return isDirectory;
     }
 
     /**

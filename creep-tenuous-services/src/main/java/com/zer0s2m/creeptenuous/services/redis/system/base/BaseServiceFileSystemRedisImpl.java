@@ -52,11 +52,14 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
      * @param parents Real names directory
      * @param systemParents System names directory
      * @param nameDirectory System name directory
+     * @return are there existing rights
      * @throws NoRightsRedisException When the user has no execution rights
      */
     @Override
-    public void checkRights(List<String> parents, List<String> systemParents, String nameDirectory)
+    public boolean checkRights(List<String> parents, List<String> systemParents, String nameDirectory)
             throws NoRightsRedisException {
+        AtomicBoolean isRight = new AtomicBoolean(true);
+
         String loginUser = accessClaims.get("login", String.class);
 
         if (enableCheckIsNameDirectory && nameDirectory != null) {
@@ -69,13 +72,14 @@ public class BaseServiceFileSystemRedisImpl implements BaseServiceFileSystemRedi
 
         objsRedis.forEach((objRedis) -> {
             if (!Objects.equals(objRedis.getLogin(), loginUser)) {
-                if (isException) {
-                    if (getIsException()) {
-                        throw new NoRightsRedisException();
-                    }
+                isRight.set(false);
+                if (getIsException()) {
+                    throw new NoRightsRedisException();
                 }
             }
         });
+
+        return isRight.get();
     }
 
     /**
