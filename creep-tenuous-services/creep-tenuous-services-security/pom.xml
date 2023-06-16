@@ -9,10 +9,10 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>com.zer0s2m</groupId>
-  <artifactId>creep-tenuous-services-user</artifactId>
+  <artifactId>creep-tenuous-services-security</artifactId>
   <version>0.0.5-SNAPSHOT</version>
-  <name>creep-tenuous-services-user</name>
-  <description>creep-tenuous-services-user</description>
+  <name>creep-tenuous-services-security</name>
+  <description>creep-tenuous-services-security</description>
   <properties>
     <java.version>17</java.version>
   </properties>
@@ -24,38 +24,15 @@
 
     <dependency>
       <groupId>com.zer0s2m</groupId>
-      <artifactId>creep-tenuous-models</artifactId>
-      <version>0.0.5-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.zer0s2m</groupId>
-      <artifactId>creep-tenuous-common</artifactId>
-      <version>0.0.5-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.zer0s2m</groupId>
-      <artifactId>creep-tenuous-repository</artifactId>
-      <version>0.0.5-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.zer0s2m</groupId>
-      <artifactId>creep-tenuous-starter-test</artifactId>
-      <version>0.0.5-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-security</artifactId>
       <version>0.0.5-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.zer0s2m</groupId>
-      <artifactId>creep-tenuous-services-security</artifactId>
-      <version>0.0.5-SNAPSHOT</version>
+      <groupId>de.mkammerer</groupId>
+      <artifactId>argon2-jvm-nolibs</artifactId>
+      <version>2.11</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 
