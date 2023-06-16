@@ -3,7 +3,6 @@ package com.zer0s2m.creeptenuous.services.redis;
 import com.zer0s2m.creeptenuous.redis.models.JwtRedis;
 import com.zer0s2m.creeptenuous.redis.repository.JwtRedisRepository;
 import com.zer0s2m.creeptenuous.security.jwt.domain.JwtRedisData;
-import com.zer0s2m.creeptenuous.services.ConfigServices;
 import com.zer0s2m.creeptenuous.services.redis.jwt.ServiceJwtRedisImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceRedis;
 import org.apache.logging.log4j.LogManager;

@@ -1,13 +1,12 @@
 package com.zer0s2m.creeptenuous.services.redis;
 
+import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateDirectory;
 import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
-import com.zer0s2m.creeptenuous.services.ConfigServices;
-import com.zer0s2m.creeptenuous.services.helpers.User;
-import com.zer0s2m.creeptenuous.services.redis.system.ServiceDeleteDirectoryRedisImpl;
+import com.zer0s2m.creeptenuous.services.redis.system.ServiceCreateDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceRedis;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
 import org.junit.jupiter.api.*;
@@ -17,45 +16,43 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 
 @SpringBootTest(classes = {
         DirectoryRedisRepository.class,
         FileRedisRepository.class,
         JwtProvider.class,
-        ServiceDeleteDirectoryRedisImpl.class
+        ServiceCreateDirectoryRedisImpl.class
 })
 @Transactional
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceRedis
 @ContextConfiguration(classes = { ConfigServices.class })
-public class ServiceDeleteDirectoryRedisTests {
+public class ServiceCreateDirectoryRedisTests {
 
     @Autowired
-    private ServiceDeleteDirectoryRedisImpl serviceDeleteDirectoryRedis;
+    private ServiceCreateDirectoryRedisImpl serviceCreateDirectoryRedis;
 
     @Autowired
     private DirectoryRedisRepository directoryRedisRepository;
 
     @BeforeEach
     void setUp() {
-        serviceDeleteDirectoryRedis.setAccessToken(UtilsAuthAction.generateAccessToken());
+        serviceCreateDirectoryRedis.setAccessToken(UtilsAuthAction.generateAccessToken());
     }
 
     @Test
-    public void delete_success() {
+    public void create_success() {
         String systemName = Distribution.getUUID();
-        directoryRedisRepository.save(new DirectoryRedis(
-                User.LOGIN.get(),
-                User.ROLE_USER.get(),
+        ContainerDataCreateDirectory data = new ContainerDataCreateDirectory(
                 "test",
                 systemName,
-                Path.of(systemName).toString(),
-                new ArrayList<>()
-        ));
+                Path.of("test")
+        );
 
-        serviceDeleteDirectoryRedis.delete(systemName);
+        DirectoryRedis directoryRedis = serviceCreateDirectoryRedis.create(data);
 
-        Assertions.assertFalse(directoryRedisRepository.existsById(systemName));
+        Assertions.assertEquals(directoryRedis.getSystemNameDirectory(), systemName);
+
+        directoryRedisRepository.delete(directoryRedis);
     }
 }

@@ -15,7 +15,6 @@ import com.zer0s2m.creeptenuous.redis.repository.JwtRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
-import com.zer0s2m.creeptenuous.services.ConfigServices;
 import com.zer0s2m.creeptenuous.services.redis.resources.ServiceRedisManagerResourcesImpl;
 import com.zer0s2m.creeptenuous.services.redis.security.ServiceManagerRightsImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceRedis;

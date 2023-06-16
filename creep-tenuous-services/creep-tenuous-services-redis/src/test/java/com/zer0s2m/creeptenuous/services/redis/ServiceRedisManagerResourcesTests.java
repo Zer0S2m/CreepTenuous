@@ -5,7 +5,6 @@ import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
-import com.zer0s2m.creeptenuous.services.ConfigServices;
 import com.zer0s2m.creeptenuous.services.redis.resources.ServiceRedisManagerResourcesImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceRedis;
 import org.junit.jupiter.api.Assertions;

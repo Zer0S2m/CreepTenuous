@@ -1,4 +1,4 @@
-package com.zer0s2m.creeptenuous.services.helpers;
+package com.zer0s2m.creeptenuous.starter.test.mock;
 
 public enum User {
     ROLE_USER("ROLE_USER"),
