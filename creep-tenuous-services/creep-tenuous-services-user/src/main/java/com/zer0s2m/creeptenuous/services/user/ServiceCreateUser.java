@@ -1,4 +1,4 @@
-package com.zer0s2m.creeptenuou.sservices.user;
+package com.zer0s2m.creeptenuous.services.user;
 
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.common.exceptions.UserAlreadyExistException;

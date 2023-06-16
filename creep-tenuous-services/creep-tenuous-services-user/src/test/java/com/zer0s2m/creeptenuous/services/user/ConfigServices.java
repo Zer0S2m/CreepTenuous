@@ -1,4 +1,4 @@
-package com.zer0s2m.creeptenuou.sservices.user;
+package com.zer0s2m.creeptenuous.services.user;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;

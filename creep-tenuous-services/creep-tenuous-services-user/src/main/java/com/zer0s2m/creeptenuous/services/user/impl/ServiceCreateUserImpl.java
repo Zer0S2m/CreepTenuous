@@ -1,4 +1,4 @@
-package com.zer0s2m.creeptenuou.sservices.user.impl;
+package com.zer0s2m.creeptenuous.services.user.impl;
 
 import com.zer0s2m.creeptenuous.common.exceptions.UserAlreadyExistException;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
@@ -6,7 +6,7 @@ import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.security.services.GeneratePassword;
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import com.zer0s2m.creeptenuous.common.enums.UserAlready;
-import com.zer0s2m.creeptenuou.sservices.user.ServiceCreateUser;
+import com.zer0s2m.creeptenuous.services.user.ServiceCreateUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
