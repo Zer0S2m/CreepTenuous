@@ -12,9 +12,6 @@ import java.util.stream.Stream;
 
 /**
  * Directory scanning utilities.
- * <p>Required for Redis services
- * {@link com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess}
- * that copy file system objects</p>
  */
 public interface WalkDirectoryInfo {
 

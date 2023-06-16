@@ -88,12 +88,6 @@
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
-      <artifactId>creep-tenuous-redis-services</artifactId>
-      <version>0.0.5-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-services-system</artifactId>
       <version>0.0.5-SNAPSHOT</version>
       <scope>compile</scope>

@@ -71,7 +71,7 @@ public interface CollectZipDirectory {
      * @param newFileZip file zip archive
      * @param filenameZip filename zip archive
      * @param fosZip output stream
-     * @param map info directory (get data - {@link ServiceDownloadDirectoryRedis#getResource(List)})
+     * @param map info directory
      *            <p><b>Key</b> - system name file object</p>
      *            <p><b>Value</b> - real name system file object</p>
      * @throws IOException system error
@@ -123,7 +123,7 @@ public interface CollectZipDirectory {
     /**
      * Get real system path by map
      * @param rawPath system name path
-     * @param map info directory (get data - {@link ServiceDownloadDirectoryRedis#getResource(List)})
+     * @param map info directory
      *            <p><b>Key</b> - system name file object</p>
      *            <p><b>Value</b> - real name system file object</p>
      * @return real system path
