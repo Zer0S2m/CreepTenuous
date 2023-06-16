@@ -7,14 +7,14 @@ import com.zer0s2m.creeptenuous.common.data.DataDeleteRightUserApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateRightUserApi;
-import com.zer0s2m.creeptenuous.redis.exceptions.ChangeRightsYourselfException;
-import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsFileSystemObjectRedisException;
-import com.zer0s2m.creeptenuous.redis.exceptions.NoExistsRightException;
-import com.zer0s2m.creeptenuous.redis.exceptions.messages.ExceptionAddRightsYourselfMsg;
-import com.zer0s2m.creeptenuous.redis.exceptions.messages.ExceptionNoExistsFileSystemObjectRedisMsg;
-import com.zer0s2m.creeptenuous.redis.exceptions.messages.ExceptionNoExistsRightMsg;
+import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
+import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
+import com.zer0s2m.creeptenuous.common.exceptions.NoExistsRightException;
+import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionAddRightsYourselfMsg;
+import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNoExistsFileSystemObjectRedisMsg;
+import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNoExistsRightMsg;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
-import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotFoundMsg;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
@@ -27,12 +27,12 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
 
     private final ServiceManagerRights serviceManagerRights;
 
-    private final BaseServiceFileSystemRedis serviceFileSystemRedis;
+    private final BaseServiceFileSystemRedisManagerRightsAccess serviceFileSystemRedis;
 
     @Autowired
     public ControllerApiRightUser(
             ServiceManagerRights serviceManagerRights,
-            BaseServiceFileSystemRedis baseServiceFileSystemRedis) {
+            BaseServiceFileSystemRedisManagerRightsAccess baseServiceFileSystemRedis) {
         this.serviceManagerRights = serviceManagerRights;
         this.serviceFileSystemRedis = baseServiceFileSystemRedis;
     }
@@ -47,7 +47,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
      */
     @Override
-    @PostMapping("/user/right")
+    @PostMapping("/user/global/right")
     @ResponseStatus(code = HttpStatus.CREATED)
     public ResponseCreateRightUserApi add(final @Valid @RequestBody @NotNull DataCreateRightUserApi data,
                                           @RequestHeader(name = "Authorization") String accessToken)
@@ -78,7 +78,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      *                                Or is {@literal null} {@link NullPointerException}
      */
     @Override
-    @DeleteMapping("/user/right")
+    @DeleteMapping("/user/global/right")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void delete(
             final @Valid @RequestBody @NotNull DataDeleteRightUserApi data,

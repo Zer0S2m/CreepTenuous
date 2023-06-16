@@ -8,9 +8,9 @@ import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.JwtRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
-import com.zer0s2m.creeptenuous.redis.repositories.DirectoryRedisRepository;
-import com.zer0s2m.creeptenuous.redis.repositories.JwtRedisRepository;
-import com.zer0s2m.creeptenuous.redis.repositories.RightUserFileSystemObjectRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.JwtRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -105,7 +105,7 @@ public class ControllerApiRightUserTests {
         jwtRedisRepository.save(jwtRedis);
 
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/user/right")
+                MockMvcRequestBuilders.post("/api/v1/user/global/right")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_ADD))
@@ -121,7 +121,7 @@ public class ControllerApiRightUserTests {
     @Test
     public void addRight_fail_notFoundUser() throws Exception {
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/user/right")
+                MockMvcRequestBuilders.post("/api/v1/user/global/right")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_FAIL_NOT_FOUND_USER))
@@ -144,7 +144,7 @@ public class ControllerApiRightUserTests {
         jwtRedisRepository.save(jwtRedis);
 
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/user/right")
+                MockMvcRequestBuilders.post("/api/v1/user/global/right")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_ADD_RIGHTS_YOURSELF))
@@ -163,7 +163,7 @@ public class ControllerApiRightUserTests {
         jwtRedisRepository.save(jwtRedis);
 
         this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/user/right")
+                MockMvcRequestBuilders.post("/api/v1/user/global/right")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_ADD))
@@ -195,7 +195,7 @@ public class ControllerApiRightUserTests {
         ));
 
         this.mockMvc.perform(
-                MockMvcRequestBuilders.delete("/api/v1/user/right")
+                MockMvcRequestBuilders.delete("/api/v1/user/global/right")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_DELETE))
@@ -223,7 +223,7 @@ public class ControllerApiRightUserTests {
         jwtRedisRepository.save(jwtRedis);
 
         this.mockMvc.perform(
-                MockMvcRequestBuilders.delete("/api/v1/user/right")
+                MockMvcRequestBuilders.delete("/api/v1/user/global/right")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_FAIL_NOT_RIGHTS))

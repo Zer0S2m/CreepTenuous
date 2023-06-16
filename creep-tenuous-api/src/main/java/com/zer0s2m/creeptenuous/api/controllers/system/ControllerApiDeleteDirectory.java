@@ -2,20 +2,25 @@ package com.zer0s2m.creeptenuous.api.controllers.system;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiDeleteDirectoryDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDeleteDirectoryRedis;
+import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteDirectoryImpl;
+import com.zer0s2m.creeptenuous.services.system.utils.WalkDirectoryInfo;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Path;
 import java.util.List;
 
 @V1APIRestController
@@ -23,9 +28,9 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
 
     static final OperationRights operationRightsDirectoryShow = OperationRights.SHOW;
 
-    static final OperationRights operationRightsDirectoryDelete = OperationRights.DELETE;
-
     private final ServiceDeleteDirectoryImpl serviceDeleteDirectory;
+
+    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath;
 
     private final ServiceDeleteDirectoryRedis serviceDeleteDirectoryRedis;
 
@@ -33,9 +38,11 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
 
     @Autowired
     public ControllerApiDeleteDirectory(ServiceDeleteDirectoryImpl serviceDeleteDirectory,
+                                        ServiceBuildDirectoryPath serviceBuildDirectoryPath,
                                         ServiceDeleteDirectoryRedis serviceDeleteDirectoryRedis,
                                         ServiceManagerRights serviceManagerRights) {
         this.serviceDeleteDirectory = serviceDeleteDirectory;
+        this.serviceBuildDirectoryPath = serviceBuildDirectoryPath;
         this.serviceDeleteDirectoryRedis = serviceDeleteDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
     }
@@ -52,6 +59,7 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
      *                                   using the newInstance method in class {@code Class}.
      * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
      *                                   tries to reflectively create an instance
+     * @throws IOException               signals that an I/O exception of some sort has occurred
      */
     @Override
     @DeleteMapping("/directory/delete")
@@ -59,9 +67,10 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
     public final void deleteDirectory(final @Valid @RequestBody @NotNull DataDeleteDirectoryApi directoryForm,
                                       @RequestHeader(name = "Authorization") String accessToken)
             throws InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException {
+            InstantiationException, IllegalAccessException, IOException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
+        serviceManagerRights.setIsDirectory(true);
 
         serviceDeleteDirectoryRedis.setAccessToken(accessToken);
         serviceDeleteDirectoryRedis.setEnableCheckIsNameDirectory(true);
@@ -70,23 +79,30 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
         boolean isRightsSystemParents = serviceDeleteDirectoryRedis.checkRights(
                 directoryForm.parents(),
                 CloneList.cloneOneLevel(directoryForm.systemParents()),
-                directoryForm.systemDirectoryName(),
-                false
+                directoryForm.systemDirectoryName()
         );
         if (!isRightsSystemParents) {
             serviceManagerRights.checkRightsByOperation(operationRightsDirectoryShow,
                     CloneList.cloneOneLevel(directoryForm.systemParents(),
                             List.of(directoryForm.systemDirectoryName())));
-            serviceManagerRights.checkRightsByOperation(operationRightsDirectoryDelete,
-                    directoryForm.systemDirectoryName());
+            serviceManagerRights.checkRightByOperationDeleteDirectory(directoryForm.systemDirectoryName());
         }
+
+        List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(
+                Path.of(serviceBuildDirectoryPath.build(
+                        CloneList.cloneOneLevel(directoryForm.systemParents(),
+                                List.of(directoryForm.systemDirectoryName())))));
+        List<String> namesFileSystemObject = attached
+                .stream()
+                .map(ContainerInfoFileSystemObject::nameFileSystemObject)
+                .toList();
 
         AtomicSystemCallManager.call(
                 serviceDeleteDirectory,
                 directoryForm.systemParents(),
                 directoryForm.systemDirectoryName()
         );
-        serviceDeleteDirectoryRedis.delete(directoryForm.systemDirectoryName());
+        serviceDeleteDirectoryRedis.delete(namesFileSystemObject);
     }
 
 }

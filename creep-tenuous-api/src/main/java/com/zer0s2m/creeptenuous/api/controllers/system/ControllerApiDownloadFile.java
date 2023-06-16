@@ -6,7 +6,7 @@ import com.zer0s2m.creeptenuous.common.containers.ContainerDataDownloadFile;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
-import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedis;
+import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadFileImpl;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
@@ -30,13 +30,13 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
 
     private final ServiceDownloadFileImpl serviceDownloadFile;
 
-    private final BaseServiceFileSystemRedis baseServiceFileSystemRedis;
+    private final BaseServiceFileSystemRedisManagerRightsAccess baseServiceFileSystemRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
     public ControllerApiDownloadFile(ServiceDownloadFileImpl serviceDownloadFile,
-                                     BaseServiceFileSystemRedis baseServiceFileSystemRedis,
+                                     BaseServiceFileSystemRedisManagerRightsAccess baseServiceFileSystemRedis,
                                      ServiceManagerRights serviceManagerRights) {
         this.serviceDownloadFile = serviceDownloadFile;
         this.baseServiceFileSystemRedis = baseServiceFileSystemRedis;
@@ -74,12 +74,10 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
 
         final ContainerDataDownloadFile<ByteArrayResource, String> dataFile = serviceDownloadFile.download(
                 data.systemParents(),
-                data.systemFileName()
-        );
+                data.systemFileName());
         return ResponseEntity.ok()
                 .headers(serviceDownloadFile.collectHeaders(dataFile))
-                .body(dataFile.byteContent()
-                );
+                .body(dataFile.byteContent());
     }
 
 }
