@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.api.core.handlers;
 
-import com.zer0s2m.creeptenuous.redis.exceptions.NoRightsRedisException;
-import com.zer0s2m.creeptenuous.redis.exceptions.messages.ExceptionNoRightsRedisMsg;
+import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
+import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNoRightsRedisMsg;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
