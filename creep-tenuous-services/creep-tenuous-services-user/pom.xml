@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.zer0s2m</groupId>
   <artifactId>creep-tenuous-services-user</artifactId>
-  <version>0.0.5-SNAPSHOT</version>
+  <version>0.0.6-SNAPSHOT</version>
   <name>creep-tenuous-services-user</name>
   <description>creep-tenuous-services-user</description>
   <properties>
@@ -25,37 +25,37 @@
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-models</artifactId>
-      <version>0.0.5-SNAPSHOT</version>
+      <version>0.0.6-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-common</artifactId>
-      <version>0.0.5-SNAPSHOT</version>
+      <version>0.0.6-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-repository</artifactId>
-      <version>0.0.5-SNAPSHOT</version>
+      <version>0.0.6-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-starter-test</artifactId>
-      <version>0.0.5-SNAPSHOT</version>
+      <version>0.0.6-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-security</artifactId>
-      <version>0.0.5-SNAPSHOT</version>
+      <version>0.0.6-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-services-security</artifactId>
-      <version>0.0.5-SNAPSHOT</version>
+      <version>0.0.6-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
