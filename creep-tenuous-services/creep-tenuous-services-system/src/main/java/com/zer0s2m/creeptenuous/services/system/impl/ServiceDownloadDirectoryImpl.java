@@ -8,7 +8,6 @@ import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationDownload;
 import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
-import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectoryRedis;
 import com.zer0s2m.creeptenuous.services.system.CollectZipDirectory;
 import com.zer0s2m.creeptenuous.services.system.ServiceDownloadDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
@@ -42,7 +41,7 @@ public class ServiceDownloadDirectoryImpl
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
     /**
-     * info directory (get data - {@link ServiceDownloadDirectoryRedis#getResource(List)})
+     * info directory
      */
     private HashMap<String, String> map = null;
 
