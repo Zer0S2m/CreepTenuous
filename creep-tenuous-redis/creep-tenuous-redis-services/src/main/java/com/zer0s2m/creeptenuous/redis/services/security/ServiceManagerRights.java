@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.redis.services.security;
 
+import com.zer0s2m.creeptenuous.common.enums.ManagerRights;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
@@ -20,7 +21,7 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
     /**
      * Separator for creating a unique key (from the system name of the file system object and user login)
      */
-    String SEPARATOR_UNIQUE_KEY = "__";
+    String SEPARATOR_UNIQUE_KEY = ManagerRights.SEPARATOR_UNIQUE_KEY.get();
 
     /**
      * Checking permissions to perform some action on a specific file object
