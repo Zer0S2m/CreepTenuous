@@ -6,13 +6,14 @@ import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 
 /**
- * Class for triggering directory object deletion events from Redis
+ * Class for triggering file object deletion events from Redis
  */
 @Component
 public class FileRedisEventPublisher implements ApplicationEventPublisherAware {
 
     private ApplicationEventPublisher publisher;
 
+    @Override
     public void setApplicationEventPublisher (@NotNull ApplicationEventPublisher publisher) {
         this.publisher = publisher;
     }

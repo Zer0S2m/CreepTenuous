@@ -16,7 +16,7 @@ import java.util.List;
  * Redis Delete File Object Handler
  */
 @Component
-class FileRedisDeleteEventHandler implements ApplicationListener<FileRedisDeleteEvent> {
+class DirectoryRedisDeleteEventHandler implements ApplicationListener<DirectoryRedisDeleteEvent> {
 
     static private final String SEPARATOR_UNIQUE_KEY = ManagerRights.SEPARATOR_UNIQUE_KEY.get();
 
@@ -25,7 +25,7 @@ class FileRedisDeleteEventHandler implements ApplicationListener<FileRedisDelete
     private final RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
     @Autowired
-    FileRedisDeleteEventHandler(JwtRedisRepository jwtRedisRepository,
+    DirectoryRedisDeleteEventHandler(JwtRedisRepository jwtRedisRepository,
                                 RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository) {
         this.jwtRedisRepository = jwtRedisRepository;
         this.rightUserFileSystemObjectRedisRepository = rightUserFileSystemObjectRedisRepository;
@@ -35,23 +35,27 @@ class FileRedisDeleteEventHandler implements ApplicationListener<FileRedisDelete
      * Handle an application event.
      * @param event the event to respond to
      */
-    public void onApplicationEvent(@NotNull FileRedisDeleteEvent event) {
+    public void onApplicationEvent(@NotNull DirectoryRedisDeleteEvent event) {
         List<String> userLogins = UtilsEventHandler.getUserLogins(jwtRedisRepository);
         Iterable<RightUserFileSystemObjectRedis> rightsUser = getRightUserFileSystemObjectRedis(
-                userLogins, event.getIdFileRedis());
+                userLogins, event.getNamesFileSystemObject());
         deleteRightUserFileSystemObjectRedis(rightsUser);
     }
 
     /**
      * Get all user rights by user logins and the system name of the file system object
      * @param userLogins user logins
-     * @param nameFileSystemObject system name of the file system object
-     * @return  user rights
+     * @param namesFileSystemObject system names of the file system object
+     * @return user rights
      */
     private @NotNull Iterable<RightUserFileSystemObjectRedis> getRightUserFileSystemObjectRedis(
-            @NotNull List<String> userLogins, String nameFileSystemObject) {
+            @NotNull List<String> userLogins, List<String> namesFileSystemObject) {
         List<String> ids = new ArrayList<>();
-        userLogins.forEach(userLogin -> ids.add(nameFileSystemObject + SEPARATOR_UNIQUE_KEY + userLogin));
+        userLogins.forEach(userLogin -> {
+            namesFileSystemObject.forEach(nameFileSystemObject -> {
+                ids.add(nameFileSystemObject + SEPARATOR_UNIQUE_KEY + userLogin);
+            });
+        });
         return rightUserFileSystemObjectRedisRepository.findAllById(ids);
     }
 

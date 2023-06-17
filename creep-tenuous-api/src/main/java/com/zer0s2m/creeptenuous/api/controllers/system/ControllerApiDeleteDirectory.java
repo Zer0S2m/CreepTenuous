@@ -7,6 +7,7 @@ import com.zer0s2m.creeptenuous.common.data.DataDeleteDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.redis.events.DirectoryRedisEventPublisher;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDeleteDirectoryRedis;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
@@ -36,15 +37,19 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
 
     private final ServiceManagerRights serviceManagerRights;
 
+    private final DirectoryRedisEventPublisher directoryRedisEventPublisher;
+
     @Autowired
     public ControllerApiDeleteDirectory(ServiceDeleteDirectoryImpl serviceDeleteDirectory,
                                         ServiceBuildDirectoryPath serviceBuildDirectoryPath,
                                         ServiceDeleteDirectoryRedis serviceDeleteDirectoryRedis,
-                                        ServiceManagerRights serviceManagerRights) {
+                                        ServiceManagerRights serviceManagerRights,
+                                        DirectoryRedisEventPublisher directoryRedisEventPublisher) {
         this.serviceDeleteDirectory = serviceDeleteDirectory;
         this.serviceBuildDirectoryPath = serviceBuildDirectoryPath;
         this.serviceDeleteDirectoryRedis = serviceDeleteDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
+        this.directoryRedisEventPublisher = directoryRedisEventPublisher;
     }
 
     /**
@@ -103,6 +108,7 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
                 directoryForm.systemDirectoryName()
         );
         serviceDeleteDirectoryRedis.delete(namesFileSystemObject);
+        directoryRedisEventPublisher.publishDelete(namesFileSystemObject);
     }
 
 }
