@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.redis.events.FileRedisEventPublisher;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDeleteFileRedis;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteFileImpl;
@@ -31,13 +32,17 @@ public class ControllerApiDeleteFile implements ControllerApiDeleteFileDoc {
 
     private final ServiceManagerRights serviceManagerRights;
 
+    private final FileRedisEventPublisher fileRedisEventPublisher;
+
     @Autowired
     public ControllerApiDeleteFile(ServiceDeleteFileImpl serviceDeleteFile,
                                    ServiceDeleteFileRedis serviceDeleteFileRedis,
-                                   ServiceManagerRights serviceManagerRights) {
+                                   ServiceManagerRights serviceManagerRights,
+                                   FileRedisEventPublisher fileRedisEventPublisher) {
         this.serviceDeleteFile = serviceDeleteFile;
         this.serviceDeleteFileRedis = serviceDeleteFileRedis;
         this.serviceManagerRights = serviceManagerRights;
+        this.fileRedisEventPublisher = fileRedisEventPublisher;
     }
 
     /**
@@ -82,6 +87,7 @@ public class ControllerApiDeleteFile implements ControllerApiDeleteFileDoc {
                 file.systemParents()
         );
         serviceDeleteFileRedis.delete(source, file.systemFileName());
+        fileRedisEventPublisher.publishDelete(file.systemFileName());
     }
 
 }

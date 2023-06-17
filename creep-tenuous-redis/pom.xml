@@ -20,6 +20,7 @@
   <modules>
     <module>creep-tenuous-redis-models</module>
     <module>creep-tenuous-redis-repository</module>
+    <module>creep-tenuous-redis-events</module>
     <module>creep-tenuous-redis-services</module>
   </modules>
   <dependencies>
