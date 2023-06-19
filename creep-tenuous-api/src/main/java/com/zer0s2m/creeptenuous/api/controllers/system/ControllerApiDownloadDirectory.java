@@ -10,8 +10,10 @@ import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectorySelectRedis;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectoryImpl;
+import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectorySelectImpl;
 import com.zer0s2m.creeptenuous.services.system.utils.WalkDirectoryInfo;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +40,11 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
     private final ServiceDownloadDirectoryImpl serviceDownloadDirectory;
 
+    private final ServiceDownloadDirectorySelectImpl serviceDownloadDirectorySelect;
+
     private final ServiceDownloadDirectoryRedis serviceDownloadDirectoryRedis;
+
+    private final ServiceDownloadDirectorySelectRedis serviceDownloadDirectorySelectRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
@@ -46,12 +52,16 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
     public ControllerApiDownloadDirectory(
             ServiceBuildDirectoryPath buildDirectoryPath,
             ServiceDownloadDirectoryImpl serviceDownloadDirectory,
+            ServiceDownloadDirectorySelectImpl serviceDownloadDirectorySelect,
             ServiceDownloadDirectoryRedis serviceDownloadDirectoryRedis,
+            ServiceDownloadDirectorySelectRedis serviceDownloadDirectorySelectRedis,
             ServiceManagerRights serviceManagerRights
     ) {
         this.buildDirectoryPath = buildDirectoryPath;
         this.serviceDownloadDirectory = serviceDownloadDirectory;
+        this.serviceDownloadDirectorySelect = serviceDownloadDirectorySelect;
         this.serviceDownloadDirectoryRedis = serviceDownloadDirectoryRedis;
+        this.serviceDownloadDirectorySelectRedis = serviceDownloadDirectorySelectRedis;
         this.serviceManagerRights = serviceManagerRights;
     }
 
@@ -112,10 +122,14 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
     @Override
     @PostMapping(path = "/directory/download/select")
-    public void downloadSelect(
+    public ResponseEntity<Resource> downloadSelect(
             final @Valid @RequestBody @NotNull DataDownloadDirectorySelectApi data,
             @RequestHeader(name = "Authorization") String accessToken) {
+        serviceManagerRights.setAccessClaims(accessToken);
+        serviceManagerRights.setIsWillBeCreated(false);
 
+        serviceDownloadDirectorySelectRedis.setAccessToken(accessToken);
+        serviceDownloadDirectorySelectRedis.setEnableCheckIsNameDirectory(true);
     }
 
 }

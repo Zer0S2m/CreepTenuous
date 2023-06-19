@@ -93,7 +93,7 @@ public interface ControllerApiDownloadDirectoryDoc {
                     @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFoundFileObjectSystem")
             }
     )
-    void downloadSelect(
+    ResponseEntity<Resource> downloadSelect(
             final DataDownloadDirectorySelectApi data,
             @Parameter(hidden = true) String accessToken
     );

@@ -120,6 +120,7 @@ public class ServiceDownloadDirectoryImpl
      * Set resource for archiving directory
      * @param map data
      */
+    @Override
     public void setMap(HashMap<String, String> map) {
         this.map = map;
     }

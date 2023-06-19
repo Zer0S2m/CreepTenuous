@@ -22,10 +22,7 @@ public interface ServiceDownloadDirectory {
       * @return archive zip
       * @throws IOException system error
       */
-     ResponseEntity<Resource> download(
-             List<String> systemParents,
-             String systemNameDirectory
-     ) throws IOException;
+     ResponseEntity<Resource> download(List<String> systemParents, String systemNameDirectory) throws IOException;
 
      /**
       * Collect headers for download directory
