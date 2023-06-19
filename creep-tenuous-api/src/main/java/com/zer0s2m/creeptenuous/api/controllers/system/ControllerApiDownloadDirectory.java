@@ -2,6 +2,7 @@ package com.zer0s2m.creeptenuous.api.controllers.system;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiDownloadDirectoryDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectoryApi;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectApi;
@@ -48,6 +49,8 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
     private final ServiceManagerRights serviceManagerRights;
 
+    private final RootPath rootPath;
+
     @Autowired
     public ControllerApiDownloadDirectory(
             ServiceBuildDirectoryPath buildDirectoryPath,
@@ -55,7 +58,8 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
             ServiceDownloadDirectorySelectImpl serviceDownloadDirectorySelect,
             ServiceDownloadDirectoryRedis serviceDownloadDirectoryRedis,
             ServiceDownloadDirectorySelectRedis serviceDownloadDirectorySelectRedis,
-            ServiceManagerRights serviceManagerRights
+            ServiceManagerRights serviceManagerRights,
+            RootPath rootPath
     ) {
         this.buildDirectoryPath = buildDirectoryPath;
         this.serviceDownloadDirectory = serviceDownloadDirectory;
@@ -63,6 +67,7 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
         this.serviceDownloadDirectoryRedis = serviceDownloadDirectoryRedis;
         this.serviceDownloadDirectorySelectRedis = serviceDownloadDirectorySelectRedis;
         this.serviceManagerRights = serviceManagerRights;
+        this.rootPath = rootPath;
     }
 
     /**
@@ -120,16 +125,43 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
         );
     }
 
+    /**
+     * Download directory with selected file objects
+     * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceDownloadDirectorySelectImpl#download()}</p>
+     *
+     * @param data        directory download data
+     * @param accessToken raw JWT access token
+     * @return zip file
+     * @throws IOException               if an I/O error occurs or the parent directory does not exist
+     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
+     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
+     *                                   using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
+     *                                   tries to reflectively create an instance
+     */
     @Override
     @PostMapping(path = "/directory/download/select")
     public ResponseEntity<Resource> downloadSelect(
             final @Valid @RequestBody @NotNull DataDownloadDirectorySelectApi data,
-            @RequestHeader(name = "Authorization") String accessToken) {
+            @RequestHeader(name = "Authorization") String accessToken) throws IOException, InvocationTargetException,
+            NoSuchMethodException, InstantiationException, IllegalAccessException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
 
         serviceDownloadDirectorySelectRedis.setAccessToken(accessToken);
         serviceDownloadDirectorySelectRedis.setEnableCheckIsNameDirectory(true);
+
+        HashMap<String, String> resource = serviceDownloadDirectoryRedis.getResource(
+                WalkDirectoryInfo.walkDirectory(Path.of(rootPath.getRootPath()))
+                        .stream()
+                        .map(ContainerInfoFileSystemObject::nameFileSystemObject)
+                        .collect(Collectors.toList())
+        );
+
+        serviceDownloadDirectorySelect.setMap(resource);
+
+        return AtomicSystemCallManager.call(serviceDownloadDirectorySelect);
     }
 
 }

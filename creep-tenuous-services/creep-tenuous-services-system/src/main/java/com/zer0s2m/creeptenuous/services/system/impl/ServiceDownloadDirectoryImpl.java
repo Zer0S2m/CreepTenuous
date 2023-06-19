@@ -59,7 +59,7 @@ public class ServiceDownloadDirectoryImpl
      */
     @Override
     @AtomicFileSystem(
-            name = "delete-file",
+            name = "download-directory",
             handlers = {
                     @AtomicFileSystemExceptionHandler(
                             exception = IOException.class,

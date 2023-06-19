@@ -1,12 +1,17 @@
 package com.zer0s2m.creeptenuous.services.system.impl;
 
 import com.zer0s2m.creeptenuous.common.annotations.ServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationDownload;
 import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.CollectZipDirectory;
 import com.zer0s2m.creeptenuous.services.system.ServiceDownloadDirectorySelect;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -22,8 +27,19 @@ public class ServiceDownloadDirectorySelectImpl
     private HashMap<String, String> map = null;
 
     @Override
+    @AtomicFileSystem(
+            name = "download-directory-select",
+            handlers = {
+                    @AtomicFileSystemExceptionHandler(
+                            exception = IOException.class,
+                            handler = ServiceFileSystemExceptionHandlerOperationDownload.class,
+                            operation = ContextAtomicFileSystem.Operations.DOWNLOAD
+                    )
+            }
+    )
     public ResponseEntity<Resource> download() {
-
+        return ResponseEntity.ok()
+                .body(null);
     }
 
     /**
