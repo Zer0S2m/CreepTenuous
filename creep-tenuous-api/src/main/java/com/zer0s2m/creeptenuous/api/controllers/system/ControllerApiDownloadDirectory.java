@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiDownl
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectoryApi;
+import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
@@ -107,6 +108,14 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
                 data.systemParents(),
                 data.systemDirectoryName()
         );
+    }
+
+    @Override
+    @PostMapping(path = "/directory/download/select")
+    public void downloadSelect(
+            final @Valid @RequestBody @NotNull DataDownloadDirectorySelectApi data,
+            @RequestHeader(name = "Authorization") String accessToken) {
+
     }
 
 }

@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectoryApi;
+import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectoryImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -64,4 +65,36 @@ public interface ControllerApiDownloadDirectoryDoc {
             @Parameter(hidden = true) String accessToken
     ) throws IOException, InvocationTargetException, NoSuchMethodException,
             InstantiationException, IllegalAccessException;
+
+    @Operation(
+            method = "POST",
+            summary = "Download file system objects selectively",
+            description = "Download file system objects selectively - output format: zip archive",
+            tags = { "Directory" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Data to download a file system objects selectively",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = DataDownloadDirectorySelectApi.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful file system objects selectively download",
+                            content = @Content(
+                                    mediaType = "application/zip",
+                                    schema = @Schema(implementation = Resource.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+                    @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden"),
+                    @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFoundFileObjectSystem")
+            }
+    )
+    void downloadSelect(
+            final DataDownloadDirectorySelectApi data,
+            @Parameter(hidden = true) String accessToken
+    );
 }
