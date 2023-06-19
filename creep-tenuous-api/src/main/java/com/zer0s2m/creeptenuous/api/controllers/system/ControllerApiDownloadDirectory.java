@@ -8,6 +8,7 @@ import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectoryApi;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
+import com.zer0s2m.creeptenuous.common.utils.UtilsDataApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectoryRedis;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +38,8 @@ import java.util.stream.Collectors;
 public class ControllerApiDownloadDirectory implements ControllerApiDownloadDirectoryDoc {
 
     static final OperationRights operationRightsShow = OperationRights.SHOW;
+
+    static final OperationRights operationRights = OperationRights.DOWNLOAD;
 
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
@@ -149,8 +153,26 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
 
-        serviceDownloadDirectorySelectRedis.setAccessToken(accessToken);
-        serviceDownloadDirectorySelectRedis.setEnableCheckIsNameDirectory(true);
+        serviceDownloadDirectorySelectRedis.setAccessClaims(accessToken);
+        serviceDownloadDirectorySelectRedis.setEnableCheckIsNameDirectory(false);
+        serviceDownloadDirectorySelectRedis.setIsException(false);
+
+        List<String> uniqueSystemParents = UtilsDataApi.collectUniqueSystemParentsForDownloadDirectorySelect(
+                data.attached());
+        List<String> uniqueSystemName = UtilsDataApi.collectUniqueSystemNameForDownloadDirectorySelect(
+                data.attached());
+        boolean isRightsSource = serviceDownloadDirectorySelectRedis.checkRights(
+                new ArrayList<>(), uniqueSystemParents, null, false);
+        boolean isRightsObjects = serviceDownloadDirectorySelectRedis.checkRights(
+                new ArrayList<>(), uniqueSystemName, null, false);
+        if (!isRightsSource || !isRightsObjects) {
+            if (!isRightsSource) {
+                serviceManagerRights.checkRightsByOperation(operationRightsShow, uniqueSystemParents);
+            }
+            if (!isRightsObjects) {
+                serviceManagerRights.checkRightsByOperation(operationRights, uniqueSystemName);
+            }
+        }
 
         HashMap<String, String> resource = serviceDownloadDirectoryRedis.getResource(
                 WalkDirectoryInfo.walkDirectory(Path.of(rootPath.getRootPath()))

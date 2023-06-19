@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.services.system.impl;
 import com.zer0s2m.creeptenuous.common.annotations.ServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationDownload;
 import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
@@ -18,6 +19,7 @@ import java.util.HashMap;
  * Service for downloading a catalog as a selection of file objects
  */
 @ServiceFileSystem("service-download-directory-select")
+@CoreServiceFileSystem(method = "download")
 public class ServiceDownloadDirectorySelectImpl
         implements ServiceDownloadDirectorySelect, CollectZipDirectory, AtomicServiceFileSystem {
 
