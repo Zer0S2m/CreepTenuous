@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Interface for downloading a directory as a selection of file objects
  */
-public interface ServiceDownloadDirectorySelect {
+public interface ServiceDownloadDirectorySelect extends ServiceDownloadDirectorySetHeaders {
 
     /**
      * Download selectively file objects
