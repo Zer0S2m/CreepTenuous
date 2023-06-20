@@ -131,7 +131,8 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
     /**
      * Download directory with selected file objects
-     * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceDownloadDirectorySelectImpl#download()}</p>
+     * <p>Called method via {@link AtomicSystemCallManager} -
+     * {@link ServiceDownloadDirectorySelectImpl#download(List)}</p>
      *
      * @param data        directory download data
      * @param accessToken raw JWT access token
@@ -183,7 +184,7 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
         serviceDownloadDirectorySelect.setMap(resource);
 
-        return AtomicSystemCallManager.call(serviceDownloadDirectorySelect);
+        return AtomicSystemCallManager.call(serviceDownloadDirectorySelect, data.attached());
     }
 
 }

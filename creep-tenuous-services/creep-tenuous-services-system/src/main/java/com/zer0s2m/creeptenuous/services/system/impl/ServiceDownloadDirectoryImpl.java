@@ -1,7 +1,6 @@
 package com.zer0s2m.creeptenuous.services.system.impl;
 
 import com.zer0s2m.creeptenuous.common.annotations.ServiceFileSystem;
-import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
 import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
@@ -17,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
@@ -33,7 +30,7 @@ import java.nio.file.Path;
  */
 @ServiceFileSystem("service-download-directory")
 @CoreServiceFileSystem(method = "download")
-public class ServiceDownloadDirectoryImpl
+public class ServiceDownloadDirectoryImpl extends ServiceDownloadDirectorySetHeadersImpl
         implements ServiceDownloadDirectory, CollectZipDirectory, AtomicServiceFileSystem {
 
     private final Logger logger = LogManager.getLogger(ServiceDownloadDirectoryImpl.class);
@@ -82,29 +79,6 @@ public class ServiceDownloadDirectoryImpl
         return ResponseEntity.ok()
                 .headers(collectHeaders(pathToZip, contentBytes))
                 .body(contentBytes);
-    }
-
-    /**
-     * Collect headers for download directory
-     * @param path source archive zip
-     * @param data byre data
-     * @return headers
-     */
-    @Override
-    public HttpHeaders collectHeaders(@NotNull Path path, @NotNull ByteArrayResource data) {
-        HttpHeaders headers = new HttpHeaders();
-
-        headers.add(HttpHeaders.EXPIRES, "1");
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition
-                .attachment()
-                .filename(String.valueOf(path.getFileName()))
-                .build()
-                .toString()
-        );
-        headers.add(HttpHeaders.CONTENT_TYPE, Directory.TYPE_APPLICATION_ZIP.get());
-        headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(data.contentLength()));
-
-        return headers;
     }
 
     /**
