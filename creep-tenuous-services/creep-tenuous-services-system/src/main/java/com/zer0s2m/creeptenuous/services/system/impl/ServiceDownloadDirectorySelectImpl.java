@@ -19,14 +19,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,7 +35,7 @@ import java.util.List;
  */
 @ServiceFileSystem("service-download-directory-select")
 @CoreServiceFileSystem(method = "download")
-public class ServiceDownloadDirectorySelectImpl extends ServiceDownloadDirectorySetHeadersImpl
+public class ServiceDownloadDirectorySelectImpl
         implements ServiceDownloadDirectorySelect, CollectZipDirectory, AtomicServiceFileSystem {
 
     private final Logger logger = LogManager.getLogger(ServiceDownloadDirectorySelectImpl.class);
@@ -59,7 +55,7 @@ public class ServiceDownloadDirectorySelectImpl extends ServiceDownloadDirectory
     /**
      * Download selectively file objects
      * @param data object file system information
-     * @return archive zip
+     * @return archive zip (source)
      * @throws IOException if an I/O error occurs or the parent directory does not exist
      */
     @Override
@@ -73,7 +69,7 @@ public class ServiceDownloadDirectorySelectImpl extends ServiceDownloadDirectory
                     )
             }
     )
-    public ResponseEntity<Resource> download(@NotNull List<DataDownloadDirectorySelectPartApi> data) throws IOException {
+    public Path download(@NotNull List<DataDownloadDirectorySelectPartApi> data) throws IOException {
         List<Path> paths = new ArrayList<>();
         data.forEach(obj -> {
             try {
@@ -86,14 +82,10 @@ public class ServiceDownloadDirectorySelectImpl extends ServiceDownloadDirectory
         });
 
         Path collectZip = mergeZipArchives(paths);
-        ByteArrayResource contentBytes = new ByteArrayResource(Files.readAllBytes(collectZip));
 
         paths.forEach(this::deleteFileZip);
-        deleteFileZip(collectZip);
 
-        return ResponseEntity.ok()
-                .headers(collectHeaders(collectZip, contentBytes))
-                .body(contentBytes);
+        return collectZip;
     }
 
     /**

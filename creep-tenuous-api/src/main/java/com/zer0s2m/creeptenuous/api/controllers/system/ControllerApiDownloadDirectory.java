@@ -13,13 +13,16 @@ import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectorySelectRedis;
+import com.zer0s2m.creeptenuous.services.system.ServiceDownloadDirectorySetHeaders;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectoryImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectorySelectImpl;
+import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectorySetHeadersImpl;
 import com.zer0s2m.creeptenuous.services.system.utils.WalkDirectoryInfo;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +50,9 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
     private final ServiceDownloadDirectoryImpl serviceDownloadDirectory;
 
     private final ServiceDownloadDirectorySelectImpl serviceDownloadDirectorySelect;
+
+    private final ServiceDownloadDirectorySetHeaders serviceDownloadDirectorySetHeaders =
+            new ServiceDownloadDirectorySetHeadersImpl();
 
     private final ServiceDownloadDirectoryRedis serviceDownloadDirectoryRedis;
 
@@ -184,7 +191,16 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
         serviceDownloadDirectorySelect.setMap(resource);
 
-        return AtomicSystemCallManager.call(serviceDownloadDirectorySelect, data.attached());
+        Path sourceZipArchive = AtomicSystemCallManager.call(serviceDownloadDirectorySelect, data.attached());
+        ByteArrayResource contentBytes = new ByteArrayResource(Files.readAllBytes(sourceZipArchive));
+        ResponseEntity<Resource> resourceResponseEntity = ResponseEntity
+                .ok()
+                .headers(serviceDownloadDirectorySetHeaders.collectHeaders(sourceZipArchive, contentBytes))
+                .body(contentBytes);
+
+        Files.delete(sourceZipArchive);
+
+        return resourceResponseEntity;
     }
 
 }
