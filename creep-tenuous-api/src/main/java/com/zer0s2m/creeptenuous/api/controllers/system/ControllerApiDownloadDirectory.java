@@ -129,11 +129,20 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
         serviceDownloadDirectory.setMap(resource);
 
-        return AtomicSystemCallManager.call(
+        Path sourceZipArchive = AtomicSystemCallManager.call(
                 serviceDownloadDirectory,
                 data.systemParents(),
                 data.systemDirectoryName()
         );
+        ByteArrayResource contentBytes = new ByteArrayResource(Files.readAllBytes(sourceZipArchive));
+        ResponseEntity<Resource> resourceResponseEntity = ResponseEntity
+                .ok()
+                .headers(serviceDownloadDirectorySetHeaders.collectHeaders(sourceZipArchive, contentBytes))
+                .body(contentBytes);
+
+        Files.delete(sourceZipArchive);
+
+        return resourceResponseEntity;
     }
 
     /**
