@@ -5,6 +5,10 @@ import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.NoSuchFileExists;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagControllerApi
 public class ControllerApiDownloadFileTests {
+
     Logger logger = LogManager.getLogger(ControllerApiDownloadFileTests.class);
 
     @Autowired
@@ -43,6 +49,12 @@ public class ControllerApiDownloadFileTests {
 
     @Autowired
     private RootPath rootPath;
+
+    @Autowired
+    private DirectoryRedisRepository directoryRedisRepository;
+
+    @Autowired
+    private FileRedisRepository fileRedisRepository;
 
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
@@ -114,7 +126,6 @@ public class ControllerApiDownloadFileTests {
         mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("/api/v1/file/download")
-                        .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(INVALID_DATA_1))
                         .header("Authorization",  accessToken)
                         .accept(MediaType.APPLICATION_JSON)
@@ -133,7 +144,6 @@ public class ControllerApiDownloadFileTests {
         mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("/api/v1/file/download")
-                        .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(INVALID_DATA_2))
                         .header("Authorization",  accessToken)
                         .accept(MediaType.APPLICATION_JSON)
@@ -147,7 +157,6 @@ public class ControllerApiDownloadFileTests {
         this.mockMvc.perform(
                         MockMvcRequestBuilders
                                 .post("/api/v1/file/download")
-                                .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(INVALID_DATA_3))
                                 .header("Authorization",  accessToken)
                                 .accept(MediaType.APPLICATION_JSON)
@@ -161,7 +170,6 @@ public class ControllerApiDownloadFileTests {
         this.mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("/api/v1/file/download")
-                        .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(INVALID_DATA_4))
                         .header("Authorization",  accessToken)
                         .accept(MediaType.APPLICATION_JSON)
@@ -169,4 +177,64 @@ public class ControllerApiDownloadFileTests {
                 )
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void downloadFile_fail_forbiddenDirectories() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/api/v1/file/download")
+                        .content(objectMapper.writeValueAsString(new DataDownloadFileApi(
+                                List.of("testDirectory"),
+                                List.of("testDirectory"),
+                                nameTestFile1,
+                                nameTestFile1
+                        )))
+                        .header("Authorization",  accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void downloadFile_fail_forbiddenFile() throws Exception {
+        FileRedis fileRedis = new FileRedis(
+                "login",
+                "ROLE_USER",
+                nameTestFile1,
+                nameTestFile1,
+                nameTestFile1,
+                new ArrayList<>());
+        fileRedisRepository.save(fileRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/api/v1/file/download")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataDownloadFileApi(
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                nameTestFile1,
+                                nameTestFile1
+                        )))
+                        .header("Authorization",  accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isForbidden());
+
+        fileRedisRepository.delete(fileRedis);
+    }
+
 }

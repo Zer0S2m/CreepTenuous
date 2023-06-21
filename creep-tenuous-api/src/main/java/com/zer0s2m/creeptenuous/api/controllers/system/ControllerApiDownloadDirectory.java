@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -178,10 +177,8 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
                 data.attached());
         List<String> uniqueSystemName = UtilsDataApi.collectUniqueSystemNameForDownloadDirectorySelect(
                 data.attached());
-        boolean isRightsSource = serviceDownloadDirectorySelectRedis.checkRights(
-                new ArrayList<>(), uniqueSystemParents, null, false);
-        boolean isRightsObjects = serviceDownloadDirectorySelectRedis.checkRights(
-                new ArrayList<>(), uniqueSystemName, null, false);
+        boolean isRightsSource = serviceDownloadDirectorySelectRedis.checkRights(uniqueSystemParents);
+        boolean isRightsObjects = serviceDownloadDirectorySelectRedis.checkRights(uniqueSystemName);
         if (!isRightsSource || !isRightsObjects) {
             if (!isRightsSource) {
                 serviceManagerRights.checkRightsByOperation(operationRightsShow, uniqueSystemParents);
