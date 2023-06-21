@@ -14,9 +14,6 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileSystemUtils;
 
 import java.nio.file.Files;
@@ -36,6 +33,7 @@ import java.util.List;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceDownloadDirectoryTests {
+
     Logger logger = LogManager.getLogger(ServiceDownloadDirectoryTests.class);
 
     @Autowired
@@ -70,6 +68,7 @@ public class ServiceDownloadDirectoryTests {
 
         Path directoryTest = Path.of(buildDirectoryPath.build(DIRECTORIES_1));
         FileSystemUtils.deleteRecursively(directoryTest);
+        Files.delete(sourceZipArchive);
 
         logger.info("Delete folder for tests: " + directoryTest);
     }
@@ -84,4 +83,5 @@ public class ServiceDownloadDirectoryTests {
                 )
         );
     }
+
 }

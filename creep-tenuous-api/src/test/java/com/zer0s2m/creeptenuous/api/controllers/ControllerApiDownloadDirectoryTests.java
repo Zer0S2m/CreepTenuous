@@ -3,6 +3,8 @@ package com.zer0s2m.creeptenuous.api.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectoryApi;
+import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectApi;
+import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectPartApi;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -92,6 +94,41 @@ public class ControllerApiDownloadDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/download")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(VALID_DATA_1))
+                        .header("Authorization",  accessToken)
+        ).andExpect(status().isOk());
+
+        Path directoryTest = Path.of(buildDirectoryPath.build(DIRECTORIES_1));
+        FileSystemUtils.deleteRecursively(directoryTest);
+
+        logger.info("Delete folder for tests: " + directoryTest);
+    }
+
+    @Test
+    public void downloadDirectorySelect_success() throws Exception {
+        UtilsActionForFiles.preparePreliminaryFilesForCopyDirectories(
+                buildDirectoryPath,
+                logger,
+                DIRECTORIES_1,
+                "test_file1.txt"
+        );
+        UtilsActionForFiles.preparePreliminaryFilesForCopyDirectories(
+                buildDirectoryPath,
+                logger,
+                DIRECTORIES_1,
+                "test_file2.txt"
+        );
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/directory/download/select")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataDownloadDirectorySelectApi(
+                                List.of(new DataDownloadDirectorySelectPartApi(
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        DIRECTORIES_1.get(0),
+                                        DIRECTORIES_1.get(0)
+                                ))
+                        )))
                         .header("Authorization",  accessToken)
         ).andExpect(status().isOk());
 
