@@ -35,10 +35,33 @@ public class ServiceCreateDirectoryRedisImpl extends BaseServiceFileSystemRedisM
     public DirectoryRedis create(@NotNull ContainerDataCreateDirectory dataCreatedDirectory) {
         String loginUser = accessClaims.get("login", String.class);
         String roleUser = accessClaims.get("role", String.class);
+        return create_(dataCreatedDirectory, loginUser, roleUser);
+    }
 
+    /**
+     * Creating a file system object in Redis
+     * @param dataCreatedDirectory data to create
+     * @param login user login
+     * @param role user role
+     * @return Redis object
+     */
+    @Override
+    public DirectoryRedis create(ContainerDataCreateDirectory dataCreatedDirectory, String login, String role) {
+        return create_(dataCreatedDirectory, login, role);
+    }
+
+    /**
+     * Creating a file system object in Redis
+     * @param dataCreatedDirectory data to create
+     * @param login user login
+     * @param role user role
+     * @return Redis object
+     */
+    private @NotNull DirectoryRedis create_(@NotNull ContainerDataCreateDirectory dataCreatedDirectory,
+                                            String login, String role) {
         DirectoryRedis objRedis = ServiceCreateDirectoryRedis.getObjRedis(
-                loginUser,
-                roleUser,
+                login,
+                role,
                 dataCreatedDirectory.realNameDirectory(),
                 dataCreatedDirectory.systemNameDirectory(),
                 dataCreatedDirectory.pathDirectory().toString(),
