@@ -1,6 +1,8 @@
 package com.zer0s2m.creeptenuous.api.controllers;
 
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagControllerApi
 public class ControllerApiUploadFileTests {
+
     Logger logger = LogManager.getLogger(ControllerApiUploadFileTests.class);
 
     @Autowired
@@ -38,9 +41,13 @@ public class ControllerApiUploadFileTests {
     @Autowired
     private ServiceBuildDirectoryPath buildDirectoryPath;
 
+    @Autowired
+    private DirectoryRedisRepository directoryRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     private final String nameTestFile1 = "test_image_1.jpeg";
+
     private final String nameTestFile2 = "test_image_2.jpeg";
 
     @Test
@@ -116,4 +123,32 @@ public class ControllerApiUploadFileTests {
         );
         Assertions.assertFalse(Files.exists(pathTestUploadFile));
     }
+
+    @Test
+    public void uploadFile_fail_forbiddenDirectories() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        File testFile = new File("src/main/resources/test/" + nameTestFile2);
+        InputStream targetStream = new FileInputStream(testFile);
+
+        mockMvc.perform(
+                        multipart("/api/v1/file/upload")
+                                .file(getMockFile(nameTestFile2, targetStream))
+                                .param("parents", "testDirectory")
+                                .param("systemParents", "testDirectory")
+                                .header("Authorization",  accessToken)
+                )
+                .andExpect(status().isForbidden());
+
+        targetStream.close();
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
 }

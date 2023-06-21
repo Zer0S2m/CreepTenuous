@@ -1,6 +1,8 @@
 package com.zer0s2m.creeptenuous.api.controllers;
 
 import com.zer0s2m.creeptenuous.common.enums.Directory;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -26,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagControllerApi
 public class ControllerApiUploadDirectoryTests {
+
     Logger logger = LogManager.getLogger(ControllerApiUploadDirectoryTests.class);
 
     @Autowired
@@ -33,6 +36,9 @@ public class ControllerApiUploadDirectoryTests {
 
     @Autowired
     private ServiceBuildDirectoryPath buildDirectoryPath;
+
+    @Autowired
+    private DirectoryRedisRepository directoryRedisRepository;
 
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
@@ -72,4 +78,38 @@ public class ControllerApiUploadDirectoryTests {
                 )
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void uploadDirectory_fail_forbiddenDirectories() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        String testFileZip = "test-zip.zip";
+        File testFile = new File("src/main/resources/test/" + testFileZip);
+        InputStream targetStream = new FileInputStream(testFile);
+
+        mockMvc.perform(
+                multipart("/api/v1/directory/upload")
+                        .file(new MockMultipartFile(
+                                "directory",
+                                testFileZip,
+                                "application/zip",
+                                targetStream
+                        ))
+                        .queryParam("parents", "testDirectory")
+                        .queryParam("systemParents", "testDirectory")
+                        .header("Authorization",  accessToken)
+                )
+                .andExpect(status().isForbidden());
+
+        targetStream.close();
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
 }
