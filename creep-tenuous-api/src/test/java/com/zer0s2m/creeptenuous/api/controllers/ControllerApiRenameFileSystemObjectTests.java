@@ -68,4 +68,31 @@ public class ControllerApiRenameFileSystemObjectTests {
         directoryRedisRepository.delete(directoryRedis);
     }
 
+    @Test
+    public void renameFileSystemObject_fail_forbiddenFileSystemObject() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/file-system-object/rename")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(new DataRenameFileSystemObjectApi(
+                                "testDirectory",
+                                "new_name"
+
+                        )))
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
 }
