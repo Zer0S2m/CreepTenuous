@@ -9,6 +9,8 @@ import com.zer0s2m.creeptenuous.common.enums.TypeFile;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNotDirectoryMsg;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.FileAlreadyExistsMsg;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.NotFoundTypeFileMsg;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -37,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagControllerApi
 public class ControllerApiCreateFileTests {
+
     Logger logger = LogManager.getLogger(ControllerApiCreateFileTests.class);
 
     @Autowired
@@ -48,16 +51,25 @@ public class ControllerApiCreateFileTests {
     @Autowired
     private ServiceBuildDirectoryPath buildDirectoryPath;
 
+    @Autowired
+    private DirectoryRedisRepository directoryRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     protected String nameTestFile1 = "testFile_1";
+
     protected String nameTestFile2 = "testFile_2";
+
     protected String nameTestFile3 = "testFile_3";
+
     protected String nameTestFile4 = "testFile_4";
 
     DataCreateFileApi RECORD_1 = new DataCreateFileApi(1, nameTestFile1, new ArrayList<>(), new ArrayList<>());
+
     DataCreateFileApi RECORD_2 = new DataCreateFileApi(2, nameTestFile2, new ArrayList<>(), new ArrayList<>());
+
     DataCreateFileApi RECORD_3 = new DataCreateFileApi(3, nameTestFile3, new ArrayList<>(), new ArrayList<>());
+
     DataCreateFileApi INVALID_RECORD_TYPE_FILE = new DataCreateFileApi(
             9999,
             "failFile",
@@ -153,6 +165,7 @@ public class ControllerApiCreateFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/create")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataCreateFileApi(1, "", new ArrayList<>(), new ArrayList<>())
                         ))
@@ -166,6 +179,7 @@ public class ControllerApiCreateFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/create")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataCreateFileApi(
                                         null,
@@ -184,10 +198,41 @@ public class ControllerApiCreateFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/create")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataCreateFileApi(1, "testFile", null, null)
                         ))
                 )
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void createFile_fail_forbidden() throws Exception {
+        DataCreateFileApi dataCreateFileApi = new DataCreateFileApi(
+                1,
+                "testFile",
+                List.of("testDirectory"),
+                List.of("testDirectory"));
+
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/file/create")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(dataCreateFileApi))
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
 }
