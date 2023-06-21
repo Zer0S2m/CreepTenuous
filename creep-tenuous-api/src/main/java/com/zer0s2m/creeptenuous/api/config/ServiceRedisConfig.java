@@ -14,7 +14,8 @@ public class ServiceRedisConfig {
     public BaseServiceFileSystemRedisManagerRightsAccessImpl baseServiceFileSystemRedis(
             DirectoryRedisRepository directoryRedisRepository, FileRedisRepository fileRedisRepository,
             JwtProvider jwtProvider) {
-        return new BaseServiceFileSystemRedisManagerRightsAccessImpl(directoryRedisRepository, fileRedisRepository, jwtProvider);
+        return new BaseServiceFileSystemRedisManagerRightsAccessImpl(directoryRedisRepository, fileRedisRepository,
+                jwtProvider);
     }
 
 }

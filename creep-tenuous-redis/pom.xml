@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.zer0s2m</groupId>
   <artifactId>creep-tenuous-redis</artifactId>
-  <version>0.0.6-SNAPSHOT</version>
+  <version>0.0.7-SNAPSHOT</version>
   <name>creep-tenuous-redis</name>
   <description>creep-tenuous-redis</description>
   <properties>
@@ -20,6 +20,7 @@
   <modules>
     <module>creep-tenuous-redis-models</module>
     <module>creep-tenuous-redis-repository</module>
+    <module>creep-tenuous-redis-events</module>
     <module>creep-tenuous-redis-services</module>
   </modules>
   <dependencies>
@@ -30,17 +31,17 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-models</artifactId>
-        <version>0.0.6-SNAPSHOT</version>
+        <version>0.0.7-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-repository</artifactId>
-        <version>0.0.6-SNAPSHOT</version>
+        <version>0.0.7-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-services</artifactId>
-        <version>0.0.6-SNAPSHOT</version>
+        <version>0.0.7-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

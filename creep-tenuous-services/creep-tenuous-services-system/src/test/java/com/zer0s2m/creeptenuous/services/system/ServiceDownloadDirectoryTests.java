@@ -14,11 +14,9 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileSystemUtils;
 
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -35,6 +33,7 @@ import java.util.List;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceDownloadDirectoryTests {
+
     Logger logger = LogManager.getLogger(ServiceDownloadDirectoryTests.class);
 
     @Autowired
@@ -60,15 +59,16 @@ public class ServiceDownloadDirectoryTests {
                 "test_file2.txt"
         );
 
-        ResponseEntity<Resource> response = service.download(
+        Path sourceZipArchive = service.download(
                 new ArrayList<>(),
                 DIRECTORIES_1.get(0)
         );
 
-        Assertions.assertSame(response.getStatusCode(), HttpStatusCode.valueOf(200));
+        Assertions.assertTrue(Files.exists(sourceZipArchive));
 
         Path directoryTest = Path.of(buildDirectoryPath.build(DIRECTORIES_1));
         FileSystemUtils.deleteRecursively(directoryTest);
+        Files.delete(sourceZipArchive);
 
         logger.info("Delete folder for tests: " + directoryTest);
     }
@@ -83,4 +83,5 @@ public class ServiceDownloadDirectoryTests {
                 )
         );
     }
+
 }

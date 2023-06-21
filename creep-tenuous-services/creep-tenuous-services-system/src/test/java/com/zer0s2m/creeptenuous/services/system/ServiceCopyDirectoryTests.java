@@ -1,7 +1,6 @@
 package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.components.RootPath;
-import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.enums.MethodCopyDirectory;
 import com.zer0s2m.creeptenuous.services.system.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
@@ -62,6 +61,15 @@ public class ServiceCopyDirectoryTests {
                 "test_file2.txt"
         );
 
+        Assertions.assertDoesNotThrow(
+                () -> service.copy(
+                        new ArrayList<>(),
+                        List.of(DIRECTORIES_3.get(0)),
+                        DIRECTORIES_1.get(0),
+                        MethodCopyDirectory.FOLDER.getMethod()
+                )
+        );
+
         FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_1)));
         FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_3)));
     }
@@ -80,6 +88,15 @@ public class ServiceCopyDirectoryTests {
                 logger,
                 DIRECTORIES_2,
                 "test_file2.txt"
+        );
+
+        Assertions.assertDoesNotThrow(
+                () -> service.copy(
+                        new ArrayList<>(),
+                        List.of(DIRECTORIES_3.get(0)),
+                        DIRECTORIES_1.get(0),
+                        MethodCopyDirectory.CONTENT.getMethod()
+                )
         );
 
         FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_1)));

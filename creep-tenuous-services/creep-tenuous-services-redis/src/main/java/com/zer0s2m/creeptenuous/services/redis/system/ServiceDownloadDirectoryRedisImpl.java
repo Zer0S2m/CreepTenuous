@@ -37,14 +37,8 @@ public class ServiceDownloadDirectoryRedisImpl extends BaseServiceFileSystemRedi
      */
     @Override
     public HashMap<String, String> getResource(List<String> systemPathObject) {
-        HashMap<String, String> map = new HashMap<>();
-
-        directoryRedisRepository.findAllById(systemPathObject)
-                .forEach(objRedis -> map.put(objRedis.getSystemNameDirectory(), objRedis.getRealNameDirectory()));
-        fileRedisRepository.findAllById(systemPathObject)
-                .forEach(objRedis -> map.put(objRedis.getSystemNameFile(), objRedis.getRealNameFile()));
-
-        return map;
+        return UtilsResourcesDownloadDirectory.getResource(systemPathObject, directoryRedisRepository,
+                fileRedisRepository);
     }
 
 }

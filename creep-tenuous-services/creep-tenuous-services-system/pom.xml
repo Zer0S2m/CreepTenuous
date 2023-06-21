@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.zer0s2m</groupId>
   <artifactId>creep-tenuous-services-system</artifactId>
-  <version>0.0.6-SNAPSHOT</version>
+  <version>0.0.7-SNAPSHOT</version>
   <name>creep-tenuous-services-system</name>
   <description>creep-tenuous-services-system</description>
   <properties>
@@ -41,23 +41,28 @@
       <version>5.2.3</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>net.lingala.zip4j</groupId>
+      <artifactId>zip4j</artifactId>
+      <version>2.11.5</version>
+    </dependency>
 
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-core</artifactId>
-      <version>0.0.6-SNAPSHOT</version>
+      <version>0.0.7-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-common</artifactId>
-      <version>0.0.6-SNAPSHOT</version>
+      <version>0.0.7-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-starter-test</artifactId>
-      <version>0.0.6-SNAPSHOT</version>
+      <version>0.0.7-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
