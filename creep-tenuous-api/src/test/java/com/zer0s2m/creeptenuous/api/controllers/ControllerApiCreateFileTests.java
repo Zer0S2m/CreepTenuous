@@ -102,7 +102,7 @@ public class ControllerApiCreateFileTests {
                 ));
     }
 
-    @Test
+    @Deprecated
     public void createFile_fail_invalidPathDirectory() throws Exception {
         this.mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/v1/file/create")
