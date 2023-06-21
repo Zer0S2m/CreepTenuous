@@ -9,12 +9,15 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
+import java.io.IOException;
+
 public interface ControllerApiCreateUserDoc {
 
     /**
      * Creating a user in the system
      * @param user Data for creating a user in the system
      * @throws UserAlreadyExistException user already exists
+     * @throws IOException if an I/O error occurs or the parent directory does not exist
      */
     @Operation(
             method = "POST",
@@ -71,5 +74,5 @@ public interface ControllerApiCreateUserDoc {
                     ),
             }
     )
-    void create(final User user) throws UserAlreadyExistException;
+    void create(final User user) throws UserAlreadyExistException, IOException;
 }

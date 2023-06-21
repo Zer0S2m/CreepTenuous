@@ -43,4 +43,13 @@ public interface ServiceCreateDirectoryRedis extends BaseServiceRedis<DirectoryR
      */
     DirectoryRedis create(ContainerDataCreateDirectory dataCreatedDirectory);
 
+    /**
+     * Creating a file system object in Redis
+     * @param dataCreatedDirectory data to create
+     * @param login user login
+     * @param role user role
+     * @return Redis object
+     */
+    DirectoryRedis create(ContainerDataCreateDirectory dataCreatedDirectory, String login, String role);
+
 }
