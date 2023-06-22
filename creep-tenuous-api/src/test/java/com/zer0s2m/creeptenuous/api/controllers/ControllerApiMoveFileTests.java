@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.data.DataMoveFileApi;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -32,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagControllerApi
 public class ControllerApiMoveFileTests {
+
     Logger logger = LogManager.getLogger(ControllerApiMoveFileTests.class);
 
     @Autowired
@@ -46,10 +51,18 @@ public class ControllerApiMoveFileTests {
     @Autowired
     private RootPath rootPath;
 
+    @Autowired
+    private DirectoryRedisRepository directoryRedisRepository;
+
+    @Autowired
+    private FileRedisRepository fileRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     private final String testFile1 = "testFile1.txt";
+
     private final String testFile2 = "testFile2.txt";
+
     private final String testFile3 = "testFile3.txt";
 
     DataMoveFileApi RECORD_1 = new DataMoveFileApi(
@@ -62,6 +75,7 @@ public class ControllerApiMoveFileTests {
             List.of("testFolder1"),
             List.of("testFolder1")
     );
+
     DataMoveFileApi RECORD_2 = new DataMoveFileApi(
             null,
             null,
@@ -221,7 +235,7 @@ public class ControllerApiMoveFileTests {
     }
 
     @Test
-    public void deleteFile_fail_notValidParents() throws Exception {
+    public void moveOneFile_fail_notValidParents() throws Exception {
         this.mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
@@ -244,7 +258,7 @@ public class ControllerApiMoveFileTests {
     }
 
     @Test
-    public void deleteFile_fail_notValidToParents() throws Exception {
+    public void moveOneFile_fail_notValidToParents() throws Exception {
         this.mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
@@ -265,4 +279,107 @@ public class ControllerApiMoveFileTests {
                 )
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void moveOneFile_fail_forbiddenDirectories() throws Exception {
+        DataMoveFileApi dataMoveFileApi = new DataMoveFileApi(
+                testFile1,
+                testFile1,
+                new ArrayList<>(),
+                new ArrayList<>(),
+                List.of("testDirectoryFrom"),
+                List.of("testDirectoryFrom"),
+                List.of("testFolder1"),
+                List.of("testFolder1")
+        );
+
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectoryFrom",
+                "testDirectoryFrom",
+                "testDirectoryFrom",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/file/move")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(dataMoveFileApi))
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void moveOneFile_fail_forbiddenFile() throws Exception {
+        DataMoveFileApi dataMoveFileApi = new DataMoveFileApi(
+                testFile1,
+                testFile1,
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>()
+        );
+
+        FileRedis fileRedis = new FileRedis(
+                "login",
+                "ROLE_USER",
+                testFile1,
+                testFile1,
+                testFile1,
+                new ArrayList<>());
+        fileRedisRepository.save(fileRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/file/move")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(dataMoveFileApi))
+                )
+                .andExpect(status().isForbidden());
+
+        fileRedisRepository.delete(fileRedis);
+    }
+
+    @Test
+    public void moveMoreOneFile_fail_forbiddenFile() throws Exception {
+        DataMoveFileApi dataMoveFileApi = new DataMoveFileApi(
+                null,
+                null,
+                List.of(testFile1),
+                List.of(testFile1),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>()
+        );
+
+        FileRedis fileRedis = new FileRedis(
+                "login",
+                "ROLE_USER",
+                testFile1,
+                testFile1,
+                testFile1,
+                new ArrayList<>());
+        fileRedisRepository.save(fileRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/file/move")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(dataMoveFileApi))
+                )
+                .andExpect(status().isForbidden());
+
+        fileRedisRepository.delete(fileRedis);
+    }
+
 }
