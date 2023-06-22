@@ -67,30 +67,21 @@ public class ControllerApiMoveDirectory implements ControllerApiMoveDirectoryDoc
 
         serviceMoveDirectoryRedis.setAccessToken(accessToken);
         serviceMoveDirectoryRedis.setIsException(false);
-        serviceMoveDirectoryRedis.setResetCheckIsNameDirectory(true);
 
-        serviceMoveDirectoryRedis.setEnableCheckIsNameDirectory(true);
         boolean isRightsSource = serviceMoveDirectoryRedis.checkRights(
-                dataDirectory.parents(),
-                CloneList.cloneOneLevel(dataDirectory.systemParents()),
-                dataDirectory.systemDirectoryName());
-        serviceMoveDirectoryRedis.setEnableCheckIsNameDirectory(false);
-        boolean isRightTarget = serviceMoveDirectoryRedis.checkRights(
-                dataDirectory.toParents(),
-                dataDirectory.systemToParents(),
-                null);
-        if (!isRightsSource || !isRightTarget) {
-            if (!isRightsSource) {
-                serviceManagerRights.checkRightsByOperation(operationRightsDirectory,
-                        CloneList.cloneOneLevel(dataDirectory.systemParents(),
-                                List.of(dataDirectory.systemDirectoryName())));
-            }
-            if (!isRightTarget) {
-                serviceManagerRights.checkRightsByOperation(operationRightsDirectory,
-                        dataDirectory.systemToParents());
-            }
-            serviceManagerRights.checkRightByOperationMoveDirectory(dataDirectory.systemDirectoryName());
+                CloneList.cloneOneLevel(dataDirectory.systemParents(), List.of(dataDirectory.systemDirectoryName())));
+        if (!isRightsSource) {
+            serviceManagerRights.checkRightsByOperation(operationRightsDirectory,
+                    CloneList.cloneOneLevel(dataDirectory.systemParents(),
+                            List.of(dataDirectory.systemDirectoryName())));
         }
+
+        boolean isRightTarget = serviceMoveDirectoryRedis.checkRights(dataDirectory.systemToParents());
+        if (!isRightTarget) {
+            serviceManagerRights.checkRightsByOperation(operationRightsDirectory,
+                    dataDirectory.systemToParents());
+        }
+        serviceManagerRights.checkRightByOperationMoveDirectory(dataDirectory.systemDirectoryName());
 
         ContainerDataMoveDirectory infoMoving = AtomicSystemCallManager.call(
                 serviceMoveDirectory,

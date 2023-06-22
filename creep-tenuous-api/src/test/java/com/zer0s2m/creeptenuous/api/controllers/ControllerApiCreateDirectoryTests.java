@@ -6,6 +6,8 @@ import com.zer0s2m.creeptenuous.common.data.DataCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionDirectoryExistsMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -47,6 +49,9 @@ public class ControllerApiCreateDirectoryTests {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private DirectoryRedisRepository directoryRedisRepository;
 
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
@@ -137,5 +142,33 @@ public class ControllerApiCreateDirectoryTests {
                         )))
                 )
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void createDirectory_fail_forbidden() throws Exception {
+        DataCreateDirectoryApi dataCreateFileApi = new DataCreateDirectoryApi(
+                List.of("testDirectory"),
+                List.of("testDirectory"),
+                "testDirectory");
+
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/directory/create")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(dataCreateFileApi))
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
     }
 }

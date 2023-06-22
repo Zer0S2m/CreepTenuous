@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.data.DataCopyDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.MethodCopyDirectory;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -32,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagControllerApi
 public class ControllerApiCopyDirectoryTests {
+
     Logger logger = LogManager.getLogger(ControllerApiCreateDirectoryTests.class);
 
     @Autowired
@@ -43,10 +46,15 @@ public class ControllerApiCopyDirectoryTests {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private DirectoryRedisRepository directoryRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     List<String> DIRECTORIES_1 = List.of("test_folder1");
+
     List<String> DIRECTORIES_2 = List.of("test_folder1", "test_folder2");
+
     List<String> DIRECTORIES_3 = List.of("test_folder3");
 
     @Test
@@ -222,4 +230,98 @@ public class ControllerApiCopyDirectoryTests {
                 )
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void copyDirectory_fail_forbiddenSourceDirectory() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectoryFrom",
+                "testDirectoryFrom",
+                "testDirectoryFrom",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/directory/copy")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
+                        .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
+                                List.of("testDirectoryFrom"),
+                                List.of("testDirectoryFrom"),
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                "test",
+                                "test",
+                                1
+                        )))
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void copyDirectory_fail_forbiddenTargetDirectory() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectoryTo",
+                "testDirectoryTo",
+                "testDirectoryTo",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/directory/copy")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
+                        .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                List.of("testDirectoryTo"),
+                                List.of("testDirectoryTo"),
+                                "test",
+                                "test",
+                                1
+                        )))
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void copyDirectory_fail_forbiddenDirectory() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/directory/copy")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
+                        .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                "testDirectory",
+                                "testDirectory",
+                                1
+                        )))
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
 }

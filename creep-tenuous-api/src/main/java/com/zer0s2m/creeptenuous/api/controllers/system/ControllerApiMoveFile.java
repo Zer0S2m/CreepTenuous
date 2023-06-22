@@ -74,8 +74,7 @@ public class ControllerApiMoveFile implements ControllerApiMoveFileDoc {
                 file.systemParents(),
                 file.systemToParents()
         );
-        boolean isRights = serviceMoveFileRedis.checkRights(
-                file.parents(), mergeRealAndSystemParents, null, false);
+        boolean isRights = serviceMoveFileRedis.checkRights(mergeRealAndSystemParents);
         if (!isRights) {
             serviceManagerRights.checkRightsByOperation(operationRightsDirectory, mergeRealAndSystemParents);
         }

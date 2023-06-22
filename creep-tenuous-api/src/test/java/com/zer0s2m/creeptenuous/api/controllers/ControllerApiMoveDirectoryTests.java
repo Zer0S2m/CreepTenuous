@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.data.DataMoveDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.MethodMoveDirectory;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -34,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagControllerApi
 public class ControllerApiMoveDirectoryTests {
+
     Logger logger = LogManager.getLogger(ControllerApiMoveDirectoryTests.class);
 
     @Autowired
@@ -45,10 +48,15 @@ public class ControllerApiMoveDirectoryTests {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private DirectoryRedisRepository directoryRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     List<String> DIRECTORIES_1 = List.of("test_folder1");
+
     List<String> DIRECTORIES_2 = List.of("test_folder1", "test_folder2");
+
     List<String> DIRECTORIES_3 = List.of("test_folder3");
 
     @Test
@@ -192,4 +200,69 @@ public class ControllerApiMoveDirectoryTests {
                 )
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    public void moveDirectory_fail_forbiddenSourceDirectory() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/directory/move")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
+                        .content(objectMapper.writeValueAsString(
+                                new DataMoveDirectoryApi(
+                                        List.of("testDirectory"),
+                                        List.of("testDirectory"),
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        "testFolder",
+                                        "testFolder",
+                                        1
+                                )))
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void moveDirectory_fail_forbiddenTargetDirectory() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/directory/move")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
+                        .content(objectMapper.writeValueAsString(
+                                new DataMoveDirectoryApi(
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        List.of("testDirectory"),
+                                        List.of("testDirectory"),
+                                        "testFolder",
+                                        "testFolder",
+                                        1
+                                )))
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
 }

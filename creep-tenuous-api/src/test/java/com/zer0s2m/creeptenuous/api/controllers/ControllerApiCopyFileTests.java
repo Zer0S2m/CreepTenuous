@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.data.DataCopyFileApi;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -35,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagControllerApi
 public class ControllerApiCopyFileTests {
+
     Logger logger = LogManager.getLogger(ControllerApiCopyFileTests.class);
 
     @Autowired
@@ -48,6 +53,12 @@ public class ControllerApiCopyFileTests {
 
     @Autowired
     private ServiceBuildDirectoryPath buildDirectoryPath;
+
+    @Autowired
+    private DirectoryRedisRepository directoryRedisRepository;
+
+    @Autowired
+    private FileRedisRepository fileRedisRepository;
 
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
@@ -198,4 +209,141 @@ public class ControllerApiCopyFileTests {
                 )
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void copyOneFile_fail_forbiddenSourceDirectory() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectoryFrom",
+                "testDirectoryFrom",
+                "testDirectoryFrom",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/file/copy")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
+                        .content(objectMapper.writeValueAsString(
+                                new DataCopyFileApi(
+                                        "file.txt",
+                                        "file.txt",
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        List.of("testDirectoryFrom"),
+                                        List.of("testDirectoryFrom"),
+                                        new ArrayList<>(),
+                                        new ArrayList<>()
+                                )
+                        ))
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void copyOneFile_fail_forbiddenTargetDirectory() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectoryTo",
+                "testDirectoryTo",
+                "testDirectoryTo",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/file/copy")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
+                        .content(objectMapper.writeValueAsString(
+                                new DataCopyFileApi(
+                                        "file.txt",
+                                        "file.txt",
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        List.of("testDirectoryTo"),
+                                        List.of("testDirectoryTo")
+                                )
+                        ))
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void copyOneFile_fail_forbiddenFile() throws Exception {
+        FileRedis fileRedis = new FileRedis(
+                "login",
+                "ROLE_USER",
+                "testFile.txt",
+                "testFile.txt",
+                "testFile.txt",
+                new ArrayList<>());
+        fileRedisRepository.save(fileRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/file/copy")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
+                        .content(objectMapper.writeValueAsString(
+                                new DataCopyFileApi(
+                                        "testFile.txt",
+                                        "testFile.txt",
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        new ArrayList<>()
+                                )
+                        ))
+                )
+                .andExpect(status().isForbidden());
+
+        fileRedisRepository.delete(fileRedis);
+    }
+
+    @Test
+    public void copyMoreOneFile_fail_forbiddenFile() throws Exception {
+        FileRedis fileRedis = new FileRedis(
+                "login",
+                "ROLE_USER",
+                "testFile.txt",
+                "testFile.txt",
+                "testFile.txt",
+                new ArrayList<>());
+        fileRedisRepository.save(fileRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/file/copy")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
+                        .content(objectMapper.writeValueAsString(
+                                new DataCopyFileApi(
+                                        null,
+                                        null,
+                                        List.of("testFile.txt"),
+                                        List.of("testFile.txt"),
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        new ArrayList<>()
+                                        )
+                                ))
+                )
+                .andExpect(status().isForbidden());
+
+        fileRedisRepository.delete(fileRedis);
+    }
+
 }

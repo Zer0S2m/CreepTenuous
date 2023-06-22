@@ -5,6 +5,10 @@ import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectoryApi;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectApi;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectPartApi;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -32,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagControllerApi
 public class ControllerApiDownloadDirectoryTests {
+
     Logger logger = LogManager.getLogger(ControllerApiDownloadDirectoryTests.class);
 
     @Autowired
@@ -42,6 +47,12 @@ public class ControllerApiDownloadDirectoryTests {
 
     @Autowired
     private ServiceBuildDirectoryPath buildDirectoryPath;
+
+    @Autowired
+    private DirectoryRedisRepository directoryRedisRepository;
+
+    @Autowired
+    private FileRedisRepository fileRedisRepository;
 
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
@@ -168,4 +179,96 @@ public class ControllerApiDownloadDirectoryTests {
                 )
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    public void downloadDirectory_fail_forbiddenDirectories() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/api/v1/directory/download")
+                        .content(objectMapper.writeValueAsString(new DataDownloadDirectoryApi(
+                                List.of("testDirectory"),
+                                List.of("testDirectory"),
+                                "testDirectory",
+                                "testDirectory"
+                        )))
+                        .header("Authorization",  accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void downloadDirectorySelect_fail_forbiddenDirectories() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/api/v1/directory/download/select")
+                        .content(objectMapper.writeValueAsString(new DataDownloadDirectorySelectApi(
+                                List.of(new DataDownloadDirectorySelectPartApi(
+                                        List.of("testDirectory"),
+                                        List.of("testDirectory"),
+                                        "testDirectory",
+                                        "testDirectory"
+                                ))
+                        )))
+                        .header("Authorization",  accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void downloadDirectorySelect_fail_forbiddenFiles() throws Exception {
+        FileRedis fileRedis = new FileRedis(
+                "login",
+                "ROLE_USER",
+                "testFile",
+                "testFile",
+                "testFile",
+                new ArrayList<>());
+        fileRedisRepository.save(fileRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/api/v1/directory/download/select")
+                        .content(objectMapper.writeValueAsString(new DataDownloadDirectorySelectApi(
+                                List.of(new DataDownloadDirectorySelectPartApi(
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        "testFile",
+                                        "testFile"
+                                ))
+                        )))
+                        .header("Authorization",  accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isForbidden());
+
+        fileRedisRepository.delete(fileRedis);
+    }
+
 }

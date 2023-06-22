@@ -3,6 +3,8 @@ package com.zer0s2m.creeptenuous.api.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteDirectoryApi;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -23,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -31,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagControllerApi
 public class ControllerApiDeleteDirectoryTests {
+
     Logger logger = LogManager.getLogger(ControllerApiDeleteDirectoryTests.class);
 
     @Autowired
@@ -41,6 +45,9 @@ public class ControllerApiDeleteDirectoryTests {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private DirectoryRedisRepository directoryRedisRepository;
 
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
@@ -107,4 +114,31 @@ public class ControllerApiDeleteDirectoryTests {
                 )
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void deleteDirectory_fail_forbiddenDirectories() throws Exception {
+        DataDeleteDirectoryApi dataDeleteDirectoryApi = new DataDeleteDirectoryApi(
+                List.of("testDirectory"), List.of("testDirectory"), "test_folder1", "test_folder1");
+
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.delete("/api/v1/directory/delete")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(dataDeleteDirectoryApi))
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
 }

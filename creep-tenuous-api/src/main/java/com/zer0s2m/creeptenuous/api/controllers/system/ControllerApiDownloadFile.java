@@ -61,7 +61,7 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
 
         baseServiceFileSystemRedis.setAccessToken(accessToken);
         baseServiceFileSystemRedis.setIsException(false);
-        boolean isRightsDirectory = baseServiceFileSystemRedis.checkRights(data.parents(), data.systemParents(), null, false);
+        boolean isRightsDirectory = baseServiceFileSystemRedis.checkRights(data.systemParents());
 
         if (!isRightsDirectory) {
             serviceManagerRights.checkRightsByOperation(operationRightsDirectory, data.systemParents());

@@ -69,8 +69,7 @@ public class ControllerApiDeleteFile implements ControllerApiDeleteFileDoc {
 
         serviceDeleteFileRedis.setAccessToken(accessToken);
         serviceDeleteFileRedis.setIsException(false);
-        boolean isRightsDirectory = serviceDeleteFileRedis.checkRights(
-                file.parents(), file.systemParents(), null, false);
+        boolean isRightsDirectory = serviceDeleteFileRedis.checkRights(file.systemParents());
 
         if (!isRightsDirectory) {
             serviceManagerRights.checkRightsByOperation(operationRightsDirectory, file.systemParents());
