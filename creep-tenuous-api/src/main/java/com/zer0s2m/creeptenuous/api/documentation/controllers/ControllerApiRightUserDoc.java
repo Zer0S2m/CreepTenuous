@@ -87,6 +87,66 @@ public interface ControllerApiRightUserDoc {
     ResponseCreateRightUserApi add(final DataCreateRightUserApi data, @Parameter(hidden = true) String accessToken)
             throws NoExistsFileSystemObjectRedisException, UserNotFoundException, ChangeRightsYourselfException;
 
+    @Operation(
+            method = "POST",
+            summary = "Adding a right",
+            description = "Adding the right to interact with the file system object - to the entire content " +
+                    "of the directory",
+            tags = { "User", "Right" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            requestBody = @RequestBody(
+                    description = "Data to adding a right",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = DataCreateRightUserApi.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Successful rights added",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ResponseCreateRightUserApi.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Cannot add rights", value ="{" +
+                                                    "\"message\": \"You cannot change rights to yourself\"," +
+                                                    "\"statusCode\": 400" +
+                                                    "}"
+                                            )
+                                    })
+                    ),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+                    @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden"),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found system object", value ="{" +
+                                                    "\"message\": \"Not found file system object\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            ),
+                                            @ExampleObject(name = "Not found user", value = "{" +
+                                                    "\"message\": \"User is not found.\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            ),
+                                    })
+                    )
+            }
+    )
+    void addComplex(final DataCreateRightUserApi data, @Parameter(hidden = true) String accessToken) throws UserNotFoundException, NoExistsFileSystemObjectRedisException;
+
     /**
      * Delete rights for a user on a file system target
      * @param data data to delete
@@ -147,7 +207,7 @@ public interface ControllerApiRightUserDoc {
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found right", value = "{" +
-                                                    "\"message\": \"User is not found.\"," +
+                                                    "\"message\": \"Not found right.\"," +
                                                     "\"statusCode\": 404" +
                                                     "}"
                                             )

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
@@ -92,6 +93,17 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
         return StreamSupport
                 .stream(Spliterators.spliteratorUnknownSize(iterable.iterator(), Spliterator.ORDERED), false)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Get data about object directory
+     * @param id id must not be {@literal null}.
+     * @return result
+     */
+    @Override
+    public DirectoryRedis getResourceDirectoryRedis(String id) {
+        Optional<DirectoryRedis> directoryRedisOptional = directoryRedisRepository.findById(id);
+        return directoryRedisOptional.orElse(null);
     }
 
 }

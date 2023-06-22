@@ -13,6 +13,8 @@ import com.zer0s2m.creeptenuous.common.exceptions.NoExistsRightException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionAddRightsYourselfMsg;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNoExistsFileSystemObjectRedisMsg;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNoExistsRightMsg;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotFoundMsg;
@@ -29,12 +31,16 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
 
     private final BaseServiceFileSystemRedisManagerRightsAccess serviceFileSystemRedis;
 
+    private final ServiceRedisManagerResources serviceRedisManagerResources;
+
     @Autowired
     public ControllerApiRightUser(
             ServiceManagerRights serviceManagerRights,
-            BaseServiceFileSystemRedisManagerRightsAccess baseServiceFileSystemRedis) {
+            BaseServiceFileSystemRedisManagerRightsAccess baseServiceFileSystemRedis,
+            ServiceRedisManagerResources serviceRedisManagerResources) {
         this.serviceManagerRights = serviceManagerRights;
         this.serviceFileSystemRedis = baseServiceFileSystemRedis;
+        this.serviceRedisManagerResources = serviceRedisManagerResources;
     }
 
     /**
@@ -65,6 +71,27 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
                 serviceManagerRights.buildObj(data.systemName(), data.loginUser(), operation));
 
         return new ResponseCreateRightUserApi(data.systemName(), data.loginUser(), operation);
+    }
+
+    @Override
+    @PostMapping("/user/global/right/complex")
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public void addComplex(final @Valid @RequestBody @NotNull  DataCreateRightUserApi data,
+                           @RequestHeader(name = "Authorization") String accessToken) throws UserNotFoundException,
+            NoExistsFileSystemObjectRedisException {
+        serviceFileSystemRedis.setAccessToken(accessToken);
+        serviceFileSystemRedis.checkRights(data.systemName());
+
+        serviceManagerRights.setIsWillBeCreated(false);
+        serviceManagerRights.setAccessClaims(accessToken);
+        serviceManagerRights.isExistsUser(data.loginUser());
+        serviceManagerRights.isExistsFileSystemObject(data.systemName());
+        OperationRights operation = OperationRights.valueOf(data.right());
+
+        DirectoryRedis directoryRedis = serviceRedisManagerResources.getResourceDirectoryRedis(data.systemName());
+        if (directoryRedis == null) {
+            throw new NoExistsFileSystemObjectRedisException();
+        }
     }
 
     /**
