@@ -79,8 +79,7 @@ public class ControllerApiCopyFile implements ControllerApiCopyFileDoc {
                 file.systemParents(),
                 file.systemToParents()
         );
-        boolean isRightsDirectory = serviceCopyFileRedis.checkRights(file.parents(),
-                mergeRealAndSystemParents, null, false);
+        boolean isRightsDirectory = serviceCopyFileRedis.checkRights(mergeRealAndSystemParents);
 
         if (!isRightsDirectory) {
             serviceManagerRights.checkRightsByOperation(operationRightsDirectory, file.systemParents());
