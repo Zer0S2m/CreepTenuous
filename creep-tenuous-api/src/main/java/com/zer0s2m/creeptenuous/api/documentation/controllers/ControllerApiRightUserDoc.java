@@ -16,6 +16,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
+import java.io.IOException;
+
 public interface ControllerApiRightUserDoc {
 
     /**
@@ -87,6 +89,15 @@ public interface ControllerApiRightUserDoc {
     ResponseCreateRightUserApi add(final DataCreateRightUserApi data, @Parameter(hidden = true) String accessToken)
             throws NoExistsFileSystemObjectRedisException, UserNotFoundException, ChangeRightsYourselfException;
 
+    /**
+     * Add rights for user on filesystem target - all directory content
+     * @param data Data to add
+     * @param accessToken raw JWT access token
+     * @throws UserNotFoundException the user does not exist in the system
+     * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database.
+     * @throws IOException signals that an I/O exception of some sort has occurred
+     * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
+     */
     @Operation(
             method = "POST",
             summary = "Adding a right",
@@ -145,7 +156,8 @@ public interface ControllerApiRightUserDoc {
                     )
             }
     )
-    void addComplex(final DataCreateRightUserApi data, @Parameter(hidden = true) String accessToken) throws UserNotFoundException, NoExistsFileSystemObjectRedisException;
+    void addComplex(final DataCreateRightUserApi data, @Parameter(hidden = true) String accessToken)
+            throws UserNotFoundException, NoExistsFileSystemObjectRedisException, IOException, ChangeRightsYourselfException;
 
     /**
      * Delete rights for a user on a file system target
