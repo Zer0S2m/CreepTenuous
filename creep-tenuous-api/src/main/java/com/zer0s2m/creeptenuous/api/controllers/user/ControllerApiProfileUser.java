@@ -5,11 +5,14 @@ import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.http.ResponseUserApi;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.security.jwt.domain.JwtAuthentication;
-import com.zer0s2m.creeptenuous.security.jwt.services.JwtService;
+import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
 import com.zer0s2m.creeptenuous.services.user.ServiceProfileUser;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.Set;
@@ -17,13 +20,13 @@ import java.util.Set;
 @V1APIRestController
 public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
 
-    private final JwtService jwtService;
+    private final JwtProvider jwtProvider;
 
     private final ServiceProfileUser serviceProfileUser;
 
     @Autowired
-    public ControllerApiProfileUser(JwtService jwtService, ServiceProfileUser serviceProfileUser) {
-        this.jwtService = jwtService;
+    public ControllerApiProfileUser(JwtProvider jwtProvider, ServiceProfileUser serviceProfileUser) {
+        this.jwtProvider = jwtProvider;
         this.serviceProfileUser = serviceProfileUser;
     }
 
@@ -34,8 +37,9 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
     @Override
     @GetMapping("/user/profile")
     @ResponseStatus(code = HttpStatus.OK)
-    public ResponseUserApi profile() {
-        JwtAuthentication userInfo = jwtService.getAuthInfo();
+    public ResponseUserApi profile( @RequestHeader(name = "Authorization") String accessToken) {
+        Claims claimsAccess = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
+        JwtAuthentication userInfo = JwtUtils.generate(claimsAccess);
         User currentUser = serviceProfileUser.getUserByLogin(userInfo.getLogin());
         return new ResponseUserApi(currentUser.getLogin() ,currentUser.getEmail(),
                 currentUser.getName(), Set.of(currentUser.getRole()));

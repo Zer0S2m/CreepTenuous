@@ -2,6 +2,7 @@ package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.http.ResponseUserApi;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -37,6 +38,6 @@ public interface ControllerApiProfileUserDoc {
                     )
             }
     )
-    ResponseUserApi profile();
+    ResponseUserApi profile(@Parameter(hidden = true) String accessToken);
 
 }
