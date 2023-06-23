@@ -75,4 +75,5 @@ public interface ControllerApiCreateUserDoc {
             }
     )
     void create(final User user) throws UserAlreadyExistException, IOException;
+
 }
