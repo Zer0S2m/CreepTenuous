@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,6 +107,35 @@ public class ControllerApiRightUserTests {
 
         this.mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/v1/user/global/right")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(RECORD_ADD))
+                        .header("Authorization", accessToken)
+                )
+                .andExpect(status().isCreated());
+
+        UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile, logger);
+        jwtRedisRepository.delete(jwtRedis);
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void addRightDirectory_success() throws Exception {
+        Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
+                RECORD_ADD.systemName(), new ArrayList<>(), logger, buildDirectoryPath
+        );
+
+        Files.createDirectory(pathTestFile);
+
+        final DirectoryRedis directoryRedis = new DirectoryRedis(UtilsAuthAction.LOGIN, "ROLE_USER",
+                RECORD_ADD.systemName(), RECORD_ADD.systemName(), pathTestFile.toString(), new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        final JwtRedis jwtRedis = new JwtRedis(RECORD_ADD.loginUser(), "", "");
+        jwtRedisRepository.save(jwtRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/user/global/right/directory")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_ADD))
