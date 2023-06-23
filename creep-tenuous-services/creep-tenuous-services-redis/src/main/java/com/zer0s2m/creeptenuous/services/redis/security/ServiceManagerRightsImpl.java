@@ -29,9 +29,11 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Service for managing user rights for interacting with a target file system object
@@ -218,6 +220,49 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
         }
 
         addUserLoginsToRedisObj(systemName, right.getLogin());
+    }
+
+    /**
+     * Create a user right on a file system object
+     * @param right data right. Must not be {@literal null}.
+     * @param operationRights type of transaction. Must not be null.
+     * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
+     */
+    @Override
+    public void addRight(final @NotNull List<RightUserFileSystemObjectRedis> right, OperationRights operationRights)
+            throws ChangeRightsYourselfException {
+        List<String> ids = new ArrayList<>();
+
+        for (RightUserFileSystemObjectRedis obj : right) {
+            checkAddingRightsYourself(obj);
+            final String key = buildUniqueKey(obj.getFileSystemObject(), obj.getLogin());
+            obj.setFileSystemObject(key);
+            ids.add(key);
+        }
+
+        Iterable<RightUserFileSystemObjectRedis> rightUserFileSystemObjectExists =
+                rightUserFileSystemObjectRedisRepository.findAllById(ids);
+        final HashMap<String, List<OperationRights>> operationRightsExistsItinerary = new HashMap<>();
+        StreamSupport.stream(rightUserFileSystemObjectExists.spliterator(), false)
+                .forEach(obj -> operationRightsExistsItinerary.put(obj.getFileSystemObject(), obj.getRight()));
+
+        right.forEach(obj -> {
+            List<OperationRights> operationRightsExists;
+            if (operationRightsExistsItinerary.containsKey(obj.getFileSystemObject())) {
+                operationRightsExists = new ArrayList<>(
+                        operationRightsExistsItinerary.get(obj.getFileSystemObject()));
+            } else {
+                operationRightsExists = new ArrayList<>();
+            }
+
+            operationRightsExists.add(operationRights);
+            obj.setRight(operationRightsExists
+                    .stream()
+                    .distinct()
+                    .collect(Collectors.toList()));
+        });
+
+        rightUserFileSystemObjectRedisRepository.saveAll(right);
     }
 
     /**
@@ -467,6 +512,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
      *                 <p>The class needs a <b>login</b> field and a corresponding <b>getters</b> and <b>setters</b></p>
      * @return objects with a set owner
      */
+    @Override
     public List<? extends BaseRedis> ownerMappingOnMove(String loginUser, @NotNull List<? extends BaseRedis> entities) {
         return entities.stream()
                 .peek(entity -> entity.setLogin(loginUser))

@@ -79,4 +79,11 @@ public interface ServiceRedisManagerResources {
         return getResourcesDirectoryForDelete(List.of(id), userLogin);
     }
 
+    /**
+     * Get data about object directory
+     * @param id id must not be {@literal null}.
+     * @return result
+     */
+    DirectoryRedis getResourceDirectoryRedis(String id);
+
 }
