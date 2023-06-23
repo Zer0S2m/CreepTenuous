@@ -1,6 +1,6 @@
 package com.zer0s2m.creeptenuous.services.user;
 
-import com.zer0s2m.creeptenuous.common.enums.UserRole;
+import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.services.user.impl.ServiceControlUserImpl;
@@ -39,6 +39,13 @@ public class ServiceControlUserTests {
             "test_admin"
     );
 
+    User RECORD_DELETE_USER = new User(
+            "test_login",
+            null,
+            "test_login@test_login.com",
+            "test_login"
+    );
+
     @Test
     @Rollback
     public void getAllUsers_success() {
@@ -46,6 +53,28 @@ public class ServiceControlUserTests {
         userRepository.save(RECORD_USER);
 
         Assertions.assertTrue(serviceControlUser.getAllUsers().size() >= 1);
+    }
+
+    @Test
+    @Rollback
+    public void deleteUserByLogin_success() throws UserNotFoundException {
+        RECORD_USER.setPassword("password");
+        RECORD_DELETE_USER.setPassword("password");
+        userRepository.save(RECORD_USER);
+        userRepository.save(RECORD_DELETE_USER);
+
+        serviceControlUser.deleteUser(RECORD_DELETE_USER.getLogin());
+
+        Assertions.assertFalse(userRepository.existsUserByLogin("test_login"));
+    }
+
+    @Test
+    @Rollback
+    public void deleteUserByLogin_fail_notExistsUser() {
+        Assertions.assertThrows(
+                UserNotFoundException.class,
+                () -> serviceControlUser.deleteUser("user_not_found_by_login")
+        );
     }
 
 }
