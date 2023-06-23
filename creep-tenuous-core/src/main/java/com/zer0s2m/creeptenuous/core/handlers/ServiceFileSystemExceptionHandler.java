@@ -23,4 +23,5 @@ public interface ServiceFileSystemExceptionHandler {
      *                       {@link com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem#getOperationsData()}
      */
     void handleException(Throwable t, HashMap<String, HashMap<String, Object>> operationsData);
+
 }

@@ -140,7 +140,7 @@ public interface FilesContextAtomic {
      * @return the path to the target file
      * @throws IOException if an I/O error occurs
      */
-    static private Path transferToTmp(Path source) throws IOException {
+    static private Path transferToTmp(@NotNull Path source) throws IOException {
         Path directoryInTmp = Path.of(tmpDirectory, source.getFileName().toString());
         return Files.move(source, directoryInTmp, StandardCopyOption.REPLACE_EXISTING);
     }
@@ -250,4 +250,5 @@ public interface FilesContextAtomic {
 
         contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
     }
+
 }

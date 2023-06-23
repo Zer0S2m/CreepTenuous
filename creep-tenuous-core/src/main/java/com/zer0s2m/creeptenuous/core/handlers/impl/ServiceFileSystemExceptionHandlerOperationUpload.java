@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.core.handlers.impl;
 import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
 import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.handlers.ServiceFileSystemExceptionHandler;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public class ServiceFileSystemExceptionHandlerOperationUpload implements Service
      * @param operationsData Data about the operation from the file system. Are in the context of atomic mode
      *                       {@link com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem#getOperationsData()}
      */
-    public void handleException(Throwable t, HashMap<String, HashMap<String, Object>> operationsData) {
+    public void handleException(Throwable t, @NotNull HashMap<String, HashMap<String, Object>> operationsData) {
         operationsData.forEach((uniqueName, operationData) -> {
             ContextAtomicFileSystem.Operations typeOperation = (ContextAtomicFileSystem.Operations) operationData.get("operation");
             if (typeOperation.equals(ContextAtomicFileSystem.Operations.UPLOAD)) {
@@ -73,4 +74,5 @@ public class ServiceFileSystemExceptionHandlerOperationUpload implements Service
             }
         });
     }
+
 }

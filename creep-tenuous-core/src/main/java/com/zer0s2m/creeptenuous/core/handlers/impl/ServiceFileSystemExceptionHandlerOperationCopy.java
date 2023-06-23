@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.core.handlers.impl;
 import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
 import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.handlers.ServiceFileSystemExceptionHandler;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +39,7 @@ public class ServiceFileSystemExceptionHandlerOperationCopy implements ServiceFi
      *                       {@link ContextAtomicFileSystem#getOperationsData()}
      */
     @Override
-    public void handleException(Throwable t, HashMap<String, HashMap<String, Object>> operationsData) {
+    public void handleException(Throwable t, @NotNull HashMap<String, HashMap<String, Object>> operationsData) {
         AtomicBoolean isEmpty = new AtomicBoolean(false);
 
         operationsData.forEach((uniqueName, operationData) -> {
@@ -64,4 +65,5 @@ public class ServiceFileSystemExceptionHandlerOperationCopy implements ServiceFi
             handleException(t, operationsData);
         }
     }
+
 }

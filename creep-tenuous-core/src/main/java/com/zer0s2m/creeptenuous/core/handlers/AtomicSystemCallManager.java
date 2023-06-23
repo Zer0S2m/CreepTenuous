@@ -5,6 +5,8 @@ import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandle
 import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
@@ -75,7 +77,7 @@ public final class AtomicSystemCallManager {
      * @throws IllegalAccessException an IllegalAccessException is thrown when an application
      *                                tries to reflectively create an instance
      */
-    public static <T> T call(AtomicServiceFileSystem instance, Object... args)
+    public static <T> T call(AtomicServiceFileSystem instance, Object @NotNull ... args)
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?>[] argTypes = new Class<?>[args.length];
 
@@ -145,7 +147,11 @@ public final class AtomicSystemCallManager {
                 return result;
             } catch (Throwable e) {
                 for (AtomicFileSystemExceptionHandler atomicFileSystemExceptionHandler: systemExceptionHandlers) {
-                    if (e.getCause().getClass().equals(atomicFileSystemExceptionHandler.exception())) {
+                    Class<? extends Throwable> classExceptionMulti = atomicFileSystemExceptionHandler
+                            .exceptionMulti();
+                    if ((e.getCause().getClass().equals(atomicFileSystemExceptionHandler.exception())) ||
+                            (atomicFileSystemExceptionHandler.isExceptionMulti() &&
+                                    classExceptionMulti.isInstance(e))) {
                         ServiceFileSystemExceptionHandler handler = atomicFileSystemExceptionHandler
                                 .handler()
                                 .getDeclaredConstructor()
@@ -175,7 +181,9 @@ public final class AtomicSystemCallManager {
      * @param class_ raw class string. inherited from {@link Path}
      * @return is the class
      */
-    private static boolean checkIsUnixPath(String class_) {
+    @Contract(pure = true)
+    private static boolean checkIsUnixPath(@NotNull String class_) {
         return class_.equals("sun.nio.fs.UnixPath");
     }
+
 }

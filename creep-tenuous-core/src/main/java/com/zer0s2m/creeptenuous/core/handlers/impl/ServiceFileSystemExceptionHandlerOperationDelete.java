@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem.Operations;
 import com.zer0s2m.creeptenuous.core.context.nio.file.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.handlers.ServiceFileSystemExceptionHandler;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,7 @@ public class ServiceFileSystemExceptionHandlerOperationDelete implements Service
      *                       {@link com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem#getOperationsData()}
      */
     @Override
-    public void handleException(Throwable t, HashMap<String, HashMap<String, Object>> operationsData) {
+    public void handleException(Throwable t, @NotNull HashMap<String, HashMap<String, Object>> operationsData) {
         operationsData.forEach((uniqueName, operationData) -> {
             Operations typeOperation = (Operations) operationData.get("operation");
             if (typeOperation.equals(Operations.DELETE)) {
@@ -76,7 +77,7 @@ public class ServiceFileSystemExceptionHandlerOperationDelete implements Service
      * @param source if an I/O error occurs
      * @throws IOException the path to the file to move
      */
-    protected void prepare(Path source) throws IOException {
+    protected void prepare(@NotNull Path source) throws IOException {
         List<String> partsSourcePath = List.of(source
                 .toString()
                 .replace(FilesContextAtomic.rootPath, "")
@@ -94,4 +95,5 @@ public class ServiceFileSystemExceptionHandlerOperationDelete implements Service
             }
         }
     }
+
 }
