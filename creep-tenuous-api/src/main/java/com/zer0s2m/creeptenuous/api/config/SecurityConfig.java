@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.config;
 
+import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.security.jwt.filters.JwtFilter;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
@@ -49,6 +50,9 @@ public class SecurityConfig {
                                 "/v3/api-docs",
                                 "/swagger-ui/**"
                         ).permitAll()
+                        .requestMatchers(
+                                "/api/v1/user/control/**"
+                        ).hasAuthority(UserRole.ROLE_ADMIN.getAuthority())
                         .anyRequest().authenticated()
                 )
                 .addFilterAfter(new JwtFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
