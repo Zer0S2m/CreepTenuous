@@ -11,6 +11,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.messages.NotFoundTypeFileMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateFileApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
+import com.zer0s2m.creeptenuous.redis.services.system.ServiceCheckUniqueNameFileSystemObject;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateFileRedis;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateFileImpl;
 import jakarta.validation.Valid;
@@ -34,12 +35,17 @@ public class ControllerApiCreateFile implements ControllerApiCreateFileDoc {
 
     private final ServiceManagerRights serviceManagerRights;
 
+    private final ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject;
+
     @Autowired
-    public ControllerApiCreateFile(ServiceCreateFileImpl serviceCreateFile, ServiceCreateFileRedis serviceFileRedis,
-                                   ServiceManagerRights serviceManagerRights) {
+    public ControllerApiCreateFile(ServiceCreateFileImpl serviceCreateFile,
+                                   ServiceCreateFileRedis serviceFileRedis,
+                                   ServiceManagerRights serviceManagerRights,
+                                   ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject) {
         this.serviceCreateFile = serviceCreateFile;
         this.serviceFileRedis = serviceFileRedis;
         this.serviceManagerRights = serviceManagerRights;
+        this.serviceCheckUniqueNameFileSystemObject = serviceCheckUniqueNameFileSystemObject;
     }
 
     /**

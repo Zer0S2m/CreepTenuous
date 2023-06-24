@@ -42,7 +42,7 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
      */
     @Override
     public List<FileRedis> getResourcesFilesForMove(List<String> ids) {
-        return getResourcesForOperation(fileRedisRepository.findAllById(ids));
+        return getResources(fileRedisRepository.findAllById(ids));
     }
 
     /**
@@ -52,7 +52,7 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
      */
     @Override
     public List<DirectoryRedis> getResourcesDirectoriesForMove(List<String> ids) {
-        return getResourcesForOperation(directoryRedisRepository.findAllById(ids));
+        return getResources(directoryRedisRepository.findAllById(ids));
     }
 
     /**
@@ -63,7 +63,7 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
      */
     @Override
     public List<FileRedis> getResourcesFileForDelete(List<String> ids, String userLogin) {
-        return getResourcesForOperation(fileRedisRepository.findAllById(ids))
+        return getResources(fileRedisRepository.findAllById(ids))
                 .stream()
                 .filter(entity -> entity.getUserLogins() != null && entity.getUserLogins().contains(userLogin))
                 .collect(Collectors.toList());
@@ -77,7 +77,7 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
      */
     @Override
     public List<DirectoryRedis> getResourcesDirectoryForDelete(List<String> ids, String userLogin) {
-        return getResourcesForOperation(directoryRedisRepository.findAllById(ids))
+        return getResources(directoryRedisRepository.findAllById(ids))
                 .stream()
                 .filter(entity -> entity.getUserLogins() != null && entity.getUserLogins().contains(userLogin))
                 .collect(Collectors.toList());
@@ -89,7 +89,7 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
      * @return data array
      * @param <T> the type of elements returned by the iterator
      */
-    private <T> List<T> getResourcesForOperation(final @NotNull Iterable<T> iterable) {
+    private <T> List<T> getResources(final @NotNull Iterable<T> iterable) {
         return StreamSupport
                 .stream(Spliterators.spliteratorUnknownSize(iterable.iterator(), Spliterator.ORDERED), false)
                 .collect(Collectors.toList());
@@ -104,6 +104,26 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
     public DirectoryRedis getResourceDirectoryRedis(String id) {
         Optional<DirectoryRedis> directoryRedisOptional = directoryRedisRepository.findById(id);
         return directoryRedisOptional.orElse(null);
+    }
+
+    /**
+     * Get data about object directories
+     * @param ids must not be {@literal null} nor contain any {@literal null} values.
+     * @return result
+     */
+    @Override
+    public List<DirectoryRedis> getResourceDirectoryRedis(Iterable<String> ids) {
+        return getResources(directoryRedisRepository.findAllById(ids));
+    }
+
+    /**
+     * Get data about object files
+     * @param ids must not be {@literal null} nor contain any {@literal null} values.
+     * @return result
+     */
+    @Override
+    public List<FileRedis> getResourceFileRedis(Iterable<String> ids) {
+        return getResources(fileRedisRepository.findAllById(ids));
     }
 
 }

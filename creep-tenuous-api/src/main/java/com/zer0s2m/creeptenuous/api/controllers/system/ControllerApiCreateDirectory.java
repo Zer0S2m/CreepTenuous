@@ -10,6 +10,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionDirectoryExi
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
+import com.zer0s2m.creeptenuous.redis.services.system.ServiceCheckUniqueNameFileSystemObject;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateDirectoryRedis;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateDirectoryImpl;
 import jakarta.validation.Valid;
@@ -33,13 +34,17 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
 
     private final ServiceManagerRights serviceManagerRights;
 
+    private final ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject;
+
     @Autowired
     public ControllerApiCreateDirectory(ServiceCreateDirectoryImpl createDirectory,
                                         ServiceCreateDirectoryRedis serviceDirectoryRedis,
-                                        ServiceManagerRights serviceManagerRights) {
+                                        ServiceManagerRights serviceManagerRights,
+                                        ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject) {
         this.createDirectory = createDirectory;
         this.serviceDirectoryRedis = serviceDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
+        this.serviceCheckUniqueNameFileSystemObject = serviceCheckUniqueNameFileSystemObject;
     }
 
     /**
