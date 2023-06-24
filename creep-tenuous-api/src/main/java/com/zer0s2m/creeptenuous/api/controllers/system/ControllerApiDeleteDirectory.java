@@ -12,7 +12,7 @@ import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDeleteDirectoryRedis;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteDirectoryImpl;
-import com.zer0s2m.creeptenuous.services.system.utils.WalkDirectoryInfo;
+import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -19,7 +19,7 @@ import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerReso
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotFoundMsg;
-import com.zer0s2m.creeptenuous.services.system.utils.WalkDirectoryInfo;
+import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = { "com.zer0s2m.creeptenuous.api" })
 public class FileUploadExceptionAdvice extends ResponseEntityExceptionHandler {
+
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<FileUploadMaxSizeMsg> handleMaxUploadSizeExceededException(
-            MaxUploadSizeExceededException e
-    ) {
+            MaxUploadSizeExceededException e) {
         return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
-                new FileUploadMaxSizeMsg(ExceptionFile.FILE_LARGE.get())
-        );
+                new FileUploadMaxSizeMsg(ExceptionFile.FILE_LARGE.get()));
     }
+
 }

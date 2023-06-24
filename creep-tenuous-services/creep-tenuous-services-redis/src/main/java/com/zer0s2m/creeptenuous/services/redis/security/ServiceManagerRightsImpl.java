@@ -19,7 +19,7 @@ import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerReso
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
-import com.zer0s2m.creeptenuous.services.system.utils.WalkDirectoryInfo;
+import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
 import io.jsonwebtoken.Claims;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;

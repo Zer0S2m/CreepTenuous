@@ -12,7 +12,8 @@ import java.util.List;
 /**
  * Service for servicing the creation of file system objects by writing to Redis
  */
-public interface ServiceCreateDirectoryRedis extends BaseServiceRedis<DirectoryRedis>, BaseServiceFileSystemRedisManagerRightsAccess {
+public interface ServiceCreateDirectoryRedis extends BaseServiceRedis<DirectoryRedis>,
+        BaseServiceFileSystemRedisManagerRightsAccess {
 
     /**
      * Instantiating a Redis Object Directory
