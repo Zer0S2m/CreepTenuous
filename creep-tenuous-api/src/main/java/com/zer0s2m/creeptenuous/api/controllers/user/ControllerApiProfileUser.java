@@ -37,7 +37,7 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
     @Override
     @GetMapping("/user/profile")
     @ResponseStatus(code = HttpStatus.OK)
-    public ResponseUserApi profile( @RequestHeader(name = "Authorization") String accessToken) {
+    public ResponseUserApi profile(@RequestHeader(name = "Authorization") String accessToken) {
         Claims claimsAccess = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
         JwtAuthentication userInfo = JwtUtils.generate(claimsAccess);
         User currentUser = serviceProfileUser.getUserByLogin(userInfo.getLogin());

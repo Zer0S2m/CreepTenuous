@@ -159,6 +159,18 @@ public class JwtServiceImpl implements JwtService {
     }
 
     /**
+     * User logout
+     * @param accessToken access JWT token
+     */
+    @Override
+    public void logout(String accessToken) {
+        if (jwtProvider.validateAccessToken(accessToken)) {
+            final Claims claims = jwtProvider.getAccessClaims(accessToken);
+            redisService.deleteTokensByLogin(claims.getSubject());
+        }
+    }
+
+    /**
      * Get user info from token
      * @return user info
      */

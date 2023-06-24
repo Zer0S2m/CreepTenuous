@@ -7,9 +7,11 @@ import com.zer0s2m.creeptenuous.security.jwt.http.JwtRefreshTokenRequest;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtResponse;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtUserRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 public interface ControllerApiAuthDoc {
 
@@ -50,9 +52,7 @@ public interface ControllerApiAuthDoc {
                     )
             }
     )
-    JwtResponse login(
-            final JwtUserRequest user
-    ) throws UserNotFoundException, UserNotValidPasswordException;
+    JwtResponse login(final JwtUserRequest user) throws UserNotFoundException, UserNotValidPasswordException;
 
     /**
      * Get JWT access token
@@ -91,9 +91,8 @@ public interface ControllerApiAuthDoc {
                     )
             }
     )
-    JwtResponse access(
-            final JwtRefreshTokenRequest request
-    ) throws UserNotFoundException, NoValidJwtRefreshTokenException;
+    JwtResponse access(final JwtRefreshTokenRequest request) throws UserNotFoundException,
+            NoValidJwtRefreshTokenException;
 
     /**
      * Get JWT refresh token
@@ -132,7 +131,34 @@ public interface ControllerApiAuthDoc {
                     )
             }
     )
-    JwtResponse refresh(
-            final JwtRefreshTokenRequest request
-    ) throws NoValidJwtRefreshTokenException, UserNotFoundException;
+    JwtResponse refresh(final JwtRefreshTokenRequest request) throws NoValidJwtRefreshTokenException,
+            UserNotFoundException;
+
+    /**
+     * Logout user
+     * @param accessToken RAW ACCESS jwt token
+     */
+    @Operation(
+            method = "GET",
+            summary = "Logout user",
+            description = "Logout user",
+            tags = { "Authorization" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful logout",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(ref = "#/components/schemas/Unauthorized")
+                            )
+                    )
+            }
+    )
+    void logout(@Parameter(hidden = true) String accessToken);
+
 }

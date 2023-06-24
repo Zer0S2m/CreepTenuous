@@ -40,6 +40,12 @@ public interface JwtService {
     JwtResponse getRefreshToken(String refreshToken) throws NoValidJwtRefreshTokenException, UserNotFoundException;
 
     /**
+     * User logout
+     * @param accessToken access JWT token
+     */
+    void logout(String accessToken);
+
+    /**
      * Get user info from token
      * @return user info
      */

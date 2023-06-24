@@ -12,6 +12,7 @@ import com.zer0s2m.creeptenuous.security.jwt.http.JwtRefreshTokenRequest;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtResponse;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtUserRequest;
 import com.zer0s2m.creeptenuous.security.jwt.services.JwtService;
+import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,16 @@ public class ControllerApiAuth implements ControllerApiAuthDoc {
     public JwtResponse refresh(final @Valid @RequestBody @NotNull JwtRefreshTokenRequest request)
             throws NoValidJwtRefreshTokenException, UserNotFoundException {
         return jwtService.getRefreshToken(request.refreshToken());
+    }
+
+    /**
+     * Logout user
+     * @param accessToken raw access JWT token
+     */
+    @Override
+    @GetMapping("/auth/logout")
+    public void logout(@RequestHeader(name = "Authorization") String accessToken) {
+        jwtService.logout(JwtUtils.getPureAccessToken(accessToken));
     }
 
     @ExceptionHandler(UserNotFoundException.class)
