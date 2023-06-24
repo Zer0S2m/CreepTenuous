@@ -1,7 +1,9 @@
 package com.zer0s2m.creeptenuous.services.redis.system;
 
 import com.zer0s2m.creeptenuous.common.exceptions.ExistsFileSystemObjectRedisException;
+import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCheckUniqueNameFileSystemObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -9,6 +11,13 @@ import org.springframework.stereotype.Service;
  */
 @Service("service-check-unique-name-file-system-object")
 public class ServiceCheckUniqueNameFileSystemObjectImpl implements ServiceCheckUniqueNameFileSystemObject {
+
+    private final ServiceRedisManagerResources serviceRedisManagerResources;
+
+    @Autowired
+    public ServiceCheckUniqueNameFileSystemObjectImpl(ServiceRedisManagerResources serviceRedisManagerResources) {
+        this.serviceRedisManagerResources = serviceRedisManagerResources;
+    }
 
     /**
      * Check name for uniqueness depending on directory level

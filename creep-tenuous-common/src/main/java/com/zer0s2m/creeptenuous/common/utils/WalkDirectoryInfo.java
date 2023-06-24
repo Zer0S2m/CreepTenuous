@@ -1,4 +1,4 @@
-package com.zer0s2m.creeptenuous.services.system.utils;
+package com.zer0s2m.creeptenuous.common.utils;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import org.jetbrains.annotations.NotNull;

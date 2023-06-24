@@ -18,7 +18,8 @@ import java.util.List;
  * Service for copying file system objects by writing to Redis
  */
 @Service("service-copy-file-redis")
-public class ServiceCopyFileRedisImpl extends BaseServiceFileSystemRedisManagerRightsAccessImpl implements ServiceCopyFileRedis {
+public class ServiceCopyFileRedisImpl extends BaseServiceFileSystemRedisManagerRightsAccessImpl
+        implements ServiceCopyFileRedis {
 
     @Autowired
     public ServiceCopyFileRedisImpl(DirectoryRedisRepository directoryRedisRepository,
