@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataCreateFileApi;
+import com.zer0s2m.creeptenuous.common.exceptions.ExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateFileApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateFileImpl;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -19,14 +21,18 @@ public interface ControllerApiCreateFileDoc {
     /**
      * Create file
      * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceCreateFileImpl#create(List, String, Integer)}</p>
-     * @param file file create data
+     *
+     * @param file        file create data
      * @param accessToken raw JWT access token
      * @return result create file
-     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
-     * @throws InstantiationException Thrown when an application tries to create an instance of a class
-     * using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
-     * tries to reflectively create an instance
+     * @throws NoSuchMethodException                Thrown when a particular method cannot be found.
+     * @throws InvocationTargetException            Exception thrown by an invoked method or constructor.
+     * @throws InstantiationException               Thrown when an application tries to create an instance of a class
+     *                                              using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException               An IllegalAccessException is thrown when an application
+     *                                              tries to reflectively create an instance
+     * @throws IOException                          signals that an I/O exception of some sort has occurred
+     * @throws ExistsFileSystemObjectRedisException uniqueness of the name in the system under different directory levels
      */
     @Operation(
             method = "POST",
@@ -58,5 +64,7 @@ public interface ControllerApiCreateFileDoc {
     ResponseCreateFileApi createFile(
             final DataCreateFileApi file,
             @Parameter(hidden = true) String accessToken
-    ) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException;
+    ) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException,
+            IOException, ExistsFileSystemObjectRedisException;
+
 }
