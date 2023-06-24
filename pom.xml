@@ -28,6 +28,7 @@
     <module>creep-tenuous-common</module>
     <module>creep-tenuous-core</module>
     <module>creep-tenuous-api</module>
+    <module>creep-tenuous-events</module>
     <module>creep-tenuous-services</module>
     <module>creep-tenuous-redis</module>
     <module>creep-tenuous-security</module>

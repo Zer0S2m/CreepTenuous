@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteUserApi;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.http.ResponseUserApi;
+import com.zer0s2m.creeptenuous.events.UserEventPublisher;
 import com.zer0s2m.creeptenuous.services.user.ServiceControlUser;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
@@ -25,9 +26,12 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
 
     private final ServiceControlUser serviceControlUser;
 
+    private final UserEventPublisher userEventPublisher;
+
     @Autowired
-    public ControllerApiControlUser(ServiceControlUser serviceControlUser) {
+    public ControllerApiControlUser(ServiceControlUser serviceControlUser, UserEventPublisher userEventPublisher) {
         this.serviceControlUser = serviceControlUser;
+        this.userEventPublisher = userEventPublisher;
     }
 
     /**
@@ -58,6 +62,7 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
     public void deleteUserByLogin(final @Valid @RequestBody @NotNull DataDeleteUserApi data)
             throws UserNotFoundException {
         serviceControlUser.deleteUser(data.login());
+        userEventPublisher.publishDelete();
     }
 
 }

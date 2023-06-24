@@ -5,8 +5,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class UserEventPublisher implements ApplicationEventPublisherAware {
 
