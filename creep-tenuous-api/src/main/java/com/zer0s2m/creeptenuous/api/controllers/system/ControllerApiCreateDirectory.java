@@ -14,6 +14,8 @@ import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCheckUniqueNameFileSystemObject;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateDirectoryRedis;
+import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateDirectoryImpl;
 import jakarta.validation.Valid;
@@ -42,17 +44,21 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
 
     private final ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject;
 
+    private final JwtProvider jwtProvider;
+
     @Autowired
     public ControllerApiCreateDirectory(ServiceCreateDirectoryImpl createDirectory,
                                         ServiceBuildDirectoryPath serviceBuildDirectoryPath,
                                         ServiceCreateDirectoryRedis serviceDirectoryRedis,
                                         ServiceManagerRights serviceManagerRights,
-                                        ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject) {
+                                        ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject,
+                                        JwtProvider jwtProvider) {
         this.createDirectory = createDirectory;
         this.serviceBuildDirectoryPath = serviceBuildDirectoryPath;
         this.serviceDirectoryRedis = serviceDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
         this.serviceCheckUniqueNameFileSystemObject = serviceCheckUniqueNameFileSystemObject;
+        this.jwtProvider = jwtProvider;
     }
 
     /**
@@ -94,9 +100,12 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
             serviceManagerRights.checkRightsByOperation(operationRights, directoryForm.systemParents());
         }
 
+        String loginUser = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken))
+                .get("login", String.class);
+
         serviceCheckUniqueNameFileSystemObject.checkUniqueName(directoryForm.directoryName(),
                 WalkDirectoryInfo.getNamesFileSystemObject(
-                        serviceBuildDirectoryPath.build(directoryForm.systemParents())));
+                        serviceBuildDirectoryPath.build(directoryForm.systemParents())), loginUser);
 
         ContainerDataCreateDirectory dataCreatedDirectory = AtomicSystemCallManager.call(
                 this.createDirectory,

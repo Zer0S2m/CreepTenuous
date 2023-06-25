@@ -16,6 +16,8 @@ import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCheckUniqueNameFileSystemObject;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateFileRedis;
+import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateFileImpl;
 import jakarta.validation.Valid;
@@ -44,17 +46,21 @@ public class ControllerApiCreateFile implements ControllerApiCreateFileDoc {
 
     private final ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject;
 
+    private final JwtProvider jwtProvider;
+
     @Autowired
     public ControllerApiCreateFile(ServiceCreateFileImpl serviceCreateFile,
                                    ServiceBuildDirectoryPath serviceBuildDirectoryPath,
                                    ServiceCreateFileRedis serviceFileRedis,
                                    ServiceManagerRights serviceManagerRights,
-                                   ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject) {
+                                   ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject,
+                                   JwtProvider jwtProvider) {
         this.serviceCreateFile = serviceCreateFile;
         this.serviceBuildDirectoryPath = serviceBuildDirectoryPath;
         this.serviceFileRedis = serviceFileRedis;
         this.serviceManagerRights = serviceManagerRights;
         this.serviceCheckUniqueNameFileSystemObject = serviceCheckUniqueNameFileSystemObject;
+        this.jwtProvider = jwtProvider;
     }
 
     /**
@@ -89,10 +95,13 @@ public class ControllerApiCreateFile implements ControllerApiCreateFileDoc {
             serviceManagerRights.checkRightsByOperation(operationRights, file.systemParents());
         }
 
+        String loginUser = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken))
+                .get("login", String.class);
+
         serviceCheckUniqueNameFileSystemObject.checkUniqueName(
                 file.fileName() + "." + TypeFile.getExtension(file.typeFile()),
                 WalkDirectoryInfo.getNamesFileSystemObject(
-                        serviceBuildDirectoryPath.build(file.systemParents())));
+                        serviceBuildDirectoryPath.build(file.systemParents())), loginUser);
 
         ContainerDataCreateFile dataCreatedFile = AtomicSystemCallManager.call(
                 this.serviceCreateFile,

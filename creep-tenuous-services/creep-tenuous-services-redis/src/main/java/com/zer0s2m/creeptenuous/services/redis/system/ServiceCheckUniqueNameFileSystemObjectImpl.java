@@ -28,22 +28,29 @@ public class ServiceCheckUniqueNameFileSystemObjectImpl implements ServiceCheckU
      * Check name for uniqueness depending on directory level
      * @param realName the new name of the object being created
      * @param ids file object names at any directory level. Must not be {@literal null} nor contain any
+     * @param userLogin user login
      * {@literal null} values.
      * @throws ExistsFileSystemObjectRedisException uniqueness of the name in the system under
      * different directory levels
      */
     @Override
-    public void checkUniqueName(String realName, Iterable<String> ids)
+    public void checkUniqueName(String realName, Iterable<String> ids, String userLogin)
             throws ExistsFileSystemObjectRedisException {
         List<DirectoryRedis> directoryRedisList = serviceRedisManagerResources.getResourceDirectoryRedis(ids);
         List<FileRedis> fileRedisList = serviceRedisManagerResources.getResourceFileRedis(ids);
 
         List<String> realNamesFileSystemObject = new ArrayList<>();
 
-        directoryRedisList.forEach(directoryRedis ->
-                realNamesFileSystemObject.add(directoryRedis.getRealNameDirectory()));
-        fileRedisList.forEach(directoryRedis ->
-                realNamesFileSystemObject.add(directoryRedis.getRealNameFile()));
+        directoryRedisList.forEach(directoryRedis -> {
+            if (directoryRedis.getLogin().equals(userLogin)) {
+                realNamesFileSystemObject.add(directoryRedis.getRealNameDirectory());
+            }
+        });
+        fileRedisList.forEach(fileRedis -> {
+            if (fileRedis.getLogin().equals(userLogin)) {
+                realNamesFileSystemObject.add(fileRedis.getRealNameFile());
+            }
+        });
 
         if (realNamesFileSystemObject.contains(realName)) {
             throw new ExistsFileSystemObjectRedisException();
