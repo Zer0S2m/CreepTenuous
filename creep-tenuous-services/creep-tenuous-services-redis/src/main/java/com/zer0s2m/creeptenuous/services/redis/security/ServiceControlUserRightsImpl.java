@@ -38,6 +38,10 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
 
     private final JwtRedisRepository jwtRedisRepository;
 
+    private Iterable<DirectoryRedis> directoryRedisIterable;
+
+    private Iterable<FileRedis> fileRedisIterable;
+
     @Autowired
     public ServiceControlUserRightsImpl(
             DirectoryRedisRepository directoryRedisRepository,
@@ -58,18 +62,10 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
      */
     @Override
     public void removeFileSystemObjects(String userLogin) {
-        DirectoryRedis directoryRedisExample = new DirectoryRedis();
-        directoryRedisExample.setLogin(userLogin);
-        FileRedis fileRedisExample = new FileRedis();
-        fileRedisExample.setLogin(userLogin);
+        setFileSystemObjects(userLogin);
 
-        Iterable<DirectoryRedis> directoryRedisList = directoryRedisRepository
-                .findAll(Example.of(directoryRedisExample));
-        Iterable<FileRedis> fileRedisList = fileRedisRepository
-                .findAll(Example.of(fileRedisExample));
-
-        directoryRedisRepository.deleteAll(directoryRedisList);
-        fileRedisRepository.deleteAll(fileRedisList);
+        directoryRedisRepository.deleteAll(directoryRedisIterable);
+        fileRedisRepository.deleteAll(fileRedisIterable);
     }
 
     /**
@@ -78,7 +74,23 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
      */
     @Override
     public void removeGrantedPermissionsForUser(String userLogin) {
+        setFileSystemObjects(userLogin);
 
+        List<String> userAllUserLogins = new ArrayList<>();
+        jwtRedisRepository
+                .findAll()
+                .forEach(jwtRedis -> userAllUserLogins.add(jwtRedis.getLogin()));
+        userAllUserLogins.remove(userLogin);
+
+        List<String> namesFileSystemObject = new ArrayList<>();
+        directoryRedisIterable.forEach(obj -> namesFileSystemObject.add(obj.getSystemNameDirectory()));
+        fileRedisIterable.forEach(obj -> namesFileSystemObject.add(obj.getSystemNameFile()));
+
+        List<String> idsRights = new ArrayList<>();
+        namesFileSystemObject.forEach(name -> userAllUserLogins.forEach(login ->
+                idsRights.add(name + ManagerRights.SEPARATOR_UNIQUE_KEY.get() + login)));
+
+        rightUserFileSystemObjectRedisRepository.deleteAllById(idsRights);
     }
 
     /**
@@ -87,6 +99,8 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
      */
     @Override
     public void removeAssignedPermissionsForUser(String userLogin) {
+        setFileSystemObjects(userLogin);
+
         RightUserFileSystemObjectRedis rightUserFileSystemObjectRedisExample = new RightUserFileSystemObjectRedis();
         rightUserFileSystemObjectRedisExample.setLogin(userLogin);
 
@@ -108,7 +122,7 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
     }
 
     /**
-     * Get file object names from user right over file object interaction
+     * Get file object names from user over file object interaction
      * @param rights user rights over interaction with a file object
      * @return names file system object
      */
@@ -146,6 +160,47 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
     @Override
     public void removeJwtTokensFotUser(String userLogin) {
         jwtRedisRepository.deleteById(userLogin);
+    }
+
+    /**
+     * Set file system objects
+     * @param userLogin user login
+     */
+    private void setFileSystemObjects(String userLogin) {
+        if (directoryRedisIterable == null) {
+            DirectoryRedis directoryRedisExample = new DirectoryRedis();
+            directoryRedisExample.setLogin(userLogin);
+
+            Iterable<DirectoryRedis> directoryRedisList = directoryRedisRepository
+                    .findAll(Example.of(directoryRedisExample));
+
+            setDirectoryRedisIterable(directoryRedisList);
+        }
+        if (fileRedisIterable == null) {
+            FileRedis fileRedisExample = new FileRedis();
+            fileRedisExample.setLogin(userLogin);
+
+            Iterable<FileRedis> fileRedisList = fileRedisRepository
+                    .findAll(Example.of(fileRedisExample));
+
+            setFileRedisIterable(fileRedisList);
+        }
+    }
+
+    /**
+     * Set file system objects of type directory
+     * @param directoryRedisIterable directory redis
+     */
+    private void setDirectoryRedisIterable(Iterable<DirectoryRedis> directoryRedisIterable) {
+        this.directoryRedisIterable = directoryRedisIterable;
+    }
+
+    /**
+     * Set file system objects of type file
+     * @param fileRedisIterable file redis
+     */
+    private void setFileRedisIterable(Iterable<FileRedis> fileRedisIterable) {
+        this.fileRedisIterable = fileRedisIterable;
     }
 
 }

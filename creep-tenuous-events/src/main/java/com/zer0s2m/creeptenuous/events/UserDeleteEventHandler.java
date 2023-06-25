@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
  *     <li>Removing all file system objects from storage</li>
  *     <li>Removing objects from Redis</li>
  *     <li>Remove all assigned and granted user rights</li>
+ *     <li>Remove jwt tokens user</li>
  * </ul>
  */
 @Component
