@@ -1,9 +1,12 @@
 package com.zer0s2m.creeptenuous.services.redis.security;
 
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceControlUserRights;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,8 +23,9 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
     private final FileRedisRepository fileRedisRepository;
 
     @Autowired
-    public ServiceControlUserRightsImpl(DirectoryRedisRepository directoryRedisRepository,
-                                        FileRedisRepository fileRedisRepository) {
+    public ServiceControlUserRightsImpl(
+            DirectoryRedisRepository directoryRedisRepository,
+            FileRedisRepository fileRedisRepository) {
         this.directoryRedisRepository = directoryRedisRepository;
         this.fileRedisRepository = fileRedisRepository;
     }
@@ -32,7 +36,18 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
      */
     @Override
     public void removeFileSystemObjects(String userLogin) {
+        DirectoryRedis directoryRedisExample = new DirectoryRedis();
+        directoryRedisExample.setLogin(userLogin);
+        FileRedis fileRedisExample = new FileRedis();
+        fileRedisExample.setLogin(userLogin);
 
+        Iterable<DirectoryRedis> directoryRedisList = directoryRedisRepository
+                .findAll(Example.of(directoryRedisExample));
+        Iterable<FileRedis> fileRedisList = fileRedisRepository
+                .findAll(Example.of(fileRedisExample));
+
+        directoryRedisRepository.deleteAll(directoryRedisList);
+        fileRedisRepository.deleteAll(fileRedisList);
     }
 
     /**
