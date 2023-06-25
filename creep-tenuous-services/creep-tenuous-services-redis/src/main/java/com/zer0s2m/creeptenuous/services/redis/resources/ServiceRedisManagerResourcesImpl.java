@@ -8,6 +8,7 @@ import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerReso
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -124,6 +125,32 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
     @Override
     public List<FileRedis> getResourceFileRedis(Iterable<String> ids) {
         return getResources(fileRedisRepository.findAllById(ids));
+    }
+
+    /**
+     * Get data about object directories by user login
+     * @param userLogin user login. Must not be {@literal null}.
+     * @return result
+     */
+    @Override
+    public List<DirectoryRedis> getResourceDirectoryRedisByLoginUser(String userLogin) {
+        DirectoryRedis directoryRedisExample = new DirectoryRedis();
+        directoryRedisExample.setLogin(userLogin);
+
+        return getResources(directoryRedisRepository.findAll(Example.of(directoryRedisExample)));
+    }
+
+    /**
+     * Get data about object files by user login
+     * @param userLogin user login. Must not be {@literal null}.
+     * @return result
+     */
+    @Override
+    public List<FileRedis> getResourceFileRedisByLoginUser(String userLogin) {
+        FileRedis fileRedisExample = new FileRedis();
+        fileRedisExample.setLogin(userLogin);
+
+        return getResources(fileRedisRepository.findAll(Example.of(fileRedisExample)));
     }
 
 }

@@ -100,4 +100,18 @@ public interface ServiceRedisManagerResources {
      */
     List<FileRedis> getResourceFileRedis(Iterable<String> ids);
 
+    /**
+     * Get data about object directories by user login
+     * @param userLogin user login. Must not be {@literal null}.
+     * @return result
+     */
+    List<DirectoryRedis> getResourceDirectoryRedisByLoginUser(String userLogin);
+
+    /**
+     * Get data about object files by user login
+     * @param userLogin user login. Must not be {@literal null}.
+     * @return result
+     */
+    List<FileRedis> getResourceFileRedisByLoginUser(String userLogin);
+
 }
