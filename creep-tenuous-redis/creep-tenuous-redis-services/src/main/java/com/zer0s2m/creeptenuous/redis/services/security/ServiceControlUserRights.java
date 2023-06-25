@@ -26,4 +26,10 @@ public interface ServiceControlUserRights {
      */
     void removeAssignedPermissionsForUser(String userLogin);
 
+    /**
+     * Delete all tokens for a user
+     * @param userLogin user login
+     */
+    void removeJwtTokensFotUser(String userLogin);
+
 }

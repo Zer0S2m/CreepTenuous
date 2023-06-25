@@ -34,6 +34,7 @@ class UserDeleteEventHandler implements ApplicationListener<UserDeleteEvent> {
         serviceControlUserRights.removeAssignedPermissionsForUser(userLogin);
         serviceControlUserRights.removeGrantedPermissionsForUser(userLogin);
         serviceControlUserRights.removeFileSystemObjects(userLogin);
+        serviceControlUserRights.removeJwtTokensFotUser(userLogin);
     }
 
 }
