@@ -21,4 +21,12 @@ public interface ServiceDeleteFile {
      */
     Path delete(String systemNameFile, List<String> systemParents) throws IOException, NoSuchFileExistsException;
 
+    /**
+     * Delete file from file system
+     * @param source source path system
+     * @return source path system
+     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     */
+    Path delete(Path source) throws IOException;
+
 }

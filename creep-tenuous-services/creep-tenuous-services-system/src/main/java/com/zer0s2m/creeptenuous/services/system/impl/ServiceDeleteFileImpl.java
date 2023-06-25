@@ -55,4 +55,27 @@ public class ServiceDeleteFileImpl implements ServiceDeleteFile, AtomicServiceFi
         return pathFile;
     }
 
+    /**
+     * Delete file from file system
+     * @param source source path system
+     * @return source path system
+     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     */
+    @Override
+    @AtomicFileSystem(
+            name = "delete-file",
+            handlers = {
+                    @AtomicFileSystemExceptionHandler(
+                            exceptionMulti = IOException.class,
+                            isExceptionMulti = true,
+                            handler = ServiceFileSystemExceptionHandlerOperationDelete.class,
+                            operation = ContextAtomicFileSystem.Operations.DELETE
+                    )
+            }
+    )
+    public Path delete(Path source) throws IOException {
+        FilesContextAtomic.delete(source);
+        return source;
+    }
+
 }
