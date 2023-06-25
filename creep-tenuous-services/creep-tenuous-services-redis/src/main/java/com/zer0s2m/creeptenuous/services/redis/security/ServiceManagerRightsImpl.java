@@ -23,7 +23,6 @@ import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
 import io.jsonwebtoken.Claims;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -88,8 +87,9 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     public void checkRightsByOperation(OperationRights operation, List<String> fileSystemObjects)
             throws NoRightsRedisException {
 
-        List<FileRedis> fileRedis = (List<FileRedis>) getFileRedis(fileSystemObjects);
-        List<DirectoryRedis> directoryRedis = (List<DirectoryRedis>) getDirectoryRedis(fileSystemObjects);
+        List<FileRedis> fileRedis = serviceRedisManagerResources.getResourceFileRedis(fileSystemObjects);
+        List<DirectoryRedis> directoryRedis = serviceRedisManagerResources.getResourceDirectoryRedis(
+                fileSystemObjects);
 
         List<FileRedis> fileRedisSorted = conductorOperationFileRedis(fileRedis, operation);
         List<DirectoryRedis> directoryRedisSorted = conductorOperationDirectoryRedis(directoryRedis, operation);
@@ -157,9 +157,8 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
      */
     private void checkRightByOperationDirectory(String fileSystemObject, OperationRights operation)
             throws IOException, NoRightsRedisException {
-        List<DirectoryRedis> directoryRedisCurrent = Streamable.of(getDirectoryRedis(List.of(fileSystemObject)))
-                .stream()
-                .toList();
+        List<DirectoryRedis> directoryRedisCurrent = serviceRedisManagerResources.getResourceDirectoryRedis(
+                List.of(fileSystemObject));
 
         if (getIsDirectory() && directoryRedisCurrent.size() != 0 && directoryRedisCurrent.get(0).getIsDirectory()) {
             List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(
@@ -224,7 +223,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
     /**
      * Create a user right on a file system object
-     * @param right data right. Must not be {@literal null}.
+     * @param right data right. must not be {@literal null} nor must it contain {@literal null}.
      * @param operationRights type of transaction. Must not be null.
      * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
      */
@@ -309,6 +308,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
      * @throws NoExistsRightException The right was not found in the database.
      *                                Or is {@literal null} {@link NullPointerException}
      */
+    @Override
     public void deleteRight(RightUserFileSystemObjectRedis right, OperationRights operationRights)
             throws ChangeRightsYourselfException, NoExistsRightException {
         checkDeletingRightsYourself(right);
@@ -323,6 +323,81 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
                 rightUserFileSystemObjectRedisRepository.save(right);
             }
         }
+    }
+
+    /**
+     * Delete a user rights a file system object
+     * @param right data right. must not be {@literal null} nor must it contain {@literal null}.
+     * @param operationRights type of transaction. Must not be null.
+     * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
+     * @throws NoExistsRightException The right was not found in the database.
+     *                                Or is {@literal null} {@link NullPointerException}
+     */
+    @Override
+    public void deleteRight(@NotNull List<RightUserFileSystemObjectRedis> right, OperationRights operationRights)
+            throws ChangeRightsYourselfException, NoExistsRightException {
+        for (RightUserFileSystemObjectRedis obj : right) {
+            checkDeletingRightsYourself(obj);
+        }
+
+        List<String> idsToDelete = new ArrayList<>();
+
+        List<RightUserFileSystemObjectRedis> cleanRights = right
+                .stream()
+                .filter(obj -> obj.getRight() != null && obj.getRight().contains(operationRights))
+                .toList();
+
+        cleanRights.forEach(obj -> {
+            List<OperationRights> operationRightsList = obj.getRight();
+            if (operationRightsList.size() == 1) {
+                idsToDelete.add(obj.getFileSystemObject());
+            } else {
+                operationRightsList.remove(operationRights);
+                obj.setRight(operationRightsList);
+            }
+        });
+
+        List<String> idsFileSystemObject = idsToDelete
+                .stream()
+                .map(this::unpackingUniqueKey)
+                .toList();
+
+        if (right.size() >= 1) {
+            List<DirectoryRedis> directoryRedisList = deleteUserLoginFromRedisFileSystemObjects(
+                    serviceRedisManagerResources
+                            .getResourceDirectoryRedis(idsFileSystemObject),
+                    right.get(0).getLogin());
+            List<FileRedis> fileRedisList = deleteUserLoginFromRedisFileSystemObjects(
+                    serviceRedisManagerResources
+                            .getResourceFileRedis(idsFileSystemObject),
+                    right.get(0).getLogin());
+
+            directoryRedisRepository.saveAll(directoryRedisList);
+            fileRedisRepository.saveAll(fileRedisList);
+        }
+
+        rightUserFileSystemObjectRedisRepository.deleteAllById(idsToDelete);
+        rightUserFileSystemObjectRedisRepository.saveAll(cleanRights);
+    }
+
+    /**
+     * Removing a User Binding to an Object in Redis
+     * @param entities data right. must not be {@literal null} nor must it contain {@literal null}.
+     * @param userLogin username to be deleted
+     * @return clean entities
+     * @param <E> file object type
+     */
+    private <E extends BaseRedis> List<E> deleteUserLoginFromRedisFileSystemObjects(
+            @NotNull List<E> entities, String userLogin) {
+        return entities
+                .stream()
+                .filter(obj -> obj.getUserLogins() != null && obj.getUserLogins().contains(userLogin))
+                .peek(obj -> {
+                    List<String> userLogins = obj.getUserLogins();
+                    userLogins.remove(userLogin);
+                    obj.setUserLogins(userLogins);
+                })
+                .toList();
     }
 
     /**
@@ -496,11 +571,29 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
      * @param loginUser login user
      * @return redis object
      */
+    @Override
     public RightUserFileSystemObjectRedis getObj(String fileSystemObject, String loginUser) {
         Optional<RightUserFileSystemObjectRedis> rightUserFileSystemObjectRedis =
                 rightUserFileSystemObjectRedisRepository
                         .findById(buildUniqueKey(fileSystemObject, loginUser));
         return rightUserFileSystemObjectRedis.orElse(null);
+    }
+
+    /**
+     * Get redis object - right
+     * @param fileSystemObject must not be {@literal null}. Must not contain {@literal null} elements.
+     * @param loginUser owner user login
+     * @return redis object
+     */
+    @Override
+    public List<RightUserFileSystemObjectRedis> getObj(@NotNull List<String> fileSystemObject, String loginUser) {
+        List<String> ids = fileSystemObject
+                .stream()
+                .map(obj -> buildUniqueKey(obj, loginUser))
+                .toList();
+        return StreamSupport
+                .stream(rightUserFileSystemObjectRedisRepository.findAllById(ids).spliterator(), false)
+                .toList();
     }
 
     /**
@@ -528,8 +621,9 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     @Override
     public List<String> permissionFiltering(List<String> fileSystemObjects, OperationRights right) {
         List<String> readyFileSystemObjects = new ArrayList<>();
-        Iterable<FileRedis> fileRedis = getFileRedis(fileSystemObjects);
-        Iterable<DirectoryRedis> directoryRedis = getDirectoryRedis(fileSystemObjects);
+        Iterable<FileRedis> fileRedis = serviceRedisManagerResources.getResourceFileRedis(fileSystemObjects);
+        Iterable<DirectoryRedis> directoryRedis = serviceRedisManagerResources.getResourceDirectoryRedis(
+                fileSystemObjects);
 
         fileRedis.forEach(obj -> {
             if ((obj.getUserLogins() != null && obj.getUserLogins().contains(getLoginUser())) ||
@@ -545,24 +639,6 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
         });
 
         return readyFileSystemObjects;
-    }
-
-    /**
-     * Getting information about files from Redis
-     * @param fileSystemObjects file system objects
-     * @return data redis file
-     */
-    private @NotNull Iterable<FileRedis> getFileRedis(@NotNull List<String> fileSystemObjects) {
-        return fileRedisRepository.findAllById(fileSystemObjects);
-    }
-
-    /**
-     * Getting information about directories from Redis
-     * @param fileSystemObjects file system objects
-     * @return data redis directory
-     */
-    private @NotNull Iterable<DirectoryRedis> getDirectoryRedis(List<String> fileSystemObjects) {
-        return directoryRedisRepository.findAllById(fileSystemObjects);
     }
 
     /**

@@ -91,7 +91,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
     @Override
     @PostMapping("/user/global/right/directory")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void addComplex(final @Valid @RequestBody @NotNull  DataCreateRightUserApi data,
+    public void addComplex(final @Valid @RequestBody @NotNull DataCreateRightUserApi data,
                            @RequestHeader(name = "Authorization") String accessToken) throws UserNotFoundException,
             NoExistsFileSystemObjectRedisException, IOException, ChangeRightsYourselfException {
         serviceFileSystemRedis.setAccessToken(accessToken);
@@ -151,6 +151,53 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
         serviceManagerRights.deleteRight(
                 serviceManagerRights.getObj(data.systemName(), data.loginUser()),
                 OperationRights.valueOf(data.right()));
+    }
+
+    /**
+     * Delete rights for a user on a file system target
+     *
+     * @param data        data to delete
+     * @param accessToken raw JWT access token
+     * @throws UserNotFoundException                  the user does not exist in the system
+     * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database.
+     * @throws IOException                            if an I/O error occurs or the parent directory does not exist
+     * @throws ChangeRightsYourselfException          change rights over the interaction of file system objects to itself
+     * @throws NoExistsRightException                 The right was not found in the database.
+     *                                                Or is {@literal null} {@link NullPointerException}
+     */
+    @Override
+    @DeleteMapping("/user/global/right/directory")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void deleteComplex(final @Valid @RequestBody @NotNull DataDeleteRightUserApi data,
+                              @RequestHeader(name = "Authorization") String accessToken)
+            throws UserNotFoundException, NoExistsFileSystemObjectRedisException,
+            IOException, ChangeRightsYourselfException, NoExistsRightException {
+        serviceFileSystemRedis.setAccessToken(accessToken);
+        serviceFileSystemRedis.checkRights(data.systemName());
+
+        serviceManagerRights.setIsWillBeCreated(false);
+        serviceManagerRights.setAccessClaims(accessToken);
+        serviceManagerRights.isExistsUser(data.loginUser());
+        serviceManagerRights.isExistsFileSystemObject(data.systemName());
+        OperationRights operation = OperationRights.valueOf(data.right());
+
+        DirectoryRedis directoryRedis = serviceRedisManagerResources.getResourceDirectoryRedis(data.systemName());
+        if (directoryRedis == null) {
+            throw new NoExistsFileSystemObjectRedisException();
+        }
+
+        Path sourceDirectory = Path.of(directoryRedis.getPathDirectory());
+
+        List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(sourceDirectory);
+        List<String> namesFileSystemObject = attached
+                .stream()
+                .map(ContainerInfoFileSystemObject::nameFileSystemObject)
+                .toList();
+
+        serviceFileSystemRedis.checkRights(namesFileSystemObject);
+
+        serviceManagerRights.deleteRight(
+                serviceManagerRights.getObj(namesFileSystemObject, data.loginUser()), operation);
     }
 
     /**
