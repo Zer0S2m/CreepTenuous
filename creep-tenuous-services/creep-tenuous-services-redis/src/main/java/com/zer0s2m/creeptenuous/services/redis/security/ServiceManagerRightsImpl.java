@@ -162,7 +162,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
         if (getIsDirectory() && directoryRedisCurrent.size() != 0 && directoryRedisCurrent.get(0).getIsDirectory()) {
             List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(
-                    Path.of(directoryRedisCurrent.get(0).getPathDirectory().replace("76785e20-66aa-4bf7-9716-7c2785e78cb1/", "")));
+                    Path.of(directoryRedisCurrent.get(0).getPathDirectory()));
             List<String> namesFileSystemObject = attached
                     .stream()
                     .map(ContainerInfoFileSystemObject::nameFileSystemObject)
