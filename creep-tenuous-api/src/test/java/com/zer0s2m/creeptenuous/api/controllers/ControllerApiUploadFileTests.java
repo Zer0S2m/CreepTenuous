@@ -1,8 +1,11 @@
 package com.zer0s2m.creeptenuous.api.controllers;
 
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -18,11 +21,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.FileSystemUtils;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,6 +48,9 @@ public class ControllerApiUploadFileTests {
 
     @Autowired
     private DirectoryRedisRepository directoryRedisRepository;
+
+    @Autowired
+    private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
@@ -149,6 +157,44 @@ public class ControllerApiUploadFileTests {
 
         targetStream.close();
         directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void uploadFile_success_forbidden() throws Exception {
+        UtilsActionForFiles.createDirectories(
+                List.of("testFolder"),
+                buildDirectoryPath,
+                logger);
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testFolder",
+                "testFolder",
+                "testFolder",
+                List.of(UtilsAuthAction.LOGIN));
+        RightUserFileSystemObjectRedis right = new RightUserFileSystemObjectRedis(
+                "testFolder" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW, OperationRights.UPLOAD));
+        directoryRedisRepository.save(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.save(right);
+
+        File testFile = new File("src/main/resources/test/" + nameTestFile2);
+        InputStream targetStream = new FileInputStream(testFile);
+
+        mockMvc.perform(
+                multipart("/api/v1/file/upload")
+                        .file(getMockFile(nameTestFile2, targetStream))
+                        .param("parents", "testFolder")
+                        .param("systemParents", "testFolder")
+                        .header("Authorization",  accessToken)
+                )
+                .andExpect(status().isCreated());
+
+        targetStream.close();
+        directoryRedisRepository.delete(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.delete(right);
+
+        FileSystemUtils.deleteRecursively(Path.of(buildDirectoryPath.build(List.of("testFolder"))));
     }
 
 }

@@ -162,26 +162,22 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
         if (getIsDirectory() && directoryRedisCurrent.size() != 0 && directoryRedisCurrent.get(0).getIsDirectory()) {
             List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(
-                    Path.of(directoryRedisCurrent.get(0).getPathDirectory().replace("76785e20-66aa-4bf7-9716-7c2785e78cb1/", "")));
+                    Path.of(directoryRedisCurrent.get(0).getPathDirectory()));
             List<String> namesFileSystemObject = attached
                     .stream()
                     .map(ContainerInfoFileSystemObject::nameFileSystemObject)
                     .toList();
-            List<DirectoryRedis> directoryRedisResource = serviceRedisManagerResources.getResourcesDirectoryForDelete(
-                    namesFileSystemObject, getLoginUser());
-            List<FileRedis> fileRedisResource = serviceRedisManagerResources.getResourcesFileForDelete(
-                    namesFileSystemObject, getLoginUser());
+            List<DirectoryRedis> directoryRedisResource = serviceRedisManagerResources.getResourceDirectoryRedis(
+                    namesFileSystemObject);
+            List<FileRedis> fileRedisResource = serviceRedisManagerResources.getResourceFileRedis(
+                    namesFileSystemObject);
 
-            if (namesFileSystemObject.size() != (directoryRedisResource.size() + fileRedisResource.size())) {
+            List<DirectoryRedis> directoryRedisSorted = conductorOperationDirectoryRedis(directoryRedisResource,
+                    operation);
+            List<FileRedis> fileRedisSorted = conductorOperationFileRedis(fileRedisResource, operation);
+
+            if (!((fileRedisSorted.size() + directoryRedisSorted.size()) == namesFileSystemObject.size())) {
                 throw new NoRightsRedisException();
-            } else {
-                List<DirectoryRedis> directoryRedisSorted = conductorOperationDirectoryRedis(directoryRedisResource,
-                        operation);
-                List<FileRedis> fileRedisSorted = conductorOperationFileRedis(fileRedisResource, operation);
-
-                if (!((fileRedisSorted.size() + directoryRedisSorted.size()) == namesFileSystemObject.size())) {
-                    throw new NoRightsRedisException();
-                }
             }
         }
     }
@@ -659,12 +655,15 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
         return fileRedisList
                 .stream()
                 .filter(obj -> {
+                    if (obj.getLogin().equals(getLoginUser())) {
+                        return true;
+                    }
                     for (RightUserFileSystemObjectRedis right : rightUserFileSystemObjectRedis) {
                         if (right.getRight() == null) {
                             return false;
                         }
-                        if (obj.getSystemNameFile().equals(unpackingUniqueKey(right.getFileSystemObject()))
-                                && right.getRight().contains(operation)) {
+                        if ((obj.getSystemNameFile().equals(unpackingUniqueKey(right.getFileSystemObject()))
+                                && right.getRight().contains(operation))) {
                             return true;
                         }
                     }
@@ -692,9 +691,15 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
         return directoryRedisList
                 .stream()
                 .filter(obj -> {
+                    if (obj.getLogin().equals(getLoginUser())) {
+                        return true;
+                    }
                     for (RightUserFileSystemObjectRedis right : rightUserFileSystemObjectRedis) {
-                        if (obj.getSystemNameDirectory().equals(unpackingUniqueKey(right.getFileSystemObject()))
-                                && right.getRight().contains(operation)) {
+                        if (right.getRight() == null) {
+                            return false;
+                        }
+                        if ((obj.getSystemNameDirectory().equals(unpackingUniqueKey(right.getFileSystemObject()))
+                                && right.getRight().contains(operation))) {
                             return true;
                         }
                     }

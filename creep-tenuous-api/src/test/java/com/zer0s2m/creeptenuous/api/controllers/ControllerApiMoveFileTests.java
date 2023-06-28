@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.data.DataMoveFileApi;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -21,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.FileSystemUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,6 +60,9 @@ public class ControllerApiMoveFileTests {
 
     @Autowired
     private FileRedisRepository fileRedisRepository;
+
+    @Autowired
+    private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
@@ -380,6 +387,112 @@ public class ControllerApiMoveFileTests {
                 .andExpect(status().isForbidden());
 
         fileRedisRepository.delete(fileRedis);
+    }
+
+    @Test
+    public void moveOneFile_success_forbidden() throws Exception {
+        final String testDirectory = "testDirectory";
+        final Path testDirectoryPath = Path.of(rootPath.getRootPath(), testDirectory);
+        final Path testFilePath = Path.of(rootPath.getRootPath(), testFile1);
+
+        Files.createDirectory(testDirectoryPath);
+        Files.createFile(testFilePath);
+
+        prepareCopy(testDirectory, testFilePath, testDirectoryPath);
+
+        DataMoveFileApi dataMoveFileApi = new DataMoveFileApi(
+                testFile1,
+                testFile1,
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                List.of(testDirectory),
+                List.of(testDirectory)
+        );
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/file/move")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(dataMoveFileApi)
+                ))
+                .andExpect(status().isNoContent());
+
+        fileRedisRepository.deleteById(testFile1);
+        directoryRedisRepository.deleteById(testDirectory);
+        rightUserFileSystemObjectRedisRepository.deleteAllById(List.of(
+                testDirectory + "__" + UtilsAuthAction.LOGIN, testFile1 + "__" + UtilsAuthAction.LOGIN));
+
+        Files.deleteIfExists(testFilePath);
+        FileSystemUtils.deleteRecursively(testDirectoryPath);
+    }
+
+    @Test
+    public void moveMoreOneFile_success_forbidden() throws Exception {
+        final String testDirectory = "testDirectory";
+        final Path testDirectoryPath = Path.of(rootPath.getRootPath(), testDirectory);
+        final Path testFilePath = Path.of(rootPath.getRootPath(), testFile1);
+
+        Files.createDirectory(testDirectoryPath);
+        Files.createFile(testFilePath);
+
+        prepareCopy(testDirectory, testFilePath, testDirectoryPath);
+
+        DataMoveFileApi dataMoveFileApi = new DataMoveFileApi(
+                null,
+                null,
+                List.of(testFile1),
+                List.of(testFile1),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                List.of(testDirectory),
+                List.of(testDirectory)
+        );
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/file/move")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(dataMoveFileApi)
+                        ))
+                .andExpect(status().isNoContent());
+
+        fileRedisRepository.deleteById(testFile1);
+        directoryRedisRepository.deleteById(testDirectory);
+        rightUserFileSystemObjectRedisRepository.deleteAllById(List.of(
+                testDirectory + "__" + UtilsAuthAction.LOGIN, testFile1 + "__" + UtilsAuthAction.LOGIN));
+
+        Files.deleteIfExists(testFilePath);
+        FileSystemUtils.deleteRecursively(testDirectoryPath);
+    }
+
+    private void prepareCopy(String testDirectory, Path testFilePath, Path testDirectoryPath) {
+        FileRedis fileRedis = new FileRedis(
+                "login",
+                "ROLE_USER",
+                testFile1,
+                testFile1,
+                testFilePath.toString(),
+                List.of(UtilsAuthAction.LOGIN));
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                testDirectory,
+                testDirectory,
+                testDirectoryPath.toString(),
+                List.of(UtilsAuthAction.LOGIN));
+        RightUserFileSystemObjectRedis rightDirectory = new RightUserFileSystemObjectRedis(
+                testDirectory + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW, OperationRights.MOVE));
+        RightUserFileSystemObjectRedis rightFile = new RightUserFileSystemObjectRedis(
+                testFile1 + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW, OperationRights.MOVE));
+        fileRedisRepository.save(fileRedis);
+        directoryRedisRepository.save(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.saveAll(List.of(rightDirectory, rightFile));
     }
 
 }

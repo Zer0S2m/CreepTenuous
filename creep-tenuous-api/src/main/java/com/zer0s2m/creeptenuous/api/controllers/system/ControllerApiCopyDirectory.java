@@ -79,10 +79,7 @@ public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc
                 dataDirectory.parents(),
                 CloneList.cloneOneLevel(dataDirectory.systemParents()),
                 dataDirectory.systemDirectoryName());
-        boolean isRightsDirectoryTarget = serviceCopyDirectoryRedis.checkRights(
-                dataDirectory.toParents(),
-                dataDirectory.systemToParents(),
-                null);
+        boolean isRightsDirectoryTarget = serviceCopyDirectoryRedis.checkRights(dataDirectory.systemToParents());
         if (!isRightsDirectorySource || !isRightsDirectoryTarget) {
             if (!isRightsDirectorySource) {
                 serviceManagerRights.checkRightsByOperation(

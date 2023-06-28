@@ -103,21 +103,29 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
             IllegalAccessException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
+        serviceManagerRights.setIsDirectory(true);
 
         serviceDownloadDirectoryRedis.setAccessToken(accessToken);
-        serviceDownloadDirectoryRedis.setEnableCheckIsNameDirectory(true);
+        serviceDownloadDirectoryRedis.setEnableCheckIsNameDirectory(false);
+        serviceDownloadDirectoryRedis.setIsException(false);
         boolean isRightsSource = serviceDownloadDirectoryRedis.checkRights(
-                CloneList.cloneOneLevel(data.parents()),
-                CloneList.cloneOneLevel(data.systemParents()),
-                data.systemDirectoryName());
+                data.parents(),
+                data.systemParents(),
+                null);
+        boolean isRightTarget = serviceDownloadDirectoryRedis.checkRights(data.systemDirectoryName());
 
         List<String> cloneSystemParents = CloneList.cloneOneLevel(data.systemParents());
-        cloneSystemParents.add(data.systemDirectoryName());
 
-        if (!isRightsSource) {
-            serviceManagerRights.checkRightsByOperation(operationRightsShow, cloneSystemParents);
-            serviceManagerRights.checkRightByOperationDownloadDirectory(data.systemDirectoryName());
+        if (!isRightsSource || !isRightTarget) {
+            if (!isRightsSource) {
+                serviceManagerRights.checkRightsByOperation(operationRightsShow, cloneSystemParents);
+            }
+            if (!isRightTarget) {
+                serviceManagerRights.checkRightByOperationDownloadDirectory(data.systemDirectoryName());
+            }
         }
+
+        cloneSystemParents.add(data.systemDirectoryName());
 
         HashMap<String, String> resource = serviceDownloadDirectoryRedis.getResource(
                 WalkDirectoryInfo.walkDirectory(Path.of(buildDirectoryPath.build(cloneSystemParents)))

@@ -239,6 +239,35 @@ public class ControllerApiRightUserTests {
     }
 
     @Test
+    public void deleteRightDirectory_success() throws Exception {
+        Path pathTestDirectory = UtilsActionForFiles.preparePreliminaryFiles(
+                RECORD_DELETE.systemName(), new ArrayList<>(), logger, buildDirectoryPath
+        );
+
+        Files.createDirectory(pathTestDirectory);
+
+        final DirectoryRedis directoryRedis = new DirectoryRedis(UtilsAuthAction.LOGIN, "ROLE_USER",
+                RECORD_DELETE.systemName(), RECORD_DELETE.systemName(), pathTestDirectory.toString(), new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        final JwtRedis jwtRedis = new JwtRedis(RECORD_DELETE.loginUser(), "", "");
+        jwtRedisRepository.save(jwtRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.delete("/api/v1/user/global/right/directory")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(RECORD_DELETE))
+                        .header("Authorization", accessToken)
+                )
+                .andExpect(status().isNoContent());
+
+        UtilsActionForFiles.deleteFileAndWriteLog(pathTestDirectory, logger);
+        jwtRedisRepository.delete(jwtRedis);
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
     public void deleteRight_fail_notRights() throws Exception {
         Path pathTestFile = UtilsActionForFiles.preparePreliminaryFiles(
                 RECORD_FAIL_NOT_RIGHTS.systemName(), new ArrayList<>(), logger, buildDirectoryPath

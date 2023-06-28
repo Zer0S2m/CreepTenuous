@@ -1,6 +1,6 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
-import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiManagerDirectoryApiDoc;
+import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiManagerDirectoryDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataBuilderDirectory;
 import com.zer0s2m.creeptenuous.common.data.DataManagerDirectoryApi;
@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.List;
 
 @V1APIRestController
-public class ControllerApiManagerDirectoryApi implements ControllerApiManagerDirectoryApiDoc {
+public class ControllerApiManagerDirectory implements ControllerApiManagerDirectoryDoc {
 
     static final OperationRights operationRights = OperationRights.SHOW;
 
@@ -33,9 +33,9 @@ public class ControllerApiManagerDirectoryApi implements ControllerApiManagerDir
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiManagerDirectoryApi(ServiceManagerDirectoryImpl builderDirectory,
-                                            ServiceManagerDirectoryRedis serviceManagerDirectoryRedis,
-                                            ServiceManagerRights serviceManagerRights) {
+    public ControllerApiManagerDirectory(ServiceManagerDirectoryImpl builderDirectory,
+                                         ServiceManagerDirectoryRedis serviceManagerDirectoryRedis,
+                                         ServiceManagerRights serviceManagerRights) {
         this.builderDirectory = builderDirectory;
         this.serviceManagerDirectoryRedis = serviceManagerDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
@@ -61,17 +61,12 @@ public class ControllerApiManagerDirectoryApi implements ControllerApiManagerDir
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
 
-        OptionalMutable<ContainerDataBuilderDirectory> rawDataOptional = new OptionalMutable<>();
-        boolean isRights = serviceManagerDirectoryRedis.checkRights(
-                data.parents(),
-                data.systemParents(),
-                null,
-                false
-        );
+        boolean isRights = serviceManagerDirectoryRedis.checkRights(data.systemParents());
         if (!isRights) {
             serviceManagerRights.checkRightsByOperation(operationRights, data.systemParents());
         }
 
+        OptionalMutable<ContainerDataBuilderDirectory> rawDataOptional = new OptionalMutable<>();
         rawDataOptional.setValue(builderDirectory.build(
                 data.systemParents(),
                 data.level()
