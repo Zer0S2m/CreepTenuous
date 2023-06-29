@@ -227,10 +227,12 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     public void addRight(final @NotNull List<RightUserFileSystemObjectRedis> right, OperationRights operationRights)
             throws ChangeRightsYourselfException {
         List<String> ids = new ArrayList<>();
+        List<String> idsFileSystemObject = new ArrayList<>();
 
         for (RightUserFileSystemObjectRedis obj : right) {
             checkAddingRightsYourself(obj);
             final String key = buildUniqueKey(obj.getFileSystemObject(), obj.getLogin());
+            idsFileSystemObject.add(obj.getFileSystemObject());
             obj.setFileSystemObject(key);
             ids.add(key);
         }
@@ -240,6 +242,15 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
         final HashMap<String, List<OperationRights>> operationRightsExistsItinerary = new HashMap<>();
         StreamSupport.stream(rightUserFileSystemObjectExists.spliterator(), false)
                 .forEach(obj -> operationRightsExistsItinerary.put(obj.getFileSystemObject(), obj.getRight()));
+
+        final List<DirectoryRedis> directoryRedisList = serviceRedisManagerResources.getResourceDirectoryRedis(
+                idsFileSystemObject);
+        final List<FileRedis> fileRedisList = serviceRedisManagerResources.getResourceFileRedis(
+                idsFileSystemObject);
+
+        directoryRedisList.forEach(directoryRedis ->
+                setDataUserLoginsToRedisObj(directoryRedis, right.get(0).getLogin()));
+        fileRedisList.forEach(fileRedis -> setDataUserLoginsToRedisObj(fileRedis, right.get(0).getLogin()));
 
         right.forEach(obj -> {
             List<OperationRights> operationRightsExists;
@@ -258,6 +269,8 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
         });
 
         rightUserFileSystemObjectRedisRepository.saveAll(right);
+        directoryRedisRepository.saveAll(directoryRedisList);
+        fileRedisRepository.saveAll(fileRedisList);
     }
 
     /**
