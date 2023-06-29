@@ -58,12 +58,33 @@ public class ServiceControlUserImpl implements ServiceControlUser {
      * @param login user login
      * @throws UserNotFoundException user does not exist in the system
      */
+    @Override
     public void blockUser(String login) throws UserNotFoundException {
+        setActivityUser(login, false);
+    }
+
+    /**
+     * Unblock a user in the system by his login
+     * @param login user login
+     * @throws UserNotFoundException user does not exist in the system
+     */
+    @Override
+    public void unblockUser(String login) throws UserNotFoundException {
+        setActivityUser(login, true);
+    }
+
+    /**
+     * Set user activity by login
+     * @param login user login
+     * @param activity is account non-locked
+     * @throws UserNotFoundException user does not exist in the system
+     */
+    private void setActivityUser(String login, boolean activity) throws UserNotFoundException {
         final User user = userRepository.findByLogin(login);
         if (user == null) {
             throw new UserNotFoundException();
         }
-        user.setActivity(false);
+        user.setActivity(activity);
         userRepository.save(user);
     }
 

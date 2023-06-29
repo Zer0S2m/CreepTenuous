@@ -35,4 +35,11 @@ public interface ServiceControlUser {
      */
     void blockUser(String login) throws UserNotFoundException;
 
+    /**
+     * Unblock a user in the system by his login
+     * @param login user login
+     * @throws UserNotFoundException user does not exist in the system
+     */
+    void unblockUser(String login) throws UserNotFoundException;
+
 }

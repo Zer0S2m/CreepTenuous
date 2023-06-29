@@ -167,4 +167,57 @@ public interface ControllerApiControlUserDoc {
     void blockUser(final DataBlockUserApi data, @Parameter(hidden = true) String accessToken)
             throws UserNotFoundException, BlockingSelfUserException;
 
+    /**
+     * Unblock a user by his login
+     * @param data data to unblock
+     * @throws UserNotFoundException Blocking self users
+     */
+    @Operation(
+            method = "PATCH",
+            summary = "Unblock user",
+            description = "Unblock user in the system",
+            tags = { "User", "User control" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Data to unblock user",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = DataBlockUserApi.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Successfully unblocked"
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(ref = "#/components/schemas/Unauthorized")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            content = @Content(
+                                    mediaType = "application/json"
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found user",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found user", value = "{" +
+                                                    "\"message\": \"User is not found.\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            ),
+                                    })
+                    )
+            }
+    )
+    void unblockUser(final DataBlockUserApi data) throws UserNotFoundException;
+
 }

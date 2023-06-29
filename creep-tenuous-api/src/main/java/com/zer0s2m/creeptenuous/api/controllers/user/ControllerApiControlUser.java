@@ -97,6 +97,19 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
         serviceControlUser.blockUser(data.login());
     }
 
+    /**
+     * Unblock a user by his login
+     * @param data data to unblock
+     * @throws UserNotFoundException Blocking self users
+     */
+    @Override
+    @PatchMapping("/user/control/unblock")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    @RolesAllowed("ROLE_ADMIN")
+    public void unblockUser(final @Valid @RequestBody @NotNull DataBlockUserApi data) throws UserNotFoundException {
+        serviceControlUser.unblockUser(data.login());
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public UserNotFoundMsg handleExceptionNotIsExistsUser(@NotNull UserNotFoundException error) {

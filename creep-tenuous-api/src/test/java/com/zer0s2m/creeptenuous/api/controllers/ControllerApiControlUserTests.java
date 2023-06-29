@@ -166,4 +166,30 @@ public class ControllerApiControlUserTests {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    @Rollback
+    public void unblockUserByLoginControl_success() throws Exception {
+        RECORD_CREATE_USER.setPassword(generatePassword.generation("test_password"));
+        RECORD_DELETE_USER.setPassword(generatePassword.generation("test_password"));
+        RECORD_CREATE_USER.setActivity(false);
+        userRepository.save(RECORD_CREATE_USER);
+        userRepository.save(RECORD_DELETE_USER);
+
+        String accessToken = jwtProvider.generateAccessToken(new JwtUserRequest(
+                RECORD_CREATE_USER.getLogin(), "test_password"), UserRole.ROLE_ADMIN);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.patch("/api/v1/user/control/unblock")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataBlockUserApi(
+                                RECORD_DELETE_USER.getLogin())))
+                        .header("Authorization", "Bearer " + accessToken)
+                )
+                .andExpect(status().isNoContent());
+
+        final User user = userRepository.findByLogin(RECORD_DELETE_USER.getLogin());
+        Assertions.assertTrue(user.isAccountNonLocked());
+    }
+
 }
