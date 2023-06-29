@@ -14,6 +14,7 @@ import java.util.List;
  * <ul>
  *     <li>Getting all users on the system</li>
  *     <li>Removing a user from the system</li>
+ *     <li>Account blocking</li>
  * </ul>
  */
 @Service("service-control-user")
@@ -50,6 +51,20 @@ public class ServiceControlUserImpl implements ServiceControlUser {
             throw new UserNotFoundException();
         }
         userRepository.delete(user);
+    }
+
+    /**
+     * Block a user in the system by his login
+     * @param login user login
+     * @throws UserNotFoundException user does not exist in the system
+     */
+    public void blockUser(String login) throws UserNotFoundException {
+        final User user = userRepository.findByLogin(login);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        user.setActivity(false);
+        userRepository.save(user);
     }
 
 }

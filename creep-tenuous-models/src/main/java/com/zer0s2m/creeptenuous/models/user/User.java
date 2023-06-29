@@ -51,17 +51,22 @@ public class User implements UserDetails {
     @Column(name = "date_of_birth")
     private Date dateOfBrith;
 
+    @Column(name = "activity")
+    private boolean activity;
+
     public User(String login, String password, String email, String name) {
         this.password = password;
         this.login = login;
         this.email = email;
         this.name = name;
         this.setRole(UserRole.ROLE_USER);
+        this.setActivity(true);
     }
 
     public User(String login, String password, String email, String name, UserRole role) {
         this(login, password, email, name);
         this.setRole(role);
+        this.setActivity(true);
     }
 
     public User() {}
@@ -124,6 +129,10 @@ public class User implements UserDetails {
         this.role = role;
     }
 
+    public void setActivity(boolean activity) {
+        this.activity = activity;
+    }
+
     public Date getDateOfBrith() {
         return dateOfBrith;
     }
@@ -139,7 +148,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return activity;
     }
 
     @Override

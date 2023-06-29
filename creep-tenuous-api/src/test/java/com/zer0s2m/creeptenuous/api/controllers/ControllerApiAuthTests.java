@@ -4,6 +4,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.common.enums.UserException;
+import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionAccountIsBlockedMsg;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.redis.repository.JwtRedisRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
@@ -32,6 +33,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagControllerApi
 public class ControllerApiAuthTests {
+
     Logger logger = LogManager.getLogger(ControllerApiAuthTests.class);
 
     @Autowired
@@ -136,6 +140,30 @@ public class ControllerApiAuthTests {
                 .andExpect(content().json(
                         objectMapper.writeValueAsString(
                                 new UserNotValidPasswordMsg(UserException.USER_NOT_VALID_PASSWORD.get())
+                        )
+                ));
+    }
+
+    @Test
+    @Rollback
+    public void loginUser_fail_blockAccount() throws Exception {
+        RECORD_CREATE_USER.setPassword(generatePassword.generation("test_password"));
+        RECORD_CREATE_USER.setActivity(false);
+        RECORD_CREATE_USER.setDateOfBrith(new Date());
+        userRepository.save(RECORD_CREATE_USER);
+
+        logger.info("Create user: " + RECORD_CREATE_USER);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/auth/login")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(RECORD_1))
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().json(
+                        objectMapper.writeValueAsString(
+                                new ExceptionAccountIsBlockedMsg(UserException.BLOCK_USER.get())
                         )
                 ));
     }
@@ -254,4 +282,5 @@ public class ControllerApiAuthTests {
                 responseContent.read("refreshToken")
         );
     }
+
 }

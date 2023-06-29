@@ -2,8 +2,10 @@ package com.zer0s2m.creeptenuous.api.core.security.jwt;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiAuthDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.common.exceptions.AccountIsBlockedException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotValidPasswordException;
+import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionAccountIsBlockedMsg;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.NoValidJwtRefreshTokenException;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.NoValidJwtRefreshTokenMsg;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotFoundMsg;
@@ -36,11 +38,12 @@ public class ControllerApiAuth implements ControllerApiAuthDoc {
      * @return JWT tokens
      * @throws UserNotFoundException user not found
      * @throws UserNotValidPasswordException invalid password
+     * @throws AccountIsBlockedException the account is blocked
      */
     @Override
     @PostMapping(value = "/auth/login")
     public JwtResponse login(final @Valid @RequestBody JwtUserRequest user) throws UserNotFoundException,
-            UserNotValidPasswordException {
+            UserNotValidPasswordException, AccountIsBlockedException {
         return jwtService.login(user);
     }
 
@@ -99,6 +102,12 @@ public class ControllerApiAuth implements ControllerApiAuthDoc {
     public NoValidJwtRefreshTokenMsg handleExceptionNotValidPasswordUser(
             @NotNull NoValidJwtRefreshTokenException error) {
         return new NoValidJwtRefreshTokenMsg(error.getMessage());
+    }
+
+    @ExceptionHandler(AccountIsBlockedException.class)
+    @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+    public ExceptionAccountIsBlockedMsg handleExceptionAccountIsBlocked(@NotNull AccountIsBlockedException error) {
+        return new ExceptionAccountIsBlockedMsg(error.getMessage());
     }
 
 }

@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zer0s2m.creeptenuous.common.data.DataBlockUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteUserApi;
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import com.zer0s2m.creeptenuous.models.user.User;
@@ -98,6 +99,71 @@ public class ControllerApiControlUserTests {
                 .andExpect(status().isNoContent());
 
         Assertions.assertFalse(userRepository.existsUserByLogin(RECORD_DELETE_USER.getLogin()));
+    }
+
+    @Test
+    @Rollback
+    public void blockUserByLoginControl_success() throws Exception {
+        RECORD_CREATE_USER.setPassword(generatePassword.generation("test_password"));
+        RECORD_DELETE_USER.setPassword(generatePassword.generation("test_password"));
+        userRepository.save(RECORD_CREATE_USER);
+        userRepository.save(RECORD_DELETE_USER);
+
+        String accessToken = jwtProvider.generateAccessToken(new JwtUserRequest(
+                RECORD_CREATE_USER.getLogin(), "test_password"), UserRole.ROLE_ADMIN);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.patch("/api/v1/user/control/block")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataBlockUserApi(
+                                RECORD_DELETE_USER.getLogin())))
+                        .header("Authorization", "Bearer " + accessToken)
+                )
+                .andExpect(status().isNoContent());
+
+        final User user = userRepository.findByLogin(RECORD_DELETE_USER.getLogin());
+        Assertions.assertFalse(user.isAccountNonLocked());
+    }
+
+    @Test
+    @Rollback
+    public void blockUserByLoginControl_fail_notFoundUser() throws Exception {
+        RECORD_CREATE_USER.setPassword(generatePassword.generation("test_password"));
+        userRepository.save(RECORD_CREATE_USER);
+
+        String accessToken = jwtProvider.generateAccessToken(new JwtUserRequest(
+                RECORD_CREATE_USER.getLogin(), "test_password"), UserRole.ROLE_ADMIN);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.patch("/api/v1/user/control/block")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataBlockUserApi(
+                                "not_found_user")))
+                        .header("Authorization", "Bearer " + accessToken)
+                )
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Rollback
+    public void blockUserByLoginControl_fail_selfBlock() throws Exception {
+        RECORD_CREATE_USER.setPassword(generatePassword.generation("test_password"));
+        userRepository.save(RECORD_CREATE_USER);
+
+        String accessToken = jwtProvider.generateAccessToken(new JwtUserRequest(
+                RECORD_CREATE_USER.getLogin(), "test_password"), UserRole.ROLE_ADMIN);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.patch("/api/v1/user/control/block")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataBlockUserApi(
+                                RECORD_CREATE_USER.getLogin())))
+                        .header("Authorization", "Bearer " + accessToken)
+                )
+                .andExpect(status().isBadRequest());
     }
 
 }

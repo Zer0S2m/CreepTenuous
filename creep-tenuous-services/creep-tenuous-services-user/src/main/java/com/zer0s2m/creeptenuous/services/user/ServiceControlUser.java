@@ -10,6 +10,7 @@ import java.util.List;
  * <ul>
  *     <li>Getting all users on the system</li>
  *     <li>Removing a user from the system</li>
+ *     <li>Account blocking</li>
  * </ul>
  */
 public interface ServiceControlUser {
@@ -26,5 +27,12 @@ public interface ServiceControlUser {
      * @throws UserNotFoundException user does not exist in the system
      */
     void deleteUser(String login) throws UserNotFoundException;
+
+    /**
+     * Block a user in the system by his login
+     * @param login user login
+     * @throws UserNotFoundException user does not exist in the system
+     */
+    void blockUser(String login) throws UserNotFoundException;
 
 }

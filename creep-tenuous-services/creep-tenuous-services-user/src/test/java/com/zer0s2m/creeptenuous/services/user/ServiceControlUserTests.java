@@ -77,4 +77,26 @@ public class ServiceControlUserTests {
         );
     }
 
+    @Test
+    @Rollback
+    public void blockUserByLogin_success() throws UserNotFoundException {
+        RECORD_USER.setPassword("password");
+        RECORD_DELETE_USER.setPassword("password");
+        userRepository.save(RECORD_USER);
+        userRepository.save(RECORD_DELETE_USER);
+
+        serviceControlUser.blockUser(RECORD_DELETE_USER.getLogin());
+
+        Assertions.assertFalse(userRepository.findByLogin(RECORD_DELETE_USER.getLogin()).isAccountNonLocked());
+    }
+
+    @Test
+    @Rollback
+    public void blockUserByLogin_fail_notExistsUser() {
+        Assertions.assertThrows(
+                UserNotFoundException.class,
+                () -> serviceControlUser.blockUser("user_not_found_by_login")
+        );
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
+import com.zer0s2m.creeptenuous.common.exceptions.AccountIsBlockedException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotValidPasswordException;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.NoValidJwtRefreshTokenException;
@@ -21,6 +22,7 @@ public interface ControllerApiAuthDoc {
      * @return JWT tokens
      * @throws UserNotFoundException user not found
      * @throws UserNotValidPasswordException invalid password
+     * @throws AccountIsBlockedException the account is blocked
      */
     @Operation(
             method = "POST",
@@ -52,7 +54,8 @@ public interface ControllerApiAuthDoc {
                     )
             }
     )
-    JwtResponse login(final JwtUserRequest user) throws UserNotFoundException, UserNotValidPasswordException;
+    JwtResponse login(final JwtUserRequest user) throws UserNotFoundException, UserNotValidPasswordException,
+            AccountIsBlockedException;
 
     /**
      * Get JWT access token
