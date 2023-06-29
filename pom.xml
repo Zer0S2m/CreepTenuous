@@ -63,12 +63,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <parallel>all</parallel>
-          <forkCount>2</forkCount>
-          <reuseForks>true</reuseForks>
-          <argLine>-D net.sf.ehcache.disabled=true</argLine>
-        </configuration>
       </plugin>
     </plugins>
   </build>
