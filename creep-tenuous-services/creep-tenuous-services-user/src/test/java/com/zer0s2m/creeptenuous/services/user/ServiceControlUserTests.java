@@ -2,7 +2,10 @@ package com.zer0s2m.creeptenuous.services.user;
 
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.models.user.User;
+import com.zer0s2m.creeptenuous.redis.repository.BlockUserDelayedRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.BlockUserRedisRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
+import com.zer0s2m.creeptenuous.services.redis.user.ServiceBlockUserRedisImpl;
 import com.zer0s2m.creeptenuous.services.user.impl.ServiceControlUserImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagService;
 import org.junit.jupiter.api.Assertions;
@@ -17,7 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest(classes = {
         ServiceControlUserImpl.class,
-        UserRepository.class
+        UserRepository.class,
+        ServiceBlockUserRedisImpl.class,
+        BlockUserRedisRepository.class,
+        BlockUserDelayedRedisRepository.class
 })
 @Transactional
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)

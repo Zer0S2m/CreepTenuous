@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.api.controllers.user;
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiControlUserDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataBlockUserApi;
+import com.zer0s2m.creeptenuous.common.data.DataBlockUserTemporarilyApi;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteUserApi;
 import com.zer0s2m.creeptenuous.common.exceptions.BlockingSelfUserException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
@@ -89,12 +90,27 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
             final @Valid @RequestBody @NotNull DataBlockUserApi data,
             @RequestHeader(name = "Authorization") String accessToken)
             throws UserNotFoundException, BlockingSelfUserException {
-        Claims claimsAccess = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
-        JwtAuthentication userInfo = JwtUtils.generate(claimsAccess);
-        if (userInfo.getLogin().equals(data.login())) {
-            throw new BlockingSelfUserException();
-        }
+        checkBLockingSelfUser(accessToken, data.login());
         serviceControlUser.blockUser(data.login());
+    }
+
+    /**
+     * Blocking a user by his login for a while
+     * @param data data to block
+     * @param accessToken raw JWT access token
+     * @throws UserNotFoundException user does not exist in the system
+     * @throws BlockingSelfUserException blocking self user
+     */
+    @Override
+    @PostMapping("/user/control/block-temporarily")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    @RolesAllowed("ROLE_ADMIN")
+    public void blockUserTemporarily(
+            final @Valid @RequestBody @NotNull DataBlockUserTemporarilyApi data,
+            @RequestHeader(name = "Authorization") String accessToken)
+            throws UserNotFoundException, BlockingSelfUserException {
+        serviceControlUser.blockUserTemporarily(data.login(), data.fromDate(), data.toDate());
+        checkBLockingSelfUser(accessToken, data.login());
     }
 
     /**
@@ -120,6 +136,20 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ExceptionBlockingSelfUserMsg handleExceptionBlockingSelfUser(@NotNull BlockingSelfUserException error) {
         return new ExceptionBlockingSelfUserMsg(error.getMessage());
+    }
+
+    /**
+     * Check if a user is blocked on himself
+     * @param accessToken raw JWT access token
+     * @param loginUser login user
+     * @throws BlockingSelfUserException Blocking self users
+     */
+    private void checkBLockingSelfUser(String accessToken, String loginUser) throws BlockingSelfUserException {
+        Claims claimsAccess = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
+        JwtAuthentication userInfo = JwtUtils.generate(claimsAccess);
+        if (userInfo.getLogin().equals(loginUser)) {
+            throw new BlockingSelfUserException();
+        }
     }
 
 }

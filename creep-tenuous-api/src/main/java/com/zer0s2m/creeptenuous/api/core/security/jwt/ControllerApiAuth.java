@@ -6,6 +6,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.AccountIsBlockedException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotValidPasswordException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionAccountIsBlockedMsg;
+import com.zer0s2m.creeptenuous.redis.services.user.ServiceBlockUserRedis;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.NoValidJwtRefreshTokenException;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.NoValidJwtRefreshTokenMsg;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotFoundMsg;
@@ -27,9 +28,12 @@ public class ControllerApiAuth implements ControllerApiAuthDoc {
 
     private final JwtService jwtService;
 
+    private final ServiceBlockUserRedis serviceBlockUserRedis;
+
     @Autowired
-    public ControllerApiAuth(JwtService jwtService) {
+    public ControllerApiAuth(JwtService jwtService, ServiceBlockUserRedis serviceBlockUserRedis) {
         this.jwtService = jwtService;
+        this.serviceBlockUserRedis = serviceBlockUserRedis;
     }
 
     /**
@@ -44,6 +48,9 @@ public class ControllerApiAuth implements ControllerApiAuthDoc {
     @PostMapping(value = "/auth/login")
     public JwtResponse login(final @Valid @RequestBody JwtUserRequest user) throws UserNotFoundException,
             UserNotValidPasswordException, AccountIsBlockedException {
+        if (serviceBlockUserRedis.check(user.login())) {
+            throw new AccountIsBlockedException();
+        }
         return jwtService.login(user);
     }
 
