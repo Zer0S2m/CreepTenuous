@@ -53,6 +53,7 @@ public class ServiceCreateUserImpl implements ServiceCreateUser {
             user.setRole(UserRole.ROLE_USER);
         }
 
+        user.setActivity(true);
         user.setPassword(generatePassword.generation(user.getPassword()));
 
         userRepository.save(user);

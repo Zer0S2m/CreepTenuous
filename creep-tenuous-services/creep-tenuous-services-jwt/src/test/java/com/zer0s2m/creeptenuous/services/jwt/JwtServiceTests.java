@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.services.jwt;
 
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
+import com.zer0s2m.creeptenuous.common.exceptions.AccountIsBlockedException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotValidPasswordException;
 import com.zer0s2m.creeptenuous.models.user.User;
@@ -81,7 +82,8 @@ public class JwtServiceTests {
 
     @Test
     @Rollback
-    public void loginUser_success() throws UserNotFoundException, UserNotValidPasswordException {
+    public void loginUser_success() throws UserNotFoundException, UserNotValidPasswordException,
+            AccountIsBlockedException {
         RECORD_USER.setPassword(generatePassword.generation("test_password"));
         userRepository.save(RECORD_USER);
 
@@ -98,8 +100,8 @@ public class JwtServiceTests {
     @Test
     @Rollback
     public void generateAccessToken_success()
-            throws UserNotFoundException, UserNotValidPasswordException, NoValidJwtRefreshTokenException
-    {
+            throws UserNotFoundException, UserNotValidPasswordException, NoValidJwtRefreshTokenException,
+            AccountIsBlockedException {
         RECORD_USER.setPassword(generatePassword.generation("test_password"));
         userRepository.save(RECORD_USER);
 
@@ -119,8 +121,8 @@ public class JwtServiceTests {
     @Test
     @Rollback
     public void generateRefreshToken_success()
-            throws UserNotFoundException, UserNotValidPasswordException, NoValidJwtRefreshTokenException
-    {
+            throws UserNotFoundException, UserNotValidPasswordException, NoValidJwtRefreshTokenException,
+            AccountIsBlockedException {
         RECORD_USER.setPassword(generatePassword.generation("test_password"));
         userRepository.save(RECORD_USER);
 
@@ -165,8 +167,7 @@ public class JwtServiceTests {
     @Test
     @Rollback
     public void generateAccessToken_fail_userNotExists()
-            throws UserNotFoundException, UserNotValidPasswordException
-    {
+            throws UserNotFoundException, UserNotValidPasswordException, AccountIsBlockedException {
         RECORD_USER.setPassword(generatePassword.generation("test_password"));
         RECORD_USER_INVALID.setPassword(generatePassword.generation("password"));
         userRepository.save(RECORD_USER);
@@ -215,8 +216,7 @@ public class JwtServiceTests {
     @Test
     @Rollback
     public void generateRefreshToken_fail_userNotExists()
-            throws UserNotFoundException, UserNotValidPasswordException
-    {
+            throws UserNotFoundException, UserNotValidPasswordException, AccountIsBlockedException {
         RECORD_USER.setPassword(generatePassword.generation("test_password"));
         RECORD_USER_INVALID.setPassword(generatePassword.generation("password"));
         userRepository.save(RECORD_USER);

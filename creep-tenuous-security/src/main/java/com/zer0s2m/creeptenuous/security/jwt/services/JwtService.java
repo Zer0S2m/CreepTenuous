@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.security.jwt.services;
 
+import com.zer0s2m.creeptenuous.common.exceptions.AccountIsBlockedException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotValidPasswordException;
 import com.zer0s2m.creeptenuous.security.jwt.domain.JwtAuthentication;
@@ -18,8 +19,10 @@ public interface JwtService {
      * @return tokens for login
      * @throws UserNotFoundException not user in system
      * @throws UserNotValidPasswordException invalid password
+     * @throws AccountIsBlockedException the account is blocked
      */
-    JwtResponse login(JwtUserRequest user) throws UserNotFoundException, UserNotValidPasswordException;
+    JwtResponse login(JwtUserRequest user) throws UserNotFoundException,
+            UserNotValidPasswordException, AccountIsBlockedException;
 
     /**
      * Generate access JWT token
@@ -38,6 +41,12 @@ public interface JwtService {
      * @throws UserNotFoundException not user in system
      */
     JwtResponse getRefreshToken(String refreshToken) throws NoValidJwtRefreshTokenException, UserNotFoundException;
+
+    /**
+     * User logout
+     * @param accessToken access JWT token
+     */
+    void logout(String accessToken);
 
     /**
      * Get user info from token

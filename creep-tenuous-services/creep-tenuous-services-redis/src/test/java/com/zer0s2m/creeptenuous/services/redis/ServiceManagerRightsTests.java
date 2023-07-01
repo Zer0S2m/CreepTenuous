@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.services.redis;
 
+import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
@@ -35,6 +36,7 @@ import java.util.List;
         ServiceRedisManagerResourcesImpl.class,
         ServiceManagerRightsImpl.class,
         JwtProvider.class,
+        RootPath.class,
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceRedis

@@ -14,4 +14,5 @@ public class UserNotFoundException extends Exception {
     public UserNotFoundException() {
         this(UserException.USER_NOT_IS_EXISTS.get());
     }
+
 }

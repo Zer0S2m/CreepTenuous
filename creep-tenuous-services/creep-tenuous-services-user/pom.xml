@@ -20,6 +20,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
+        <version>3.1.1</version>
     </dependency>
 
     <dependency>
@@ -56,6 +57,24 @@
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-services-security</artifactId>
       <version>0.0.7-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-redis-services</artifactId>
+      <version>0.0.7-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-redis-repository</artifactId>
+      <version>0.0.7-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-services-redis</artifactId>
+      <version>0.0.7-SNAPSHOT</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 

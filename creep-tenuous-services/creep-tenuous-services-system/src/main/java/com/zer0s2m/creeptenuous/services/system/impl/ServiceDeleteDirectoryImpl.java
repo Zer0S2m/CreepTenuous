@@ -64,4 +64,32 @@ public class ServiceDeleteDirectoryImpl implements ServiceDeleteDirectory, Atomi
         }
     }
 
+    /**
+     * Delete directory from system
+     * @param source source path system
+     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     */
+    @Override
+    @AtomicFileSystem(
+            name = "delete-directory",
+            handlers = {
+                    @AtomicFileSystemExceptionHandler(
+                            exceptionMulti = IOException.class,
+                            isExceptionMulti = true,
+                            handler = ServiceFileSystemExceptionHandlerOperationDelete.class,
+                            operation = ContextAtomicFileSystem.Operations.DELETE
+                    )
+            }
+    )
+    public void delete(Path source) throws IOException {
+        if (Files.isDirectory(source)) {
+            try (Stream<Path> pathStream = Files.walk(source)) {
+                pathStream
+                        .sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(FilesContextAtomic::deleteNoException);
+            }
+        }
+    }
+
 }

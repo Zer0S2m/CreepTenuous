@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.io.IOException;
 
-public interface ControllerApiManagerDirectoryApiDoc {
+public interface ControllerApiManagerDirectoryDoc {
 
     /**
      * Manager directory - get all directories by level

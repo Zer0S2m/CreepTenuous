@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
+import com.zer0s2m.creeptenuous.common.exceptions.AccountIsBlockedException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotValidPasswordException;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.NoValidJwtRefreshTokenException;
@@ -7,9 +8,11 @@ import com.zer0s2m.creeptenuous.security.jwt.http.JwtRefreshTokenRequest;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtResponse;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtUserRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 public interface ControllerApiAuthDoc {
 
@@ -19,6 +22,7 @@ public interface ControllerApiAuthDoc {
      * @return JWT tokens
      * @throws UserNotFoundException user not found
      * @throws UserNotValidPasswordException invalid password
+     * @throws AccountIsBlockedException the account is blocked
      */
     @Operation(
             method = "POST",
@@ -50,9 +54,8 @@ public interface ControllerApiAuthDoc {
                     )
             }
     )
-    JwtResponse login(
-            final JwtUserRequest user
-    ) throws UserNotFoundException, UserNotValidPasswordException;
+    JwtResponse login(final JwtUserRequest user) throws UserNotFoundException, UserNotValidPasswordException,
+            AccountIsBlockedException;
 
     /**
      * Get JWT access token
@@ -91,9 +94,8 @@ public interface ControllerApiAuthDoc {
                     )
             }
     )
-    JwtResponse access(
-            final JwtRefreshTokenRequest request
-    ) throws UserNotFoundException, NoValidJwtRefreshTokenException;
+    JwtResponse access(final JwtRefreshTokenRequest request) throws UserNotFoundException,
+            NoValidJwtRefreshTokenException;
 
     /**
      * Get JWT refresh token
@@ -132,7 +134,34 @@ public interface ControllerApiAuthDoc {
                     )
             }
     )
-    JwtResponse refresh(
-            final JwtRefreshTokenRequest request
-    ) throws NoValidJwtRefreshTokenException, UserNotFoundException;
+    JwtResponse refresh(final JwtRefreshTokenRequest request) throws NoValidJwtRefreshTokenException,
+            UserNotFoundException;
+
+    /**
+     * Logout user
+     * @param accessToken RAW ACCESS jwt token
+     */
+    @Operation(
+            method = "GET",
+            summary = "Logout user",
+            description = "Logout user",
+            tags = { "Authorization" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful logout",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(ref = "#/components/schemas/Unauthorized")
+                            )
+                    )
+            }
+    )
+    void logout(@Parameter(hidden = true) String accessToken);
+
 }

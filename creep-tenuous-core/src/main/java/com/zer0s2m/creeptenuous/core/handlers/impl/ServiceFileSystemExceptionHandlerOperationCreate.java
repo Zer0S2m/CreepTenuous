@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandle
 import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem.Operations;
 import com.zer0s2m.creeptenuous.core.handlers.ServiceFileSystemExceptionHandler;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public class ServiceFileSystemExceptionHandlerOperationCreate implements Service
      *                       {@link com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem#getOperationsData()}
      */
     @Override
-    public void handleException(Throwable t, HashMap<String, HashMap<String, Object>> operationsData) {
+    public void handleException(Throwable t, @NotNull HashMap<String, HashMap<String, Object>> operationsData) {
         operationsData.forEach((uniqueName, operationData) -> {
             Operations typeOperation = (Operations) operationData.get("operation");
             if (typeOperation.equals(Operations.CREATE)) {
@@ -56,4 +57,5 @@ public class ServiceFileSystemExceptionHandlerOperationCreate implements Service
             }
         });
     }
+
 }

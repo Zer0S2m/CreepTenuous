@@ -23,9 +23,12 @@ public class RightUserFileSystemObjectRedis {
     @Column(name = "right")
     private List<OperationRights> right;
 
+    public RightUserFileSystemObjectRedis() {}
+
     public RightUserFileSystemObjectRedis(String fileSystemObject, String login, List<OperationRights> right) {
         this.fileSystemObject = fileSystemObject;
         this.login = login;
         this.right = right;
     }
+
 }

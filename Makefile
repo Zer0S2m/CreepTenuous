@@ -11,6 +11,9 @@ define run-docker-dev
 $(docker_compose_bin) -f docker-compose.dev.yml up -d --force-recreate
 endef
 
+define run-migrations
+cd ./creep-tenuous-repository && mvn clean flyway:migrate -Dflyway.configFiles=flyway.conf
+endef
 
 build-dev-docker:
 	$(docker_compose_bin) -f docker-compose.dev.yml build
@@ -18,9 +21,13 @@ build-dev-docker:
 dev-docker:
 	@$(run-docker-dev)
 
+migrate:
+	@$(run-migrations)
+
 full-dev:
 	./init.sh
 	@$(run-docker-dev)
+	@$(run-migrations)
 	mvn spring-boot:run
 
 build:

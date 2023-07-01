@@ -79,4 +79,39 @@ public interface ServiceRedisManagerResources {
         return getResourcesDirectoryForDelete(List.of(id), userLogin);
     }
 
+    /**
+     * Get data about object directory
+     * @param id id must not be {@literal null}.
+     * @return result
+     */
+    DirectoryRedis getResourceDirectoryRedis(String id);
+
+    /**
+     * Get data about object directories
+     * @param ids must not be {@literal null} nor contain any {@literal null} values.
+     * @return result
+     */
+    List<DirectoryRedis> getResourceDirectoryRedis(Iterable<String> ids);
+
+    /**
+     * Get data about object files
+     * @param ids must not be {@literal null} nor contain any {@literal null} values.
+     * @return result
+     */
+    List<FileRedis> getResourceFileRedis(Iterable<String> ids);
+
+    /**
+     * Get data about object directories by user login
+     * @param userLogin user login. Must not be {@literal null}.
+     * @return result
+     */
+    List<DirectoryRedis> getResourceDirectoryRedisByLoginUser(String userLogin);
+
+    /**
+     * Get data about object files by user login
+     * @param userLogin user login. Must not be {@literal null}.
+     * @return result
+     */
+    List<FileRedis> getResourceFileRedisByLoginUser(String userLogin);
+
 }

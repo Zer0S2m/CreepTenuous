@@ -5,12 +5,18 @@ import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateDirectory;
 import com.zer0s2m.creeptenuous.common.data.DataCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.common.exceptions.ExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.common.exceptions.FileAlreadyExistsException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionDirectoryExistsMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
+import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
+import com.zer0s2m.creeptenuous.redis.services.system.ServiceCheckUniqueNameFileSystemObject;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateDirectoryRedis;
+import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
+import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateDirectoryImpl;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.Contract;
@@ -19,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -29,17 +36,29 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
 
     private final ServiceCreateDirectoryImpl createDirectory;
 
+    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath;
+
     private final ServiceCreateDirectoryRedis serviceDirectoryRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
+    private final ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject;
+
+    private final JwtProvider jwtProvider;
+
     @Autowired
     public ControllerApiCreateDirectory(ServiceCreateDirectoryImpl createDirectory,
+                                        ServiceBuildDirectoryPath serviceBuildDirectoryPath,
                                         ServiceCreateDirectoryRedis serviceDirectoryRedis,
-                                        ServiceManagerRights serviceManagerRights) {
+                                        ServiceManagerRights serviceManagerRights,
+                                        ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject,
+                                        JwtProvider jwtProvider) {
         this.createDirectory = createDirectory;
+        this.serviceBuildDirectoryPath = serviceBuildDirectoryPath;
         this.serviceDirectoryRedis = serviceDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
+        this.serviceCheckUniqueNameFileSystemObject = serviceCheckUniqueNameFileSystemObject;
+        this.jwtProvider = jwtProvider;
     }
 
     /**
@@ -49,13 +68,15 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
      * @param directoryForm directory create data
      * @param accessToken   raw JWT access token
      * @return result create directory
-     * @throws FileAlreadyExistsException file already exists
-     * @throws InvocationTargetException  Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException      Thrown when a particular method cannot be found.
-     * @throws InstantiationException     Thrown when an application tries to create an instance of a class
-     *                                    using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException     An IllegalAccessException is thrown when an application
-     *                                    tries to reflectively create an instance
+     * @throws FileAlreadyExistsException           file already exists
+     * @throws InvocationTargetException            Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException                Thrown when a particular method cannot be found.
+     * @throws InstantiationException               Thrown when an application tries to create an instance of a class
+     *                                              using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException               An IllegalAccessException is thrown when an application
+     *                                              tries to reflectively create an instance
+     * @throws IOException                          signals that an I/O exception of some sort has occurred
+     * @throws ExistsFileSystemObjectRedisException uniqueness of the name in the system under different directory levels
      */
     @Contract("_, _ -> new")
     @Override
@@ -64,7 +85,8 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
     public final @NotNull ResponseCreateDirectoryApi createDirectory(
             final @Valid @RequestBody @NotNull DataCreateDirectoryApi directoryForm,
             @RequestHeader(name = "Authorization") String accessToken) throws FileAlreadyExistsException,
-            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+            InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
+            IOException, ExistsFileSystemObjectRedisException {
         serviceDirectoryRedis.setAccessToken(accessToken);
         boolean isRights = serviceDirectoryRedis.checkRights(
                 directoryForm.parents(),
@@ -77,6 +99,13 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
             serviceManagerRights.setIsWillBeCreated(false);
             serviceManagerRights.checkRightsByOperation(operationRights, directoryForm.systemParents());
         }
+
+        String loginUser = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken))
+                .get("login", String.class);
+
+        serviceCheckUniqueNameFileSystemObject.checkUniqueName(directoryForm.directoryName(),
+                WalkDirectoryInfo.getNamesFileSystemObject(
+                        serviceBuildDirectoryPath.build(directoryForm.systemParents())), loginUser);
 
         ContainerDataCreateDirectory dataCreatedDirectory = AtomicSystemCallManager.call(
                 this.createDirectory,

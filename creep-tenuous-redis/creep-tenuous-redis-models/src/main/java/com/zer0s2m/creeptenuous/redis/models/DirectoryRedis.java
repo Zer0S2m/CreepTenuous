@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @RedisHash("directories")
 public class DirectoryRedis implements BaseRedis {
-    @Indexed
+
     @Column(name = "realNameDirectory")
     private String realNameDirectory;
 
@@ -38,6 +38,8 @@ public class DirectoryRedis implements BaseRedis {
     @Column(name = "user_logins")
     private List<String> userLogins;
 
+    public DirectoryRedis() {}
+
     public DirectoryRedis(
             String login,
             String role,
@@ -55,4 +57,5 @@ public class DirectoryRedis implements BaseRedis {
         this.isDirectory = true;
         this.isFile = false;
     }
+
 }

@@ -20,11 +20,19 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
+        <version>3.1.1</version>
     </dependency>
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
       <version>20230227</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>24.0.1</version>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
@@ -48,12 +56,6 @@
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-redis-services</artifactId>
-      <version>0.0.7-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.zer0s2m</groupId>
-      <artifactId>creep-tenuous-services-system</artifactId>
       <version>0.0.7-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>

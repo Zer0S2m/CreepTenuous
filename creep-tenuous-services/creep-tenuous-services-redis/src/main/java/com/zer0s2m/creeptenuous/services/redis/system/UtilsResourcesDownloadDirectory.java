@@ -22,9 +22,9 @@ interface UtilsResourcesDownloadDirectory {
      *         <p><b>Key</b> - system name file object</p>
      *         <p><b>Value</b> - real name system file object</p>
      */
-    static HashMap<String, String> getResource(List<String> systemPathObject,
-                                               @NotNull DirectoryRedisRepository directoryRedisRepository,
-                                               @NotNull FileRedisRepository fileRedisRepository) {
+    static @NotNull HashMap<String, String> getResource(List<String> systemPathObject,
+                                                        @NotNull DirectoryRedisRepository directoryRedisRepository,
+                                                        @NotNull FileRedisRepository fileRedisRepository) {
         HashMap<String, String> map = new HashMap<>();
 
         directoryRedisRepository.findAllById(systemPathObject)

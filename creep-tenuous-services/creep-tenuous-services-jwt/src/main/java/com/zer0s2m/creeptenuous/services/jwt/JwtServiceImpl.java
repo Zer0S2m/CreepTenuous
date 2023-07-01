@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.services.jwt;
 
 import com.zer0s2m.creeptenuous.common.enums.UserException;
+import com.zer0s2m.creeptenuous.common.exceptions.AccountIsBlockedException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotValidPasswordException;
 import com.zer0s2m.creeptenuous.models.user.User;
@@ -46,16 +47,20 @@ public class JwtServiceImpl implements JwtService {
      * @return tokens for login
      * @throws UserNotFoundException not user in system
      * @throws UserNotValidPasswordException invalid password
+     * @throws AccountIsBlockedException the account is blocked
      */
     @Override
     public JwtResponse login(@NotNull JwtUserRequest user) throws UserNotFoundException,
-            UserNotValidPasswordException {
+            UserNotValidPasswordException, AccountIsBlockedException {
         User currentUser = userRepository.findByLogin(user.login());
         if (currentUser == null) {
             throw new UserNotFoundException(UserException.USER_NOT_IS_EXISTS.get());
         }
         if (!generatePassword.verify(user.password(), currentUser.getPassword())) {
             throw new UserNotValidPasswordException(UserException.USER_NOT_VALID_PASSWORD.get());
+        }
+        if (!currentUser.isAccountNonLocked()) {
+            throw new AccountIsBlockedException();
         }
 
         redisService.deleteTokensByLogin(currentUser.getLogin());
@@ -156,6 +161,18 @@ public class JwtServiceImpl implements JwtService {
             return new JwtResponse(newAccessToken, newRefreshToken);
         }
         throw new NoValidJwtRefreshTokenException("No valid refresh token");
+    }
+
+    /**
+     * User logout
+     * @param accessToken access JWT token
+     */
+    @Override
+    public void logout(String accessToken) {
+        if (jwtProvider.validateAccessToken(accessToken)) {
+            final Claims claims = jwtProvider.getAccessClaims(accessToken);
+            redisService.deleteTokensByLogin(claims.getSubject());
+        }
     }
 
     /**

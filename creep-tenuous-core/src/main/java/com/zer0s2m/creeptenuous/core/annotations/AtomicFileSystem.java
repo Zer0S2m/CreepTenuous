@@ -10,6 +10,7 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Documented
 public @interface AtomicFileSystem {
+
     /**
      * Custom name of the operation in which the atomic mode will be enabled
      * @return custom name
@@ -22,4 +23,5 @@ public @interface AtomicFileSystem {
      * @return handlers exception {@link AtomicFileSystemExceptionHandler#exception()}
      */
     AtomicFileSystemExceptionHandler[] handlers();
+
 }

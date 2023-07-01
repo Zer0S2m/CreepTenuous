@@ -12,7 +12,7 @@ import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.context.nio.file.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.handlers.impl.ServiceFileSystemExceptionHandlerOperationCopy;
 import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
-import com.zer0s2m.creeptenuous.services.system.utils.WalkDirectoryInfo;
+import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
 import com.zer0s2m.creeptenuous.services.system.ServiceCopyDirectory;
 import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;

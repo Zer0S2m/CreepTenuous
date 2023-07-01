@@ -4,7 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.NoSuchFileExists;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
+import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
+import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
 import org.apache.logging.log4j.LogManager;
@@ -19,11 +27,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.FileSystemUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,6 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagControllerApi
 public class ControllerApiDownloadFileTests {
+
     Logger logger = LogManager.getLogger(ControllerApiDownloadFileTests.class);
 
     @Autowired
@@ -44,46 +55,23 @@ public class ControllerApiDownloadFileTests {
     @Autowired
     private RootPath rootPath;
 
+    @Autowired
+    private ServiceBuildDirectoryPath buildDirectoryPath;
+
+    @Autowired
+    private DirectoryRedisRepository directoryRedisRepository;
+
+    @Autowired
+    private FileRedisRepository fileRedisRepository;
+
+    @Autowired
+    private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     private final String nameTestFile1 = "test_image_1.jpeg";
 
     private final String failNameTestFile = "fail_name_test_file.fail_extension";
-
-    DataDownloadFileApi VALID_DATA_1 = new DataDownloadFileApi(
-            new ArrayList<>(),
-            new ArrayList<>(),
-            nameTestFile1,
-            nameTestFile1
-    );
-
-    DataDownloadFileApi INVALID_DATA_1 = new DataDownloadFileApi(
-            new ArrayList<>(),
-            new ArrayList<>(),
-            failNameTestFile,
-            failNameTestFile
-    );
-
-    DataDownloadFileApi INVALID_DATA_2 = new DataDownloadFileApi(
-            Arrays.asList("invalid", "path", "directory"),
-            Arrays.asList("invalid", "path", "directory"),
-            failNameTestFile,
-            failNameTestFile
-    );
-
-    DataDownloadFileApi INVALID_DATA_3 = new DataDownloadFileApi(
-            new ArrayList<>(),
-            new ArrayList<>(),
-            null,
-            null
-    );
-
-    DataDownloadFileApi INVALID_DATA_4 = new DataDownloadFileApi(
-            null,
-            null,
-            nameTestFile1,
-            nameTestFile1
-    );
 
     @Test
     public void downloadFile_success() throws Exception {
@@ -99,7 +87,12 @@ public class ControllerApiDownloadFileTests {
                 MockMvcRequestBuilders
                         .post("/api/v1/file/download")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(VALID_DATA_1))
+                        .content(objectMapper.writeValueAsString(new DataDownloadFileApi(
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                nameTestFile1,
+                                nameTestFile1
+                        )))
                         .header("Authorization",  accessToken)
         )
                 .andExpect(status().isOk())
@@ -114,8 +107,12 @@ public class ControllerApiDownloadFileTests {
         mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("/api/v1/file/download")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(INVALID_DATA_1))
+                        .content(objectMapper.writeValueAsString(new DataDownloadFileApi(
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                failNameTestFile,
+                                failNameTestFile
+                        )))
                         .header("Authorization",  accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -133,8 +130,12 @@ public class ControllerApiDownloadFileTests {
         mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("/api/v1/file/download")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(INVALID_DATA_2))
+                        .content(objectMapper.writeValueAsString(new DataDownloadFileApi(
+                                Arrays.asList("invalid", "path", "directory"),
+                                Arrays.asList("invalid", "path", "directory"),
+                                failNameTestFile,
+                                failNameTestFile
+                        )))
                         .header("Authorization",  accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -145,13 +146,17 @@ public class ControllerApiDownloadFileTests {
     @Test
     public void downloadFile_fail_notValidNameFile() throws Exception {
         this.mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .post("/api/v1/file/download")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(INVALID_DATA_3))
-                                .header("Authorization",  accessToken)
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)
+                MockMvcRequestBuilders
+                        .post("/api/v1/file/download")
+                        .content(objectMapper.writeValueAsString(new DataDownloadFileApi(
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                null,
+                                null
+                        )))
+                        .header("Authorization",  accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -161,12 +166,131 @@ public class ControllerApiDownloadFileTests {
         this.mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("/api/v1/file/download")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(INVALID_DATA_4))
+                        .content(objectMapper.writeValueAsString(new DataDownloadFileApi(
+                                null,
+                                null,
+                                nameTestFile1,
+                                nameTestFile1
+                        )))
                         .header("Authorization",  accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void downloadFile_fail_forbiddenDirectories() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/api/v1/file/download")
+                        .content(objectMapper.writeValueAsString(new DataDownloadFileApi(
+                                List.of("testDirectory"),
+                                List.of("testDirectory"),
+                                nameTestFile1,
+                                nameTestFile1
+                        )))
+                        .header("Authorization",  accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void downloadFile_fail_forbiddenFile() throws Exception {
+        FileRedis fileRedis = new FileRedis(
+                "login",
+                "ROLE_USER",
+                nameTestFile1,
+                nameTestFile1,
+                nameTestFile1,
+                new ArrayList<>());
+        fileRedisRepository.save(fileRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/api/v1/file/download")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataDownloadFileApi(
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                nameTestFile1,
+                                nameTestFile1
+                        )))
+                        .header("Authorization",  accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isForbidden());
+
+        fileRedisRepository.delete(fileRedis);
+    }
+
+    @Test
+    public void downloadFile_success_forbidden() throws Exception {
+        final Path testDirectoryPath = Path.of(rootPath.getRootPath(), "testFolder1");
+        Files.createDirectory(testDirectoryPath);
+        Path sourcePath = Path.of("src/main/resources/test/", nameTestFile1);
+        Path targetPath = Path.of(testDirectoryPath.toString(), nameTestFile1);
+        Files.copy(sourcePath, targetPath);
+
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                UtilsAuthAction.ROLE_USER,
+                "testFolder1",
+                "testFolder1",
+                buildDirectoryPath.build(List.of("testFolder1")),
+                List.of(UtilsAuthAction.LOGIN));
+        FileRedis fileRedis = new FileRedis(
+                "login",
+                "ROLE_USER",
+                nameTestFile1,
+                nameTestFile1,
+                nameTestFile1,
+                List.of(UtilsAuthAction.LOGIN));
+        RightUserFileSystemObjectRedis rightDirectory = new RightUserFileSystemObjectRedis(
+                "testFolder1" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW));
+        RightUserFileSystemObjectRedis rightFile = new RightUserFileSystemObjectRedis(
+                nameTestFile1 + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW, OperationRights.DOWNLOAD));
+        fileRedisRepository.save(fileRedis);
+        directoryRedisRepository.save(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.saveAll(List.of(rightDirectory, rightFile));
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/api/v1/file/download")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataDownloadFileApi(
+                                List.of("testFolder1"),
+                                List.of("testFolder1"),
+                                nameTestFile1,
+                                nameTestFile1
+                        )))
+                        .header("Authorization",  accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk());
+
+        fileRedisRepository.delete(fileRedis);
+        directoryRedisRepository.delete(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.deleteAll(List.of(rightDirectory, rightFile));
+
+        FileSystemUtils.deleteRecursively(testDirectoryPath);
+    }
+
 }

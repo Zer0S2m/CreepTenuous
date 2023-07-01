@@ -2,8 +2,16 @@ package com.zer0s2m.creeptenuous.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
+import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.data.DataCopyDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.MethodCopyDirectory;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
+import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -20,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.FileSystemUtils;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagControllerApi
 public class ControllerApiCopyDirectoryTests {
+
     Logger logger = LogManager.getLogger(ControllerApiCreateDirectoryTests.class);
 
     @Autowired
@@ -43,10 +53,24 @@ public class ControllerApiCopyDirectoryTests {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private RootPath rootPath;
+
+    @Autowired
+    private DirectoryRedisRepository directoryRedisRepository;
+
+    @Autowired
+    private FileRedisRepository fileRedisRepository;
+
+    @Autowired
+    private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     List<String> DIRECTORIES_1 = List.of("test_folder1");
+
     List<String> DIRECTORIES_2 = List.of("test_folder1", "test_folder2");
+
     List<String> DIRECTORIES_3 = List.of("test_folder3");
 
     @Test
@@ -222,4 +246,169 @@ public class ControllerApiCopyDirectoryTests {
                 )
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void copyDirectory_fail_forbiddenSourceDirectory() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectoryFrom",
+                "testDirectoryFrom",
+                "testDirectoryFrom",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/directory/copy")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
+                        .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
+                                List.of("testDirectoryFrom"),
+                                List.of("testDirectoryFrom"),
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                "test",
+                                "test",
+                                1
+                        )))
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void copyDirectory_fail_forbiddenTargetDirectory() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectoryTo",
+                "testDirectoryTo",
+                "testDirectoryTo",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/directory/copy")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
+                        .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                List.of("testDirectoryTo"),
+                                List.of("testDirectoryTo"),
+                                "test",
+                                "test",
+                                1
+                        )))
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void copyDirectory_fail_forbiddenDirectory() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/directory/copy")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
+                        .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                "testDirectory",
+                                "testDirectory",
+                                1
+                        )))
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void copyDirectory_success_forbidden() throws Exception {
+        final Path testDirectorySource = Path.of(rootPath.getRootPath(), "testDirectory1");
+        final Path testDirectoryTarget = Path.of(rootPath.getRootPath(), "testDirectoryTarget");
+        final Path testFileSource = Path.of(testDirectorySource.toString(), "testFile");
+        Files.createDirectory(testDirectorySource);
+        Files.createDirectory(testDirectoryTarget);
+        Files.createFile(testFileSource);
+
+        DirectoryRedis directoryRedisSource = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory1",
+                "testDirectory1",
+                testDirectorySource.toString(),
+                List.of(UtilsAuthAction.LOGIN));
+        DirectoryRedis directoryRedisTarget = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectoryTarget",
+                "testDirectoryTarget",
+                testDirectoryTarget.toString(),
+                List.of(UtilsAuthAction.LOGIN));
+        FileRedis fileRedis = new FileRedis(
+                "login",
+                "ROLE_USER",
+                "testFile",
+                "testFile",
+                testFileSource.toString(),
+                List.of(UtilsAuthAction.LOGIN));
+        RightUserFileSystemObjectRedis rightDirectorySource = new RightUserFileSystemObjectRedis(
+                "testDirectory1" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW, OperationRights.COPY));
+        RightUserFileSystemObjectRedis rightDirectoryTarget = new RightUserFileSystemObjectRedis(
+                "testDirectoryTarget" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW, OperationRights.COPY));
+        RightUserFileSystemObjectRedis rightFileSource = new RightUserFileSystemObjectRedis(
+                "testFile" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW, OperationRights.COPY));
+
+        directoryRedisRepository.saveAll(List.of(directoryRedisSource, directoryRedisTarget));
+        fileRedisRepository.save(fileRedis);
+        rightUserFileSystemObjectRedisRepository.saveAll(List.of(rightDirectorySource, rightDirectoryTarget,
+                rightFileSource));
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/directory/copy")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",  accessToken)
+                        .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                List.of("testDirectoryTarget"),
+                                List.of("testDirectoryTarget"),
+                                "testDirectory1",
+                                "testDirectory1",
+                                1
+                        )))
+                )
+                .andExpect(status().isCreated());
+
+        directoryRedisRepository.deleteAll(List.of(directoryRedisSource, directoryRedisTarget));
+        fileRedisRepository.delete(fileRedis);
+        rightUserFileSystemObjectRedisRepository.deleteAll(List.of(rightDirectorySource, rightDirectoryTarget,
+                rightFileSource));
+
+        FileSystemUtils.deleteRecursively(testDirectorySource);
+        FileSystemUtils.deleteRecursively(testDirectoryTarget);
+    }
+
 }

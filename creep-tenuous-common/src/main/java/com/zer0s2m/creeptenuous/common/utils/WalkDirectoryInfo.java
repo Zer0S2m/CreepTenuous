@@ -1,4 +1,4 @@
-package com.zer0s2m.creeptenuous.services.system.utils;
+package com.zer0s2m.creeptenuous.common.utils;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import org.jetbrains.annotations.NotNull;
@@ -6,8 +6,11 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -48,6 +51,21 @@ public interface WalkDirectoryInfo {
      */
     static @NotNull List<ContainerInfoFileSystemObject> walkDirectory(Path source) throws IOException {
         return walkDirectory(source, null);
+    }
+
+    /**
+     * Get file object names from directory path
+     * @param dir source path
+     * @return file object names
+     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     */
+    static Set<String> getNamesFileSystemObject(String dir) throws IOException {
+        try (Stream<Path> stream = Files.list(Paths.get(dir))) {
+            return stream
+                    .map(Path::getFileName)
+                    .map(Path::toString)
+                    .collect(Collectors.toSet());
+        }
     }
 
 }

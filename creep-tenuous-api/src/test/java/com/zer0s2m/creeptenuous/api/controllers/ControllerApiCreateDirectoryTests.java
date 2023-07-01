@@ -4,8 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.data.DataCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
+import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionDirectoryExistsMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
+import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -22,12 +27,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.FileSystemUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagControllerApi
 public class ControllerApiCreateDirectoryTests {
+
     Logger logger = LogManager.getLogger(ControllerApiCreateDirectoryTests.class);
 
     @Autowired
@@ -48,20 +56,18 @@ public class ControllerApiCreateDirectoryTests {
     @Autowired
     private MockMvc mockMvc;
 
-    private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
+    @Autowired
+    private DirectoryRedisRepository directoryRedisRepository;
 
-    List<String> DIRECTORIES_1 = List.of("test_folder1");
+    @Autowired
+    private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
+
+    private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     DataCreateDirectoryApi RECORD_1 = new DataCreateDirectoryApi(
             new ArrayList<>(),
             new ArrayList<>(),
-            "test_folder1"
-    );
-
-    DataCreateDirectoryApi INVALID_RECORD = new DataCreateDirectoryApi(
-            Arrays.asList("invalid", "path", "directory"),
-            Arrays.asList("invalid", "path", "directory"),
-            "test_folder1"
+            UUID.randomUUID().toString()
     );
 
     @Test
@@ -86,11 +92,9 @@ public class ControllerApiCreateDirectoryTests {
         UtilsActionForFiles.deleteFileAndWriteLog(newFolder, logger);
     }
 
-    /**
-     * @deprecated
-     */
+    @Deprecated
     public void createDirectory_fail_directoryExists() throws Exception {
-        UtilsActionForFiles.createDirectories(DIRECTORIES_1, serviceBuildDirectoryPath, logger);
+        UtilsActionForFiles.createDirectories(List.of("test_folder1"), serviceBuildDirectoryPath, logger);
 
         this.mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/v1/directory/create")
@@ -108,7 +112,7 @@ public class ControllerApiCreateDirectoryTests {
                         )
                 ));
 
-        Path newFolder = Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_1));
+        Path newFolder = Path.of(serviceBuildDirectoryPath.build(List.of("test_folder1")));
         UtilsActionForFiles.deleteFileAndWriteLog(newFolder, logger);
     }
 
@@ -119,7 +123,11 @@ public class ControllerApiCreateDirectoryTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", accessToken)
-                        .content(objectMapper.writeValueAsString(INVALID_RECORD))
+                        .content(objectMapper.writeValueAsString(new DataCreateDirectoryApi(
+                                Arrays.asList("invalid", "path", "directory"),
+                                Arrays.asList("invalid", "path", "directory"),
+                                "test_folder1"
+                        )))
                 )
                 .andExpect(status().isNotFound());
     }
@@ -138,4 +146,73 @@ public class ControllerApiCreateDirectoryTests {
                 )
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void createDirectory_fail_forbidden() throws Exception {
+        DataCreateDirectoryApi dataCreateFileApi = new DataCreateDirectoryApi(
+                List.of("testDirectory"),
+                List.of("testDirectory"),
+                "testDirectory");
+
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                new ArrayList<>());
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/directory/create")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(dataCreateFileApi))
+                )
+                .andExpect(status().isForbidden());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void createDirectory_success_forbidden() throws Exception {
+        UtilsActionForFiles.createDirectories(
+                List.of("testDirectory"),
+                serviceBuildDirectoryPath,
+                logger);
+
+        DataCreateDirectoryApi dataCreateDirectoryApi = new DataCreateDirectoryApi(
+                List.of("testDirectory"),
+                List.of("testDirectory"),
+                "testDirectory");
+        RightUserFileSystemObjectRedis right = new RightUserFileSystemObjectRedis(
+                "testDirectory" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.CREATE));
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                UtilsAuthAction.ROLE_USER,
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                List.of(UtilsAuthAction.LOGIN));
+
+        rightUserFileSystemObjectRedisRepository.save(right);
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/directory/create")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(dataCreateDirectoryApi))
+                )
+                .andExpect(status().isCreated());
+
+        directoryRedisRepository.delete(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.delete(right);
+
+        FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(List.of("testDirectory"))));
+    }
+
 }
