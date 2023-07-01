@@ -1,6 +1,8 @@
 package com.zer0s2m.creeptenuous.services.redis.security;
 
+import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
+import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
@@ -26,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +42,11 @@ import java.util.stream.StreamSupport;
  */
 @Service("service-manager-rights")
 public class ServiceManagerRightsImpl implements ServiceManagerRights {
+
+    /**
+     * Basic operation in the system to manage user rights
+     */
+    static final OperationRights baseOperationRights = OperationRights.SHOW;
 
     protected final JwtProvider jwtProvider;
 
@@ -60,6 +68,8 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
     private final ServiceRedisManagerResources serviceRedisManagerResources;
 
+    private final RootPath rootPath;
+
     @Autowired
     public ServiceManagerRightsImpl(
             JwtProvider jwtProvider,
@@ -67,7 +77,8 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
             FileRedisRepository fileRedisRepository,
             RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository,
             JwtRedisRepository jwtRedisRepository,
-            ServiceRedisManagerResources serviceRedisManagerResources
+            ServiceRedisManagerResources serviceRedisManagerResources,
+            RootPath rootPath
     ) {
         this.jwtProvider = jwtProvider;
         this.directoryRedisRepository = directoryRedisRepository;
@@ -75,6 +86,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
         this.rightUserFileSystemObjectRedisRepository = rightUserFileSystemObjectRedisRepository;
         this.jwtRedisRepository = jwtRedisRepository;
         this.serviceRedisManagerResources = serviceRedisManagerResources;
+        this.rootPath = rootPath;
     }
 
     /**
@@ -305,6 +317,49 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
             if (!userLogins.contains(loginUserOther)) {
                 userLogins.add(loginUserOther);
                 obj.setUserLogins(userLogins);
+            }
+        }
+    }
+
+    /**
+     * Set directory pass access if the nesting level prevents the user from reaching the file system object
+     * @param nameFileSystemObject filesystem object system name. Must not be {@literal null}.
+     * @param loginUser login user. Must not be {@literal null}.
+     * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
+     */
+    @Override
+    public void setDirectoryPassAccess(String nameFileSystemObject, String loginUser)
+            throws ChangeRightsYourselfException {
+        Optional<FileRedis> fileRedisOptional = fileRedisRepository.findById(nameFileSystemObject);
+        Optional<DirectoryRedis> directoryRedisOptional = directoryRedisRepository.findById(nameFileSystemObject);
+
+        if (fileRedisOptional.isPresent()) {
+            setDirectoryPassAccessAddRights(nameFileSystemObject,
+                    Path.of(fileRedisOptional.get().getPathFile()), loginUser);
+        }
+        if (directoryRedisOptional.isPresent()) {
+            setDirectoryPassAccessAddRights(nameFileSystemObject,
+                    Path.of(directoryRedisOptional.get().getPathDirectory()), loginUser);
+        }
+    }
+
+    /**
+     * Set directory pass access if the nesting level prevents the user from reaching the file system object
+     * @param nameFileSystemObject filesystem object system name. Must not be {@literal null}.
+     * @param source source file system object
+     * @param loginUser login user. Must not be {@literal null}.
+     * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
+     */
+    private void setDirectoryPassAccessAddRights(String nameFileSystemObject, Path source, String loginUser)
+            throws ChangeRightsYourselfException {
+        if (Files.exists(source)) {
+            String sourceStr = source.toString()
+                    .replace(rootPath.getRootPath() + Directory.SEPARATOR.get(), "")
+                    .replace(Directory.SEPARATOR.get() + nameFileSystemObject, "");
+            List<String> systemParents = new ArrayList<>(List.of(sourceStr.split(Directory.SEPARATOR.get())));
+            if (systemParents.size() > 0) {
+                addRight(buildObj(systemParents, loginUser, baseOperationRights),
+                        baseOperationRights);
             }
         }
     }

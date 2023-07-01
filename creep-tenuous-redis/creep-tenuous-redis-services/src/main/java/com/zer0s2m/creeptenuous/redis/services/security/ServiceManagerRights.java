@@ -61,6 +61,14 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
             throws ChangeRightsYourselfException;
 
     /**
+     * set directory pass access if the nesting level prevents the user from reaching the file system object
+     * @param nameFileSystemObject filesystem object system name. Must not be {@literal null}.
+     * @param loginUser login user. Must not be {@literal null}.
+     * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
+     */
+    void setDirectoryPassAccess(String nameFileSystemObject, String loginUser) throws ChangeRightsYourselfException;
+
+    /**
      * Delete a user right a file system object
      * @param right data right. Must not be {@literal null}.
      * @param operationRights type of transaction. Must not be {@literal null}.

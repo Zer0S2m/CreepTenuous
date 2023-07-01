@@ -75,6 +75,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
 
         serviceManagerRights.addRight(
                 serviceManagerRights.buildObj(data.systemName(), data.loginUser(), operation));
+        serviceManagerRights.setDirectoryPassAccess(data.systemName(), data.loginUser());
 
         return new ResponseCreateRightUserApi(data.systemName(), data.loginUser(), operation);
     }
@@ -120,6 +121,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
 
         serviceManagerRights.addRight(
                 serviceManagerRights.buildObj(namesFileSystemObject, data.loginUser(), operation), operation);
+        serviceManagerRights.setDirectoryPassAccess(data.systemName(), data.loginUser());
     }
 
     /**
