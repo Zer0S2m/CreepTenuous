@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.zer0s2m</groupId>
 	<artifactId>creep-tenuous-models</artifactId>
-	<version>0.0.7-SNAPSHOT</version>
+	<version>0.0.8-SNAPSHOT</version>
 	<name>creep-tenuous-models</name>
 	<description>creep-tenuous-models</description>
 	<properties>
@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>com.zer0s2m</groupId>
 			<artifactId>creep-tenuous-common</artifactId>
-			<version>0.0.7-SNAPSHOT</version>
+			<version>0.0.8-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
    </dependencies>

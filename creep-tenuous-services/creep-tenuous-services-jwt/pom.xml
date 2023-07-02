@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.zer0s2m</groupId>
   <artifactId>creep-tenuous-services-jwt</artifactId>
-  <version>0.0.7-SNAPSHOT</version>
+  <version>0.0.8-SNAPSHOT</version>
   <name>creep-tenuous-services-jwt</name>
   <description>creep-tenuous-services-jwt</description>
   <properties>
@@ -26,55 +26,55 @@
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-security</artifactId>
-      <version>0.0.7-SNAPSHOT</version>
+      <version>0.0.8-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-redis-models</artifactId>
-      <version>0.0.7-SNAPSHOT</version>
+      <version>0.0.8-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-repository</artifactId>
-      <version>0.0.7-SNAPSHOT</version>
+      <version>0.0.8-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-models</artifactId>
-      <version>0.0.7-SNAPSHOT</version>
+      <version>0.0.8-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-redis-services</artifactId>
-      <version>0.0.7-SNAPSHOT</version>
+      <version>0.0.8-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-redis-repository</artifactId>
-      <version>0.0.7-SNAPSHOT</version>
+      <version>0.0.8-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-starter-test</artifactId>
-      <version>0.0.7-SNAPSHOT</version>
+      <version>0.0.8-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-services-security</artifactId>
-      <version>0.0.7-SNAPSHOT</version>
+      <version>0.0.8-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-services-redis</artifactId>
-      <version>0.0.7-SNAPSHOT</version>
+      <version>0.0.8-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

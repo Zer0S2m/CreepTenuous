@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.zer0s2m</groupId>
   <artifactId>CreepTenuous</artifactId>
-  <version>0.0.7-SNAPSHOT</version>
+  <version>0.0.8-SNAPSHOT</version>
   <name>CreepTenuous</name>
   <description>CreepTenuous</description>
   <packaging>pom</packaging>
@@ -22,6 +22,7 @@
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <start-class>com.zer0s2m.creeptenuous.api.CreepTenuousApiApplication</start-class>
+    <spring.boot.main>com.zer0s2m.creeptenuous.api.CreepTenuousApiApplication</spring.boot.main>
   </properties>
   <modules>
     <module>creep-tenuous-starter-test</module>
@@ -39,15 +40,6 @@
   </dependencies>
 
   <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-dependencies</artifactId>
-        <version>${spring-cloud.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
   </dependencyManagement>
 
   <build>
@@ -56,6 +48,10 @@
         <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
+          <configuration>
+            <skip>false</skip>
+            <mainClass>${spring.boot.main}</mainClass>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>

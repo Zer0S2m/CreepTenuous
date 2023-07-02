@@ -37,4 +37,4 @@ build-scip-tests:
 	mvn clean package spring-boot:repackage -Dmaven.test.skip
 
 run:
-	$(java_bin) -jar creep-tenuous-api/target/creep-tenuous-api-0.0.7-SNAPSHOT.jar
+	$(java_bin) -jar creep-tenuous-api/target/creep-tenuous-api-0.0.8-SNAPSHOT.jar
