@@ -33,8 +33,35 @@
     </dependency>
 
     <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>24.0.1</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-api</artifactId>
+      <version>0.11.5</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20230227</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-integration-core</artifactId>
+      <version>0.0.8-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-common</artifactId>
       <version>0.0.8-SNAPSHOT</version>
     </dependency>
   </dependencies>
