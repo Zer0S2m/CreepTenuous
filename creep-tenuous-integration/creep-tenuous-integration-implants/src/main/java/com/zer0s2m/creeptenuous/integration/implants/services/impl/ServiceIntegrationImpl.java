@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.integration.implants.services.impl;
 
+import com.zer0s2m.creeptenuous.integration.core.ServiceIntegrationJwt;
 import com.zer0s2m.creeptenuous.integration.implants.services.ServiceIntegration;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -23,7 +25,9 @@ public class ServiceIntegrationImpl implements ServiceIntegration {
 
     private final RSAKeys rsaKeys = new RSAKeys();
 
-    RestTemplate restTemplate = new RestTemplate();
+    private final RestOperations restTemplate = new RestTemplate();
+
+    private final ServiceIntegrationJwt serviceIntegrationJwt = new ServiceIntegrationJwtImpl();
 
     @Value("${integration.implants.host:localhost}")
     private String host;
@@ -43,7 +47,7 @@ public class ServiceIntegrationImpl implements ServiceIntegration {
         final JSONObject dataIntegrationApi = new JSONObject();
         final HttpHeaders headers = new HttpHeaders();
 
-        dataIntegrationApi.put("token", ServiceJwt.generateToken(rsaKeys.getPrivateKey()));
+        dataIntegrationApi.put("token", serviceIntegrationJwt.generateToken(rsaKeys.getPrivateKey()));
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         final HttpEntity<String> entity = new HttpEntity<>(dataIntegrationApi.toString(), headers);
