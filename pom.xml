@@ -21,7 +21,6 @@
     <spring-cloud.version>2022.0.0-RC2</spring-cloud.version>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <start-class>com.zer0s2m.creeptenuous.api.CreepTenuousApiApplication</start-class>
     <spring.boot.main>com.zer0s2m.creeptenuous.api.CreepTenuousApiApplication</spring.boot.main>
   </properties>
   <modules>
@@ -35,6 +34,7 @@
     <module>creep-tenuous-security</module>
     <module>creep-tenuous-repository</module>
     <module>creep-tenuous-models</module>
+    <module>creep-tenuous-integration</module>
   </modules>
   <dependencies>
   </dependencies>
@@ -49,8 +49,7 @@
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
           <configuration>
-            <skip>false</skip>
-            <mainClass>${spring.boot.main}</mainClass>
+            <skip>true</skip>
           </configuration>
         </plugin>
       </plugins>
