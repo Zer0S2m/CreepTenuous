@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CommentFileSystemObjectRepository extends CrudRepository<Long, CommentFileSystemObject> {
+public interface CommentFileSystemObjectRepository extends CrudRepository<CommentFileSystemObject, Long> {
 }
