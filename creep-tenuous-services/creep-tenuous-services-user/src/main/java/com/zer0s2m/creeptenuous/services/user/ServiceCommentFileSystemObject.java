@@ -31,6 +31,11 @@ public interface ServiceCommentFileSystemObject {
      */
     void delete(Long id);
 
-    void edit();
+    /**
+     * Edit comment file system object
+     * @param comment comment for file object
+     * @param id id comment. Must not be {@literal null}.
+     */
+    CommentFileSystemObject edit(String comment, Long id);
 
 }

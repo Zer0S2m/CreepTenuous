@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -75,9 +76,21 @@ public class ServiceCommentFileSystemObjectImpl implements ServiceCommentFileSys
         repository.deleteById(id);
     }
 
+    /**
+     * Edit comment file system object
+     * @param comment comment for file object
+     * @param id id comment. Must not be {@literal null}.
+     */
     @Override
-    public void edit() {
-
+    public CommentFileSystemObject edit(String comment, Long id) {
+        Optional<CommentFileSystemObject> obj = repository.findById(id);
+        if (obj.isPresent()) {
+            CommentFileSystemObject readyObj = obj.get();
+            readyObj.setComment(comment);
+            repository.save(readyObj);
+            return readyObj;
+        }
+        return null;
     }
 
     /**

@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiComme
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataCreateCommentFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteCommentFileSystemObjectApi;
+import com.zer0s2m.creeptenuous.common.data.DataEditCommentFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.models.common.CommentFileSystemObject;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
@@ -47,6 +48,10 @@ public class ControllerApiCommentFileSystemObjectUser implements ControllerApiCo
                 data.comment(), data.fileSystemObject(), claims.get("login", String.class));
     }
 
+    /**
+     * Delete a comment for a file object
+     * @param data data to deleting
+     */
     @Override
     @DeleteMapping("/common/comment/file-system-object")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
@@ -54,9 +59,16 @@ public class ControllerApiCommentFileSystemObjectUser implements ControllerApiCo
         serviceCommentFileSystemObject.delete(data.id());
     }
 
+    /**
+     * Edit a comment for a file object
+     * @param data data to editing
+     * @return comment
+     */
     @Override
-    public void edit() {
-
+    @PutMapping("/common/comment/file-system-object")
+    @ResponseStatus(code = HttpStatus.OK)
+    public CommentFileSystemObject edit(final @Valid @RequestBody @NotNull DataEditCommentFileSystemObjectApi data) {
+        return serviceCommentFileSystemObject.edit(data.comment(), data.id());
     }
 
 }

@@ -42,4 +42,8 @@ public class CommentFileSystemObject {
     public CommentFileSystemObject() {
     }
 
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
 }
