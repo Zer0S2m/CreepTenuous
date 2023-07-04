@@ -66,9 +66,13 @@ public class ServiceCommentFileSystemObjectImpl implements ServiceCommentFileSys
         return repository.save(obj);
     }
 
+    /**
+     * Delete comment file system object
+     * @param id id comment. Must not be {@literal null}.
+     */
     @Override
-    public void delete() {
-
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 
     @Override

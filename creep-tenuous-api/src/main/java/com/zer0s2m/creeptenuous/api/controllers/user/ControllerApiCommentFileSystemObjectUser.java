@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.api.controllers.user;
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCommentFileSystemObjectUserDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataCreateCommentFileSystemObjectApi;
+import com.zer0s2m.creeptenuous.common.data.DataDeleteCommentFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.models.common.CommentFileSystemObject;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
@@ -12,10 +13,7 @@ import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 @V1APIRestController
 public class ControllerApiCommentFileSystemObjectUser implements ControllerApiCommentFileSystemObjectUserDoc {
@@ -50,8 +48,10 @@ public class ControllerApiCommentFileSystemObjectUser implements ControllerApiCo
     }
 
     @Override
-    public void delete() {
-
+    @DeleteMapping("/common/comment/file-system-object")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void delete(final @Valid @RequestBody @NotNull DataDeleteCommentFileSystemObjectApi data) {
+        serviceCommentFileSystemObject.delete(data.id());
     }
 
     @Override

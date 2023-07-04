@@ -25,7 +25,11 @@ public interface ServiceCommentFileSystemObject {
      */
     CommentFileSystemObject create(String comment, String fileSystemObject, String login);
 
-    void delete();
+    /**
+     * Delete comment file system object
+     * @param id id comment. Must not be {@literal null}.
+     */
+    void delete(Long id);
 
     void edit();
 

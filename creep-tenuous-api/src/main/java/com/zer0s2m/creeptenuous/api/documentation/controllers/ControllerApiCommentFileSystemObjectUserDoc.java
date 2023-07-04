@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataCreateCommentFileSystemObjectApi;
+import com.zer0s2m.creeptenuous.common.data.DataDeleteCommentFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.models.common.CommentFileSystemObject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -58,7 +59,36 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
             final DataCreateCommentFileSystemObjectApi data,
             final @Parameter(hidden = true) String accessToken);
 
-    void delete();
+    @Operation(
+            method = "DELETE",
+            summary = "Delete comment",
+            description = "Delete Comment for File System Object",
+            tags = { "Common" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Successful comment deleted",
+                            content = @Content
+                    ),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+                    @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden"),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found comment", value ="{" +
+                                                    "\"message\": \"Not found comment\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            )
+                                    })
+                    )
+            }
+    )
+    void delete(final DataDeleteCommentFileSystemObjectApi data);
 
     void edit();
 

@@ -21,7 +21,7 @@ public class CommentFileSystemObject {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CommentFileSystemObjectSequence")
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
