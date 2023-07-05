@@ -13,7 +13,60 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+import java.util.List;
+
 public interface ControllerApiCommentFileSystemObjectUserDoc {
+
+    /**
+     * Get all comments of a file object for a user
+     * @param fileSystemObject name file system object
+     * @param accessToken access JWT token
+     * @return comments
+     * @throws NotFoundException not found comments for filesystem objects
+     */
+    @Operation(
+            method = "GET",
+            summary = "Get comments",
+            description = "Get all comment for File System Object",
+            tags = { "Common" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful get",
+                            content = @Content(
+                                    examples = {
+                                            @ExampleObject(name = "Comments", value = "[\n" +
+                                                    "{" +
+                                                    "\"id\": 4," +
+                                                    "\"comment\": \"Comment\"," +
+                                                    "\"fileSystemObject\": \"8159f622-2dc3-4d56-a29d-e5c9cdfbb25c\"" +
+                                                    "}" +
+                                                    "]"
+                                            )
+                                    }
+                            )
+                    ),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+                    @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden"),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found comment", value ="{" +
+                                                    "\"message\": \"Not found comment\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            )
+                                    })
+                    )
+            }
+    )
+    List<CommentFileSystemObject> list(
+            final String fileSystemObject, final @Parameter(hidden = true) String accessToken)
+            throws NotFoundException;
 
     /**
      * Create a comment for a file object

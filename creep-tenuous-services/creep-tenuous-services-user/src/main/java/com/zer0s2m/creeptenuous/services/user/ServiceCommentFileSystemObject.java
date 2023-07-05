@@ -3,10 +3,20 @@ package com.zer0s2m.creeptenuous.services.user;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
 import com.zer0s2m.creeptenuous.models.common.CommentFileSystemObject;
 
+import java.util.List;
+
 /**
  * Interface for implementing interaction with comments for file system objects
  */
 public interface ServiceCommentFileSystemObject {
+
+    /**
+     * Get all comments
+     * @param fileSystemObject name file system object
+     * @param userLogin user login
+     * @return comments
+     */
+    List<CommentFileSystemObject> list(String fileSystemObject, String userLogin);
 
     /**
      * Create Comment for File System Object

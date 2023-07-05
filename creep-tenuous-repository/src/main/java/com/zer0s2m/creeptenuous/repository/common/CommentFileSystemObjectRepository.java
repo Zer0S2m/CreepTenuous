@@ -4,7 +4,9 @@ import com.zer0s2m.creeptenuous.models.common.CommentFileSystemObject;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface CommentFileSystemObjectRepository extends CrudRepository<CommentFileSystemObject, Long> {
@@ -15,7 +17,16 @@ public interface CommentFileSystemObjectRepository extends CrudRepository<Commen
      * @param user_login user login. Must not be {@literal null}.
      * @return comment
      */
-    Optional<CommentFileSystemObject> findByIdAndUserLogin(Long id, String user_login);
+    Optional<CommentFileSystemObject> findByIdAndUser_Login(Long id, String user_login);
+
+    /**
+     * Returns all instances of type {@code T} with the given ID and username.
+     * @param fileSystemObject name file system object
+     * @param user_login user login. Must not be {@literal null}.
+     * @return comments
+     */
+    List<CommentFileSystemObject> findAllByFileSystemObjectAndUser_Login(
+            UUID fileSystemObject, String user_login);
 
     /**
      * Returns whether an entity exists with the given id and username.

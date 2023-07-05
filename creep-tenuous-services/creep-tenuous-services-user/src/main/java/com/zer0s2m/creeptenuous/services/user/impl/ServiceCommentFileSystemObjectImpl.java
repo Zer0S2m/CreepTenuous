@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,6 +31,17 @@ public class ServiceCommentFileSystemObjectImpl implements ServiceCommentFileSys
             UserRepository userRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
+    }
+
+    /**
+     * Get all comments
+     * @param fileSystemObject name file system object
+     * @param userLogin user login
+     * @return comments
+     */
+    @Override
+    public List<CommentFileSystemObject> list(String fileSystemObject, String userLogin) {
+        return repository.findAllByFileSystemObjectAndUser_Login(UUID.fromString(fileSystemObject), userLogin);
     }
 
     /**
@@ -93,7 +105,7 @@ public class ServiceCommentFileSystemObjectImpl implements ServiceCommentFileSys
      */
     @Override
     public CommentFileSystemObject edit(String comment, Long id, String userLogin) throws NotFoundException {
-        Optional<CommentFileSystemObject> obj = repository.findByIdAndUserLogin(id, userLogin);
+        Optional<CommentFileSystemObject> obj = repository.findByIdAndUser_Login(id, userLogin);
         if (obj.isEmpty()) {
             throw new NotFoundCommentFileSystemObjectException();
         }

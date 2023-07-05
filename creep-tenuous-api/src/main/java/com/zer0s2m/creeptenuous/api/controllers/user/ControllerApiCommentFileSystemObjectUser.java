@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @V1APIRestController
 public class ControllerApiCommentFileSystemObjectUser implements ControllerApiCommentFileSystemObjectUserDoc {
 
@@ -36,6 +38,30 @@ public class ControllerApiCommentFileSystemObjectUser implements ControllerApiCo
         this.serviceCommentFileSystemObject = serviceCommentFileSystemObject;
         this.baseServiceFileSystemRedis = baseServiceFileSystemRedis;
         this.jwtProvider = jwtProvider;
+    }
+
+    /**
+     * Get all comments of a file object for a user
+     * @param fileSystemObject name file system object
+     * @param accessToken access JWT token
+     * @return comments
+     * @throws NotFoundException not found comments for filesystem objects
+     */
+    @Override
+    @GetMapping("/common/comment/file-system-object")
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<CommentFileSystemObject> list(
+            final @RequestParam("file") String fileSystemObject,
+            final @RequestHeader(name = "Authorization") String accessToken) throws NotFoundException {
+        baseServiceFileSystemRedis.setAccessClaims(accessToken);
+        baseServiceFileSystemRedis.setIsException(true);
+        baseServiceFileSystemRedis.checkRights(fileSystemObject);
+        if (!baseServiceFileSystemRedis.existsById(fileSystemObject)) {
+            throw new NotFoundCommentFileSystemObjectException();
+        }
+
+        final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
+        return serviceCommentFileSystemObject.list(fileSystemObject, claims.get("login", String.class));
     }
 
     /**
