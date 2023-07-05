@@ -76,4 +76,11 @@ public interface BaseServiceFileSystemRedisManagerRightsAccess extends BaseServi
      */
     boolean getIsException();
 
+    /**
+     * Returns whether an entity with the given id exists.
+     * @param id id file system object. Must not be {@literal null}.
+     * @return is exists
+     */
+    boolean existsById(String id);
+
 }

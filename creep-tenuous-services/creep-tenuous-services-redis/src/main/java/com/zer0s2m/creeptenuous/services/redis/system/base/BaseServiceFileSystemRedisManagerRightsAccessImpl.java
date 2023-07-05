@@ -191,6 +191,7 @@ public class BaseServiceFileSystemRedisManagerRightsAccessImpl
      * Enable check right inclusive name directory
      * @param enableCheckIsNameDirectory is enabled
      */
+    @Override
     public void setEnableCheckIsNameDirectory(Boolean enableCheckIsNameDirectory) {
         this.enableCheckIsNameDirectory = enableCheckIsNameDirectory;
     }
@@ -199,6 +200,7 @@ public class BaseServiceFileSystemRedisManagerRightsAccessImpl
      * Reset parameter - {@link BaseServiceFileSystemRedisManagerRightsAccessImpl#enableCheckIsNameDirectory}
      * @param resetCheckIsNameDirectory is enabled
      */
+    @Override
     public void setResetCheckIsNameDirectory(Boolean resetCheckIsNameDirectory) {
         this.resetCheckIsNameDirectory = resetCheckIsNameDirectory;
     }
@@ -207,6 +209,7 @@ public class BaseServiceFileSystemRedisManagerRightsAccessImpl
      * Setting whether to raise an exception
      * @param isException whether to raise an exception if there are no rights
      */
+    @Override
     public void setIsException(boolean isException) {
         this.isException = isException;
     }
@@ -215,8 +218,22 @@ public class BaseServiceFileSystemRedisManagerRightsAccessImpl
      * Getting whether to raise an exception
      * @return whether to raise an exception if there are no rights
      */
+    @Override
     public boolean getIsException() {
         return this.isException;
+    }
+
+    /**
+     * Returns whether an entity with the given id exists.
+     * @param id id file system object. Must not be {@literal null}.
+     * @return is exists
+     */
+    @Override
+    public boolean existsById(String id) {
+        boolean isExistsDirectory = directoryRedisRepository.existsById(id);
+        boolean isExistsFile = fileRedisRepository.existsById(id);
+
+        return isExistsDirectory || isExistsFile;
     }
 
 }
