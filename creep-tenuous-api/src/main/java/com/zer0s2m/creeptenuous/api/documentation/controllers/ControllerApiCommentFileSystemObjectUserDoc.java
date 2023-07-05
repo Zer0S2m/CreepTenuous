@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.api.documentation.controllers;
 import com.zer0s2m.creeptenuous.common.data.DataCreateCommentFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteCommentFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataEditCommentFileSystemObjectApi;
+import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
 import com.zer0s2m.creeptenuous.models.common.CommentFileSystemObject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,6 +20,7 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
      * @param data data to created
      * @param accessToken access JWT token
      * @return comment
+     * @throws NotFoundException not found comments for filesystem objects
      */
     @Operation(
             method = "POST",
@@ -65,11 +67,13 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
     )
     CommentFileSystemObject create(
             final DataCreateCommentFileSystemObjectApi data,
-            final @Parameter(hidden = true) String accessToken);
+            final @Parameter(hidden = true) String accessToken) throws NotFoundException;
 
     /**
      * Delete a comment for a file object
      * @param data data to deleting
+     * @param accessToken access JWT token
+     * @throws NotFoundException not found comments for filesystem objects
      */
     @Operation(
             method = "DELETE",
@@ -107,12 +111,15 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
                     )
             }
     )
-    void delete(final DataDeleteCommentFileSystemObjectApi data);
+    void delete(final DataDeleteCommentFileSystemObjectApi data,
+                final @Parameter(hidden = true) String accessToken) throws NotFoundException;
 
     /**
      * Edit a comment for a file object
      * @param data data to editing
+     * @param accessToken access JWT token
      * @return comment
+     * @throws NotFoundException not found comments for filesystem objects
      */
     @Operation(
             method = "PUT",
@@ -148,15 +155,18 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
                             content = @Content(
                                     mediaType = "application/json",
                                     examples = {
-                                            @ExampleObject(name = "Not found system object", value ="{" +
-                                                    "\"message\": \"Not found file system object\"," +
+                                            @ExampleObject(name = "Not found comment", value ="{" +
+                                                    "\"message\": \"Not found comment\"," +
                                                     "\"statusCode\": 404" +
                                                     "}"
-                                            )
+                                            ),
                                     })
                     )
             }
     )
-    CommentFileSystemObject edit(final DataEditCommentFileSystemObjectApi data);
+    CommentFileSystemObject edit(
+            final DataEditCommentFileSystemObjectApi data,
+            final @Parameter(hidden = true) String accessToken)
+            throws NotFoundException;
 
 }

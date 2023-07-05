@@ -1,5 +1,7 @@
 package com.zer0s2m.creeptenuous.services.user.impl;
 
+import com.zer0s2m.creeptenuous.common.exceptions.NotFoundCommentFileSystemObjectException;
+import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
 import com.zer0s2m.creeptenuous.models.common.CommentFileSystemObject;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.repository.common.CommentFileSystemObjectRepository;
@@ -70,9 +72,14 @@ public class ServiceCommentFileSystemObjectImpl implements ServiceCommentFileSys
     /**
      * Delete comment file system object
      * @param id id comment. Must not be {@literal null}.
+     * @param userLogin user login. Must not be {@literal null}.
+     * @throws NotFoundException not found comments for filesystem objects
      */
     @Override
-    public void delete(Long id) {
+    public void delete(Long id, String userLogin) throws NotFoundException {
+        if (!repository.existsByIdAndUserLogin(id, userLogin)) {
+            throw new NotFoundCommentFileSystemObjectException();
+        }
         repository.deleteById(id);
     }
 
@@ -80,17 +87,20 @@ public class ServiceCommentFileSystemObjectImpl implements ServiceCommentFileSys
      * Edit comment file system object
      * @param comment comment for file object
      * @param id id comment. Must not be {@literal null}.
+     * @param userLogin user login. Must not be {@literal null}.
+     * @return updated comment
+     * @throws NotFoundException not found comments for filesystem objects
      */
     @Override
-    public CommentFileSystemObject edit(String comment, Long id) {
-        Optional<CommentFileSystemObject> obj = repository.findById(id);
-        if (obj.isPresent()) {
-            CommentFileSystemObject readyObj = obj.get();
-            readyObj.setComment(comment);
-            repository.save(readyObj);
-            return readyObj;
+    public CommentFileSystemObject edit(String comment, Long id, String userLogin) throws NotFoundException {
+        Optional<CommentFileSystemObject> obj = repository.findByIdAndUserLogin(id, userLogin);
+        if (obj.isEmpty()) {
+            throw new NotFoundCommentFileSystemObjectException();
         }
-        return null;
+        CommentFileSystemObject readyObj = obj.get();
+        readyObj.setComment(comment);
+        repository.save(readyObj);
+        return readyObj;
     }
 
     /**
