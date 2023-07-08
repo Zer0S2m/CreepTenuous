@@ -5,8 +5,16 @@ package com.zer0s2m.creeptenuous.redis.services.user;
  */
 public interface ServiceControlFileSystemObjectRedis {
 
-    void freezingFileSystemObject();
+    /**
+     * Freeze a file object by its name
+     * @param nameFileSystemObject name file system object
+     */
+    void freezingFileSystemObject(final String nameFileSystemObject);
 
-    void unfreezingFileSystemObject();
+    /**
+     * Unfreeze a file object by its name
+     * @param nameFileSystemObject name file system object
+     */
+    void unfreezingFileSystemObject(final String nameFileSystemObject);
 
 }
