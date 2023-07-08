@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataRenameFileSystemObjectApi;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseRenameFileSystemObjectDoc;
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
@@ -20,7 +21,8 @@ public interface ControllerApiRenameFileSystemObjectDoc {
      * @param accessToken raw JWT access token
      * @return new name
      * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database.
-     * @throws NoRightsRedisException When the user has no execution right
+     * @throws NoRightsRedisException                 When the user has no execution right
+     * @throws FileObjectIsFrozenException            file object is frozen
      */
     @Operation(
             method = "PUT",
@@ -50,6 +52,6 @@ public interface ControllerApiRenameFileSystemObjectDoc {
             }
     )
     ResponseRenameFileSystemObjectDoc rename(
-            final DataRenameFileSystemObjectApi data, @Parameter(hidden = true) String accessToken) throws NoExistsFileSystemObjectRedisException;
+            final DataRenameFileSystemObjectApi data, @Parameter(hidden = true) String accessToken) throws NoExistsFileSystemObjectRedisException, FileObjectIsFrozenException;
 
 }

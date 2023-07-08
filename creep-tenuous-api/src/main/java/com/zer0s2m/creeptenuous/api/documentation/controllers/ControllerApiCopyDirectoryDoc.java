@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataCopyDirectoryApi;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseCopyDirectoryApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCopyDirectoryImpl;
@@ -24,13 +25,14 @@ public interface ControllerApiCopyDirectoryDoc {
      * @param dataDirectory Directory copy data
      * @param accessToken   Raw JWT access token
      * @return Result copy directory
-     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
-     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
-     *                                   using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
-     *                                   tries to reflectively create an instance
-     * @throws IOException               signals that an I/O exception of some sort has occurred
+     * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
+     * @throws InstantiationException      Thrown when an application tries to create an instance of a class
+     *                                     using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
+     *                                     tries to reflectively create an instance
+     * @throws IOException                 signals that an I/O exception of some sort has occurred
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Operation(
             method = "POST",
@@ -63,5 +65,5 @@ public interface ControllerApiCopyDirectoryDoc {
             DataCopyDirectoryApi dataDirectory,
             @Parameter(hidden = true) String accessToken
     ) throws InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException, IOException;
+            InstantiationException, IllegalAccessException, IOException, FileObjectIsFrozenException;
 }

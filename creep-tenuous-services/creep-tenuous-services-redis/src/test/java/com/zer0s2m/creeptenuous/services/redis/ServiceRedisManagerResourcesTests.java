@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.services.redis.resources.ServiceRedisManagerResourcesImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceRedis;
@@ -21,6 +22,7 @@ import java.util.List;
 @SpringBootTest(classes = {
         DirectoryRedisRepository.class,
         FileRedisRepository.class,
+        FrozenFileSystemObjectRedisRepository.class,
         ServiceRedisManagerResourcesImpl.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)

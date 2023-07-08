@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataDownloadFile;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadFileImpl;
@@ -49,13 +50,14 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
      * @param data        file download data
      * @param accessToken raw JWT access token
      * @return file
-     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     * @throws IOException                 if an I/O error occurs or the parent directory does not exist
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Override
     @PostMapping(path = "/file/download")
     public ResponseEntity<Resource> download(final @Valid @RequestBody @NotNull DataDownloadFileApi data,
                                              @RequestHeader(name = "Authorization") String accessToken)
-            throws IOException {
+            throws IOException, FileObjectIsFrozenException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
 
@@ -65,11 +67,21 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
 
         if (!isRightsDirectory) {
             serviceManagerRights.checkRightsByOperation(operationRightsDirectory, data.systemParents());
+
+            boolean isFrozen = baseServiceFileSystemRedis.isFrozenFileSystemObject(data.systemParents());
+            if (isFrozen) {
+                throw new FileObjectIsFrozenException();
+            }
         }
 
         boolean isRightsFile = baseServiceFileSystemRedis.checkRights(List.of(data.systemFileName()));
         if (!isRightsFile) {
             serviceManagerRights.checkRightsByOperation(operationRightsFile, data.systemFileName());
+
+            boolean isFrozen = baseServiceFileSystemRedis.isFrozenFileSystemObject(data.systemFileName());
+            if (isFrozen) {
+                throw new FileObjectIsFrozenException();
+            }
         }
 
         final ContainerDataDownloadFile<ByteArrayResource, String> dataFile = serviceDownloadFile.download(

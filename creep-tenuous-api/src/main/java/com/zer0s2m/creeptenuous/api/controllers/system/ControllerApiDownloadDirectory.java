@@ -7,6 +7,7 @@ import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectoryApi;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.common.utils.UtilsDataApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
@@ -87,20 +88,22 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
      * @param data        directory download data
      * @param accessToken raw JWT access token
      * @return zip file
-     * @throws IOException               if an I/O error occurs or the parent directory does not exist
-     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
-     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
-     *                                   using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
-     *                                   tries to reflectively create an instance
+     * @throws IOException                 if an I/O error occurs or the parent directory does not exist
+     * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
+     * @throws InstantiationException      Thrown when an application tries to create an instance of a class
+     *                                     using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
+     *                                     tries to reflectively create an instance
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Override
     @PostMapping(path = "/directory/download")
-    public final ResponseEntity<Resource> download(final @Valid @RequestBody @NotNull DataDownloadDirectoryApi data,
-                                                   @RequestHeader(name = "Authorization") String accessToken)
-            throws IOException, InvocationTargetException, NoSuchMethodException, InstantiationException,
-            IllegalAccessException {
+    public final @NotNull ResponseEntity<Resource> download(
+            final @Valid @RequestBody @NotNull DataDownloadDirectoryApi data,
+            @RequestHeader(name = "Authorization") String accessToken) throws IOException,
+            InvocationTargetException, NoSuchMethodException, InstantiationException,
+            IllegalAccessException, FileObjectIsFrozenException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
         serviceManagerRights.setIsDirectory(true);
@@ -119,9 +122,19 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
         if (!isRightsSource || !isRightTarget) {
             if (!isRightsSource) {
                 serviceManagerRights.checkRightsByOperation(operationRightsShow, cloneSystemParents);
+
+                boolean isFrozen = serviceDownloadDirectoryRedis.isFrozenFileSystemObject(cloneSystemParents);
+                if (isFrozen) {
+                    throw new FileObjectIsFrozenException();
+                }
             }
             if (!isRightTarget) {
                 serviceManagerRights.checkRightByOperationDownloadDirectory(data.systemDirectoryName());
+
+                boolean isFrozen = serviceDownloadDirectoryRedis.isFrozenFileSystemObject(data.systemDirectoryName());
+                if (isFrozen) {
+                    throw new FileObjectIsFrozenException();
+                }
             }
         }
 
@@ -160,20 +173,21 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
      * @param data        directory download data
      * @param accessToken raw JWT access token
      * @return zip file
-     * @throws IOException               if an I/O error occurs or the parent directory does not exist
-     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
-     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
-     *                                   using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
-     *                                   tries to reflectively create an instance
+     * @throws IOException                 if an I/O error occurs or the parent directory does not exist
+     * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
+     * @throws InstantiationException      Thrown when an application tries to create an instance of a class
+     *                                     using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
+     *                                     tries to reflectively create an instance
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Override
     @PostMapping(path = "/directory/download/select")
     public ResponseEntity<Resource> downloadSelect(
             final @Valid @RequestBody @NotNull DataDownloadDirectorySelectApi data,
             @RequestHeader(name = "Authorization") String accessToken) throws IOException, InvocationTargetException,
-            NoSuchMethodException, InstantiationException, IllegalAccessException {
+            NoSuchMethodException, InstantiationException, IllegalAccessException, FileObjectIsFrozenException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
 
@@ -190,9 +204,21 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
         if (!isRightsSource || !isRightsObjects) {
             if (!isRightsSource) {
                 serviceManagerRights.checkRightsByOperation(operationRightsShow, uniqueSystemParents);
+
+                boolean isFrozen = serviceDownloadDirectorySelectRedis
+                        .isFrozenFileSystemObject(uniqueSystemParents);
+                if (isFrozen) {
+                    throw new FileObjectIsFrozenException();
+                }
             }
             if (!isRightsObjects) {
                 serviceManagerRights.checkRightsByOperation(operationRights, uniqueSystemName);
+
+                boolean isFrozen = serviceDownloadDirectorySelectRedis
+                        .isFrozenFileSystemObject(uniqueSystemName);
+                if (isFrozen) {
+                    throw new FileObjectIsFrozenException();
+                }
             }
         }
 

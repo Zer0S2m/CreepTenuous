@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadDirectoryApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceUploadDirectoryImpl;
@@ -21,18 +22,19 @@ public interface ControllerApiUploadDirectoryDoc {
     /**
      * Upload directory (zip archive)
      * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceUploadDirectoryImpl#upload(Path, Path)}</p>
-     * @param parents real names directories
+     *
+     * @param parents       real names directories
      * @param systemParents parts of the system path - source
-     * @param zipFile raw zip archive
-     * @param accessToken raw JWT access token
+     * @param zipFile       raw zip archive
+     * @param accessToken   raw JWT access token
      * @return result upload directory (zip archive)
-     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
-     * @throws InstantiationException Thrown when an application tries to create an instance of a class
-     * using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
-     * tries to reflectively create an instance
-     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
+     * @throws InstantiationException      Thrown when an application tries to create an instance of a class
+     *                                     using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
+     *                                     tries to reflectively create an instance
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Operation(
             method = "POST",
@@ -73,5 +75,5 @@ public interface ControllerApiUploadDirectoryDoc {
             final MultipartFile zipFile,
             @Parameter(hidden = true) String accessToken
     ) throws InvocationTargetException, NoSuchMethodException, InstantiationException,
-            IllegalAccessException, IOException;
+            IllegalAccessException, IOException, FileObjectIsFrozenException;
 }
