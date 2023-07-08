@@ -6,6 +6,7 @@ import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceUploadDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceRedis;
@@ -23,6 +24,7 @@ import java.util.Optional;
 @SpringBootTest(classes = {
         DirectoryRedisRepository.class,
         FileRedisRepository.class,
+        FrozenFileSystemObjectRedisRepository.class,
         JwtProvider.class,
         ServiceUploadDirectoryRedisImpl.class
 })

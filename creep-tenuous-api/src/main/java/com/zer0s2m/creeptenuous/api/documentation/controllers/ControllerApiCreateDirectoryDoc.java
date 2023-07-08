@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.api.documentation.controllers;
 import com.zer0s2m.creeptenuous.common.data.DataCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.common.exceptions.ExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.common.exceptions.FileAlreadyExistsException;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateDirectoryImpl;
@@ -15,7 +16,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.NoSuchFileException;
 import java.util.List;
 
 public interface ControllerApiCreateDirectoryDoc {
@@ -36,6 +36,7 @@ public interface ControllerApiCreateDirectoryDoc {
      *                                              tries to reflectively create an instance
      * @throws IOException                          signals that an I/O exception of some sort has occurred
      * @throws ExistsFileSystemObjectRedisException uniqueness of the name in the system under different directory levels
+     * @throws FileObjectIsFrozenException          file object is frozen
      */
     @Operation(
             method = "POST",
@@ -69,6 +70,6 @@ public interface ControllerApiCreateDirectoryDoc {
             @Parameter(hidden = true) String accessToken
     ) throws FileAlreadyExistsException, InvocationTargetException,
             NoSuchMethodException, InstantiationException, IllegalAccessException,
-            IOException, ExistsFileSystemObjectRedisException;
+            IOException, ExistsFileSystemObjectRedisException, FileObjectIsFrozenException;
 
 }

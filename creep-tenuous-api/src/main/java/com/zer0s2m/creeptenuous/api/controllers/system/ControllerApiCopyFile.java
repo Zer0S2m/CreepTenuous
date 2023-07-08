@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCopyFile;
 import com.zer0s2m.creeptenuous.common.data.DataCopyFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseCopyFileApi;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
@@ -55,13 +56,14 @@ public class ControllerApiCopyFile implements ControllerApiCopyFileDoc {
      * @param file        copy data file
      * @param accessToken raw JWT access token
      * @return result copy file(s)
-     * @throws IOException               if an I/O error occurs or the parent directory does not exist
-     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
-     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
-     *                                   using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
-     *                                   tries to reflectively create an instance
+     * @throws IOException                 if an I/O error occurs or the parent directory does not exist
+     * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
+     * @throws InstantiationException      Thrown when an application tries to create an instance of a class
+     *                                     using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
+     *                                     tries to reflectively create an instance
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Override
     @PostMapping("/file/copy")
@@ -69,7 +71,7 @@ public class ControllerApiCopyFile implements ControllerApiCopyFileDoc {
     public ResponseCopyFileApi copy(final @Valid @RequestBody @NotNull DataCopyFileApi file,
                                     @RequestHeader(name = "Authorization") String accessToken)
             throws IOException, InvocationTargetException, NoSuchMethodException, InstantiationException,
-            IllegalAccessException {
+            IllegalAccessException, FileObjectIsFrozenException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
 
@@ -84,12 +86,23 @@ public class ControllerApiCopyFile implements ControllerApiCopyFileDoc {
         if (!isRightsDirectory) {
             serviceManagerRights.checkRightsByOperation(operationRightsDirectory, file.systemParents());
             serviceManagerRights.checkRightsByOperation(operationRightsDirectory, file.systemToParents());
+
+            boolean isFrozen = serviceCopyFileRedis.isFrozenFileSystemObject(
+                    CloneList.cloneOneLevel(file.systemParents(), file.systemToParents()));
+            if (isFrozen) {
+                throw new FileObjectIsFrozenException();
+            }
         }
 
         if (file.systemFileName() != null) {
             boolean isRightsFile = serviceCopyFileRedis.checkRights(file.systemFileName());
             if (!isRightsFile) {
                 serviceManagerRights.checkRightsByOperation(operationRights, file.systemFileName());
+
+                boolean isFrozen = serviceCopyFileRedis.isFrozenFileSystemObject(file.systemFileName());
+                if (isFrozen) {
+                    throw new FileObjectIsFrozenException();
+                }
             }
 
             ContainerDataCopyFile containerData = AtomicSystemCallManager.call(
@@ -104,6 +117,11 @@ public class ControllerApiCopyFile implements ControllerApiCopyFileDoc {
             boolean isRightsFile = serviceCopyFileRedis.checkRights(file.systemNameFiles());
             if (!isRightsFile) {
                 serviceManagerRights.checkRightsByOperation(operationRights, file.systemNameFiles());
+
+                boolean isFrozen = serviceCopyFileRedis.isFrozenFileSystemObject(file.systemNameFiles());
+                if (isFrozen) {
+                    throw new FileObjectIsFrozenException();
+                }
             }
 
             List<ContainerDataCopyFile> containersData = AtomicSystemCallManager.call(

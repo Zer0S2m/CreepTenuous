@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataDeleteDirectoryApi;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteDirectoryImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,13 +23,14 @@ public interface ControllerApiDeleteDirectoryDoc {
      *
      * @param directoryForm directory delete data
      * @param accessToken   raw JWT access token
-     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
-     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
-     *                                   using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
-     *                                   tries to reflectively create an instance
-     * @throws IOException               signals that an I/O exception of some sort has occurred
+     * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
+     * @throws InstantiationException      Thrown when an application tries to create an instance of a class
+     *                                     using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
+     *                                     tries to reflectively create an instance
+     * @throws IOException                 signals that an I/O exception of some sort has occurred
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Operation(
             method = "DELETE",
@@ -60,5 +62,5 @@ public interface ControllerApiDeleteDirectoryDoc {
             final DataDeleteDirectoryApi directoryForm,
             @Parameter(hidden = true) String accessToken
     ) throws InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException, IOException;
+            InstantiationException, IllegalAccessException, IOException, FileObjectIsFrozenException;
 }

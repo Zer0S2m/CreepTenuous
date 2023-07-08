@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,10 +17,12 @@ public interface ControllerApiDownloadFileDoc {
 
     /**
      * Download file
-     * @param data file download data
+     *
+     * @param data        file download data
      * @param accessToken raw JWT access token
      * @return file
-     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     * @throws IOException                 if an I/O error occurs or the parent directory does not exist
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Operation(
             method = "POST",
@@ -50,5 +53,5 @@ public interface ControllerApiDownloadFileDoc {
     ResponseEntity<Resource> download(
             final DataDownloadFileApi data,
             @Parameter(hidden = true) String accessToken
-    ) throws IOException;
+    ) throws IOException, FileObjectIsFrozenException;
 }

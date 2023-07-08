@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiRenam
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataRenameFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseRenameFileSystemObjectDoc;
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
@@ -39,7 +40,8 @@ public class ControllerApiRenameFileSystemObject implements ControllerApiRenameF
      * @param accessToken raw JWT access token
      * @return new name
      * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database.
-     * @throws NoRightsRedisException When the user has no execution right
+     * @throws NoRightsRedisException                 When the user has no execution right
+     * @throws FileObjectIsFrozenException            file object is frozen
      */
     @Override
     @PutMapping("/file-system-object/rename")
@@ -47,7 +49,7 @@ public class ControllerApiRenameFileSystemObject implements ControllerApiRenameF
     public ResponseRenameFileSystemObjectDoc rename(
             final @Valid @RequestBody @NotNull DataRenameFileSystemObjectApi data,
             @RequestHeader(name = "Authorization") String accessToken)
-            throws NoExistsFileSystemObjectRedisException, NoRightsRedisException {
+            throws NoExistsFileSystemObjectRedisException, NoRightsRedisException, FileObjectIsFrozenException {
         serviceRenameFileSystemObjectRedis.setAccessClaims(accessToken);
         serviceRenameFileSystemObjectRedis.setIsException(false);
 
@@ -58,6 +60,11 @@ public class ControllerApiRenameFileSystemObject implements ControllerApiRenameF
         boolean isRight = serviceRenameFileSystemObjectRedis.checkRights(data.systemName());
         if (!isRight) {
             serviceManagerRights.checkRightsByOperation(operationRights, data.systemName());
+
+            boolean isFrozen = serviceRenameFileSystemObjectRedis.isFrozenFileSystemObject(data.systemName());
+            if (isFrozen) {
+                throw new FileObjectIsFrozenException();
+            }
         }
 
         serviceRenameFileSystemObjectRedis.rename(data.systemName(), data.newRealName());

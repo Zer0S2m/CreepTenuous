@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataManagerDirectoryApi;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.exceptions.NotValidLevelDirectoryException;
 import com.zer0s2m.creeptenuous.common.http.ResponseManagerDirectoryApi;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,10 +17,12 @@ public interface ControllerApiManagerDirectoryDoc {
 
     /**
      * Manager directory - get all directories by level
+     *
      * @param data data manager directory
      * @return result manager build info in directory
-     * @throws IOException if an I/O error occurs or the parent directory does not exist
-     * @throws NotValidLevelDirectoryException  invalid level directory
+     * @throws IOException                     if an I/O error occurs or the parent directory does not exist
+     * @throws NotValidLevelDirectoryException invalid level directory
+     * @throws FileObjectIsFrozenException     file object is frozen
      */
     @Operation(
             method = "POST",
@@ -51,5 +54,5 @@ public interface ControllerApiManagerDirectoryDoc {
     ResponseManagerDirectoryApi manager(
             final DataManagerDirectoryApi data,
             @Parameter(hidden = true) String accessToken
-    ) throws IOException, NotValidLevelDirectoryException;
+    ) throws IOException, NotValidLevelDirectoryException, FileObjectIsFrozenException;
 }

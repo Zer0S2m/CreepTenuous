@@ -1,11 +1,14 @@
 package com.zer0s2m.creeptenuous.services.redis.system.base;
 
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
+import com.zer0s2m.creeptenuous.redis.models.FrozenFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.base.BaseRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
@@ -34,6 +37,8 @@ public class BaseServiceFileSystemRedisManagerRightsAccessImpl
 
     protected final FileRedisRepository fileRedisRepository;
 
+    protected final FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository;
+
     protected final JwtProvider jwtProvider;
 
     protected Claims accessClaims;
@@ -45,10 +50,14 @@ public class BaseServiceFileSystemRedisManagerRightsAccessImpl
     private String loginUser;
 
     @Autowired
-    public BaseServiceFileSystemRedisManagerRightsAccessImpl(DirectoryRedisRepository directoryRedisRepository,
-                                                             FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
+    public BaseServiceFileSystemRedisManagerRightsAccessImpl(
+            DirectoryRedisRepository directoryRedisRepository,
+            FileRedisRepository fileRedisRepository,
+            FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository,
+            JwtProvider jwtProvider) {
         this.directoryRedisRepository = directoryRedisRepository;
         this.fileRedisRepository = fileRedisRepository;
+        this.frozenFileSystemObjectRedisRepository = frozenFileSystemObjectRedisRepository;
         this.jwtProvider = jwtProvider;
     }
 
@@ -234,6 +243,32 @@ public class BaseServiceFileSystemRedisManagerRightsAccessImpl
         boolean isExistsFile = fileRedisRepository.existsById(id);
 
         return isExistsDirectory || isExistsFile;
+    }
+
+    /**
+     * Check if an object is frozen by the file system
+     * @param fileSystemObject file object names
+     * @return is frozen
+     * @throws FileObjectIsFrozenException file object is frozen
+     */
+    @Override
+    public boolean isFrozenFileSystemObject(List<String> fileSystemObject) throws FileObjectIsFrozenException {
+        AtomicBoolean isFrozen = new AtomicBoolean(false);
+
+        Iterable<FrozenFileSystemObjectRedis> frozenFileSystemObjectRedisIterable =
+                frozenFileSystemObjectRedisRepository.findAllById(fileSystemObject);
+
+        for (FrozenFileSystemObjectRedis frozenFileSystemObjectRedis: frozenFileSystemObjectRedisIterable) {
+            if (fileSystemObject.contains(frozenFileSystemObjectRedis.getSystemName())) {
+                isFrozen.set(true);
+                if (getIsException()) {
+                    throw new FileObjectIsFrozenException();
+                }
+                return isFrozen.get();
+            }
+        }
+
+        return isFrozen.get();
     }
 
 }

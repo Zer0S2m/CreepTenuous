@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.services.redis.system;
 
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisManagerRightsAccessImpl;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateDirectory;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
@@ -21,9 +22,13 @@ public class ServiceCreateDirectoryRedisImpl extends BaseServiceFileSystemRedisM
         implements ServiceCreateDirectoryRedis {
 
     @Autowired
-    public ServiceCreateDirectoryRedisImpl(DirectoryRedisRepository redisRepository,
-                                           FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
-        super(redisRepository, fileRedisRepository, jwtProvider);
+    public ServiceCreateDirectoryRedisImpl(
+            DirectoryRedisRepository directoryRedisRepository,
+            FileRedisRepository fileRedisRepository,
+            FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository,
+            JwtProvider jwtProvider) {
+        super(directoryRedisRepository, fileRedisRepository, frozenFileSystemObjectRedisRepository,
+                jwtProvider);
     }
 
     /**

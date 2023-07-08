@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFile;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateFileRedis;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceUploadFileRedis;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
@@ -23,9 +24,13 @@ import java.util.stream.Collectors;
 public class ServiceUploadFileRedisImpl extends BaseServiceFileSystemRedisManagerRightsAccessImpl implements ServiceUploadFileRedis {
 
     @Autowired
-    public ServiceUploadFileRedisImpl(DirectoryRedisRepository directoryRedisRepository,
-                                      FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
-        super(directoryRedisRepository, fileRedisRepository, jwtProvider);
+    public ServiceUploadFileRedisImpl(
+            DirectoryRedisRepository directoryRedisRepository,
+            FileRedisRepository fileRedisRepository,
+            FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository,
+            JwtProvider jwtProvider) {
+        super(directoryRedisRepository, fileRedisRepository, frozenFileSystemObjectRedisRepository,
+                jwtProvider);
     }
 
     /**
