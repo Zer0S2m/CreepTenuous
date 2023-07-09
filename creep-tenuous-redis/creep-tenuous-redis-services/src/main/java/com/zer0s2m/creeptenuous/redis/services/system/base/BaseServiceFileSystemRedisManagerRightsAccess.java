@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.redis.services.system.base;
 
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.redis.services.security.BaseServiceManagerRightsAccess;
 
@@ -75,5 +76,30 @@ public interface BaseServiceFileSystemRedisManagerRightsAccess extends BaseServi
      * @return whether to raise an exception if there are no rights
      */
     boolean getIsException();
+
+    /**
+     * Returns whether an entity with the given id exists.
+     * @param id id file system object. Must not be {@literal null}.
+     * @return is exists
+     */
+    boolean existsById(String id);
+
+    /**
+     * Check if an object is frozen by the file system
+     * @param fileSystemObject file object names
+     * @return is frozen
+     * @throws FileObjectIsFrozenException file object is frozen
+     */
+    boolean isFrozenFileSystemObject(List<String> fileSystemObject) throws FileObjectIsFrozenException;
+
+    /**
+     * Check if an object is frozen by the file system
+     * @param fileSystemObject file object names
+     * @return is frozen
+     * @throws FileObjectIsFrozenException file object is frozen
+     */
+    default boolean isFrozenFileSystemObject(String fileSystemObject) throws FileObjectIsFrozenException {
+        return isFrozenFileSystemObject(List.of(fileSystemObject));
+    }
 
 }

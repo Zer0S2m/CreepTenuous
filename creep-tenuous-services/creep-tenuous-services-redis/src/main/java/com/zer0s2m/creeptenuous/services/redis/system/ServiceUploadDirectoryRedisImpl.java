@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceUploadDirectoryRedis;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisManagerRightsAccessImpl;
@@ -28,9 +29,13 @@ public class ServiceUploadDirectoryRedisImpl extends BaseServiceFileSystemRedisM
     private String roleUser;
 
     @Autowired
-    public ServiceUploadDirectoryRedisImpl(DirectoryRedisRepository directoryRedisRepository,
-                                           FileRedisRepository fileRedisRepository, JwtProvider jwtProvider) {
-        super(directoryRedisRepository, fileRedisRepository, jwtProvider);
+    public ServiceUploadDirectoryRedisImpl(
+            DirectoryRedisRepository directoryRedisRepository,
+            FileRedisRepository fileRedisRepository,
+            FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository,
+            JwtProvider jwtProvider) {
+        super(directoryRedisRepository, fileRedisRepository, frozenFileSystemObjectRedisRepository,
+                jwtProvider);
     }
 
     /**

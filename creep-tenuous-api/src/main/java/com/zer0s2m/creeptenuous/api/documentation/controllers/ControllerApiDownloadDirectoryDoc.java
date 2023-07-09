@@ -2,6 +2,7 @@ package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectoryApi;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectApi;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectoryImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectorySelectImpl;
@@ -23,16 +24,18 @@ public interface ControllerApiDownloadDirectoryDoc {
     /**
      * Download directory
      * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceDownloadDirectoryImpl#download(List, String)}</p>
-     * @param data directory download data
+     *
+     * @param data        directory download data
      * @param accessToken raw JWT access token
      * @return zip file
-     * @throws IOException if an I/O error occurs or the parent directory does not exist
-     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
-     * @throws InstantiationException Thrown when an application tries to create an instance of a class
-     * using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
-     * tries to reflectively create an instance
+     * @throws IOException                 if an I/O error occurs or the parent directory does not exist
+     * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
+     * @throws InstantiationException      Thrown when an application tries to create an instance of a class
+     *                                     using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
+     *                                     tries to reflectively create an instance
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Operation(
             method = "POST",
@@ -65,22 +68,24 @@ public interface ControllerApiDownloadDirectoryDoc {
             final DataDownloadDirectoryApi data,
             @Parameter(hidden = true) String accessToken
     ) throws IOException, InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException;
+            InstantiationException, IllegalAccessException, FileObjectIsFrozenException;
 
     /**
      * Download directory with selected file objects
-     * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceDownloadDirectorySelectImpl#download()}</p>
+     * <p>Called method via {@link AtomicSystemCallManager} -
+     * {@link ServiceDownloadDirectorySelectImpl#download(List)}</p>
      *
      * @param data        directory download data
      * @param accessToken raw JWT access token
      * @return zip file
-     * @throws IOException               if an I/O error occurs or the parent directory does not exist
-     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
-     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
-     *                                   using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
-     *                                   tries to reflectively create an instance
+     * @throws IOException                 if an I/O error occurs or the parent directory does not exist
+     * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
+     * @throws InstantiationException      Thrown when an application tries to create an instance of a class
+     *                                     using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
+     *                                     tries to reflectively create an instance
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Operation(
             method = "POST",
@@ -113,5 +118,5 @@ public interface ControllerApiDownloadDirectoryDoc {
             final DataDownloadDirectorySelectApi data,
             @Parameter(hidden = true) String accessToken
     ) throws IOException, InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException;
+            InstantiationException, IllegalAccessException, FileObjectIsFrozenException;
 }

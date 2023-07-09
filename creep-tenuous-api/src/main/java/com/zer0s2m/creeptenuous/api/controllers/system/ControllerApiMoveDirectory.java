@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataMoveDirectory;
 import com.zer0s2m.creeptenuous.common.data.DataMoveDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
@@ -46,13 +47,14 @@ public class ControllerApiMoveDirectory implements ControllerApiMoveDirectoryDoc
      *
      * @param dataDirectory directory move data
      * @param accessToken   raw JWT access token
-     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
-     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
-     *                                   using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
-     *                                   tries to reflectively create an instance
-     * @throws IOException               signals that an I/O exception of some sort has occurred
+     * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
+     * @throws InstantiationException      Thrown when an application tries to create an instance of a class
+     *                                     using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
+     *                                     tries to reflectively create an instance
+     * @throws IOException                 signals that an I/O exception of some sort has occurred
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Override
     @PutMapping("/directory/move")
@@ -60,7 +62,7 @@ public class ControllerApiMoveDirectory implements ControllerApiMoveDirectoryDoc
     public final void move(final @Valid @RequestBody @NotNull DataMoveDirectoryApi dataDirectory,
                            @RequestHeader(name = "Authorization") String accessToken)
             throws InvocationTargetException, NoSuchMethodException, InstantiationException,
-            IllegalAccessException, IOException {
+            IllegalAccessException, IOException, FileObjectIsFrozenException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
         serviceManagerRights.setIsDirectory(true);
@@ -71,15 +73,25 @@ public class ControllerApiMoveDirectory implements ControllerApiMoveDirectoryDoc
         boolean isRightsSource = serviceMoveDirectoryRedis.checkRights(
                 CloneList.cloneOneLevel(dataDirectory.systemParents(), List.of(dataDirectory.systemDirectoryName())));
         if (!isRightsSource) {
-            serviceManagerRights.checkRightsByOperation(operationRightsDirectory,
-                    CloneList.cloneOneLevel(dataDirectory.systemParents(),
-                            List.of(dataDirectory.systemDirectoryName())));
+            final List<String> cloneSystemParents = CloneList.cloneOneLevel(dataDirectory.systemParents(),
+                    List.of(dataDirectory.systemDirectoryName()));
+            serviceManagerRights.checkRightsByOperation(operationRightsDirectory, cloneSystemParents);
+
+            boolean isFrozen = serviceMoveDirectoryRedis.isFrozenFileSystemObject(cloneSystemParents);
+            if (isFrozen) {
+                throw new FileObjectIsFrozenException();
+            }
         }
 
         boolean isRightTarget = serviceMoveDirectoryRedis.checkRights(dataDirectory.systemToParents());
         if (!isRightTarget) {
             serviceManagerRights.checkRightsByOperation(operationRightsDirectory,
                     dataDirectory.systemToParents());
+
+            boolean isFrozen = serviceMoveDirectoryRedis.isFrozenFileSystemObject(dataDirectory.systemToParents());
+            if (isFrozen) {
+                throw new FileObjectIsFrozenException();
+            }
         }
         serviceManagerRights.checkRightByOperationMoveDirectory(dataDirectory.systemDirectoryName());
 

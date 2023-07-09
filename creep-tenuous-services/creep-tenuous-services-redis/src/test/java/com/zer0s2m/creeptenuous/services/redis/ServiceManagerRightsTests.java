@@ -10,10 +10,7 @@ import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.models.JwtRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
-import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
-import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
-import com.zer0s2m.creeptenuous.redis.repository.JwtRedisRepository;
-import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.*;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.services.redis.resources.ServiceRedisManagerResourcesImpl;
@@ -33,6 +30,7 @@ import java.util.List;
         FileRedisRepository.class,
         RightUserFileSystemObjectRedisRepository.class,
         JwtRedisRepository.class,
+        FrozenFileSystemObjectRedisRepository.class,
         ServiceRedisManagerResourcesImpl.class,
         ServiceManagerRightsImpl.class,
         JwtProvider.class,

@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataCopyFileApi;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseCopyFileApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCopyFileImpl;
@@ -22,16 +23,18 @@ public interface ControllerApiCopyFileDoc {
      * Copy file(s)
      * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceCopyFileImpl#copy(String, List, List)}
      * or {@link ServiceCopyFileImpl#copy(List, List, List)}</p>
-     * @param file copy data file
+     *
+     * @param file        copy data file
      * @param accessToken raw JWT access token
      * @return result copy file(s)
-     * @throws IOException if an I/O error occurs or the parent directory does not exist
-     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException Thrown when a particular method cannot be found.
-     * @throws InstantiationException Thrown when an application tries to create an instance of a class
-     * using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException An IllegalAccessException is thrown when an application
-     * tries to reflectively create an instance
+     * @throws IOException                 if an I/O error occurs or the parent directory does not exist
+     * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
+     * @throws InstantiationException      Thrown when an application tries to create an instance of a class
+     *                                     using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
+     *                                     tries to reflectively create an instance
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Operation(
             method = "POST",
@@ -88,5 +91,5 @@ public interface ControllerApiCopyFileDoc {
             final DataCopyFileApi file,
             @Parameter(hidden = true) String accessToken
     ) throws IOException, InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException;
+            InstantiationException, IllegalAccessException, FileObjectIsFrozenException;
 }

@@ -7,6 +7,7 @@ import com.zer0s2m.creeptenuous.common.data.DataCreateFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.enums.TypeFile;
 import com.zer0s2m.creeptenuous.common.exceptions.ExistsFileSystemObjectRedisException;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundTypeFileException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.FileAlreadyExistsMsg;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.NotFoundTypeFileMsg;
@@ -78,6 +79,7 @@ public class ControllerApiCreateFile implements ControllerApiCreateFileDoc {
      *                                              tries to reflectively create an instance
      * @throws IOException                          signals that an I/O exception of some sort has occurred
      * @throws ExistsFileSystemObjectRedisException uniqueness of the name in the system under different directory levels
+     * @throws FileObjectIsFrozenException          file object is frozen
      */
     @Override
     @PostMapping("/file/create")
@@ -85,7 +87,7 @@ public class ControllerApiCreateFile implements ControllerApiCreateFileDoc {
     public ResponseCreateFileApi createFile(final @Valid @RequestBody @NotNull DataCreateFileApi file,
                                             @RequestHeader(name = "Authorization") String accessToken)
             throws InvocationTargetException, NoSuchMethodException, IllegalAccessException,
-            InstantiationException, IOException, ExistsFileSystemObjectRedisException {
+            InstantiationException, IOException, ExistsFileSystemObjectRedisException, FileObjectIsFrozenException {
         serviceFileRedis.setAccessToken(accessToken);
         boolean isRights = serviceFileRedis.checkRights(file.parents(), file.systemParents(), null, false);
 
@@ -93,6 +95,11 @@ public class ControllerApiCreateFile implements ControllerApiCreateFileDoc {
             serviceManagerRights.setAccessClaims(accessToken);
             serviceManagerRights.setIsWillBeCreated(false);
             serviceManagerRights.checkRightsByOperation(operationRights, file.systemParents());
+
+            boolean isFrozen = serviceFileRedis.isFrozenFileSystemObject(file.systemParents());
+            if (isFrozen) {
+                throw new FileObjectIsFrozenException();
+            }
         }
 
         String loginUser = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken))
