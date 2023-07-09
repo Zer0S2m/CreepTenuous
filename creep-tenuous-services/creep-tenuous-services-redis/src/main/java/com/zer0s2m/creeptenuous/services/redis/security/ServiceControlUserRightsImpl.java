@@ -164,27 +164,25 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
 
     /**
      * Set file system objects
+     *
      * @param userLogin user login
      */
     private void setFileSystemObjects(String userLogin) {
-        if (directoryRedisIterable == null) {
-            DirectoryRedis directoryRedisExample = new DirectoryRedis();
-            directoryRedisExample.setLogin(userLogin);
+        DirectoryRedis directoryRedisExample = new DirectoryRedis();
+        directoryRedisExample.setLogin(userLogin);
 
-            Iterable<DirectoryRedis> directoryRedisList = directoryRedisRepository
-                    .findAll(Example.of(directoryRedisExample));
+        Iterable<DirectoryRedis> directoryRedisList = directoryRedisRepository
+                .findAll(Example.of(directoryRedisExample));
 
-            setDirectoryRedisIterable(directoryRedisList);
-        }
-        if (fileRedisIterable == null) {
-            FileRedis fileRedisExample = new FileRedis();
-            fileRedisExample.setLogin(userLogin);
+        setDirectoryRedisIterable(directoryRedisList);
 
-            Iterable<FileRedis> fileRedisList = fileRedisRepository
-                    .findAll(Example.of(fileRedisExample));
+        FileRedis fileRedisExample = new FileRedis();
+        fileRedisExample.setLogin(userLogin);
 
-            setFileRedisIterable(fileRedisList);
-        }
+        Iterable<FileRedis> fileRedisList = fileRedisRepository
+                .findAll(Example.of(fileRedisExample));
+
+        setFileRedisIterable(fileRedisList);
     }
 
     /**

@@ -176,6 +176,48 @@ public class ServiceManagerRightsTests {
     }
 
     @Test
+    public void addRightsFromList_success_objectDirectoryRedis() {
+        prepareJwtRedis();
+        prepareDirectoryRedis();
+
+        final RightUserFileSystemObjectRedis rightUserFileSystemObjectRedis = serviceManagerRights.buildObj(systemName,
+                otherUserLogin, OperationRights.SHOW);
+
+        Assertions.assertDoesNotThrow(
+                () -> serviceManagerRights.addRight(
+                        List.of(rightUserFileSystemObjectRedis), OperationRights.SHOW),
+                "Exceptions");
+
+        Assertions.assertTrue(rightUserFileSystemObjectRedisRepository.existsById(
+                systemName + "__" + otherUserLogin));
+
+        rightUserFileSystemObjectRedisRepository.delete(rightUserFileSystemObjectRedis);
+        jwtRedisRepository.deleteById(otherUserLogin);
+        directoryRedisRepository.deleteById(systemName);
+    }
+
+    @Test
+    public void addRightsFromList_success_objectFileRedis() {
+        prepareJwtRedis();
+        prepareFileRedis();
+
+        final RightUserFileSystemObjectRedis rightUserFileSystemObjectRedis = serviceManagerRights.buildObj(
+                systemName, otherUserLogin, OperationRights.SHOW);
+
+        Assertions.assertDoesNotThrow(
+                () -> serviceManagerRights.addRight(
+                        List.of(rightUserFileSystemObjectRedis), OperationRights.SHOW),
+                "Exceptions");
+
+        Assertions.assertTrue(rightUserFileSystemObjectRedisRepository.existsById(
+                systemName + "__" + otherUserLogin));
+
+        rightUserFileSystemObjectRedisRepository.delete(rightUserFileSystemObjectRedis);
+        jwtRedisRepository.deleteById(otherUserLogin);
+        fileRedisRepository.deleteById(systemName);
+    }
+
+    @Test
     public void deleteRights_success() {
         prepareJwtRedis();
 
@@ -193,6 +235,35 @@ public class ServiceManagerRightsTests {
 
         Assertions.assertDoesNotThrow(
                 () -> serviceManagerRights.deleteRight(rightUserFileSystemObjectRedisReal, OperationRights.SHOW),
+                "Exceptions");
+
+        Assertions.assertFalse(rightUserFileSystemObjectRedisRepository.existsById(
+                rightUserFileSystemObjectRedisReal.getFileSystemObject()));
+
+        rightUserFileSystemObjectRedisRepository.delete(rightUserFileSystemObjectRedisReal);
+        jwtRedisRepository.deleteById(otherUserLogin);
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void deleteRightsFromList_success() {
+        prepareJwtRedis();
+
+        final DirectoryRedis directoryRedis = new DirectoryRedis(ownerUserLogin, "ROLE_USER", systemName,
+                systemName, systemName, List.of(otherUserLogin));
+        directoryRedisRepository.save(directoryRedis);
+
+        final RightUserFileSystemObjectRedis rightUserFileSystemObjectRedisCreate = serviceManagerRights.buildObj(
+                systemName + "__" + otherUserLogin, otherUserLogin, OperationRights.SHOW);
+
+        rightUserFileSystemObjectRedisRepository.save(rightUserFileSystemObjectRedisCreate);
+
+        final RightUserFileSystemObjectRedis rightUserFileSystemObjectRedisReal = serviceManagerRights.getObj(
+                systemName, otherUserLogin);
+
+        Assertions.assertDoesNotThrow(
+                () -> serviceManagerRights.deleteRight(
+                        List.of(rightUserFileSystemObjectRedisReal), OperationRights.SHOW),
                 "Exceptions");
 
         rightUserFileSystemObjectRedisRepository.delete(rightUserFileSystemObjectRedisReal);

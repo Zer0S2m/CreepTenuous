@@ -47,6 +47,30 @@ public class ServiceCreateUserTests {
 
     @Test
     @Rollback
+    public void createUser_success_notRoles() throws UserAlreadyExistException {
+        User newUser = getFataDorCreateUser();
+        newUser.setRole(null);
+        Long userId = service.create(newUser);
+
+        logger.info("Create new user in db: " + newUser);
+
+        Assertions.assertNotNull(userId);
+    }
+
+    @Test
+    @Rollback
+    public void createUser_success_notEmail() throws UserAlreadyExistException {
+        User newUser = getFataDorCreateUser();
+        newUser.setEmail(null);
+        Long userId = service.create(newUser);
+
+        logger.info("Create new user in db: " + newUser);
+
+        Assertions.assertNotNull(userId);
+    }
+
+    @Test
+    @Rollback
     public void createUser_fail_userAlreadyExistsLogin() throws UserAlreadyExistException {
         User newUser1 = getFataDorCreateUser();
         Long userId1 = service.create(newUser1);

@@ -32,6 +32,7 @@ import java.util.List;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceDeleteDirectoryTests {
+
     Logger logger = LogManager.getLogger(ServiceDeleteDirectoryTests.class);
 
     @Autowired
@@ -51,6 +52,42 @@ public class ServiceDeleteDirectoryTests {
     }
 
     @Test
+    public void deleteDirectory_fail_objectIsFile() throws Exception {
+        final Path pathFile = Path.of(Path.of(serviceBuildDirectoryPath.build(), "testFile.txt").toUri());
+        Files.createFile(pathFile);
+
+        Assertions.assertDoesNotThrow(
+                () -> service.delete(new ArrayList<>(), "testFile.txt")
+        );
+
+        Files.deleteIfExists(pathFile);
+    }
+
+    @Test
+    public void deleteDirectoryPath_success() throws Exception {
+        final Path pathFolder = Path.of(Path.of(serviceBuildDirectoryPath.build(), "directory").toUri());
+        Files.createDirectory(pathFolder);
+
+        Assertions.assertDoesNotThrow(
+                () -> service.delete(pathFolder)
+        );
+
+        Assertions.assertFalse(Files.exists(pathFolder));
+    }
+
+    @Test
+    public void deleteDirectoryPath_fail_objectIsFile() throws Exception {
+        final Path pathFile = Path.of(Path.of(serviceBuildDirectoryPath.build(), "testFile.txt").toUri());
+        Files.createFile(pathFile);
+
+        Assertions.assertDoesNotThrow(
+                () -> service.delete(pathFile)
+        );
+
+        Files.deleteIfExists(pathFile);
+    }
+
+    @Test
     public void deleteDirectory_fail_invalidPathDirectory() {
         Assertions.assertThrows(
                 NoSuchFileException.class,
@@ -60,4 +97,5 @@ public class ServiceDeleteDirectoryTests {
                 )
         );
     }
+
 }
