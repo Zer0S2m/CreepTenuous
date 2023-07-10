@@ -89,7 +89,8 @@ public class ControllerApiCreateFile implements ControllerApiCreateFileDoc {
             throws InvocationTargetException, NoSuchMethodException, IllegalAccessException,
             InstantiationException, IOException, ExistsFileSystemObjectRedisException, FileObjectIsFrozenException {
         serviceFileRedis.setAccessToken(accessToken);
-        boolean isRights = serviceFileRedis.checkRights(file.parents(), file.systemParents(), null, false);
+        serviceFileRedis.setIsException(false);
+        boolean isRights = serviceFileRedis.checkRights(file.parents(), file.systemParents(), null);
 
         if (!isRights) {
             serviceManagerRights.setAccessClaims(accessToken);

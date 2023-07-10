@@ -1,4 +1,4 @@
-package com.zer0s2m.creeptenuous.api.core.handlers.messages;
+package com.zer0s2m.creeptenuous.api.core.handlers;
 
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionFileObjectIsFrozenMsg;

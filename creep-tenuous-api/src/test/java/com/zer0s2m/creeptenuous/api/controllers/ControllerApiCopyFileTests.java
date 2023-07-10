@@ -7,9 +7,11 @@ import com.zer0s2m.creeptenuous.common.data.DataCopyFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.FrozenFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
@@ -66,6 +68,9 @@ public class ControllerApiCopyFileTests {
     @Autowired
     private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
+    @Autowired
+    private FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     private final String testFile1 = "testFile1.txt";
@@ -115,7 +120,7 @@ public class ControllerApiCopyFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_1))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isCreated());
 
@@ -152,7 +157,7 @@ public class ControllerApiCopyFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_2))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isCreated());
 
@@ -177,7 +182,7 @@ public class ControllerApiCopyFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataCopyFileApi(
                                         "file.txt",
@@ -200,7 +205,7 @@ public class ControllerApiCopyFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataCopyFileApi(
                                         "file.txt",
@@ -232,7 +237,7 @@ public class ControllerApiCopyFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataCopyFileApi(
                                         "file.txt",
@@ -266,7 +271,7 @@ public class ControllerApiCopyFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataCopyFileApi(
                                         "file.txt",
@@ -300,7 +305,7 @@ public class ControllerApiCopyFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataCopyFileApi(
                                         "testFile.txt",
@@ -334,7 +339,7 @@ public class ControllerApiCopyFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataCopyFileApi(
                                         null,
@@ -368,7 +373,7 @@ public class ControllerApiCopyFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataCopyFileApi(
                                         fileName,
@@ -394,6 +399,84 @@ public class ControllerApiCopyFileTests {
     }
 
     @Test
+    public void copyOneFile_fail_isFrozenDirectoriesSource() throws Exception {
+        final String fileName = "testFile.txt";
+        final String directoryName = "testDirectory";
+
+        prepareCopy(fileName, directoryName);
+
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                directoryName);
+
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/file/copy")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(
+                                new DataCopyFileApi(
+                                        fileName,
+                                        fileName,
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        List.of(directoryName),
+                                        List.of(directoryName)
+                                )
+                        ))
+                )
+                .andExpect(status().isBadRequest());
+
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
+        fileRedisRepository.deleteById(fileName);
+        directoryRedisRepository.deleteById(directoryName);
+        rightUserFileSystemObjectRedisRepository.deleteAllById(List.of(
+                fileName + "__" + UtilsAuthAction.LOGIN, directoryName + "__" + UtilsAuthAction.LOGIN));
+    }
+
+    @Test
+    public void copyOneFile_fail_isFrozenDirectoriesTarget() throws Exception {
+        final String fileName = "testFile.txt";
+        final String directoryName = "testDirectory";
+
+        prepareCopy(fileName, directoryName);
+
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                fileName);
+
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/file/copy")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(
+                                new DataCopyFileApi(
+                                        fileName,
+                                        fileName,
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        List.of(directoryName),
+                                        List.of(directoryName)
+                                )
+                        ))
+                )
+                .andExpect(status().isBadRequest());
+
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
+        fileRedisRepository.deleteById(fileName);
+        directoryRedisRepository.deleteById(directoryName);
+        rightUserFileSystemObjectRedisRepository.deleteAllById(List.of(
+                fileName + "__" + UtilsAuthAction.LOGIN, directoryName + "__" + UtilsAuthAction.LOGIN));
+    }
+
+    @Test
     public void copyMoreOneFile_success_forbidden() throws Exception {
         final String fileName = "testFile.txt";
         final String directoryName = "testDirectory";
@@ -408,7 +491,7 @@ public class ControllerApiCopyFileTests {
                 MockMvcRequestBuilders.post("/api/v1/file/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataCopyFileApi(
                                         null,
@@ -431,6 +514,45 @@ public class ControllerApiCopyFileTests {
 
         FileSystemUtils.deleteRecursively(directoryPath);
         Files.deleteIfExists(filePath);
+    }
+
+    @Test
+    public void copyMoreOneFile_fail_isFrozenDirectoriesTarget() throws Exception {
+        final String fileName = "testFile.txt";
+        final String directoryName = "testDirectory";
+
+        prepareCopy(fileName, directoryName);
+
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                fileName);
+
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/file/copy")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(
+                                new DataCopyFileApi(
+                                        null,
+                                        null,
+                                        List.of(fileName),
+                                        List.of(fileName),
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        List.of(directoryName),
+                                        List.of(directoryName)
+                                )
+                        ))
+                )
+                .andExpect(status().isBadRequest());
+
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
+        fileRedisRepository.deleteById(fileName);
+        directoryRedisRepository.deleteById(directoryName);
+        rightUserFileSystemObjectRedisRepository.deleteAllById(List.of(
+                fileName + "__" + UtilsAuthAction.LOGIN, directoryName + "__" + UtilsAuthAction.LOGIN));
     }
 
     private void prepareCopy(String fileName, String directoryName) {

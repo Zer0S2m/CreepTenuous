@@ -70,7 +70,8 @@ public class ControllerApiUploadDirectory implements ControllerApiUploadDirector
             NoSuchMethodException, InstantiationException, IllegalAccessException, IOException,
             FileObjectIsFrozenException {
         serviceUploadDirectoryRedis.setAccessToken(accessToken);
-        boolean isRights = serviceUploadDirectoryRedis.checkRights(parents, systemParents, null, false);
+        serviceUploadDirectoryRedis.setIsException(false);
+        boolean isRights = serviceUploadDirectoryRedis.checkRights(parents, systemParents, null);
         if (!isRights) {
             serviceManagerRights.setAccessClaims(accessToken);
             serviceManagerRights.setIsWillBeCreated(false);

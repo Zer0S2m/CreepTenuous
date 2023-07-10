@@ -12,7 +12,6 @@ import com.zer0s2m.creeptenuous.common.http.ResponseManagerDirectoryApi;
 import com.zer0s2m.creeptenuous.common.utils.OptionalMutable;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceManagerDirectoryRedis;
-import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceManagerDirectoryImpl;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
@@ -32,19 +31,15 @@ public class ControllerApiManagerDirectory implements ControllerApiManagerDirect
 
     private final ServiceManagerDirectoryRedis serviceManagerDirectoryRedis;
 
-    private final BaseServiceFileSystemRedisManagerRightsAccess baseServiceFileSystemRedis;
-
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
     public ControllerApiManagerDirectory(
             ServiceManagerDirectoryImpl builderDirectory,
             ServiceManagerDirectoryRedis serviceManagerDirectoryRedis,
-            BaseServiceFileSystemRedisManagerRightsAccess baseServiceFileSystemRedis,
             ServiceManagerRights serviceManagerRights) {
         this.builderDirectory = builderDirectory;
         this.serviceManagerDirectoryRedis = serviceManagerDirectoryRedis;
-        this.baseServiceFileSystemRedis = baseServiceFileSystemRedis;
         this.serviceManagerRights = serviceManagerRights;
     }
 
@@ -73,7 +68,7 @@ public class ControllerApiManagerDirectory implements ControllerApiManagerDirect
         if (!isRights) {
             serviceManagerRights.checkRightsByOperation(operationRights, data.systemParents());
 
-            boolean isFrozen = baseServiceFileSystemRedis.isFrozenFileSystemObject(data.systemParents());
+            boolean isFrozen = serviceManagerDirectoryRedis.isFrozenFileSystemObject(data.systemParents());
             if (isFrozen) {
                 throw new FileObjectIsFrozenException();
             }

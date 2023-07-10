@@ -64,7 +64,7 @@ public class ControllerApiControlFileSystemObjectTests {
                         .content(objectMapper.writeValueAsString(new DataControlFileSystemObjectApi(
                                 systemName
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isNoContent());
 
@@ -83,7 +83,7 @@ public class ControllerApiControlFileSystemObjectTests {
                         .content(objectMapper.writeValueAsString(new DataControlFileSystemObjectApi(
                                 "not_found_file_system_object"
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isNotFound());
     }
@@ -107,7 +107,7 @@ public class ControllerApiControlFileSystemObjectTests {
                         .content(objectMapper.writeValueAsString(new DataControlFileSystemObjectApi(
                                 systemName
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isNoContent());
 
@@ -126,7 +126,7 @@ public class ControllerApiControlFileSystemObjectTests {
                         .content(objectMapper.writeValueAsString(new DataControlFileSystemObjectApi(
                                 "not_found_file_system_object"
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isNotFound());
     }

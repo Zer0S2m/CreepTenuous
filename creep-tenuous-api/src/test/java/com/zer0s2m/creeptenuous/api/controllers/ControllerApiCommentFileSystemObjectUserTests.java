@@ -80,7 +80,7 @@ public class ControllerApiCommentFileSystemObjectUserTests {
                 MockMvcRequestBuilders.get("/api/v1/common/comment/file-system-object")
                         .contentType(MediaType.APPLICATION_JSON)
                         .queryParam("file", systemName)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isOk());
 
@@ -93,7 +93,7 @@ public class ControllerApiCommentFileSystemObjectUserTests {
                 MockMvcRequestBuilders.get("/api/v1/common/comment/file-system-object")
                         .contentType(MediaType.APPLICATION_JSON)
                         .queryParam("file", "not_file_system_object_exists")
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isNotFound());
     }
@@ -120,7 +120,7 @@ public class ControllerApiCommentFileSystemObjectUserTests {
                                 "Comment",
                                 systemName
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isCreated());
 
@@ -137,7 +137,7 @@ public class ControllerApiCommentFileSystemObjectUserTests {
                                 "Comment",
                                         "not_found_file_system_object"
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isNotFound());
     }
@@ -159,7 +159,7 @@ public class ControllerApiCommentFileSystemObjectUserTests {
                         .content(objectMapper.writeValueAsString(new DataDeleteCommentFileSystemObjectApi(
                                 commentFileSystemObject.getId()
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isNoContent());
 
@@ -176,7 +176,7 @@ public class ControllerApiCommentFileSystemObjectUserTests {
                         .content(objectMapper.writeValueAsString(new DataDeleteCommentFileSystemObjectApi(
                                 11111L
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isNotFound());
     }
@@ -199,7 +199,7 @@ public class ControllerApiCommentFileSystemObjectUserTests {
                                 commentFileSystemObject.getId(),
                                 "New comment"
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isOk());
 
@@ -221,7 +221,7 @@ public class ControllerApiCommentFileSystemObjectUserTests {
                                 11111L,
                                 "New comment"
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isNotFound());
     }

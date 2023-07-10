@@ -90,11 +90,11 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
             InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
             IOException, ExistsFileSystemObjectRedisException, FileObjectIsFrozenException {
         serviceDirectoryRedis.setAccessToken(accessToken);
+        serviceDirectoryRedis.setIsException(false);
         boolean isRights = serviceDirectoryRedis.checkRights(
                 directoryForm.parents(),
                 directoryForm.systemParents(),
-                directoryForm.directoryName(),
-                false
+                directoryForm.directoryName()
         );
         if (!isRights) {
             serviceManagerRights.setAccessClaims(accessToken);

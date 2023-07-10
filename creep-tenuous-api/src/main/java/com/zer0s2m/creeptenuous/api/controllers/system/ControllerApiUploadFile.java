@@ -68,7 +68,9 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
     ) throws InvocationTargetException, NoSuchMethodException, InstantiationException,
             IllegalAccessException, FileObjectIsFrozenException {
         serviceUploadFileRedis.setAccessToken(accessToken);
-        boolean isRights = serviceUploadFileRedis.checkRights(parents, systemParents, null, false);
+        serviceUploadFileRedis.setIsException(false);
+
+        boolean isRights = serviceUploadFileRedis.checkRights(parents, systemParents, null);
         if (!isRights) {
             serviceManagerRights.setAccessClaims(accessToken);
             serviceManagerRights.setIsWillBeCreated(false);

@@ -5,8 +5,10 @@ import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.data.DataManagerDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.models.FrozenFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -49,6 +51,9 @@ public class ControllerApiManagerDirectoryTests {
     @Autowired
     private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
+    @Autowired
+    private FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     @Test
@@ -74,7 +79,7 @@ public class ControllerApiManagerDirectoryTests {
                                 List.of("directory"),
                                 List.of("directory")
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isOk());
 
@@ -109,13 +114,49 @@ public class ControllerApiManagerDirectoryTests {
                                 List.of("directory"),
                                 List.of("directory")
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isOk());
 
         directoryRedisRepository.delete(directoryRedis);
         rightUserFileSystemObjectRedisRepository.delete(rightDirectory);
         FileSystemUtils.deleteRecursively(directoryPath);
+    }
+
+    @Test
+    public void getDirectories_fail_isFrozenDirectories() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                UtilsAuthAction.ROLE_USER,
+                "directory",
+                "directory",
+                "directory",
+                List.of(UtilsAuthAction.LOGIN));
+        RightUserFileSystemObjectRedis rightDirectory = new RightUserFileSystemObjectRedis(
+                "directory" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW));
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                "directory");
+
+        rightUserFileSystemObjectRedisRepository.save(rightDirectory);
+        directoryRedisRepository.save(directoryRedis);
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/v1/directory")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataManagerDirectoryApi(
+                                1,
+                                List.of("directory"),
+                                List.of("directory")
+                        )))
+                        .header("Authorization", accessToken)
+                )
+                .andExpect(status().isBadRequest());
+
+        directoryRedisRepository.delete(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.delete(rightDirectory);
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
     }
 
     @Test
@@ -129,7 +170,7 @@ public class ControllerApiManagerDirectoryTests {
                                 List.of("directory"),
                                 List.of("directory")
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isBadRequest());
     }

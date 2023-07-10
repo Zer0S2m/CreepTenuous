@@ -8,8 +8,10 @@ import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionDirectoryExistsMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.models.FrozenFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
@@ -62,6 +64,9 @@ public class ControllerApiCreateDirectoryTests {
     @Autowired
     private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
+    @Autowired
+    private FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     DataCreateDirectoryApi RECORD_1 = new DataCreateDirectoryApi(
@@ -76,7 +81,7 @@ public class ControllerApiCreateDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/create")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(RECORD_1))
                 )
                 .andExpect(status().isCreated())
@@ -211,6 +216,51 @@ public class ControllerApiCreateDirectoryTests {
 
         directoryRedisRepository.delete(directoryRedis);
         rightUserFileSystemObjectRedisRepository.delete(right);
+
+        FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(List.of("testDirectory"))));
+    }
+
+    @Test
+    public void createDirectory_fail_isFrozenDirectories() throws Exception {
+        UtilsActionForFiles.createDirectories(
+                List.of("testDirectory"),
+                serviceBuildDirectoryPath,
+                logger);
+
+        DataCreateDirectoryApi dataCreateDirectoryApi = new DataCreateDirectoryApi(
+                List.of("testDirectory"),
+                List.of("testDirectory"),
+                "testDirectory");
+
+        RightUserFileSystemObjectRedis right = new RightUserFileSystemObjectRedis(
+                "testDirectory" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.CREATE, OperationRights.SHOW));
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                UtilsAuthAction.ROLE_USER,
+                "testDirectory",
+                "testDirectory",
+                serviceBuildDirectoryPath.build(List.of("testDirectory")),
+                List.of(UtilsAuthAction.LOGIN));
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                "testDirectory");
+
+        rightUserFileSystemObjectRedisRepository.save(right);
+        directoryRedisRepository.save(directoryRedis);
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/directory/create")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(dataCreateDirectoryApi))
+                )
+                .andExpect(status().isBadRequest());
+
+        directoryRedisRepository.delete(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.delete(right);
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
 
         FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(List.of("testDirectory"))));
     }

@@ -9,9 +9,11 @@ import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectPartApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.FrozenFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
@@ -66,6 +68,9 @@ public class ControllerApiDownloadDirectoryTests {
     @Autowired
     private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
+    @Autowired
+    private FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     List<String> DIRECTORIES_1 = List.of("test_folder1");
@@ -94,7 +99,7 @@ public class ControllerApiDownloadDirectoryTests {
                                 DIRECTORIES_1.get(0),
                                 DIRECTORIES_1.get(0)
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
         ).andExpect(status().isOk());
 
         Path directoryTest = Path.of(buildDirectoryPath.build(DIRECTORIES_1));
@@ -129,7 +134,7 @@ public class ControllerApiDownloadDirectoryTests {
                                         DIRECTORIES_1.get(0)
                                 ))
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
         ).andExpect(status().isOk());
 
         Path directoryTest = Path.of(buildDirectoryPath.build(DIRECTORIES_1));
@@ -149,7 +154,7 @@ public class ControllerApiDownloadDirectoryTests {
                                 null,
                                 null
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
         ).andExpect(status().isBadRequest());
     }
 
@@ -164,7 +169,7 @@ public class ControllerApiDownloadDirectoryTests {
                                 DIRECTORIES_1.get(0),
                                 DIRECTORIES_1.get(0)
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
         ).andExpect(status().isBadRequest());
     }
 
@@ -179,7 +184,7 @@ public class ControllerApiDownloadDirectoryTests {
                                 DIRECTORIES_1.get(0),
                                 DIRECTORIES_1.get(0)
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isNotFound());
     }
@@ -204,7 +209,7 @@ public class ControllerApiDownloadDirectoryTests {
                                 "testDirectory",
                                 "testDirectory"
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -235,7 +240,7 @@ public class ControllerApiDownloadDirectoryTests {
                                         "testDirectory"
                                 ))
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -266,7 +271,7 @@ public class ControllerApiDownloadDirectoryTests {
                                         "testFile"
                                 ))
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -291,12 +296,48 @@ public class ControllerApiDownloadDirectoryTests {
                                 testFolder,
                                 testFolder
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());
 
+        fileRedisRepository.deleteById(testFile);
+        directoryRedisRepository.deleteById(testFolder);
+        rightUserFileSystemObjectRedisRepository.deleteAllById(List.of(
+                testFile + "__" + UtilsAuthAction.LOGIN, testFolder + "__" + UtilsAuthAction.LOGIN));
+
+        FileSystemUtils.deleteRecursively(testDirectoryPath);
+    }
+
+    @Test
+    public void downloadDirectory_fail_isFrozenDirectory() throws Exception {
+        final String testFolder = "testFolder2";
+        final String testFile = "testFile1";
+        final Path testDirectoryPath = Path.of(rootPath.getRootPath(), testFolder);
+        prepareDownload(testFolder, testFile);
+
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                testFolder);
+
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/api/v1/directory/download")
+                        .content(objectMapper.writeValueAsString(new DataDownloadDirectoryApi(
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                testFolder,
+                                testFolder
+                        )))
+                        .header("Authorization", accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isBadRequest());
+
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
         fileRedisRepository.deleteById(testFile);
         directoryRedisRepository.deleteById(testFolder);
         rightUserFileSystemObjectRedisRepository.deleteAllById(List.of(
@@ -322,12 +363,49 @@ public class ControllerApiDownloadDirectoryTests {
                                         testFolder,
                                         testFolder
                                 )))))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());
 
+        fileRedisRepository.deleteById(testFile);
+        directoryRedisRepository.deleteById(testFolder);
+        rightUserFileSystemObjectRedisRepository.deleteAllById(List.of(
+                testFile + "__" + UtilsAuthAction.LOGIN, testFolder + "__" + UtilsAuthAction.LOGIN));
+
+        FileSystemUtils.deleteRecursively(testDirectoryPath);
+    }
+
+    @Test
+    public void downloadDirectorySelect_fail_isFrozenDirectory() throws Exception {
+        final String testFolder = "testFolder2";
+        final String testFile = "testFile1";
+        final Path testDirectoryPath = Path.of(rootPath.getRootPath(), testFolder);
+        prepareDownload(testFolder, testFile);
+
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                testFolder);
+
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/api/v1/directory/download/select")
+                        .content(objectMapper.writeValueAsString(new DataDownloadDirectorySelectApi(
+                                List.of(new DataDownloadDirectorySelectPartApi(
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        testFolder,
+                                        testFolder
+                                )))))
+                        .header("Authorization", accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isBadRequest());
+
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
         fileRedisRepository.deleteById(testFile);
         directoryRedisRepository.deleteById(testFolder);
         rightUserFileSystemObjectRedisRepository.deleteAllById(List.of(

@@ -7,9 +7,11 @@ import com.zer0s2m.creeptenuous.common.data.DataMoveFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.FrozenFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
@@ -64,6 +66,9 @@ public class ControllerApiMoveFileTests {
     @Autowired
     private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
+    @Autowired
+    private FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     private final String testFile1 = "testFile1.txt";
@@ -114,7 +119,7 @@ public class ControllerApiMoveFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_1))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isNoContent());
 
@@ -158,7 +163,7 @@ public class ControllerApiMoveFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_2))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isNoContent());
 
@@ -186,7 +191,7 @@ public class ControllerApiMoveFileTests {
                 MockMvcRequestBuilders.put("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveFileApi(
                                         "testFile.txt",
@@ -209,7 +214,7 @@ public class ControllerApiMoveFileTests {
         MockHttpServletRequestBuilder builderRequest = MockMvcRequestBuilders.put("/api/v1/file/move")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization",  accessToken);
+                .header("Authorization", accessToken);
 
         this.mockMvc.perform(builderRequest
                 .content(objectMapper.writeValueAsString(
@@ -247,7 +252,7 @@ public class ControllerApiMoveFileTests {
                 MockMvcRequestBuilders.put("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveFileApi(
                                         "file.txt",
@@ -270,7 +275,7 @@ public class ControllerApiMoveFileTests {
                 MockMvcRequestBuilders.put("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveFileApi(
                                         "file.txt",
@@ -430,6 +435,84 @@ public class ControllerApiMoveFileTests {
     }
 
     @Test
+    public void moveOneFile_fail_isFrozenFile() throws Exception {
+        final String testDirectory = "testDirectory";
+        final Path testDirectoryPath = Path.of(rootPath.getRootPath(), testDirectory);
+        final Path testFilePath = Path.of(rootPath.getRootPath(), testFile1);
+
+        prepareCopy(testDirectory, testFilePath, testDirectoryPath);
+
+        DataMoveFileApi dataMoveFileApi = new DataMoveFileApi(
+                testFile1,
+                testFile1,
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                List.of(testDirectory),
+                List.of(testDirectory)
+        );
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                testFile1);
+
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/file/move")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(dataMoveFileApi)
+                        ))
+                .andExpect(status().isBadRequest());
+
+        fileRedisRepository.deleteById(testFile1);
+        directoryRedisRepository.deleteById(testDirectory);
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
+        rightUserFileSystemObjectRedisRepository.deleteAllById(List.of(
+                testDirectory + "__" + UtilsAuthAction.LOGIN, testFile1 + "__" + UtilsAuthAction.LOGIN));
+    }
+
+    @Test
+    public void moveOneFile_fail_isFrozenDirectories() throws Exception {
+        final String testDirectory = "testDirectory";
+        final Path testDirectoryPath = Path.of(rootPath.getRootPath(), testDirectory);
+        final Path testFilePath = Path.of(rootPath.getRootPath(), testFile1);
+
+        prepareCopy(testDirectory, testFilePath, testDirectoryPath);
+
+        DataMoveFileApi dataMoveFileApi = new DataMoveFileApi(
+                testFile1,
+                testFile1,
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                List.of(testDirectory),
+                List.of(testDirectory)
+        );
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                testDirectory);
+
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/file/move")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(dataMoveFileApi)
+                        ))
+                .andExpect(status().isBadRequest());
+
+        fileRedisRepository.deleteById(testFile1);
+        directoryRedisRepository.deleteById(testDirectory);
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
+        rightUserFileSystemObjectRedisRepository.deleteAllById(List.of(
+                testDirectory + "__" + UtilsAuthAction.LOGIN, testFile1 + "__" + UtilsAuthAction.LOGIN));
+    }
+
+    @Test
     public void moveMoreOneFile_success_forbidden() throws Exception {
         final String testDirectory = "testDirectory";
         final Path testDirectoryPath = Path.of(rootPath.getRootPath(), testDirectory);
@@ -467,6 +550,45 @@ public class ControllerApiMoveFileTests {
 
         Files.deleteIfExists(testFilePath);
         FileSystemUtils.deleteRecursively(testDirectoryPath);
+    }
+
+    @Test
+    public void moveMoreOneFile_fail_isFrozenFile() throws Exception {
+        final String testDirectory = "testDirectory";
+        final Path testDirectoryPath = Path.of(rootPath.getRootPath(), testDirectory);
+        final Path testFilePath = Path.of(rootPath.getRootPath(), testFile1);
+
+        prepareCopy(testDirectory, testFilePath, testDirectoryPath);
+
+        DataMoveFileApi dataMoveFileApi = new DataMoveFileApi(
+                null,
+                null,
+                List.of(testFile1),
+                List.of(testFile1),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                List.of(testDirectory),
+                List.of(testDirectory)
+        );
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                testFile1);
+
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/file/move")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(dataMoveFileApi)
+                        ))
+                .andExpect(status().isBadRequest());
+
+        fileRedisRepository.deleteById(testFile1);
+        directoryRedisRepository.deleteById(testDirectory);
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
+        rightUserFileSystemObjectRedisRepository.deleteAllById(List.of(
+                testDirectory + "__" + UtilsAuthAction.LOGIN, testFile1 + "__" + UtilsAuthAction.LOGIN));
     }
 
     private void prepareCopy(String testDirectory, Path testFilePath, Path testDirectoryPath) {

@@ -8,9 +8,11 @@ import com.zer0s2m.creeptenuous.common.enums.MethodMoveDirectory;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.FrozenFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
@@ -66,6 +68,9 @@ public class ControllerApiMoveDirectoryTests {
     @Autowired
     private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
+    @Autowired
+    private FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     List<String> DIRECTORIES_1 = List.of("test_folder1");
@@ -94,7 +99,7 @@ public class ControllerApiMoveDirectoryTests {
                 MockMvcRequestBuilders.put("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(new DataMoveDirectoryApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),
@@ -146,7 +151,7 @@ public class ControllerApiMoveDirectoryTests {
                 MockMvcRequestBuilders.put("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(new DataMoveDirectoryApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),
@@ -182,7 +187,7 @@ public class ControllerApiMoveDirectoryTests {
                 MockMvcRequestBuilders.put("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(new DataMoveDirectoryApi(
                                 Arrays.asList("invalid", "path", "directory"),
                                 Arrays.asList("invalid", "path", "directory"),
@@ -202,7 +207,7 @@ public class ControllerApiMoveDirectoryTests {
                 MockMvcRequestBuilders.put("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(new DataMoveDirectoryApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),
@@ -231,7 +236,7 @@ public class ControllerApiMoveDirectoryTests {
                 MockMvcRequestBuilders.put("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveDirectoryApi(
                                         List.of("testDirectory"),
@@ -263,7 +268,7 @@ public class ControllerApiMoveDirectoryTests {
                 MockMvcRequestBuilders.put("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveDirectoryApi(
                                         new ArrayList<>(),
@@ -335,7 +340,7 @@ public class ControllerApiMoveDirectoryTests {
                 MockMvcRequestBuilders.put("/api/v1/directory/move")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveDirectoryApi(
                                         List.of("testDirectorySource"),
@@ -355,6 +360,90 @@ public class ControllerApiMoveDirectoryTests {
 
         FileSystemUtils.deleteRecursively(testDirectorySourcePath);
         FileSystemUtils.deleteRecursively(testDirectoryTargetPath);
+    }
+
+    @Test
+    public void moveDirectory_fail_isFrozenDirectorySource() throws Exception {
+        DirectoryRedis directoryRedisSource = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectorySource",
+                "testDirectorySource",
+                "testDirectorySource",
+                List.of(UtilsAuthAction.LOGIN));
+        RightUserFileSystemObjectRedis rightDirectorySource = new RightUserFileSystemObjectRedis(
+                "testDirectorySource" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW));
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                "testDirectorySource");
+
+        directoryRedisRepository.save(directoryRedisSource);
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+        rightUserFileSystemObjectRedisRepository.save(rightDirectorySource);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/directory/move")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(
+                                new DataMoveDirectoryApi(
+                                        List.of("testDirectorySource"),
+                                        List.of("testDirectorySource"),
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        "folder",
+                                        "folder",
+                                        2
+                                )))
+                )
+                .andExpect(status().isBadRequest());
+
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
+        directoryRedisRepository.delete(directoryRedisSource);
+        rightUserFileSystemObjectRedisRepository.delete(rightDirectorySource);
+    }
+
+    @Test
+    public void moveDirectory_fail_isFrozenDirectoryTarget() throws Exception {
+        DirectoryRedis directoryRedisSource = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectoryTarget",
+                "testDirectoryTarget",
+                "testDirectoryTarget",
+                List.of(UtilsAuthAction.LOGIN));
+        RightUserFileSystemObjectRedis rightDirectorySource = new RightUserFileSystemObjectRedis(
+                "testDirectoryTarget" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW));
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                "testDirectoryTarget");
+
+        directoryRedisRepository.save(directoryRedisSource);
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+        rightUserFileSystemObjectRedisRepository.save(rightDirectorySource);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/directory/move")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(
+                                new DataMoveDirectoryApi(
+                                        new ArrayList<>(),
+                                        new ArrayList<>(),
+                                        List.of("testDirectoryTarget"),
+                                        List.of("testDirectoryTarget"),
+                                        "folder",
+                                        "folder",
+                                        2
+                                )))
+                )
+                .andExpect(status().isBadRequest());
+
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
+        directoryRedisRepository.delete(directoryRedisSource);
+        rightUserFileSystemObjectRedisRepository.delete(rightDirectorySource);
     }
 
 }
