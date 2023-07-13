@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataCreateRightUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteRightUserApi;
+import com.zer0s2m.creeptenuous.common.data.DataViewGrantedRightsApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateRightUserApi;
@@ -14,6 +15,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.NoExistsRightException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionAddRightsYourselfMsg;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNoExistsFileSystemObjectRedisMsg;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNoExistsRightMsg;
+import com.zer0s2m.creeptenuous.common.http.ResponseGrantedRightsApi;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
@@ -200,6 +202,31 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
 
         serviceManagerRights.deleteRight(
                 serviceManagerRights.getObj(namesFileSystemObject, data.loginUser()), operation);
+    }
+
+    /**
+     * Get permission data for a file object
+     * @param data data for obtaining granted rights to a file object
+     * @param accessToken raw JWT access token
+     * @return granted rights
+     * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database.
+     */
+    @Override
+    @PostMapping("/user/global/right/list")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseGrantedRightsApi viewGrantedRights(
+            final @Valid @RequestBody @NotNull DataViewGrantedRightsApi data,
+            @RequestHeader(name = "Authorization") String accessToken) throws NoExistsFileSystemObjectRedisException {
+        serviceFileSystemRedis.setAccessToken(accessToken);
+        serviceFileSystemRedis.checkRights(data.systemName());
+
+        serviceManagerRights.setIsWillBeCreated(false);
+        serviceManagerRights.setAccessClaims(accessToken);
+        serviceManagerRights.isExistsFileSystemObject(data.systemName());
+
+        return new ResponseGrantedRightsApi(
+                data.systemName(),
+                serviceManagerRights.getGrantedRight(data.systemName()));
     }
 
     /**

@@ -1,8 +1,10 @@
 package com.zer0s2m.creeptenuous.services.redis.security;
 
 import com.zer0s2m.creeptenuous.common.components.RootPath;
+import com.zer0s2m.creeptenuous.common.containers.ContainerGrantedRight;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
+import com.zer0s2m.creeptenuous.common.enums.ManagerRights;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
@@ -500,6 +502,50 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Get all granted rights to the specified object
+     * @param systemName file system object
+     * @return granted rights
+     */
+    @Override
+    public List<ContainerGrantedRight> getGrantedRight(final String systemName) {
+        DirectoryRedis directoryRedis = serviceRedisManagerResources.getResourceDirectoryRedis(
+                systemName);
+        FileRedis fileRedis = serviceRedisManagerResources.getResourceFileRedis(systemName);
+        if (directoryRedis != null) {
+            return getGrantedRight(directoryRedis, directoryRedis.getSystemNameDirectory());
+        } else if (fileRedis != null) {
+            return getGrantedRight(fileRedis, fileRedis.getSystemNameFile());
+        }
+
+        return new ArrayList<>();
+    }
+
+    /**
+     * Get all granted rights to the specified object
+     * @param object underlying file storage object
+     * @param systemName name file system object
+     * @return granted rights
+     */
+    private @NotNull List<ContainerGrantedRight> getGrantedRight(@NotNull BaseRedis object, String systemName) {
+        List<String> userLogins = object.getUserLogins();
+        List<String> idsUserRights = new ArrayList<>();
+
+        if (userLogins != null) {
+            userLogins.forEach(userLogin ->
+                    idsUserRights.add(systemName + ManagerRights.SEPARATOR_UNIQUE_KEY.get() + userLogin));
+        }
+
+        Iterable<RightUserFileSystemObjectRedis> rightUserFileSystemObjectRedisList =
+                rightUserFileSystemObjectRedisRepository.findAllById(idsUserRights);
+        List<ContainerGrantedRight> containerGrantedRightList = new ArrayList<>();
+        rightUserFileSystemObjectRedisList.forEach(right ->
+                containerGrantedRightList.add(new ContainerGrantedRight(
+                        right.getLogin(), right.getRight())));
+
+        return containerGrantedRightList;
     }
 
     /**

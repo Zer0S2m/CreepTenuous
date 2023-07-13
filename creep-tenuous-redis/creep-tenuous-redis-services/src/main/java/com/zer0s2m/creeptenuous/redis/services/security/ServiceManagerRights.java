@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.redis.services.security;
 
+import com.zer0s2m.creeptenuous.common.containers.ContainerGrantedRight;
 import com.zer0s2m.creeptenuous.common.enums.ManagerRights;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
@@ -89,6 +90,13 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
      */
     void deleteRight(List<RightUserFileSystemObjectRedis> right, OperationRights operationRights)
             throws ChangeRightsYourselfException, NoExistsRightException;
+
+    /**
+     * Get all granted rights to the specified object
+     * @param systemName file system object
+     * @return granted rights
+     */
+    List<ContainerGrantedRight> getGrantedRight(final String systemName);
 
     /**
      * Checking for the existence of a file system object in the database
