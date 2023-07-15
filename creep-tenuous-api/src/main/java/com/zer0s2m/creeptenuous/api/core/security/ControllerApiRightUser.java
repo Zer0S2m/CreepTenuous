@@ -8,6 +8,7 @@ import com.zer0s2m.creeptenuous.common.data.DataDeleteRightUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataViewGrantedRightsApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
+import com.zer0s2m.creeptenuous.common.http.ResponseAllGrantedRightsApi;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateRightUserApi;
 import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 @V1APIRestController
@@ -227,6 +229,22 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
         return new ResponseGrantedRightsApi(
                 data.systemName(),
                 serviceManagerRights.getGrantedRight(data.systemName()));
+    }
+
+    /**
+     * Get information about all issued rights to all objects
+     * @param accessToken raw JWT access token
+     * @return granted all rights
+     */
+    @Override
+    @GetMapping("/user/global/right/list-all")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseAllGrantedRightsApi viewAllGrantedRights(
+            @RequestHeader(name = "Authorization") String accessToken) {
+        serviceManagerRights.setIsWillBeCreated(false);
+        serviceManagerRights.setAccessClaims(accessToken);
+        return new ResponseAllGrantedRightsApi(
+                new ArrayList<>(serviceManagerRights.getGrantedRight()));
     }
 
     /**

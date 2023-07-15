@@ -10,6 +10,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsRightException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
+import com.zer0s2m.creeptenuous.common.http.ResponseGrantedRightsApi;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
@@ -32,10 +33,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -546,6 +544,65 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
                         right.getLogin(), right.getRight())));
 
         return containerGrantedRightList;
+    }
+
+    /**
+     * Get information about all issued rights to all objects
+     * @return granted all rights
+     */
+    @Override
+    public Collection<ResponseGrantedRightsApi> getGrantedRight() {
+        String userLogin = getLoginUser();
+
+        List<DirectoryRedis> directoryRedisList = serviceRedisManagerResources.getResourceDirectoryRedisByLoginUser(
+                userLogin);
+        List<FileRedis> fileRedisList = serviceRedisManagerResources.getResourceFileRedisByLoginUser(
+                userLogin);
+
+        Set<String> idsRights = new HashSet<>();
+        directoryRedisList.forEach(directoryRedis ->
+                idsRights.addAll(getIdsRights(directoryRedis, directoryRedis.getSystemNameDirectory())));
+        fileRedisList.forEach(fileRedis ->
+                idsRights.addAll(getIdsRights(fileRedis, fileRedis.getSystemNameFile())));
+
+        Map<String, ResponseGrantedRightsApi> mapRights = new HashMap<>();
+        Iterable<RightUserFileSystemObjectRedis> rightUserFileSystemObjectRedisIterable =
+                rightUserFileSystemObjectRedisRepository.findAllById(idsRights);
+        rightUserFileSystemObjectRedisIterable.forEach(right -> {
+            final String systemName = unpackingUniqueKey(right.getFileSystemObject());
+            if (!mapRights.containsKey(systemName)) {
+                mapRights.put(systemName, new ResponseGrantedRightsApi(
+                        systemName, List.of(new ContainerGrantedRight(
+                        right.getLogin(), right.getRight()
+                ))
+                ));
+            } else {
+                final List<ContainerGrantedRight> lastRights = new ArrayList<>(mapRights.get(systemName).rights());
+                lastRights.add(new ContainerGrantedRight(right.getLogin(), right.getRight()));
+                mapRights.put(systemName, new ResponseGrantedRightsApi(
+                        systemName, lastRights));
+            }
+        });
+
+        return mapRights.values();
+    }
+
+    /**
+     * Get unique user permission keys to interact with file objects
+     * @param object underlying file storage object
+     * @param systemName name file system object
+     * @return ids
+     */
+    private @NotNull List<String> getIdsRights(@NotNull BaseRedis object, String systemName) {
+        List<String> idsRights = new ArrayList<>();
+        List<String> userLogins = object.getUserLogins();
+
+        if (userLogins != null) {
+            userLogins.forEach(login ->
+                    idsRights.add(systemName + ManagerRights.SEPARATOR_UNIQUE_KEY.get() + login));
+        }
+
+        return idsRights;
     }
 
     /**

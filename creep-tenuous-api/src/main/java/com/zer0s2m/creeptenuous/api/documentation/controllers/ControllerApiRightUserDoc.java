@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.common.data.DataCreateRightUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteRightUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataViewGrantedRightsApi;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
+import com.zer0s2m.creeptenuous.common.http.ResponseAllGrantedRightsApi;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateRightUserApi;
 import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
@@ -363,5 +364,36 @@ public interface ControllerApiRightUserDoc {
     ResponseGrantedRightsApi viewGrantedRights(final DataViewGrantedRightsApi data,
                                                @Parameter(hidden = true) String accessToken)
             throws NoExistsFileSystemObjectRedisException;
+
+    /**
+     * Get information about all issued rights to all objects
+     * @param accessToken raw JWT access token
+     * @return granted all rights
+     */
+    @Operation(
+            method = "GET",
+            summary = "Get information about all issued rights to all objects",
+            description = "Get information about all issued rights to all objects for system users",
+            tags = { "User", "Right" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful getting",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ResponseAllGrantedRightsApi.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad request",
+                            content = @Content
+                    ),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+                    @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden")
+            }
+    )
+    ResponseAllGrantedRightsApi viewAllGrantedRights(@Parameter(hidden = true) String accessToken);
 
 }
