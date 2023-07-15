@@ -533,7 +533,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
         if (userLogins != null) {
             userLogins.forEach(userLogin ->
-                    idsUserRights.add(systemName + ManagerRights.SEPARATOR_UNIQUE_KEY.get() + userLogin));
+                    idsUserRights.add(buildUniqueKey(systemName, userLogin)));
         }
 
         Iterable<RightUserFileSystemObjectRedis> rightUserFileSystemObjectRedisList =
