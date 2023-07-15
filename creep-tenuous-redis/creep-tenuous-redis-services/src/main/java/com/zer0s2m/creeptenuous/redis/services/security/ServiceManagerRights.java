@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.redis.services.security;
 
+import com.zer0s2m.creeptenuous.common.containers.ContainerGrantedRight;
 import com.zer0s2m.creeptenuous.common.enums.ManagerRights;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
@@ -7,11 +8,13 @@ import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsRightException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
+import com.zer0s2m.creeptenuous.common.http.ResponseGrantedRightsApi;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.base.BaseRedis;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -89,6 +92,19 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
      */
     void deleteRight(List<RightUserFileSystemObjectRedis> right, OperationRights operationRights)
             throws ChangeRightsYourselfException, NoExistsRightException;
+
+    /**
+     * Get all granted rights to the specified object
+     * @param systemName file system object
+     * @return granted rights
+     */
+    List<ContainerGrantedRight> getGrantedRight(final String systemName);
+
+    /**
+     * Get information about all issued rights to all objects
+     * @return granted all rights
+     */
+    Collection<ResponseGrantedRightsApi> getGrantedRight();
 
     /**
      * Checking for the existence of a file system object in the database

@@ -94,6 +94,13 @@ public interface ServiceRedisManagerResources {
     List<DirectoryRedis> getResourceDirectoryRedis(Iterable<String> ids);
 
     /**
+     * Get data about object file
+     * @param id id must not be {@literal null}.
+     * @return result
+     */
+    FileRedis getResourceFileRedis(String id);
+
+    /**
      * Get data about object files
      * @param ids must not be {@literal null} nor contain any {@literal null} values.
      * @return result

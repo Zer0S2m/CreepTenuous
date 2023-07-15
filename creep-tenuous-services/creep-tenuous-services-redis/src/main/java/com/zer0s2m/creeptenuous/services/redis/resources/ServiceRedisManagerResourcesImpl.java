@@ -118,6 +118,17 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
     }
 
     /**
+     * Get data about object file
+     * @param id id must not be {@literal null}.
+     * @return result
+     */
+    @Override
+    public FileRedis getResourceFileRedis(String id) {
+        Optional<FileRedis> fileRedisOptional = fileRedisRepository.findById(id);
+        return fileRedisOptional.orElse(null);
+    }
+
+    /**
      * Get data about object files
      * @param ids must not be {@literal null} nor contain any {@literal null} values.
      * @return result
