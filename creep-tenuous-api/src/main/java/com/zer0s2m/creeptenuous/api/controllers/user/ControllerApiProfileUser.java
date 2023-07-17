@@ -2,19 +2,22 @@ package com.zer0s2m.creeptenuous.api.controllers.user;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiProfileUserDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.common.data.DataIsDeletingFileObjectApi;
+import com.zer0s2m.creeptenuous.common.data.DataTransferredUserApi;
+import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.http.ResponseUserApi;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.security.jwt.domain.JwtAuthentication;
+import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotFoundMsg;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
 import com.zer0s2m.creeptenuous.services.user.ServiceProfileUser;
 import io.jsonwebtoken.Claims;
+import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
@@ -46,18 +49,46 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
                 currentUser.getName(), Set.of(currentUser.getRole()));
     }
 
+    /**
+     * Set setting for user - deleting a user if it is deleted
+     * @param data setting data
+     * @param accessToken raw access JWT token
+     * @throws UserNotFoundException not exists user
+     */
     @Override
     @PatchMapping("/user/profile/settings/is-delete-file-objects")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void setIsDeletingFileObjectsSettings(String accessToken) {
+    public void setIsDeletingFileObjectsSettings(
+            final @Valid @RequestBody @NotNull DataIsDeletingFileObjectApi data,
+            @RequestHeader(name = "Authorization") String accessToken) throws UserNotFoundException {
+        Claims claimsAccess = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
+        JwtAuthentication userInfo = JwtUtils.generate(claimsAccess);
 
+        serviceProfileUser.setIsDeletingFileObjectSettings(userInfo.getLogin(), data.isDelete());
     }
 
+    /**
+     * Set setting - transfer file objects to designated user
+     * @param data setting data
+     * @param accessToken wat access JWT token
+     * @throws UserNotFoundException not exists user
+     */
     @Override
     @PatchMapping("/user/profile/settings/set-transfer-user")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void setTransferredUserId(String accessToken) {
+    public void setTransferredUserId(
+            final @Valid @RequestBody @NotNull DataTransferredUserApi data,
+            @RequestHeader(name = "Authorization") String accessToken) throws UserNotFoundException {
+        Claims claimsAccess = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
+        JwtAuthentication userInfo = JwtUtils.generate(claimsAccess);
 
+        serviceProfileUser.setTransferredUserSettings(userInfo.getLogin(), data.userId());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    public UserNotFoundMsg handleExceptionNotIsExistsUser(@NotNull UserNotFoundException error) {
+        return new UserNotFoundMsg(error.getMessage());
     }
 
 }

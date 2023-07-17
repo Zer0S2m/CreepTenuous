@@ -1,9 +1,13 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
+import com.zer0s2m.creeptenuous.common.data.DataIsDeletingFileObjectApi;
+import com.zer0s2m.creeptenuous.common.data.DataTransferredUserApi;
+import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.http.ResponseUserApi;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -40,8 +44,105 @@ public interface ControllerApiProfileUserDoc {
     )
     ResponseUserApi profile(@Parameter(hidden = true) String accessToken);
 
-    void setIsDeletingFileObjectsSettings(@Parameter(hidden = true) String accessToken);
+    /**
+     * Set setting for user - deleting a user if it is deleted
+     * @param data setting data
+     * @param accessToken raw access JWT token
+     * @throws UserNotFoundException not exists user
+     */
+    @Operation(
+            method = "PATCH",
+            summary = "Set setting - deleting file objects",
+            description = "Set setting - deleting file objects for a user if he is deleted",
+            tags = { "User" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Setting data",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = DataIsDeletingFileObjectApi.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Successful",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(ref = "#/components/schemas/Unauthorized")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found user", value = "{" +
+                                                    "\"message\": \"User is not found.\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            ),
+                                    })
+                    )
+            }
+    )
+    void setIsDeletingFileObjectsSettings(
+            final DataIsDeletingFileObjectApi data,
+            @Parameter(hidden = true) String accessToken) throws UserNotFoundException;
 
-    void setTransferredUserId(@Parameter(hidden = true) String accessToken);
+    /**
+     * Set setting - transfer file objects to designated user
+     * @param data setting data
+     * @param accessToken wat access JWT token
+     * @throws UserNotFoundException not exists user
+     */
+    @Operation(
+            method = "PATCH",
+            summary = "Set setting - transfer file objects to designated user",
+            description = "Set setting - transfer file objects to the assigned user if the user is deleted",
+            tags = { "User" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Setting data",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = DataTransferredUserApi.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Successful",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(ref = "#/components/schemas/Unauthorized")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found user", value = "{" +
+                                                    "\"message\": \"User is not found.\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            ),
+                                    })
+                    )
+            }
+    )
+    void setTransferredUserId(
+            final DataTransferredUserApi data, @Parameter(hidden = true) String accessToken) throws UserNotFoundException;
 
 }

@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.services.user;
 
+import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.models.user.User;
 
 /**
@@ -14,8 +15,20 @@ public interface ServiceProfileUser {
      */
     User getUserByLogin(String login);
 
-    void setIsDeletingFileObjectSettings();
+    /**
+     * Set setting for user - deleting a user if it is deleted
+     * @param login owner user
+     * @param isDelete is deleting
+     * @throws UserNotFoundException not exists user
+     */
+    void setIsDeletingFileObjectSettings(String login, boolean isDelete) throws UserNotFoundException;
 
-    void setTransferredUserSettings();
+    /**
+     * Set Setting - Transfer File Objects to Designated User
+     * @param login owner user
+     * @param transferUserId designated user for migration
+     * @throws UserNotFoundException not exists user
+     */
+    void setTransferredUserSettings(String login, Long transferUserId) throws UserNotFoundException;
 
 }

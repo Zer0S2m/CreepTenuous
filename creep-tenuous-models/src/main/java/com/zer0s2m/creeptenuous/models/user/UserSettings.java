@@ -23,4 +23,25 @@ public class UserSettings {
     @Column(name = "is_deleting_file_objects")
     private boolean isDeletingFileObjects;
 
+    public UserSettings(User user, boolean isDeletingFileObjects) {
+        this.user = user;
+        this.isDeletingFileObjects = isDeletingFileObjects;
+    }
+
+    public UserSettings(User user, User transferredUser) {
+        this.user = user;
+        this.transferredUser = transferredUser;
+    }
+
+    public UserSettings() {
+    }
+
+    public void setIsDeletingFileObjects(boolean isDeletingFileObjects) {
+        this.isDeletingFileObjects = isDeletingFileObjects;
+    }
+
+    public void setTransferredUser(User transferredUser) {
+        this.transferredUser = transferredUser;
+    }
+
 }
