@@ -12,11 +12,11 @@ public class UserSettings {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "UserSettingsSequence")
     private Long id;
 
-    @OneToOne()
+    @ManyToOne()
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @OneToOne()
+    @OneToOne(cascade = { CascadeType.PERSIST })
     @JoinColumn(name = "transferred_user_id", referencedColumnName = "id")
     private User transferredUser;
 
@@ -40,8 +40,16 @@ public class UserSettings {
         this.isDeletingFileObjects = isDeletingFileObjects;
     }
 
+    public boolean getIsDeletingFileObjects() {
+        return isDeletingFileObjects;
+    }
+
     public void setTransferredUser(User transferredUser) {
         this.transferredUser = transferredUser;
+    }
+
+    public User getTransferredUser() {
+        return transferredUser;
     }
 
 }

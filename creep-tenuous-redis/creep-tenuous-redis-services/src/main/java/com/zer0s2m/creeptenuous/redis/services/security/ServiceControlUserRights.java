@@ -32,4 +32,25 @@ public interface ServiceControlUserRights {
      */
     void removeJwtTokensFotUser(String userLogin);
 
+    /**
+     * Migrate assigned rights from a remote user to another
+     * @param ownerUserLogin owner user login
+     * @param transferUserLogin login of the user to whom the data will be transferred
+     */
+    void migrateAssignedPermissionsForUser(String ownerUserLogin, String transferUserLogin);
+
+    /**
+     * Move file objects from remote user to assigned user
+     * @param ownerUserLogin owner user login
+     * @param transferUserLogin login of the user to whom the data will be transferred
+     */
+    void migrateFileSystemObjects(String ownerUserLogin, String transferUserLogin);
+
+    /**
+     * Remove rights assigned to a migrated user
+     * @param ownerUserLogin owner user login
+     * @param transferUserLogin login of the user to whom the data will be transferred
+     */
+    void deleteAssignedPermissionsForUser(String ownerUserLogin, String transferUserLogin);
+
 }
