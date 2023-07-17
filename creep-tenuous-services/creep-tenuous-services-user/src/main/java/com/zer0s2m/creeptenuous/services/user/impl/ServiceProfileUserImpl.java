@@ -29,4 +29,14 @@ public class ServiceProfileUserImpl implements ServiceProfileUser {
         return userRepository.findByLogin(login);
     }
 
+    @Override
+    public void setIsDeletingFileObjectSettings() {
+
+    }
+
+    @Override
+    public void setTransferredUserSettings() {
+
+    }
+
 }

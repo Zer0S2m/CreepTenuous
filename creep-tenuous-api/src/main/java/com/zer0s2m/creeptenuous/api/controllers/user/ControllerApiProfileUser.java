@@ -12,6 +12,7 @@ import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -43,6 +44,20 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
         User currentUser = serviceProfileUser.getUserByLogin(userInfo.getLogin());
         return new ResponseUserApi(currentUser.getLogin() ,currentUser.getEmail(),
                 currentUser.getName(), Set.of(currentUser.getRole()));
+    }
+
+    @Override
+    @PatchMapping("/user/profile/settings/is-delete-file-objects")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void setIsDeletingFileObjectsSettings(String accessToken) {
+
+    }
+
+    @Override
+    @PatchMapping("/user/profile/settings/set-transfer-user")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void setTransferredUserId(String accessToken) {
+
     }
 
 }

@@ -40,4 +40,8 @@ public interface ControllerApiProfileUserDoc {
     )
     ResponseUserApi profile(@Parameter(hidden = true) String accessToken);
 
+    void setIsDeletingFileObjectsSettings(@Parameter(hidden = true) String accessToken);
+
+    void setTransferredUserId(@Parameter(hidden = true) String accessToken);
+
 }

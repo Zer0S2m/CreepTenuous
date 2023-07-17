@@ -14,4 +14,8 @@ public interface ServiceProfileUser {
      */
     User getUserByLogin(String login);
 
+    void setIsDeletingFileObjectSettings();
+
+    void setTransferredUserSettings();
+
 }
