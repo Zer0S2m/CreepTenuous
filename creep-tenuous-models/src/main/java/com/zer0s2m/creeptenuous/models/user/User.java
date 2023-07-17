@@ -15,6 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "\"user\"")
 public class User implements UserDetails {
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     @JsonProperty
@@ -53,6 +54,9 @@ public class User implements UserDetails {
 
     @Column(name = "activity")
     private boolean activity;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private UserSettings user;
 
     public User(String login, String password, String email, String name) {
         this.password = password;
@@ -160,4 +164,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }
