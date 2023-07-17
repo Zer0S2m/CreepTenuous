@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiUploa
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFile;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseObjectUploadFileApi;
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadFileApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
@@ -48,12 +49,13 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
      * @param systemParents parts of the system path - source
      * @param accessToken   raw JWT access token
      * @return result upload file
-     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
-     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
-     *                                   using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
-     *                                   tries to reflectively create an instance
+     * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
+     * @throws InstantiationException      Thrown when an application tries to create an instance of a class
+     *                                     using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
+     *                                     tries to reflectively create an instance
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Override
     @PostMapping(value = "/file/upload")
@@ -63,13 +65,21 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
             final @RequestParam("parents") List<String> parents,
             final @RequestParam("systemParents") List<String> systemParents,
             @RequestHeader(name = "Authorization") String accessToken
-    ) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    ) throws InvocationTargetException, NoSuchMethodException, InstantiationException,
+            IllegalAccessException, FileObjectIsFrozenException {
         serviceUploadFileRedis.setAccessToken(accessToken);
-        boolean isRights = serviceUploadFileRedis.checkRights(parents, systemParents, null, false);
+        serviceUploadFileRedis.setIsException(false);
+
+        boolean isRights = serviceUploadFileRedis.checkRights(parents, systemParents, null);
         if (!isRights) {
             serviceManagerRights.setAccessClaims(accessToken);
             serviceManagerRights.setIsWillBeCreated(false);
             serviceManagerRights.checkRightsByOperation(operationRights, systemParents);
+
+            boolean isFrozen = serviceUploadFileRedis.isFrozenFileSystemObject(systemParents);
+            if (isFrozen) {
+                throw new FileObjectIsFrozenException();
+            }
         }
 
         List<ResponseObjectUploadFileApi> data = AtomicSystemCallManager.call(

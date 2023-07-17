@@ -41,3 +41,23 @@ Run system after build:
 make dev
 make run
 ```
+
+## Integration modules
+
+### [CreepTenuousImplants](https://github.com/Zer0S2m/CreepTenuousImplants)
+In order to integrate an additional module and open access to it, 
+you must complete the steps that are described in the module 
+[documentation](https://github.com/Zer0S2m/CreepTenuousImplants#integration)
+
+The generated key (in an additional module) you must place in the following directory:
+**`./creep-tenuous-integration/creep-tenuous-integration-implants/src/main/resources/keys`**.
+
+Or run the following command to transfer the private key:
+```shell
+make move-integration-key-implants
+```
+
+Before starting the system, write the following variable in the **`.env`** file:
+```shell
+export CT_IS_INTEGRATION_IMPLANTS=true
+```

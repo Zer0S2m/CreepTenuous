@@ -3,14 +3,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.1.0</version>
-    <relativePath/> <!-- lookup parent from repository -->
+    <groupId>com.zer0s2m</groupId>
+    <artifactId>creep-tenuous-redis</artifactId>
+    <version>0.0.9-SNAPSHOT</version>
   </parent>
-  <groupId>com.zer0s2m</groupId>
   <artifactId>creep-tenuous-redis-models</artifactId>
-  <version>0.0.8-SNAPSHOT</version>
+  <version>0.0.9-SNAPSHOT</version>
   <name>creep-tenuous-redis-models</name>
   <description>creep-tenuous-redis-models</description>
   <properties>
@@ -41,7 +39,6 @@
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-common</artifactId>
-      <version>0.0.8-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

@@ -179,6 +179,7 @@ public class JwtServiceImpl implements JwtService {
      * Get user info from token
      * @return user info
      */
+    @Override
     public JwtAuthentication getAuthInfo() {
         return (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
     }

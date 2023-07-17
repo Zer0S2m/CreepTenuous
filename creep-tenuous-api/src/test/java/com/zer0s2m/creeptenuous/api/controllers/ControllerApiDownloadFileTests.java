@@ -8,9 +8,11 @@ import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.NoSuchFileExists;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.FrozenFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
@@ -67,6 +69,9 @@ public class ControllerApiDownloadFileTests {
     @Autowired
     private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
+    @Autowired
+    private FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     private final String nameTestFile1 = "test_image_1.jpeg";
@@ -93,7 +98,7 @@ public class ControllerApiDownloadFileTests {
                                 nameTestFile1,
                                 nameTestFile1
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
         )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.IMAGE_JPEG_VALUE));
@@ -113,7 +118,7 @@ public class ControllerApiDownloadFileTests {
                                 failNameTestFile,
                                 failNameTestFile
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -136,7 +141,7 @@ public class ControllerApiDownloadFileTests {
                                 failNameTestFile,
                                 failNameTestFile
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -154,7 +159,7 @@ public class ControllerApiDownloadFileTests {
                                 null,
                                 null
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -172,7 +177,7 @@ public class ControllerApiDownloadFileTests {
                                 nameTestFile1,
                                 nameTestFile1
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -199,7 +204,7 @@ public class ControllerApiDownloadFileTests {
                                 nameTestFile1,
                                 nameTestFile1
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -229,7 +234,7 @@ public class ControllerApiDownloadFileTests {
                                 nameTestFile1,
                                 nameTestFile1
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -280,7 +285,7 @@ public class ControllerApiDownloadFileTests {
                                 nameTestFile1,
                                 nameTestFile1
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -291,6 +296,85 @@ public class ControllerApiDownloadFileTests {
         rightUserFileSystemObjectRedisRepository.deleteAll(List.of(rightDirectory, rightFile));
 
         FileSystemUtils.deleteRecursively(testDirectoryPath);
+    }
+
+    @Test
+    public void downloadFile_fail_isFrozenDirectory() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                UtilsAuthAction.ROLE_USER,
+                "testFolder1",
+                "testFolder1",
+                "testFolder1",
+                List.of(UtilsAuthAction.LOGIN));
+        RightUserFileSystemObjectRedis rightDirectory = new RightUserFileSystemObjectRedis(
+                "testFolder1" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW));
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                "testFolder1");
+
+        directoryRedisRepository.save(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.save(rightDirectory);
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/api/v1/file/download")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataDownloadFileApi(
+                                List.of("testFolder1"),
+                                List.of("testFolder1"),
+                                nameTestFile1,
+                                nameTestFile1
+                        )))
+                        .header("Authorization", accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isBadRequest());
+
+        directoryRedisRepository.delete(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.delete(rightDirectory);
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
+    }
+
+    @Test
+    public void downloadFile_fail_isFrozenFail() throws Exception {
+        FileRedis fileRedis = new FileRedis(
+                "login",
+                "ROLE_USER",
+                nameTestFile1,
+                nameTestFile1,
+                nameTestFile1,
+                List.of(UtilsAuthAction.LOGIN));
+        RightUserFileSystemObjectRedis rightFile = new RightUserFileSystemObjectRedis(
+                nameTestFile1 + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW, OperationRights.DOWNLOAD));
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                nameTestFile1);
+
+        fileRedisRepository.save(fileRedis);
+        rightUserFileSystemObjectRedisRepository.save(rightFile);
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/api/v1/file/download")
+                        .content(objectMapper.writeValueAsString(new DataDownloadFileApi(
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                nameTestFile1,
+                                nameTestFile1
+                        )))
+                        .header("Authorization", accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isBadRequest());
+
+        fileRedisRepository.delete(fileRedis);
+        rightUserFileSystemObjectRedisRepository.delete(rightFile);
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
     }
 
 }

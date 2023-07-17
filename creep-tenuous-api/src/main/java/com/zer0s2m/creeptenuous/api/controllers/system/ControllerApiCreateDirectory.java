@@ -7,6 +7,7 @@ import com.zer0s2m.creeptenuous.common.data.DataCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.ExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.common.exceptions.FileAlreadyExistsException;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionDirectoryExistsMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
@@ -77,6 +78,7 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
      *                                              tries to reflectively create an instance
      * @throws IOException                          signals that an I/O exception of some sort has occurred
      * @throws ExistsFileSystemObjectRedisException uniqueness of the name in the system under different directory levels
+     * @throws FileObjectIsFrozenException          file object is frozen
      */
     @Contract("_, _ -> new")
     @Override
@@ -86,18 +88,23 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
             final @Valid @RequestBody @NotNull DataCreateDirectoryApi directoryForm,
             @RequestHeader(name = "Authorization") String accessToken) throws FileAlreadyExistsException,
             InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
-            IOException, ExistsFileSystemObjectRedisException {
+            IOException, ExistsFileSystemObjectRedisException, FileObjectIsFrozenException {
         serviceDirectoryRedis.setAccessToken(accessToken);
+        serviceDirectoryRedis.setIsException(false);
         boolean isRights = serviceDirectoryRedis.checkRights(
                 directoryForm.parents(),
                 directoryForm.systemParents(),
-                directoryForm.directoryName(),
-                false
+                directoryForm.directoryName()
         );
         if (!isRights) {
             serviceManagerRights.setAccessClaims(accessToken);
             serviceManagerRights.setIsWillBeCreated(false);
             serviceManagerRights.checkRightsByOperation(operationRights, directoryForm.systemParents());
+
+            boolean isFrozen = serviceDirectoryRedis.isFrozenFileSystemObject(directoryForm.systemParents());
+            if (isFrozen) {
+                throw new FileObjectIsFrozenException();
+            }
         }
 
         String loginUser = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken))

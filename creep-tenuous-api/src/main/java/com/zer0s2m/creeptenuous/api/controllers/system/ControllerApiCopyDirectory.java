@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataCopyDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseCopyDirectoryApi;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
@@ -51,13 +52,14 @@ public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc
      * @param dataDirectory Directory copy data
      * @param accessToken   Raw JWT access token
      * @return Result copy directory
-     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
-     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
-     *                                   using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
-     *                                   tries to reflectively create an instance
-     * @throws IOException               signals that an I/O exception of some sort has occurred
+     * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
+     * @throws InstantiationException      Thrown when an application tries to create an instance of a class
+     *                                     using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
+     *                                     tries to reflectively create an instance
+     * @throws IOException                 signals that an I/O exception of some sort has occurred
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Override
     @PostMapping("/directory/copy")
@@ -65,7 +67,7 @@ public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc
     public ResponseCopyDirectoryApi copy(final @Valid @RequestBody @NotNull DataCopyDirectoryApi dataDirectory,
                                          @RequestHeader(name = "Authorization") String accessToken)
             throws InvocationTargetException, NoSuchMethodException, InstantiationException,
-            IllegalAccessException, IOException {
+            IllegalAccessException, IOException, FileObjectIsFrozenException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
         serviceManagerRights.setIsDirectory(true);
@@ -91,6 +93,14 @@ public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc
                         dataDirectory.systemToParents());
             }
             serviceManagerRights.checkRightByOperationCopyDirectory(dataDirectory.systemDirectoryName());
+
+            boolean isFrozenFileSystemObjects = serviceCopyDirectoryRedis.isFrozenFileSystemObject(
+                    CloneList.cloneOneLevel(CloneList.cloneOneLevel(
+                                    dataDirectory.systemParents(), dataDirectory.systemToParents()),
+                            List.of(dataDirectory.systemDirectoryName())));
+            if (isFrozenFileSystemObjects) {
+                throw new FileObjectIsFrozenException();
+            }
         }
 
         List<ContainerInfoFileSystemObject> attached = AtomicSystemCallManager.call(

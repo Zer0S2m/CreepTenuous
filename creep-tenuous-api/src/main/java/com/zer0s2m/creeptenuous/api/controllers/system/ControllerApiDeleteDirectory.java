@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.events.DirectoryRedisEventPublisher;
@@ -58,13 +59,14 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
      *
      * @param directoryForm directory delete data
      * @param accessToken   raw JWT access token
-     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
-     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
-     *                                   using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
-     *                                   tries to reflectively create an instance
-     * @throws IOException               signals that an I/O exception of some sort has occurred
+     * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
+     * @throws InstantiationException      Thrown when an application tries to create an instance of a class
+     *                                     using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
+     *                                     tries to reflectively create an instance
+     * @throws IOException                 signals that an I/O exception of some sort has occurred
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Override
     @DeleteMapping("/directory/delete")
@@ -72,7 +74,7 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
     public final void deleteDirectory(final @Valid @RequestBody @NotNull DataDeleteDirectoryApi directoryForm,
                                       @RequestHeader(name = "Authorization") String accessToken)
             throws InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException, IOException {
+            InstantiationException, IllegalAccessException, IOException, FileObjectIsFrozenException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
         serviceManagerRights.setIsDirectory(true);
@@ -87,10 +89,15 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
                 directoryForm.systemDirectoryName()
         );
         if (!isRightsSystemParents) {
-            serviceManagerRights.checkRightsByOperation(operationRightsDirectoryShow,
-                    CloneList.cloneOneLevel(directoryForm.systemParents(),
-                            List.of(directoryForm.systemDirectoryName())));
+            final List<String> cloneSystemsParents = CloneList.cloneOneLevel(directoryForm.systemParents(),
+                    List.of(directoryForm.systemDirectoryName()));
+            serviceManagerRights.checkRightsByOperation(operationRightsDirectoryShow, cloneSystemsParents);
             serviceManagerRights.checkRightByOperationDeleteDirectory(directoryForm.systemDirectoryName());
+
+            boolean isFrozen = serviceDeleteDirectoryRedis.isFrozenFileSystemObject(cloneSystemsParents);
+            if (isFrozen) {
+                throw new FileObjectIsFrozenException();
+            }
         }
 
         List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(

@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.common.data.DataRenameFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.models.FrozenFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
@@ -37,6 +39,9 @@ public class ControllerApiRenameFileSystemObjectTests {
 
     @Autowired
     private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
+
+    @Autowired
+    private FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository;
 
     @Autowired
     private MockMvc mockMvc;
@@ -129,6 +134,42 @@ public class ControllerApiRenameFileSystemObjectTests {
                 .andExpect(status().isOk());
 
         directoryRedisRepository.delete(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.delete(right);
+    }
+
+    @Test
+    public void renameFileSystemObject_fail_isFrozen() throws Exception {
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                List.of(UtilsAuthAction.LOGIN));
+        RightUserFileSystemObjectRedis right = new RightUserFileSystemObjectRedis(
+                "testDirectory" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.RENAME));
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                "testDirectory");
+
+        directoryRedisRepository.save(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.save(right);
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/file-system-object/rename")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(new DataRenameFileSystemObjectApi(
+                                "testDirectory",
+                                "new_name"
+                        )))
+                )
+                .andExpect(status().isBadRequest());
+
+        directoryRedisRepository.delete(directoryRedis);
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
         rightUserFileSystemObjectRedisRepository.delete(right);
     }
 

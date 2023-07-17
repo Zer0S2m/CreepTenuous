@@ -41,3 +41,7 @@ logs
 
 ### TESTS ###
 htmlReport/
+
+### INTEGRATION ###
+**/src/main/**/*.pem
+**/src/main/**/*.pub

@@ -4,8 +4,10 @@ import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.models.FrozenFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
@@ -50,6 +52,9 @@ public class ControllerApiUploadDirectoryTests {
     @Autowired
     private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
+    @Autowired
+    private FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     @Test
@@ -68,7 +73,7 @@ public class ControllerApiUploadDirectoryTests {
                         ))
                         .queryParam("parents", "")
                         .queryParam("systemParents", "")
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isCreated());
 
@@ -84,7 +89,7 @@ public class ControllerApiUploadDirectoryTests {
                 multipart("/api/v1/directory/upload")
                         .queryParam("parents", "invalid", "path", "directory")
                         .queryParam("systemParents", "invalid", "path", "directory")
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -114,7 +119,7 @@ public class ControllerApiUploadDirectoryTests {
                         ))
                         .queryParam("parents", "testDirectory")
                         .queryParam("systemParents", "testDirectory")
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isForbidden());
 
@@ -155,12 +160,61 @@ public class ControllerApiUploadDirectoryTests {
                         ))
                         .queryParam("parents", "testDirectory")
                         .queryParam("systemParents", "testDirectory")
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isCreated());
 
         targetStream.close();
         directoryRedisRepository.delete(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.delete(right);
+
+        FileSystemUtils.deleteRecursively(Path.of(buildDirectoryPath.build(List.of("testDirectory"))));
+    }
+
+    @Test
+    public void uploadDirectory_fail_isFrozenDirectories() throws Exception {
+        UtilsActionForFiles.createDirectories(
+                List.of("testDirectory"),
+                buildDirectoryPath,
+                logger);
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                List.of(UtilsAuthAction.LOGIN));
+        RightUserFileSystemObjectRedis right = new RightUserFileSystemObjectRedis(
+                "testDirectory" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW, OperationRights.UPLOAD));
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                "testDirectory");
+
+        directoryRedisRepository.save(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.save(right);
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+
+        String testFileZip = "test-zip.zip";
+        File testFile = new File("src/main/resources/test/" + testFileZip);
+        InputStream targetStream = new FileInputStream(testFile);
+
+        mockMvc.perform(
+                multipart("/api/v1/directory/upload")
+                        .file(new MockMultipartFile(
+                                "directory",
+                                testFileZip,
+                                "application/zip",
+                                targetStream
+                        ))
+                        .queryParam("parents", "testDirectory")
+                        .queryParam("systemParents", "testDirectory")
+                        .header("Authorization", accessToken)
+                )
+                .andExpect(status().isBadRequest());
+
+        targetStream.close();
+        directoryRedisRepository.delete(directoryRedis);
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
         rightUserFileSystemObjectRedisRepository.delete(right);
 
         FileSystemUtils.deleteRecursively(Path.of(buildDirectoryPath.build(List.of("testDirectory"))));

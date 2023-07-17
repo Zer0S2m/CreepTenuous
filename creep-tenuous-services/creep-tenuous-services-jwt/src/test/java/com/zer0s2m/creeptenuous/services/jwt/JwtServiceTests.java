@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.AccountIsBlockedException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotValidPasswordException;
 import com.zer0s2m.creeptenuous.models.user.User;
+import com.zer0s2m.creeptenuous.redis.models.JwtRedis;
 import com.zer0s2m.creeptenuous.redis.repository.JwtRedisRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.NoValidJwtRefreshTokenException;
@@ -99,6 +100,24 @@ public class JwtServiceTests {
 
     @Test
     @Rollback
+    public void loginUser_fail_accountLocked()  {
+        RECORD_USER.setPassword(generatePassword.generation("test_password"));
+        RECORD_USER.setActivity(false);
+        userRepository.save(RECORD_USER);
+
+        logger.info("Create user for tests: " + RECORD_USER);
+
+        Assertions.assertThrows(
+                AccountIsBlockedException.class,
+                () -> jwtService.login(RECORD_USER_REQUEST)
+        );
+
+        jwtRedisDataRepository.deleteById(RECORD_USER.getLogin());
+        RECORD_USER.setActivity(true);
+    }
+
+    @Test
+    @Rollback
     public void generateAccessToken_success()
             throws UserNotFoundException, UserNotValidPasswordException, NoValidJwtRefreshTokenException,
             AccountIsBlockedException {
@@ -114,6 +133,49 @@ public class JwtServiceTests {
         JwtResponse responseAccessToken = jwtService.getAccessToken(response.refreshToken());
 
         Assertions.assertTrue(jwtProvider.validateAccessToken(responseAccessToken.accessToken()));
+
+        jwtRedisDataRepository.deleteById(RECORD_USER.getLogin());
+    }
+
+    @Test
+    @Rollback
+    public void generateAccessToken_fail_noValidRefreshToken() throws UserNotFoundException,
+            NoValidJwtRefreshTokenException {
+        final JwtResponse jwtResponse = jwtService.getAccessToken("refreshToken");
+        Assertions.assertNull(jwtResponse.refreshToken());
+        Assertions.assertNull(jwtResponse.accessToken());
+    }
+
+    @Test
+    @Rollback
+    public void generateAccessToken_fail_refreshTokenIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> jwtService.getAccessToken(null)
+        );
+    }
+
+    @Test
+    @Rollback
+    public void generateAccessToken_fail_tokenMismatch()
+            throws UserNotFoundException, UserNotValidPasswordException, AccountIsBlockedException {
+        RECORD_USER.setPassword(generatePassword.generation("test_password"));
+        userRepository.save(RECORD_USER);
+
+        logger.info("Create user for tests: " + RECORD_USER);
+
+        JwtResponse response = jwtService.login(RECORD_USER_REQUEST);
+
+        Assertions.assertTrue(jwtProvider.validateRefreshToken(response.refreshToken()));
+
+        final JwtRedis jwtRedis = jwtRedisDataRepository.findById(RECORD_USER.getLogin()).get();
+        jwtRedis.setRefreshToken("newRefreshToken");
+        jwtRedisDataRepository.save(jwtRedis);
+
+        Assertions.assertThrows(
+                NoValidJwtRefreshTokenException.class,
+                () -> jwtService.getAccessToken(response.refreshToken())
+        );
 
         jwtRedisDataRepository.deleteById(RECORD_USER.getLogin());
     }
@@ -138,6 +200,50 @@ public class JwtServiceTests {
         Assertions.assertTrue(jwtProvider.validateRefreshToken(responseRefreshToken.refreshToken()));
 
         jwtRedisDataRepository.deleteById(RECORD_USER.getLogin());
+    }
+
+    @Test
+    @Rollback
+    public void generateRefreshToken_fail_tokenMismatch()
+            throws UserNotFoundException, UserNotValidPasswordException, NoValidJwtRefreshTokenException,
+            AccountIsBlockedException {
+        RECORD_USER.setPassword(generatePassword.generation("test_password"));
+        userRepository.save(RECORD_USER);
+
+        logger.info("Create user for tests: " + RECORD_USER);
+
+        JwtResponse response = jwtService.login(RECORD_USER_REQUEST);
+
+        Assertions.assertTrue(jwtProvider.validateRefreshToken(response.refreshToken()));
+
+        final JwtRedis jwtRedis = jwtRedisDataRepository.findById(RECORD_USER.getLogin()).get();
+        jwtRedis.setRefreshToken("newRefreshToken");
+        jwtRedisDataRepository.save(jwtRedis);
+
+        Assertions.assertThrows(
+                NoValidJwtRefreshTokenException.class,
+                () -> jwtService.getRefreshToken(response.refreshToken())
+        );
+
+        jwtRedisDataRepository.deleteById(RECORD_USER.getLogin());
+    }
+
+    @Test
+    @Rollback
+    public void generateRefreshToken_fail_noValidRefreshToken() {
+        Assertions.assertThrows(
+                NoValidJwtRefreshTokenException.class,
+                () -> jwtService.getRefreshToken("refreshToken")
+        );
+    }
+
+    @Test
+    @Rollback
+    public void generateRefreshToken_fail_refreshTokenIsNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> jwtService.getRefreshToken(null)
+        );
     }
 
     @Test
@@ -261,5 +367,29 @@ public class JwtServiceTests {
 
         jwtRedisDataRepository.deleteById(RECORD_USER.getLogin());
     }
-}
 
+    @Test
+    @Rollback
+    public void logout_success() throws UserNotFoundException, UserNotValidPasswordException,
+            AccountIsBlockedException {
+        RECORD_USER.setPassword(generatePassword.generation("test_password"));
+        userRepository.save(RECORD_USER);
+
+        logger.info("Create user for tests: " + RECORD_USER);
+
+        JwtResponse response = jwtService.login(RECORD_USER_REQUEST);
+
+        Assertions.assertDoesNotThrow(
+                () -> jwtService.logout(response.accessToken())
+        );
+    }
+
+    @Test
+    @Rollback
+    public void logout_fail_invalidToken() {
+        Assertions.assertDoesNotThrow(
+                () -> jwtService.logout("accessToken")
+        );
+    }
+
+}

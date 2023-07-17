@@ -61,4 +61,5 @@ public enum OperationRights {
     static public List<OperationRights> baseOperations() {
         return List.of(MOVE, COPY, UPLOAD, DOWNLOAD, CREATE, DELETE, SHOW, RENAME);
     }
+
 }

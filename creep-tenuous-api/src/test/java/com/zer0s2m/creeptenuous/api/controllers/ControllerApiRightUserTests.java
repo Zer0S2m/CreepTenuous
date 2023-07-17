@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.data.DataCreateRightUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteRightUserApi;
+import com.zer0s2m.creeptenuous.common.data.DataViewGrantedRightsApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.JwtRedis;
@@ -293,6 +294,43 @@ public class ControllerApiRightUserTests {
         UtilsActionForFiles.deleteFileAndWriteLog(pathTestFile, logger);
         jwtRedisRepository.delete(jwtRedis);
         directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void viewGrantedRights_success() throws Exception {
+        final DataViewGrantedRightsApi data = new DataViewGrantedRightsApi(
+                "systemName"
+        );
+        final DirectoryRedis directoryRedis = new DirectoryRedis(
+                UtilsAuthAction.LOGIN,
+                UtilsAuthAction.ROLE_USER,
+                "systemName",
+                "systemName",
+                "systemName",
+                new ArrayList<>()
+        );
+        directoryRedisRepository.save(directoryRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/user/global/right/list")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(data))
+                        .header("Authorization", accessToken)
+                )
+                .andExpect(status().isOk());
+
+        directoryRedisRepository.delete(directoryRedis);
+    }
+
+    @Test
+    public void viewAllGrantedRights_success() throws Exception {
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.get("/api/v1/user/global/right/list-all")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                )
+                .andExpect(status().isOk());
     }
 
 }

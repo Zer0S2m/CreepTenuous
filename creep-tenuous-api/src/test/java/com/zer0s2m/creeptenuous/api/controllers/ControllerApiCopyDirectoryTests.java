@@ -8,9 +8,11 @@ import com.zer0s2m.creeptenuous.common.enums.MethodCopyDirectory;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.FrozenFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
@@ -65,6 +67,9 @@ public class ControllerApiCopyDirectoryTests {
     @Autowired
     private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
+    @Autowired
+    private FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     List<String> DIRECTORIES_1 = List.of("test_folder1");
@@ -93,7 +98,7 @@ public class ControllerApiCopyDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),
@@ -130,7 +135,7 @@ public class ControllerApiCopyDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),
@@ -153,7 +158,7 @@ public class ControllerApiCopyDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
                                 Arrays.asList("invalid", "path", "directory"),
                                 Arrays.asList("invalid", "path", "directory"),
@@ -173,7 +178,7 @@ public class ControllerApiCopyDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),
@@ -193,7 +198,7 @@ public class ControllerApiCopyDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
                                 null,
                                 null,
@@ -213,7 +218,7 @@ public class ControllerApiCopyDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),
@@ -233,7 +238,7 @@ public class ControllerApiCopyDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),
@@ -262,7 +267,7 @@ public class ControllerApiCopyDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
                                 List.of("testDirectoryFrom"),
                                 List.of("testDirectoryFrom"),
@@ -293,7 +298,7 @@ public class ControllerApiCopyDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),
@@ -324,7 +329,7 @@ public class ControllerApiCopyDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),
@@ -389,7 +394,7 @@ public class ControllerApiCopyDirectoryTests {
                 MockMvcRequestBuilders.post("/api/v1/directory/copy")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),
@@ -406,6 +411,57 @@ public class ControllerApiCopyDirectoryTests {
         fileRedisRepository.delete(fileRedis);
         rightUserFileSystemObjectRedisRepository.deleteAll(List.of(rightDirectorySource, rightDirectoryTarget,
                 rightFileSource));
+
+        FileSystemUtils.deleteRecursively(testDirectorySource);
+        FileSystemUtils.deleteRecursively(testDirectoryTarget);
+    }
+
+    @Test
+    public void copyDirectory_fail_isFrozenDirectories() throws Exception {
+        final Path testDirectorySource = Path.of(rootPath.getRootPath(), "testDirectory1");
+        final Path testDirectoryTarget = Path.of(rootPath.getRootPath(), "testDirectoryTarget");
+        final Path testFileSource = Path.of(testDirectorySource.toString(), "testFile");
+        Files.createDirectory(testDirectorySource);
+        Files.createDirectory(testDirectoryTarget);
+        Files.createFile(testFileSource);
+
+        DirectoryRedis directoryRedisTarget = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                "testDirectoryTarget",
+                "testDirectoryTarget",
+                testDirectoryTarget.toString(),
+                List.of(UtilsAuthAction.LOGIN));
+        RightUserFileSystemObjectRedis rightDirectoryTarget = new RightUserFileSystemObjectRedis(
+                "testDirectoryTarget" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW, OperationRights.COPY));
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                "testDirectoryTarget");
+
+        directoryRedisRepository.save(directoryRedisTarget);
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+        rightUserFileSystemObjectRedisRepository.save(rightDirectoryTarget);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/directory/copy")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                List.of("testDirectoryTarget"),
+                                List.of("testDirectoryTarget"),
+                                "testDirectory1",
+                                "testDirectory1",
+                                1
+                        )))
+                )
+                .andExpect(status().isBadRequest());
+
+        directoryRedisRepository.delete(directoryRedisTarget);
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
+        rightUserFileSystemObjectRedisRepository.delete(rightDirectoryTarget);
 
         FileSystemUtils.deleteRecursively(testDirectorySource);
         FileSystemUtils.deleteRecursively(testDirectoryTarget);

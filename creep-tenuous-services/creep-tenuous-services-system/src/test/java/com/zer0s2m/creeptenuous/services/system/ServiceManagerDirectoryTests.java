@@ -32,6 +32,7 @@ import java.util.List;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceManagerDirectoryTests {
+
     Logger logger = LogManager.getLogger(ServiceManagerDirectoryTests.class);
 
     @Autowired
@@ -68,4 +69,5 @@ public class ServiceManagerDirectoryTests {
                 () -> serviceManagerDirectory.build(new ArrayList<>(), 10)
         );
     }
+
 }

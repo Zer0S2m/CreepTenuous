@@ -10,9 +10,11 @@ import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNotDirectory
 import com.zer0s2m.creeptenuous.common.exceptions.messages.NoSuchFileExists;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.FrozenFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
@@ -69,6 +71,9 @@ public class ControllerApiDeleteFileTests {
     @Autowired
     private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
+    @Autowired
+    private FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository;
+
     private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken());
 
     private final String testFile1 = "testFile1.txt";
@@ -92,7 +97,7 @@ public class ControllerApiDeleteFileTests {
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(record))
-                            .header("Authorization",  accessToken)
+                            .header("Authorization", accessToken)
                     )
                     .andExpect(status().isNoContent());
             Assertions.assertFalse(Files.exists(pathTestFile));
@@ -113,7 +118,7 @@ public class ControllerApiDeleteFileTests {
                                 Arrays.asList("invalid", "path", "directory"),
                                 Arrays.asList("invalid", "path", "directory")
                         )))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(content().json(
@@ -137,7 +142,7 @@ public class ControllerApiDeleteFileTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(INVALID_RECORD_NOT_EXISTS_FILE))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(content().json(
@@ -159,7 +164,7 @@ public class ControllerApiDeleteFileTests {
                         .content(objectMapper.writeValueAsString(
                                 new DataDeleteFileApi("", "", new ArrayList<>(), new ArrayList<>())
                         ))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -177,7 +182,7 @@ public class ControllerApiDeleteFileTests {
                                         null, null
                                 )
                         ))
-                        .header("Authorization",  accessToken)
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -292,6 +297,78 @@ public class ControllerApiDeleteFileTests {
         rightUserFileSystemObjectRedisRepository.deleteAll(List.of(rightDirectory, rightFile));
 
         FileSystemUtils.deleteRecursively(Path.of(buildDirectoryPath.build(List.of("testDirectory"))));
+    }
+
+    @Test
+    public void deleteFile_fail_isFrozenDirectory() throws Exception {
+        DataDeleteFileApi dataDeleteFileApi = new DataDeleteFileApi(
+                testFile1, testFile1, List.of("testDirectory"), List.of("testDirectory"));
+
+        DirectoryRedis directoryRedis = new DirectoryRedis(
+                "login",
+                UtilsAuthAction.ROLE_USER,
+                "testDirectory",
+                "testDirectory",
+                "testDirectory",
+                List.of(UtilsAuthAction.LOGIN));
+        RightUserFileSystemObjectRedis rightDirectory = new RightUserFileSystemObjectRedis(
+                "testDirectory" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW));
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                "testDirectory");
+
+        directoryRedisRepository.save(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.save(rightDirectory);
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.delete("/api/v1/file/delete")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(dataDeleteFileApi))
+                )
+                .andExpect(status().isBadRequest());
+
+        directoryRedisRepository.delete(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.delete(rightDirectory);
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
+    }
+
+    @Test
+    public void deleteFile_fail_isFrozenFile() throws Exception {
+        DataDeleteFileApi dataDeleteFileApi = new DataDeleteFileApi(
+                testFile1, testFile1, new ArrayList<>(), new ArrayList<>());
+
+        FileRedis fileRedis = new FileRedis(
+                "login",
+                UtilsAuthAction.ROLE_USER,
+                testFile1,
+                testFile1,
+                testFile1,
+                List.of(UtilsAuthAction.LOGIN));
+        RightUserFileSystemObjectRedis rightFile = new RightUserFileSystemObjectRedis(
+                testFile1 + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.DELETE));
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                testFile1);
+
+        fileRedisRepository.save(fileRedis);
+        rightUserFileSystemObjectRedisRepository.save(rightFile);
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.delete("/api/v1/file/delete")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                        .content(objectMapper.writeValueAsString(dataDeleteFileApi))
+                )
+                .andExpect(status().isBadRequest());
+
+        fileRedisRepository.delete(fileRedis);
+        rightUserFileSystemObjectRedisRepository.delete(rightFile);
+        frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
     }
 
 }

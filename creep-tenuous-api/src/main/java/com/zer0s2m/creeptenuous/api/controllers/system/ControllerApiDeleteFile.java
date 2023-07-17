@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiDelet
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.events.FileRedisEventPublisher;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
@@ -50,12 +51,13 @@ public class ControllerApiDeleteFile implements ControllerApiDeleteFileDoc {
      *
      * @param file        file delete data
      * @param accessToken raw JWT access token
-     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
-     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
-     *                                   using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
-     *                                   tries to reflectively create an instance
+     * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
+     * @throws InstantiationException      Thrown when an application tries to create an instance of a class
+     *                                     using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
+     *                                     tries to reflectively create an instance
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Override
     @DeleteMapping("/file/delete")
@@ -63,7 +65,7 @@ public class ControllerApiDeleteFile implements ControllerApiDeleteFileDoc {
     public void deleteFile(final @Valid @RequestBody @NotNull DataDeleteFileApi file,
                            @RequestHeader(name = "Authorization") String accessToken)
             throws InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException {
+            InstantiationException, IllegalAccessException, FileObjectIsFrozenException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
 
@@ -73,11 +75,21 @@ public class ControllerApiDeleteFile implements ControllerApiDeleteFileDoc {
 
         if (!isRightsDirectory) {
             serviceManagerRights.checkRightsByOperation(operationRightsDirectory, file.systemParents());
+
+            boolean isFrozen = serviceDeleteFileRedis.isFrozenFileSystemObject(file.systemParents());
+            if (isFrozen) {
+                throw new FileObjectIsFrozenException();
+            }
         }
 
         boolean isRightsFile = serviceDeleteFileRedis.checkRights(List.of(file.systemFileName()));
         if (!isRightsFile) {
             serviceManagerRights.checkRightsByOperation(operationRightsFile, file.systemFileName());
+
+            boolean isFrozen = serviceDeleteFileRedis.isFrozenFileSystemObject(file.systemFileName());
+            if (isFrozen) {
+                throw new FileObjectIsFrozenException();
+            }
         }
 
         Path source = AtomicSystemCallManager.call(

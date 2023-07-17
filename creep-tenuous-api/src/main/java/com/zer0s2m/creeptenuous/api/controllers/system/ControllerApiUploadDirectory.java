@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.api.controllers.system;
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiUploadDirectoryDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadDirectoryApi;
 import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
@@ -49,13 +50,13 @@ public class ControllerApiUploadDirectory implements ControllerApiUploadDirector
      * @param zipFile       raw zip archive
      * @param accessToken   raw JWT access token
      * @return result upload directory (zip archive)
-     * @throws InvocationTargetException Exception thrown by an invoked method or constructor.
-     * @throws NoSuchMethodException     Thrown when a particular method cannot be found.
-     * @throws InstantiationException    Thrown when an application tries to create an instance of a class
-     *                                   using the newInstance method in class {@code Class}.
-     * @throws IllegalAccessException    An IllegalAccessException is thrown when an application
-     *                                   tries to reflectively create an instance
-     * @throws IOException               if an I/O error occurs or the parent directory does not exist
+     * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
+     * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
+     * @throws InstantiationException      Thrown when an application tries to create an instance of a class
+     *                                     using the newInstance method in class {@code Class}.
+     * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
+     *                                     tries to reflectively create an instance
+     * @throws FileObjectIsFrozenException file object is frozen
      */
     @Override
     @PostMapping(path = "/directory/upload")
@@ -66,13 +67,20 @@ public class ControllerApiUploadDirectory implements ControllerApiUploadDirector
             final @RequestPart("directory") MultipartFile zipFile,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws InvocationTargetException,
-            NoSuchMethodException, InstantiationException, IllegalAccessException, IOException {
+            NoSuchMethodException, InstantiationException, IllegalAccessException, IOException,
+            FileObjectIsFrozenException {
         serviceUploadDirectoryRedis.setAccessToken(accessToken);
-        boolean isRights = serviceUploadDirectoryRedis.checkRights(parents, systemParents, null, false);
+        serviceUploadDirectoryRedis.setIsException(false);
+        boolean isRights = serviceUploadDirectoryRedis.checkRights(parents, systemParents, null);
         if (!isRights) {
             serviceManagerRights.setAccessClaims(accessToken);
             serviceManagerRights.setIsWillBeCreated(false);
             serviceManagerRights.checkRightsByOperation(operationRights, systemParents);
+
+            boolean isFrozen = serviceUploadDirectoryRedis.isFrozenFileSystemObject(systemParents);
+            if (isFrozen) {
+                throw new FileObjectIsFrozenException();
+            }
         }
 
         Path systemPath = serviceUploadDirectory.getPath(systemParents);

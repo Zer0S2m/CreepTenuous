@@ -17,6 +17,8 @@ public class DocsConfiguration {
 
     Schema schemaForbidden;
 
+    Schema schemaForbiddenServers;
+
     Schema schemaNotFoundDirectory;
 
     Schema schemaNotFoundFile;
@@ -33,6 +35,8 @@ public class DocsConfiguration {
 
     ApiResponse responseForbidden;
 
+    ApiResponse responseForbiddenServers;
+
     ApiResponse responseNotFoundDirectory;
 
     ApiResponse responseNotFoundFile;
@@ -47,6 +51,7 @@ public class DocsConfiguration {
         return new OpenAPI()
                 .components(new Components()
                         .addSchemas("Forbidden" , this.schemaForbidden)
+                        .addSchemas("ForbiddenServers" , this.schemaForbiddenServers)
                         .addSchemas("NotFoundDirectory" , this.schemaNotFoundDirectory)
                         .addSchemas("NotFoundFile" , this.schemaNotFoundFile)
                         .addSchemas("NotFoundFileObjectSystem" , this.schemaNotFound)
@@ -55,6 +60,7 @@ public class DocsConfiguration {
                         .addSchemas("InvalidJwtRefreshToken" , this.schemaInvalidJwtRefreshToken)
                         .addSchemas("Unauthorized" , this.schemaUnauthorized)
                         .addResponses("Forbidden", this.responseForbidden)
+                        .addResponses("ForbiddenServers", this.responseForbiddenServers)
                         .addResponses("NotFoundDirectory", this.responseNotFoundDirectory)
                         .addResponses("NotFoundFile", this.responseNotFoundFile)
                         .addResponses("NotFoundFileObjectSystem", this.responseNotFound)
@@ -66,6 +72,11 @@ public class DocsConfiguration {
                 .addProperty("message", new StringSchema().example("Forbidden"))
                 .addProperty("status", new IntegerSchema().example(403));
         this.schemaForbidden.setTitle("Forbidden");
+
+        this.schemaForbiddenServers = new Schema<Map<String, Object>>()
+                .addProperty("message", new StringSchema().example("Forbidden"))
+                .addProperty("status", new IntegerSchema().example(403));
+        this.schemaForbiddenServers.setTitle("ForbiddenServers");
 
         this.schemaNotFoundDirectory = new Schema<Map<String, Object>>()
                 .addProperty("message", new StringSchema().example(Directory.NOT_FOUND_DIRECTORY.get()))
@@ -116,6 +127,14 @@ public class DocsConfiguration {
                 .addMediaType(org.springframework.http.MediaType.APPLICATION_JSON_VALUE, mediaTypeForbidden)
         );
         responseForbidden.setDescription("Insufficient rights to perform an operation on a file system object");
+
+        responseForbiddenServers = new ApiResponse();
+        MediaType mediaTypeForbiddenServers = new MediaType();
+        mediaTypeForbiddenServers.setSchema(this.schemaForbiddenServers);
+        responseForbiddenServers.setContent(new Content()
+                .addMediaType(org.springframework.http.MediaType.APPLICATION_JSON_VALUE, mediaTypeForbiddenServers)
+        );
+        responseForbiddenServers.setDescription("Forbidden");
 
         responseNotFoundDirectory = new ApiResponse();
         MediaType mediaTypeNotFoundDirectory = new MediaType();

@@ -18,6 +18,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @SpringBootTest(classes = {
         ServiceControlUserImpl.class,
         UserRepository.class,
@@ -94,6 +96,40 @@ public class ServiceControlUserTests {
         serviceControlUser.blockUser(RECORD_DELETE_USER.getLogin());
 
         Assertions.assertFalse(userRepository.findByLogin(RECORD_DELETE_USER.getLogin()).isAccountNonLocked());
+    }
+
+    @Test
+    @Rollback
+    public void blockUserTemporarily_success_fromDateNow() {
+        RECORD_USER.setPassword("password");
+        userRepository.save(RECORD_USER);
+
+        Assertions.assertDoesNotThrow(
+                () -> serviceControlUser.blockUserTemporarily(
+                        RECORD_USER.getLogin(), LocalDateTime.now(), LocalDateTime.now())
+        );
+    }
+
+    @Test
+    @Rollback
+    public void blockUserTemporarily_success_notFromDate() {
+        RECORD_USER.setPassword("password");
+        userRepository.save(RECORD_USER);
+
+        Assertions.assertDoesNotThrow(
+                () -> serviceControlUser.blockUserTemporarily(
+                        RECORD_USER.getLogin(), null, LocalDateTime.now())
+        );
+    }
+
+    @Test
+    @Rollback
+    public void blockUserTemporarily_fail_notFoundUser() {
+        Assertions.assertThrows(
+                UserNotFoundException.class,
+                () -> serviceControlUser.blockUserTemporarily(
+                        "not_found_user", null, LocalDateTime.now())
+        );
     }
 
     @Test

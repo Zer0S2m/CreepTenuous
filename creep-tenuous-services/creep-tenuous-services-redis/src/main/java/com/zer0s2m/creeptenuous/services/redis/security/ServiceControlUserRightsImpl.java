@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.StreamSupport;
 
 /**
  * Service for controlling user rights over file system objects, such as:
@@ -147,9 +150,49 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
                 .stream()
                 .peek(obj -> {
                     List<String> userLogins = obj.getUserLogins();
-                    userLogins.remove(userLogin);
-                    obj.setUserLogins(userLogins);
+                    if (userLogins != null) {
+                        userLogins.remove(userLogin);
+                        obj.setUserLogins(userLogins);
+                    }
                 })
+                .toList();
+    }
+
+    /**
+     * Migrate new user login from filesystem object when granting permission
+     * @param fileSystemObject file system objects
+     * @param newUserLogin new login of the user to whom the data is transferred
+     * @return clean set of objects with new assigned user
+     * @param <E> file object type
+     */
+    private <E extends BaseRedis> List<E> migrateUserLoginFileSystemObject(
+            @NotNull List<E> fileSystemObject, String newUserLogin) {
+        return fileSystemObject
+                .stream()
+                .peek(obj -> {
+                    List<String> userLogins = obj.getUserLogins();
+                    if (userLogins != null) {
+                        userLogins.add(newUserLogin);
+                        obj.setUserLogins(userLogins);
+                    } else {
+                        obj.setUserLogins(List.of(newUserLogin));
+                    }
+                })
+                .toList();
+    }
+
+    /**
+     * Move file objects from remote user to assigned user
+     * @param fileSystemObject file system objects
+     * @param newUserLogin new login of the user to whom the data is transferred
+     * @return clean set of objects with new assigned user
+     * @param <E> file object type
+     */
+    private <E extends BaseRedis> List<E> migrateFileObjectsSystem(
+            @NotNull List<E> fileSystemObject, String newUserLogin) {
+        return fileSystemObject
+                .stream()
+                .peek(obj -> obj.setLogin(newUserLogin))
                 .toList();
     }
 
@@ -164,27 +207,25 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
 
     /**
      * Set file system objects
+     *
      * @param userLogin user login
      */
     private void setFileSystemObjects(String userLogin) {
-        if (directoryRedisIterable == null) {
-            DirectoryRedis directoryRedisExample = new DirectoryRedis();
-            directoryRedisExample.setLogin(userLogin);
+        DirectoryRedis directoryRedisExample = new DirectoryRedis();
+        directoryRedisExample.setLogin(userLogin);
 
-            Iterable<DirectoryRedis> directoryRedisList = directoryRedisRepository
-                    .findAll(Example.of(directoryRedisExample));
+        Iterable<DirectoryRedis> directoryRedisList = directoryRedisRepository
+                .findAll(Example.of(directoryRedisExample));
 
-            setDirectoryRedisIterable(directoryRedisList);
-        }
-        if (fileRedisIterable == null) {
-            FileRedis fileRedisExample = new FileRedis();
-            fileRedisExample.setLogin(userLogin);
+        setDirectoryRedisIterable(directoryRedisList);
 
-            Iterable<FileRedis> fileRedisList = fileRedisRepository
-                    .findAll(Example.of(fileRedisExample));
+        FileRedis fileRedisExample = new FileRedis();
+        fileRedisExample.setLogin(userLogin);
 
-            setFileRedisIterable(fileRedisList);
-        }
+        Iterable<FileRedis> fileRedisList = fileRedisRepository
+                .findAll(Example.of(fileRedisExample));
+
+        setFileRedisIterable(fileRedisList);
     }
 
     /**
@@ -201,6 +242,105 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
      */
     private void setFileRedisIterable(Iterable<FileRedis> fileRedisIterable) {
         this.fileRedisIterable = fileRedisIterable;
+    }
+
+    /**
+     * Migrate assigned rights from a remote user to another
+     * @param ownerUserLogin owner user login
+     * @param transferUserLogin login of the user to whom the data will be transferred
+     */
+    @Override
+    public void migrateAssignedPermissionsForUser(String ownerUserLogin, String transferUserLogin) {
+        RightUserFileSystemObjectRedis rightUserFileSystemObjectRedisExample = new RightUserFileSystemObjectRedis();
+        rightUserFileSystemObjectRedisExample.setLogin(ownerUserLogin);
+
+        Iterable<RightUserFileSystemObjectRedis> rightUserFileSystemObjectRedis =
+                rightUserFileSystemObjectRedisRepository.findAll(Example.of(rightUserFileSystemObjectRedisExample));
+
+        List<RightUserFileSystemObjectRedis> rightUserFileSystemObjectRedisClean =
+                StreamSupport
+                        .stream(Spliterators.spliteratorUnknownSize(
+                                rightUserFileSystemObjectRedis.iterator(), Spliterator.ORDERED), false)
+                        .peek(obj -> {
+                            obj.setLogin(transferUserLogin);
+                            obj.setFileSystemObject(
+                                    obj.getFileSystemObject().split(ManagerRights.SEPARATOR_UNIQUE_KEY.get())[0] +
+                                            ManagerRights.SEPARATOR_UNIQUE_KEY.get() + transferUserLogin
+                            );
+                        })
+                        .toList();
+
+        List<String> namesFileSystemObject = getNamesFileSystemObjectFromRights(rightUserFileSystemObjectRedis);
+
+        List<DirectoryRedis> directoryRedisList = serviceRedisManagerResources.getResourceDirectoryRedis(
+                namesFileSystemObject);
+        List<FileRedis> fileRedisList = serviceRedisManagerResources.getResourceFileRedis(namesFileSystemObject);
+
+        List<DirectoryRedis> directoryRedisRaw = removeUserLoginFileSystemObject(directoryRedisList, ownerUserLogin);
+        List<FileRedis> fileRedisRaw = removeUserLoginFileSystemObject(fileRedisList, ownerUserLogin);
+        List<DirectoryRedis> directoryRedisClean = migrateUserLoginFileSystemObject(
+                directoryRedisRaw, transferUserLogin);
+        List<FileRedis> fileRedisClean = migrateUserLoginFileSystemObject(fileRedisRaw, transferUserLogin);
+
+        directoryRedisRepository.saveAll(directoryRedisClean);
+        fileRedisRepository.saveAll(fileRedisClean);
+        rightUserFileSystemObjectRedisRepository.saveAll(rightUserFileSystemObjectRedisClean);
+    }
+
+    /**
+     * Move file objects from remote user to assigned user
+     * @param ownerUserLogin owner user login
+     * @param transferUserLogin login of the user to whom the data will be transferred
+     */
+    @Override
+    public void migrateFileSystemObjects(String ownerUserLogin, String transferUserLogin) {
+        setFileSystemObjects(ownerUserLogin);
+
+        List<DirectoryRedis> directoryRedisList = StreamSupport
+                .stream(Spliterators.spliteratorUnknownSize(
+                        directoryRedisIterable.iterator(), Spliterator.ORDERED), false)
+                .toList();
+        List<FileRedis> fileRedisList = StreamSupport
+                .stream(Spliterators.spliteratorUnknownSize(
+                        fileRedisIterable.iterator(), Spliterator.ORDERED), false)
+                .toList();
+
+        List<DirectoryRedis> directoryRedisRaw = removeUserLoginFileSystemObject(directoryRedisList, transferUserLogin);
+        List<FileRedis> fileRedisRaw = removeUserLoginFileSystemObject(fileRedisList, transferUserLogin);
+        List<DirectoryRedis> directoryRedisClean = migrateFileObjectsSystem(directoryRedisRaw, transferUserLogin);
+        List<FileRedis> fileRedisClean = migrateFileObjectsSystem(fileRedisRaw, transferUserLogin);
+
+        directoryRedisRepository.saveAll(directoryRedisClean);
+        fileRedisRepository.saveAll(fileRedisClean);
+    }
+
+    /**
+     * Remove rights assigned to a migrated user
+     * @param ownerUserLogin owner user login
+     * @param transferUserLogin login of the user to whom the data will be transferred
+     */
+    @Override
+    public void deleteAssignedPermissionsForUser(String ownerUserLogin, String transferUserLogin) {
+        RightUserFileSystemObjectRedis rightUserFileSystemObjectRedisExample = new RightUserFileSystemObjectRedis();
+        rightUserFileSystemObjectRedisExample.setLogin(transferUserLogin);
+
+        List<RightUserFileSystemObjectRedis> rightUserFileSystemObjectRedis =
+                StreamSupport
+                        .stream(Spliterators.spliteratorUnknownSize(
+                                rightUserFileSystemObjectRedisRepository
+                                        .findAll(Example.of(rightUserFileSystemObjectRedisExample))
+                                        .iterator(), Spliterator.ORDERED), false)
+                        .toList();
+        List<String> namesFileSystemObjects = getNamesFileSystemObjectFromRights(rightUserFileSystemObjectRedis);
+
+        rightUserFileSystemObjectRedisRepository.deleteAll(
+                rightUserFileSystemObjectRedis
+                        .stream()
+                        .filter(obj -> namesFileSystemObjects
+                                .contains(obj
+                                        .getFileSystemObject()
+                                        .split(ManagerRights.SEPARATOR_UNIQUE_KEY.get())[0]))
+                        .toList());
     }
 
 }

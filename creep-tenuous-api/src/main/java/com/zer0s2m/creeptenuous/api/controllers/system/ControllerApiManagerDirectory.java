@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataBuilderDirectory;
 import com.zer0s2m.creeptenuous.common.data.DataManagerDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.exceptions.NotValidLevelDirectoryException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionBadLevelDirectoryMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseManagerDirectoryApi;
@@ -33,9 +34,10 @@ public class ControllerApiManagerDirectory implements ControllerApiManagerDirect
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiManagerDirectory(ServiceManagerDirectoryImpl builderDirectory,
-                                         ServiceManagerDirectoryRedis serviceManagerDirectoryRedis,
-                                         ServiceManagerRights serviceManagerRights) {
+    public ControllerApiManagerDirectory(
+            ServiceManagerDirectoryImpl builderDirectory,
+            ServiceManagerDirectoryRedis serviceManagerDirectoryRedis,
+            ServiceManagerRights serviceManagerRights) {
         this.builderDirectory = builderDirectory;
         this.serviceManagerDirectoryRedis = serviceManagerDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
@@ -48,13 +50,14 @@ public class ControllerApiManagerDirectory implements ControllerApiManagerDirect
      * @return result manager build info in directory
      * @throws IOException                     if an I/O error occurs or the parent directory does not exist
      * @throws NotValidLevelDirectoryException invalid level directory
+     * @throws FileObjectIsFrozenException     file object is frozen
      */
     @Override
     @PostMapping("/directory")
     @ResponseStatus(code = HttpStatus.OK)
     public ResponseManagerDirectoryApi manager(final @Valid @RequestBody @NotNull DataManagerDirectoryApi data,
                                                @RequestHeader(name = "Authorization") String accessToken)
-            throws IOException, NotValidLevelDirectoryException {
+            throws IOException, NotValidLevelDirectoryException, FileObjectIsFrozenException {
         serviceManagerDirectoryRedis.setAccessToken(accessToken);
         serviceManagerDirectoryRedis.setIsException(false);
 
@@ -64,6 +67,11 @@ public class ControllerApiManagerDirectory implements ControllerApiManagerDirect
         boolean isRights = serviceManagerDirectoryRedis.checkRights(data.systemParents());
         if (!isRights) {
             serviceManagerRights.checkRightsByOperation(operationRights, data.systemParents());
+
+            boolean isFrozen = serviceManagerDirectoryRedis.isFrozenFileSystemObject(data.systemParents());
+            if (isFrozen) {
+                throw new FileObjectIsFrozenException();
+            }
         }
 
         OptionalMutable<ContainerDataBuilderDirectory> rawDataOptional = new OptionalMutable<>();

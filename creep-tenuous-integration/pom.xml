@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.zer0s2m</groupId>
+    <artifactId>creep-tenuous</artifactId>
+    <version>0.0.9-SNAPSHOT</version>
+  </parent>
+  <artifactId>creep-tenuous-integration</artifactId>
+  <version>0.0.9-SNAPSHOT</version>
+  <name>creep-tenuous-integration</name>
+  <description>creep-tenuous-integration</description>
+  <properties>
+    <java.version>17</java.version>
+  </properties>
+  <packaging>pom</packaging>
+  <modules>
+    <module>creep-tenuous-integration-core</module>
+    <module>creep-tenuous-integration-implants</module>
+  </modules>
+  <dependencies>
+  </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.zer0s2m</groupId>
+        <artifactId>creep-tenuous-integration-implants</artifactId>
+        <version>0.0.9-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.zer0s2m</groupId>
+        <artifactId>creep-tenuous-integration-core</artifactId>
+        <version>0.0.9-SNAPSHOT</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
