@@ -56,7 +56,10 @@ public class User implements UserDetails {
     private boolean activity;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private UserSettings user;
+    private UserSettings userSettings;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserCategory> userCategories;
 
     public User(String login, String password, String email, String name) {
         this.password = password;
