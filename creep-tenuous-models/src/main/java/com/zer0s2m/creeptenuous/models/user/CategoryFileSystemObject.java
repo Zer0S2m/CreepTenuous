@@ -38,6 +38,10 @@ public class CategoryFileSystemObject {
         this.fileSystemObject = fileSystemObject;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public UUID getFileSystemObject() {
         return fileSystemObject;
     }

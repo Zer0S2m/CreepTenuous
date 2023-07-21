@@ -1,9 +1,12 @@
 package com.zer0s2m.creeptenuous.services.user;
 
+import com.zer0s2m.creeptenuous.common.containers.ContainerCategoryFileSystemObject;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUserCategory;
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
+import com.zer0s2m.creeptenuous.common.exceptions.NotFoundCategoryFileSystemObjectException;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundUserCategoryException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
+import com.zer0s2m.creeptenuous.models.user.CategoryFileSystemObject;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.models.user.UserCategory;
 import com.zer0s2m.creeptenuous.repository.user.CategoryFileSystemObjectRepository;
@@ -23,6 +26,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @SpringBootTest(classes = {
         ServiceCategoryUserImpl.class,
@@ -42,6 +46,9 @@ public class ServiceCategoryUserTests {
 
     @Autowired
     private UserCategoryRepository userCategoryRepository;
+
+    @Autowired
+    private CategoryFileSystemObjectRepository categoryFileSystemObjectRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -119,6 +126,104 @@ public class ServiceCategoryUserTests {
         Assertions.assertThrows(
                 NotFoundUserCategoryException.class,
                 () -> serviceCategoryUser.delete(12333L, "not_found_login_user")
+        );
+    }
+
+    @Test
+    @Rollback
+    public void setFileSystemObjectInCategory_success() {
+        User user = userRepository.save(RECORD_CREATE_USER);
+        UserCategory userCategory = userCategoryRepository.save(new UserCategory(
+                "Title", user));
+
+        Assertions.assertDoesNotThrow(
+                () -> serviceCategoryUser.setFileSystemObjectInCategory(
+                        userCategory.getId(), UUID.randomUUID().toString(), user.getLogin())
+        );
+    }
+
+    @Test
+    public void setFileSystemObjectInCategory_fail_notFoundUser() {
+        Assertions.assertThrows(
+                UserNotFoundException.class,
+                () -> serviceCategoryUser.setFileSystemObjectInCategory(
+                        1L, "systemName", "not_found_login_user")
+        );
+    }
+
+    @Test
+    public void setFileSystemObjectInCategory_fail_notFoundCategory() {
+        User user = userRepository.save(RECORD_CREATE_USER);
+        Assertions.assertThrows(
+                NotFoundUserCategoryException.class,
+                () -> serviceCategoryUser.setFileSystemObjectInCategory(
+                        123322L, "systemName", user.getLogin())
+        );
+    }
+
+    @Test
+    @Rollback
+    public void unsetFileSystemObjectInCategory_success() {
+        User user = userRepository.save(RECORD_CREATE_USER);
+        UserCategory userCategory = userCategoryRepository.save(new UserCategory(
+                "Title", user));
+        final UUID systemName = UUID.randomUUID();
+        CategoryFileSystemObject categoryFileSystemObject = categoryFileSystemObjectRepository.save(
+                new CategoryFileSystemObject(user, userCategory, systemName));
+
+        Assertions.assertDoesNotThrow(
+                () -> serviceCategoryUser.unsetFileSystemObjectInCategory(
+                        userCategory.getId(), categoryFileSystemObject.getFileSystemObject().toString(),
+                        user.getLogin())
+        );
+        Assertions.assertFalse(categoryFileSystemObjectRepository.existsById(categoryFileSystemObject.getId()));
+    }
+
+    @Test
+    public void unsetFileSystemObjectInCategory_fail_notFoundCategory() {
+        Assertions.assertThrows(
+                NotFoundUserCategoryException.class,
+                () -> serviceCategoryUser.unsetFileSystemObjectInCategory(
+                        123322L, "systemName", "login")
+        );
+    }
+
+    @Test
+    @Rollback
+    public void unsetFileSystemObjectInCategory_notFoundCategoryFileSystemObject() {
+        User user = userRepository.save(RECORD_CREATE_USER);
+        UserCategory userCategory = userCategoryRepository.save(new UserCategory(
+                "Title", user));
+
+        Assertions.assertThrows(
+                NotFoundCategoryFileSystemObjectException.class,
+                () -> serviceCategoryUser.unsetFileSystemObjectInCategory(
+                        userCategory.getId(), UUID.randomUUID().toString(), user.getLogin())
+        );
+    }
+
+    @Test
+    @Rollback
+    public void getFileSystemObjectInCategoryByCategoryId_success() {
+        User user = userRepository.save(RECORD_CREATE_USER);
+        UserCategory userCategory = userCategoryRepository.save(new UserCategory(
+                "Title", user));
+        categoryFileSystemObjectRepository.save(
+                new CategoryFileSystemObject(user, userCategory, UUID.randomUUID()));
+
+        List<ContainerCategoryFileSystemObject> data = Assertions.assertDoesNotThrow(
+                () -> serviceCategoryUser.getFileSystemObjectInCategoryByCategoryId(
+                        userCategory.getId(), user.getLogin())
+        );
+        Assertions.assertTrue(data.size() >= 1);
+    }
+
+    @Test
+    public void getFileSystemObjectInCategoryByCategoryId_fail_notFoundCategory() {
+        Assertions.assertThrows(
+                NotFoundUserCategoryException.class,
+                () -> serviceCategoryUser.getFileSystemObjectInCategoryByCategoryId(
+                        123L, "user_not_found")
         );
     }
 

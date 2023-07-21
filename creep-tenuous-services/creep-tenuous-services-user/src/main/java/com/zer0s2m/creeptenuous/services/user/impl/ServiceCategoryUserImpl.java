@@ -130,14 +130,15 @@ public class ServiceCategoryUserImpl implements ServiceCategoryUser {
     public void setFileSystemObjectInCategory(
             final Long categoryId, final String fileSystemObject, final String userLogin)
             throws NotFoundException {
+        User user = userRepository.findByLogin(userLogin);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+
         Optional<UserCategory> userCategoryOptional = userCategoryRepository.findByIdAndUser_Login(
                 categoryId, userLogin);
         if (userCategoryOptional.isEmpty()) {
             throw new NotFoundUserCategoryException();
-        }
-        User user = userRepository.findByLogin(userLogin);
-        if (user == null) {
-            throw new UserNotFoundException();
         }
 
         CategoryFileSystemObject categoryFileSystemObject = new CategoryFileSystemObject(
