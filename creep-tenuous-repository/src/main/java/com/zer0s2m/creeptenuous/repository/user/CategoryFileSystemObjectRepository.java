@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.models.user.CategoryFileSystemObject;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,5 +30,11 @@ public interface CategoryFileSystemObjectRepository
      */
     Iterable<CategoryFileSystemObject> findAllByUserCategoryIdAndUserLogin(
             Long userCategory_id, String user_login);
+
+    /**
+     * Removes all instances with the given file object system names.
+     * @param fileSystemObject must not be {@literal null}. Must not contain {@literal null} elements.
+     */
+    void deleteAllByFileSystemObjectIn(Collection<UUID> fileSystemObject);
 
 }
