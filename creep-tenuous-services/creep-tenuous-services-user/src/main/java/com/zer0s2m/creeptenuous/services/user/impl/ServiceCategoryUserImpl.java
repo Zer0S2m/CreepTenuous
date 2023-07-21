@@ -89,7 +89,7 @@ public class ServiceCategoryUserImpl implements ServiceCategoryUser {
      */
     @Override
     public void delete(final Long id, final String userLogin) throws NotFoundException {
-        if (userCategoryRepository.existsByIdAndUserLogin(id, userLogin)) {
+        if (!userCategoryRepository.existsByIdAndUserLogin(id, userLogin)) {
             throw new NotFoundUserCategoryException();
         }
         userCategoryRepository.deleteById(id);
