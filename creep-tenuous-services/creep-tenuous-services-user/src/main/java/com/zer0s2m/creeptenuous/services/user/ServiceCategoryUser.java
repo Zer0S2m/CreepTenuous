@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.services.user;
 
+import com.zer0s2m.creeptenuous.common.containers.ContainerCategoryFileSystemObject;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUserCategory;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
@@ -38,10 +39,40 @@ public interface ServiceCategoryUser {
 
     /**
      * Delete comment file system object
-     * @param id id comment. Must not be {@literal null}.
+     * @param id id category. Must not be {@literal null}.
      * @param userLogin user login. Must not be {@literal null}.
      * @throws NotFoundException not found user category
      */
     void delete(final Long id, final String userLogin) throws NotFoundException;
+
+    /**
+     * Bind a file object to a custom category
+     * @param categoryId id category. Must not be {@literal null}.
+     * @param fileSystemObject file object name
+     * @param userLogin user login. Must not be {@literal null}.
+     * @throws NotFoundException not found category or user
+     */
+    void setFileSystemObjectInCategory(
+            final Long categoryId, final String fileSystemObject, final String userLogin) throws NotFoundException;
+
+    /**
+     * Link a file object to a custom category
+     * @param categoryId id category. Must not be {@literal null}.
+     * @param fileSystemObject file object name
+     * @param userLogin user login. Must not be {@literal null}.
+     * @throws NotFoundException not found category or linked file category objects to user category
+     */
+    void unsetFileSystemObjectInCategory(
+            final Long categoryId, final String fileSystemObject, final String userLogin) throws NotFoundException;
+
+    /**
+     * Get all objects of the file category associated with the user category by ID
+     * @param categoryId id category. Must not be {@literal null}.
+     * @param userLogin user login. Must not be {@literal null}.
+     * @return linked file category objects to user category
+     * @throws NotFoundException not found category
+     */
+    List<ContainerCategoryFileSystemObject> getFileSystemObjectInCategoryByCategoryId(
+            final Long categoryId, final String userLogin) throws NotFoundException;
 
 }

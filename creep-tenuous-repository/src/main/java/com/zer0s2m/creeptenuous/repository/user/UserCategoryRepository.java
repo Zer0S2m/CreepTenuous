@@ -11,7 +11,7 @@ public interface UserCategoryRepository extends CrudRepository<UserCategory, Lon
 
     /**
      * Returns whether an entity exists with the given id and username.
-     * @param id id comment. Must not be {@literal null}.
+     * @param id id category. Must not be {@literal null}.
      * @param user_login user login. Must not be {@literal null}.
      * @return is exists
      */

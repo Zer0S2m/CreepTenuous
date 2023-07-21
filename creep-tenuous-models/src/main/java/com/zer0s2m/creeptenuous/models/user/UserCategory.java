@@ -2,6 +2,8 @@ package com.zer0s2m.creeptenuous.models.user;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "\"user_categories\"")
 public class UserCategory {
@@ -18,6 +20,9 @@ public class UserCategory {
     @ManyToOne()
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
+
+    @OneToMany(mappedBy = "userCategory", cascade = CascadeType.ALL)
+    private List<CategoryFileSystemObject> categoryFileSystemObjects;
 
     public UserCategory(String title, User user) {
         this.title = title;

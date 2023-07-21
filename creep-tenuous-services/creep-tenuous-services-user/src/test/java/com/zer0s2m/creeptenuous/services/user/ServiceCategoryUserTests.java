@@ -6,6 +6,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.NotFoundUserCategoryException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.models.user.UserCategory;
+import com.zer0s2m.creeptenuous.repository.user.CategoryFileSystemObjectRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserCategoryRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.services.user.impl.ServiceCategoryUserImpl;
@@ -26,7 +27,8 @@ import java.util.List;
 @SpringBootTest(classes = {
         ServiceCategoryUserImpl.class,
         UserRepository.class,
-        UserCategoryRepository.class
+        UserCategoryRepository.class,
+        CategoryFileSystemObjectRepository.class
 })
 @Transactional
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)

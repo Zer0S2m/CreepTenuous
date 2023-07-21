@@ -1,6 +1,8 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
+import com.zer0s2m.creeptenuous.common.containers.ContainerCategoryFileSystemObject;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUserCategory;
+import com.zer0s2m.creeptenuous.common.data.DataControlFileSystemObjectInCategoryApi;
 import com.zer0s2m.creeptenuous.common.data.DataCreateUserCategoryApi;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteUserCategoryApi;
 import com.zer0s2m.creeptenuous.common.data.DataEditUserCategoryApi;
@@ -127,7 +129,7 @@ public interface ControllerApiCategoryUserDoc {
                             content = @Content(
                                     mediaType = "application/json",
                                     examples = {
-                                            @ExampleObject(name = "Not found comment", value ="{" +
+                                            @ExampleObject(name = "Not found category", value ="{" +
                                                     "\"message\": \"Not found category\"," +
                                                     "\"statusCode\": 404" +
                                                     "}"
@@ -172,7 +174,7 @@ public interface ControllerApiCategoryUserDoc {
                             content = @Content(
                                     mediaType = "application/json",
                                     examples = {
-                                            @ExampleObject(name = "Not found comment", value ="{" +
+                                            @ExampleObject(name = "Not found category", value ="{" +
                                                     "\"message\": \"Not found category\"," +
                                                     "\"statusCode\": 404" +
                                                     "}"
@@ -182,6 +184,162 @@ public interface ControllerApiCategoryUserDoc {
             }
     )
     void delete(final DataDeleteUserCategoryApi data, @Parameter(hidden = true) String accessToken)
+            throws NotFoundException;
+
+    /**
+     * Bind a file object to a custom category
+     * @param data binding data
+     * @param accessToken raw access JWT token
+     * @throws NotFoundException not found category or file system object
+     */
+    @Operation(
+            method = "POST",
+            summary = "Set category",
+            description = "Bind a file object to a custom category",
+            tags = { "Category" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Data to set",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = DataControlFileSystemObjectInCategoryApi.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Successful category set",
+                            content = @Content
+                    ),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+                    @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden"),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found category", value ="{" +
+                                                    "\"message\": \"Not found category\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            ),
+                                            @ExampleObject(name = "Not found system object", value ="{" +
+                                                    "\"message\": \"Not found file system object\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            ),
+                                            @ExampleObject(name = "Not found user", value = "{" +
+                                                    "\"message\": \"User is not found.\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            ),
+                                    })
+                    )
+            }
+    )
+    void setFileSystemObjectInCategory(
+            final DataControlFileSystemObjectInCategoryApi data,
+            @Parameter(hidden = true) String accessToken) throws NotFoundException;
+
+    /**
+     * Link a file object to a custom category
+     * @param data data to unbind
+     * @param accessToken raw access JWT token
+     * @throws NotFoundException not found category or file system object
+     */
+    @Operation(
+            method = "DELETE",
+            summary = "Unset category",
+            description = "Link a file object to a custom category",
+            tags = { "Category" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Data to unset",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = DataControlFileSystemObjectInCategoryApi.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Successful category unset",
+                            content = @Content
+                    ),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+                    @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden"),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found category", value ="{" +
+                                                    "\"message\": \"Not found category\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            ),
+                                            @ExampleObject(name = "Not found system object", value ="{" +
+                                                    "\"message\": \"Not found file system object\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            )
+                                    })
+                    )
+            }
+    )
+    void unsetFileSystemObjectInCategory(
+            final DataControlFileSystemObjectInCategoryApi data,
+            @Parameter(hidden = true) String accessToken) throws NotFoundException;
+
+    /**
+     * Get all objects of the file category associated with the user category by ID
+     * @param categoryId ID custom category
+     * @param accessToken raw access JWT token
+     * @return linked file category objects to user category
+     * @throws NotFoundException not found category
+     */
+    @Operation(
+            method = "GET",
+            summary = "File objects associated with a category",
+            description = "Get all objects of the file category associated with the user category by ID",
+            tags = { "Category" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful getting",
+                            content = @Content(
+                                    examples = {
+                                            @ExampleObject(value = "[" +
+                                                    "{" +
+                                                    "\"categoryId\": 2," +
+                                                    "\"fileSystemObject\": \"78b1bbdb-14a9-4ccc-82b4-4984314b064d\"" +
+                                                    "}" +
+                                                    "]")
+                                    }
+                            )
+                    ),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+                    @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden"),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found category", value ="{" +
+                                                    "\"message\": \"Not found category\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            )
+                                    })
+                    )
+            }
+    )
+    List<ContainerCategoryFileSystemObject> getFileSystemObjectInCategoryByCategoryId(
+            final Long categoryId, @Parameter(hidden = true) String accessToken)
             throws NotFoundException;
 
 }
