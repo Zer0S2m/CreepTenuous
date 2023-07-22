@@ -2,10 +2,7 @@ package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataControlFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataCreateUserColorDirectoryApi;
-import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
-import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
-import com.zer0s2m.creeptenuous.common.exceptions.NotFoundUserColorDirectoryException;
-import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
+import com.zer0s2m.creeptenuous.common.exceptions.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,7 +18,8 @@ public interface ControllerApiCustomizationUserDoc {
      * @param data data to create
      * @param accessToken raw access JWT token
      * @throws UserNotFoundException user not found
-     * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database.
+     * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database
+     * @throws FileObjectIsNotDirectoryTypeException file object is not a directory type
      */
     @Operation(
             method = "PUT",
@@ -66,7 +64,8 @@ public interface ControllerApiCustomizationUserDoc {
     )
     void setColorInDirectory(
             final DataCreateUserColorDirectoryApi data,
-            @Parameter(hidden = true) String accessToken) throws NotFoundException;
+            @Parameter(hidden = true) String accessToken)
+            throws NotFoundException, FileObjectIsNotDirectoryTypeException;
 
     /**
      * Remove color from custom directory
@@ -74,6 +73,7 @@ public interface ControllerApiCustomizationUserDoc {
      * @param accessToken raw access JWT token
      * @throws NotFoundUserColorDirectoryException color scheme not found for user directory
      * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database
+     * @throws FileObjectIsNotDirectoryTypeException file object is not a directory type
      */
     @Operation(
             method = "DELETE",
@@ -111,6 +111,6 @@ public interface ControllerApiCustomizationUserDoc {
     )
     void deleteColorInDirectory(
             final DataControlFileSystemObjectApi data, @Parameter(hidden = true) String accessToken)
-            throws NotFoundException;
+            throws NotFoundException, FileObjectIsNotDirectoryTypeException;
 
 }

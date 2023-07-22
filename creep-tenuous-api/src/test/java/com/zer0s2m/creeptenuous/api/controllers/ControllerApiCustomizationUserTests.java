@@ -7,7 +7,9 @@ import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.models.user.UserColorDirectory;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserColorDirectoryRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
@@ -46,6 +48,9 @@ public class ControllerApiCustomizationUserTests {
 
     @Autowired
     private DirectoryRedisRepository directoryRedisRepository;
+
+    @Autowired
+    private FileRedisRepository fileRedisRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -137,6 +142,33 @@ public class ControllerApiCustomizationUserTests {
     }
 
     @Test
+    public void setColorInDirectory_fail_fileObjectIsNotDirectoryType() throws Exception {
+        userRepository.save(RECORD_CREATE_USER);
+
+        final UUID systemName = UUID.randomUUID();
+
+        fileRedisRepository.save(new FileRedis(
+                RECORD_CREATE_USER.getLogin(),
+                "ROLE_USER",
+                systemName.toString(),
+                systemName.toString(),
+                systemName.toString(),
+                new ArrayList<>()
+        ));
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/user/customization/directory/color")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataCreateUserColorDirectoryApi(
+                                systemName.toString(), "color"
+                        )))
+                        .header("Authorization", accessToken)
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void deleteColorInDirectory_success() throws Exception {
         User user = userRepository.save(RECORD_CREATE_USER);
         final UUID systemName = UUID.randomUUID();
@@ -162,6 +194,10 @@ public class ControllerApiCustomizationUserTests {
                         .header("Authorization", accessToken)
                 )
                 .andExpect(status().isNoContent());
+
+        Assertions.assertTrue(userColorDirectoryRepository.findByUserLoginAndDirectory(
+                RECORD_CREATE_USER.getLogin(), systemName
+        ).isEmpty());
     }
 
     @Test
@@ -176,6 +212,38 @@ public class ControllerApiCustomizationUserTests {
                         .header("Authorization", accessToken)
                 )
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void deleteColorInDirectory_fail_fileObjectIsNotDirectoryType() throws Exception {
+        User user = userRepository.save(RECORD_CREATE_USER);
+        final UUID systemName = UUID.randomUUID();
+
+        userColorDirectoryRepository.save(new UserColorDirectory(
+                user, "color", systemName));
+        fileRedisRepository.save(new FileRedis(
+                RECORD_CREATE_USER.getLogin(),
+                "ROLE_USER",
+                systemName.toString(),
+                systemName.toString(),
+                systemName.toString(),
+                new ArrayList<>()
+        ));
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.delete("/api/v1/user/customization/directory/color")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataControlFileSystemObjectApi(
+                                systemName.toString()
+                        )))
+                        .header("Authorization", accessToken)
+                )
+                .andExpect(status().isBadRequest());
+
+        Assertions.assertTrue(userColorDirectoryRepository.findByUserLoginAndDirectory(
+                user.getLogin(), systemName
+        ).isPresent());
     }
 
 }
