@@ -17,7 +17,8 @@ public record ResponseManagerDirectoryApi(
                         "\"realName\": \"string\"," +
                         "\"systemName\": \"string\"," +
                         "\"isFile\": false," +
-                        "\"isDirectory\": true" +
+                        "\"isDirectory\": true," +
+                        "\"color\": \"#fff\"" +
                         "}"
         )
         List<Object> objects

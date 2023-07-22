@@ -164,4 +164,14 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
         return getResources(fileRedisRepository.findAll(Example.of(fileRedisExample)));
     }
 
+    /**
+     * Check if a file object is a directory type
+     * @param id id must not be {@literal null}.
+     * @return verified
+     */
+    @Override
+    public boolean checkFileObjectDirectoryType(final String id) {
+        return directoryRedisRepository.existsById(id);
+    }
+
 }

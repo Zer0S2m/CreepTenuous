@@ -6,6 +6,7 @@ import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
+import com.zer0s2m.creeptenuous.repository.user.UserColorDirectoryRepository;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.starter.test.mock.User;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceManagerDirectoryRedisImpl;
@@ -24,6 +25,7 @@ import java.util.List;
         DirectoryRedisRepository.class,
         FileRedisRepository.class,
         FrozenFileSystemObjectRedisRepository.class,
+        UserColorDirectoryRepository.class,
         JwtProvider.class,
         ServiceManagerDirectoryRedisImpl.class
 })
@@ -83,4 +85,5 @@ public class ServiceManagerDirectoryRedisTests {
         List<Object> dataBuild = serviceManagerDirectoryRedis.build(new ArrayList<>());
         Assertions.assertEquals(0, dataBuild.size());
     }
+
 }

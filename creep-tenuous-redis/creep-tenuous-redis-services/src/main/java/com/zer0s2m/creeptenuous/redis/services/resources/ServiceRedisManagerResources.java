@@ -121,4 +121,11 @@ public interface ServiceRedisManagerResources {
      */
     List<FileRedis> getResourceFileRedisByLoginUser(String userLogin);
 
+    /**
+     * Check if a file object is a directory type
+     * @param id id must not be {@literal null}.
+     * @return verified
+     */
+    boolean checkFileObjectDirectoryType(final String id);
+
 }
