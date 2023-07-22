@@ -37,8 +37,16 @@ public class UserColorDirectory {
         this.directory = directory;
     }
 
+    public String getColor() {
+        return color;
+    }
+
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public UUID getDirectory() {
+        return directory;
     }
 
 }

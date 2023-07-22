@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.models.user.UserColorDirectory;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,5 +18,12 @@ public interface UserColorDirectoryRepository extends CrudRepository<UserColorDi
      * @return object
      */
     Optional<UserColorDirectory> findByUserLoginAndDirectory(String user_login, UUID directory);
+
+    /**
+     * Retrieves objects by secondary field - file system object type
+     * @param directory names directories. Must not be {@literal null}.
+     * @return objects
+     */
+    Iterable<UserColorDirectory> findAllByDirectoryIn(Collection<UUID> directory);
 
 }
