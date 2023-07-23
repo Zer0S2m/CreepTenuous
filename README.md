@@ -1,5 +1,9 @@
 # CreepTenuous
 
+<p align="center">
+<img src="./doc/logo.svg" alt="Logo project" width="300" height="300">
+</p>
+
 ## Modules
 1) Client - [CreepTenuousClient](https://github.com/Zer0S2m/CreepTenuousClient)
 2) Tentacles - [CreepTenuousTentacle](https://github.com/Zer0S2m/CreepTenuousTentacle)
