@@ -55,8 +55,14 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
     public List<ResponseUserApi> getAllUsers() {
         return serviceControlUser.getAllUsers()
                 .stream()
-                .map(user -> new ResponseUserApi(user.getLogin(), user.getEmail(),
-                        user.getName(), Set.of(user.getRole())))
+                .map(user -> new ResponseUserApi(
+                        user.getLogin(),
+                        user.getEmail(),
+                        user.getName(),
+                        Set.of(user.getRole()),
+                        null,
+                        null
+                ))
                 .collect(Collectors.toList());
     }
 

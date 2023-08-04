@@ -7,6 +7,7 @@ import com.zer0s2m.creeptenuous.common.data.DataTransferredUserApi;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.http.ResponseUserApi;
 import com.zer0s2m.creeptenuous.models.user.User;
+import com.zer0s2m.creeptenuous.models.user.UserSettings;
 import com.zer0s2m.creeptenuous.security.jwt.domain.JwtAuthentication;
 import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotFoundMsg;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
@@ -44,9 +45,19 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
     public ResponseUserApi profile(@RequestHeader(name = "Authorization") String accessToken) {
         Claims claimsAccess = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
         JwtAuthentication userInfo = JwtUtils.generate(claimsAccess);
+
         User currentUser = serviceProfileUser.getUserByLogin(userInfo.getLogin());
-        return new ResponseUserApi(currentUser.getLogin() ,currentUser.getEmail(),
-                currentUser.getName(), Set.of(currentUser.getRole()));
+        UserSettings userSettings = currentUser.getUserSettings();
+        User transferredUser = userSettings != null ? userSettings.getTransferredUser() : null;
+
+        return new ResponseUserApi(
+                currentUser.getLogin(),
+                currentUser.getEmail(),
+                currentUser.getName(),
+                Set.of(currentUser.getRole()),
+                userSettings != null ? userSettings.getIsDeletingFileObjects() : false,
+                transferredUser != null ? transferredUser.getLogin() : null
+        );
     }
 
     /**

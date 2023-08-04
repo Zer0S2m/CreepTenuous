@@ -168,4 +168,8 @@ public class User implements UserDetails {
         return true;
     }
 
+    public UserSettings getUserSettings() {
+        return userSettings;
+    }
+
 }
