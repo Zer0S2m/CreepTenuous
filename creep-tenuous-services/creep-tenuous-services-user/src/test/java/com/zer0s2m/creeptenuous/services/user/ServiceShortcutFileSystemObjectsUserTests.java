@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.services.user;
 
+import com.zer0s2m.creeptenuous.common.data.DataControlFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.models.common.ShortcutFileSystemObject;
@@ -19,6 +20,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @SpringBootTest(classes = {
@@ -91,6 +93,20 @@ public class ServiceShortcutFileSystemObjectsUserTests {
                 UserNotFoundException.class,
                 () -> serviceShortcutFileSystemObjectsUser.delete(
                         "user_not_found_in_db", systemName1, systemName2));
+    }
+
+    @Test
+    public void show_success() {
+        User user = userRepository.save(RECORD_CREATE_USER);
+        shortcutFileSystemObjectRepository.save(
+                new ShortcutFileSystemObject(
+                        user, systemName1, systemName2));
+
+        List<DataControlFileSystemObjectApi> objects = Assertions.assertDoesNotThrow(
+                () -> serviceShortcutFileSystemObjectsUser.show(
+                        user.getLogin(), systemName2)
+        );
+        Assertions.assertTrue(objects.size() >= 1);
     }
 
 }

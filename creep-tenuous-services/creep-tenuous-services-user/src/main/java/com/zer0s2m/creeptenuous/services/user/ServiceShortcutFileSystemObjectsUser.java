@@ -1,7 +1,9 @@
 package com.zer0s2m.creeptenuous.services.user;
 
+import com.zer0s2m.creeptenuous.common.data.DataControlFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -27,6 +29,16 @@ public interface ServiceShortcutFileSystemObjectsUser {
      * @throws UserNotFoundException user not exists
      */
     void delete(String userLogin, UUID attachedFileSystemObject, UUID toAttachedFileSystemObject)
+            throws UserNotFoundException;
+
+    /**
+     * Show all shortcut to a file object
+     * @param userLogin user login
+     * @param toAttachedFileSystemObject file object to be attached to
+     * @return file system objects
+     * @throws UserNotFoundException user not exists
+     */
+    List<DataControlFileSystemObjectApi> show(String userLogin, UUID toAttachedFileSystemObject)
             throws UserNotFoundException;
 
 }

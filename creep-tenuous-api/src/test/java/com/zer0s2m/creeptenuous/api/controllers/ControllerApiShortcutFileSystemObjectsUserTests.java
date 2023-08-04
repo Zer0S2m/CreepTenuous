@@ -175,4 +175,39 @@ public class ControllerApiShortcutFileSystemObjectsUserTests {
         Assertions.assertFalse(shortcutFileSystemObjectRepository.existsById(object.getId()));
     }
 
+    @Test
+    public void show_success() throws Exception {
+        userRepository.save(RECORD_CREATE_USER);
+
+        directoryRedisRepository.save(new DirectoryRedis(
+                UtilsAuthAction.LOGIN,
+                UtilsAuthAction.ROLE_USER,
+                systemName1.toString(),
+                systemName1.toString(),
+                systemName1.toString(),
+                new ArrayList<>()
+        ));
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.get("/api/v1/common/shortcut/file-system-object")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .queryParam("file", systemName1.toString())
+                        .header("Authorization", accessToken)
+                )
+                .andExpect(status().isOk());
+
+        directoryRedisRepository.deleteById(systemName1.toString());
+    }
+
+    @Test
+    public void show_fail_doesNotExistsFIleSystemObject() throws Exception {
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.get("/api/v1/common/shortcut/file-system-object")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .queryParam("file", UUID.randomUUID().toString())
+                        .header("Authorization", accessToken)
+                )
+                .andExpect(status().isNotFound());
+    }
+
 }

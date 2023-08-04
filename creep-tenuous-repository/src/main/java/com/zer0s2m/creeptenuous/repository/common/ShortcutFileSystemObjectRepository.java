@@ -18,4 +18,13 @@ public interface ShortcutFileSystemObjectRepository extends CrudRepository<Short
     void deleteByAttachedFileSystemObjectAndToAttachedFileSystemObjectAndUserLogin(
             UUID attachedFileSystemObject, UUID toAttachedFileSystemObject, String user_login);
 
+    /**
+     * Returns all instances of type T with the given toAttachedFileSystemObject and username.
+     * @param toAttachedFileSystemObject file object to be attached to
+     * @param user_login user login
+     * @return entities
+     */
+    Iterable<ShortcutFileSystemObject> getAllByToAttachedFileSystemObjectAndUserLogin(
+            UUID toAttachedFileSystemObject, String user_login);
+
 }

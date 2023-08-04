@@ -44,4 +44,8 @@ public class ShortcutFileSystemObject {
         return id;
     }
 
+    public UUID getAttachedFileSystemObject() {
+        return attachedFileSystemObject;
+    }
+
 }

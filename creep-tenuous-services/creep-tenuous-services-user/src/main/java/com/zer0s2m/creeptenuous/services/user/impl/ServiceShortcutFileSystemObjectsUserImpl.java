@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.services.user.impl;
 
+import com.zer0s2m.creeptenuous.common.data.DataControlFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.models.common.ShortcutFileSystemObject;
 import com.zer0s2m.creeptenuous.models.user.User;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -63,6 +66,25 @@ public class ServiceShortcutFileSystemObjectsUserImpl implements ServiceShortcut
                         attachedFileSystemObject,
                         toAttachedFileSystemObject,
                         getUserByLogin(userLogin).getLogin());
+    }
+
+    /**
+     * Show all shortcut to a file object
+     * @param userLogin user login
+     * @param toAttachedFileSystemObject file object to be attached to
+     * @return file system objects
+     * @throws UserNotFoundException user not exists
+     */
+    @Override
+    public List<DataControlFileSystemObjectApi> show(String userLogin, UUID toAttachedFileSystemObject)
+            throws UserNotFoundException {
+        List<DataControlFileSystemObjectApi> dataControlFileSystemObjectApis = new ArrayList<>();
+        shortcutFileSystemObjectRepository.getAllByToAttachedFileSystemObjectAndUserLogin(
+                toAttachedFileSystemObject, getUserByLogin(userLogin).getLogin()
+        ).forEach(obj -> dataControlFileSystemObjectApis.add(new DataControlFileSystemObjectApi(
+                obj.getAttachedFileSystemObject().toString()
+        )));
+        return dataControlFileSystemObjectApis;
     }
 
     /**
