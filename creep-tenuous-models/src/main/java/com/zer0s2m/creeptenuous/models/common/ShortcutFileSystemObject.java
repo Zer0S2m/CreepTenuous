@@ -40,4 +40,8 @@ public class ShortcutFileSystemObject {
         this.toAttachedFileSystemObject = toAttachedFileSystemObject;
     }
 
+    public Long getId() {
+        return id;
+    }
+
 }
