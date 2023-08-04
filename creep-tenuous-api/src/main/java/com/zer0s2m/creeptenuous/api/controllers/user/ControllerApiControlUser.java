@@ -11,7 +11,6 @@ import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionBlockingSelf
 import com.zer0s2m.creeptenuous.common.http.ResponseUserApi;
 import com.zer0s2m.creeptenuous.events.UserEventPublisher;
 import com.zer0s2m.creeptenuous.security.jwt.domain.JwtAuthentication;
-import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotFoundMsg;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
 import com.zer0s2m.creeptenuous.services.user.ServiceControlUser;
@@ -130,12 +129,6 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
     @RolesAllowed("ROLE_ADMIN")
     public void unblockUser(final @Valid @RequestBody @NotNull DataBlockUserApi data) throws UserNotFoundException {
         serviceControlUser.unblockUser(data.login());
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public UserNotFoundMsg handleExceptionNotIsExistsUser(@NotNull UserNotFoundException error) {
-        return new UserNotFoundMsg(error.getMessage());
     }
 
     @ExceptionHandler(BlockingSelfUserException.class)
