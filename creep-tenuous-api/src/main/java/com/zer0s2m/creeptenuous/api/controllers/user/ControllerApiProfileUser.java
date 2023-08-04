@@ -9,7 +9,6 @@ import com.zer0s2m.creeptenuous.common.http.ResponseUserApi;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.models.user.UserSettings;
 import com.zer0s2m.creeptenuous.security.jwt.domain.JwtAuthentication;
-import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotFoundMsg;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
 import com.zer0s2m.creeptenuous.services.user.ServiceProfileUser;
@@ -94,12 +93,6 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
         JwtAuthentication userInfo = JwtUtils.generate(claimsAccess);
 
         serviceProfileUser.setTransferredUserSettings(userInfo.getLogin(), data.userId());
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public UserNotFoundMsg handleExceptionNotIsExistsUser(@NotNull UserNotFoundException error) {
-        return new UserNotFoundMsg(error.getMessage());
     }
 
 }

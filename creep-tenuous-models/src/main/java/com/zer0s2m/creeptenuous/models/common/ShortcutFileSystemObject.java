@@ -29,4 +29,15 @@ public class ShortcutFileSystemObject {
     @Column(name = "to_attached_file_system_object")
     private UUID toAttachedFileSystemObject;
 
+    public ShortcutFileSystemObject() {}
+
+    public ShortcutFileSystemObject(
+            User user,
+            UUID attachedFileSystemObject,
+            UUID toAttachedFileSystemObject) {
+        this.user = user;
+        this.attachedFileSystemObject = attachedFileSystemObject;
+        this.toAttachedFileSystemObject = toAttachedFileSystemObject;
+    }
+
 }
