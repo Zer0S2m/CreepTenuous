@@ -33,14 +33,16 @@ public interface ServiceCustomizationUser {
      * Create custom color
      * @param userLogin user login. Must not be {@literal null}
      * @param color color is specified in <b>HEX</b> format
+     * @throws UserNotFoundException not found user
      */
-    void createColor(final String userLogin, String color);
+    void createColor(final String userLogin, String color) throws NotFoundException;
 
     /**
      * Edit custom color
      * @param userLogin user login. Must not be {@literal null}
      * @param id id entity. Must not be {@literal null}
      * @param newColor new color is specified in <b>HEX</b> format
+     * @throws NotFoundUserColorException not found user color
      */
     void editColor(final String userLogin, final Long id, String newColor) throws NotFoundException;
 
@@ -48,6 +50,7 @@ public interface ServiceCustomizationUser {
      * Delete custom color
      * @param userLogin user login. Must not be {@literal null}
      * @param id id entity. Must not be {@literal null}
+     * @throws NotFoundUserColorException not found user color
      */
     void deleteColor(final String userLogin, final Long id) throws NotFoundException;
 

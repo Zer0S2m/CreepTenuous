@@ -56,6 +56,11 @@ public interface ControllerApiCustomizationUserDoc {
                                                     "\"message\": \"Not found file system object\"," +
                                                     "\"statusCode\": 404" +
                                                     "}"
+                                            ),
+                                            @ExampleObject(name = "Not found user color", value ="{" +
+                                                    "\"message\": \"Color scheme not found for user\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
                                             )
                                     })
                     )
@@ -112,6 +117,12 @@ public interface ControllerApiCustomizationUserDoc {
             final DataControlFileSystemObjectApi data, @Parameter(hidden = true) String accessToken)
             throws NotFoundException, FileObjectIsNotDirectoryTypeException;
 
+    /**
+     * Create custom color
+     * @param data data to created
+     * @param accessToken raw access JWT token
+     * @throws UserNotFoundException not found user
+     */
     @Operation(
             method = "POST",
             summary = "Create custom color",
@@ -149,8 +160,15 @@ public interface ControllerApiCustomizationUserDoc {
             }
     )
     void createCustomColor(
-            final DataCreateCustomColorApi data, @Parameter(hidden = true) String accessToken);
+            final DataCreateCustomColorApi data, @Parameter(hidden = true) String accessToken)
+            throws NotFoundException;
 
+    /**
+     * Edit custom color
+     * @param data data to editing
+     * @param accessToken raw access JWT token
+     * @throws NotFoundUserColorException not found user color
+     */
     @Operation(
             method = "PUT",
             summary = "Edit custom color",
@@ -188,8 +206,15 @@ public interface ControllerApiCustomizationUserDoc {
             }
     )
     void editCustomColor(
-            final DataEditCustomColorApi data, @Parameter(hidden = true) String accessToken);
+            final DataEditCustomColorApi data, @Parameter(hidden = true) String accessToken)
+            throws NotFoundException;
 
+    /**
+     * Delete custom color
+     * @param data data to deleting
+     * @param accessToken raw access JWT token
+     * @throws NotFoundUserColorException not found user color
+     */
     @Operation(
             method = "DELETE",
             summary = "Delete custom color",
@@ -220,6 +245,7 @@ public interface ControllerApiCustomizationUserDoc {
             }
     )
     void deleteCustomColor(
-            final DataControlAnyObjectApi data, @Parameter(hidden = true) String accessToken);
+            final DataControlAnyObjectApi data, @Parameter(hidden = true) String accessToken)
+            throws NotFoundException;
 
 }

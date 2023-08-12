@@ -82,31 +82,55 @@ public class ControllerApiCustomizationUser implements ControllerApiCustomizatio
                 data.fileSystemObject(), claims.get("login", String.class));
     }
 
+    /**
+     * Create custom color
+     * @param data data to created
+     * @param accessToken raw access JWT token
+     * @throws UserNotFoundException not found user
+     */
     @Override
     @PostMapping("/user/customization/color")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void createCustomColor(
             final @Valid @RequestBody @NotNull DataCreateCustomColorApi data,
-            @RequestHeader(name = "Authorization") String accessToken) {
-
+            @RequestHeader(name = "Authorization") String accessToken) throws NotFoundException {
+        final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
+        serviceCustomizationUser.createColor(claims.get("login", String.class), data.color());
     }
 
+    /**
+     * Edit custom color
+     * @param data data to editing
+     * @param accessToken raw access JWT token
+     * @throws NotFoundUserColorException not found user color
+     */
     @Override
     @PutMapping("/user/customization/color")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void editCustomColor(
             final @Valid @RequestBody @NotNull DataEditCustomColorApi data,
-            @RequestHeader(name = "Authorization") String accessToken) {
-
+            @RequestHeader(name = "Authorization") String accessToken) throws NotFoundException {
+        final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
+        serviceCustomizationUser.editColor(
+                claims.get("login", String.class),
+                data.id(),
+                data.color());
     }
 
+    /**
+     * Delete custom color
+     * @param data data to deleting
+     * @param accessToken raw access JWT token
+     * @throws NotFoundUserColorException not found user color
+     */
     @Override
     @DeleteMapping("/user/customization/color")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteCustomColor(
             final @Valid @RequestBody @NotNull DataControlAnyObjectApi data,
-            @RequestHeader(name = "Authorization") String accessToken) {
-
+            @RequestHeader(name = "Authorization") String accessToken) throws NotFoundException {
+        final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
+        serviceCustomizationUser.deleteColor(claims.get("login", String.class), data.id());
     }
 
     /**

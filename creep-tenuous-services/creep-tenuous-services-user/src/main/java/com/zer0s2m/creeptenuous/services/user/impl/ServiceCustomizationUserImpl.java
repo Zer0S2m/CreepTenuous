@@ -51,10 +51,7 @@ public class ServiceCustomizationUserImpl implements ServiceCustomizationUser {
     @Override
     public void setColorInDirectory(
             final String fileSystemObject, final String userLogin, Long userColorId) throws NotFoundException {
-        User user = userRepository.findByLogin(userLogin);
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
+        User user = getUserByLogin(userLogin);
 
         UUID systemNameDirectory = UUID.fromString(fileSystemObject);
         Optional<UserColorDirectory> userColorCategoryOptional = userColorCategoryRepository
@@ -107,13 +104,28 @@ public class ServiceCustomizationUserImpl implements ServiceCustomizationUser {
     }
 
     /**
+     * Get user bu login
+     * @param userLogin user login. Must not be {@literal null}
+     * @return entity
+     * @throws NotFoundException not found user
+     */
+    private @NotNull User getUserByLogin(final String userLogin) throws NotFoundException {
+        User user = userRepository.findByLogin(userLogin);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        return user;
+    }
+
+    /**
      * Create custom color
      * @param userLogin user login. Must not be {@literal null}
      * @param color color is specified in <b>HEX</b> format
+     * @throws UserNotFoundException not found user
      */
     @Override
-    public void createColor(final String userLogin, String color) {
-
+    public void createColor(final String userLogin, String color) throws NotFoundException {
+        userColorRepository.save(new UserColor(getUserByLogin(userLogin), color));
     }
 
     /**
@@ -121,20 +133,24 @@ public class ServiceCustomizationUserImpl implements ServiceCustomizationUser {
      * @param userLogin user login. Must not be {@literal null}
      * @param id id entity. Must not be {@literal null}
      * @param newColor new color is specified in <b>HEX</b> format
+     * @throws NotFoundUserColorException not found user color
      */
     @Override
     public void editColor(final String userLogin, final Long id, String newColor) throws NotFoundException {
-
+        UserColor userColor = getUserColorByIdAndUserLogin(id, userLogin);
+        userColor.setColor(newColor);
+        userColorRepository.save(userColor);
     }
 
     /**
      * Delete custom color
      * @param userLogin user login. Must not be {@literal null}
      * @param id id entity. Must not be {@literal null}
+     * @throws NotFoundUserColorException not found user color
      */
     @Override
     public void deleteColor(final String userLogin, final Long id) throws NotFoundException {
-
+        userColorRepository.delete(getUserColorByIdAndUserLogin(id, userLogin));
     }
 
 }
