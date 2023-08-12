@@ -2,12 +2,16 @@ package com.zer0s2m.creeptenuous.services.user.impl;
 
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundUserColorDirectoryException;
+import com.zer0s2m.creeptenuous.common.exceptions.NotFoundUserColorException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.models.user.User;
+import com.zer0s2m.creeptenuous.models.user.UserColor;
 import com.zer0s2m.creeptenuous.models.user.UserColorDirectory;
 import com.zer0s2m.creeptenuous.repository.user.UserColorDirectoryRepository;
+import com.zer0s2m.creeptenuous.repository.user.UserColorRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.services.user.ServiceCustomizationUser;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,24 +28,29 @@ public class ServiceCustomizationUserImpl implements ServiceCustomizationUser {
 
     private final UserColorDirectoryRepository userColorCategoryRepository;
 
+    private final UserColorRepository userColorRepository;
+
     @Autowired
     public ServiceCustomizationUserImpl(
             UserRepository userRepository,
-            UserColorDirectoryRepository userColorCategoryRepository) {
+            UserColorDirectoryRepository userColorCategoryRepository,
+            UserColorRepository userColorRepository) {
         this.userRepository = userRepository;
         this.userColorCategoryRepository = userColorCategoryRepository;
+        this.userColorRepository = userColorRepository;
     }
 
     /**
      * Set color scheme for user directory. Updates the object, otherwise creates it
      * @param fileSystemObject file object name
      * @param userLogin user login. Must not be {@literal null}.
-     * @param color color is specified in <b>HEX</b> format
+     * @param userColorId ID from entity {@link UserColor}. Must not be {@literal null}.
      * @throws UserNotFoundException not found user
+     * @throws NotFoundUserColorException not found user color
      */
     @Override
     public void setColorInDirectory(
-            final String fileSystemObject, final String userLogin, String color) throws NotFoundException {
+            final String fileSystemObject, final String userLogin, Long userColorId) throws NotFoundException {
         User user = userRepository.findByLogin(userLogin);
         if (user == null) {
             throw new UserNotFoundException();
@@ -54,9 +63,10 @@ public class ServiceCustomizationUserImpl implements ServiceCustomizationUser {
         UserColorDirectory userColorDirectory;
         if (userColorCategoryOptional.isPresent()) {
             userColorDirectory = userColorCategoryOptional.get();
-            userColorDirectory.setColor(color);
+            userColorDirectory.setColor(getUserColorByIdAndUserLogin(userColorId, userLogin));
         } else {
-            userColorDirectory = new UserColorDirectory(user, color, systemNameDirectory);
+            userColorDirectory = new UserColorDirectory(user,
+                    getUserColorByIdAndUserLogin(userColorId, userLogin), systemNameDirectory);
         }
         userColorCategoryRepository.save(userColorDirectory);
     }
@@ -78,6 +88,53 @@ public class ServiceCustomizationUserImpl implements ServiceCustomizationUser {
         }
 
         userColorCategoryRepository.delete(userColorDirectory.get());
+    }
+
+    /**
+     * Get entity user color
+     * @param id ID from entity {@link UserColor}. Must not be {@literal null}.
+     * @param userLogin user login. Must not be {@literal null}
+     * @return entity
+     * @throws NotFoundUserColorException not found user color
+     */
+    private @NotNull UserColor getUserColorByIdAndUserLogin(final Long id, final String userLogin)
+            throws NotFoundException {
+        Optional<UserColor> userColorRaw = userColorRepository.findByIdAndUserLogin(id, userLogin);
+        if (userColorRaw.isEmpty()) {
+            throw new NotFoundUserColorException();
+        }
+        return userColorRaw.get();
+    }
+
+    /**
+     * Create custom color
+     * @param userLogin user login. Must not be {@literal null}
+     * @param color color is specified in <b>HEX</b> format
+     */
+    @Override
+    public void createColor(final String userLogin, String color) {
+
+    }
+
+    /**
+     * Edit custom color
+     * @param userLogin user login. Must not be {@literal null}
+     * @param id id entity. Must not be {@literal null}
+     * @param newColor new color is specified in <b>HEX</b> format
+     */
+    @Override
+    public void editColor(final String userLogin, final Long id, String newColor) throws NotFoundException {
+
+    }
+
+    /**
+     * Delete custom color
+     * @param userLogin user login. Must not be {@literal null}
+     * @param id id entity. Must not be {@literal null}
+     */
+    @Override
+    public void deleteColor(final String userLogin, final Long id) throws NotFoundException {
+
     }
 
 }

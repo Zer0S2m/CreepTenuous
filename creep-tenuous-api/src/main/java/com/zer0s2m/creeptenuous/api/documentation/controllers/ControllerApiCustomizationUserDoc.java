@@ -1,7 +1,6 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
-import com.zer0s2m.creeptenuous.common.data.DataControlFileSystemObjectApi;
-import com.zer0s2m.creeptenuous.common.data.DataCreateUserColorDirectoryApi;
+import com.zer0s2m.creeptenuous.common.data.*;
 import com.zer0s2m.creeptenuous.common.exceptions.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -112,5 +111,115 @@ public interface ControllerApiCustomizationUserDoc {
     void deleteColorInDirectory(
             final DataControlFileSystemObjectApi data, @Parameter(hidden = true) String accessToken)
             throws NotFoundException, FileObjectIsNotDirectoryTypeException;
+
+    @Operation(
+            method = "POST",
+            summary = "Create custom color",
+            description = "Create custom color",
+            tags = { "Customization" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Data to created",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = DataCreateCustomColorApi.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Successful created",
+                            content = @Content
+                    ),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+                    @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden"),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found user", value ="{" +
+                                                    "\"message\": \"Not found user\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            )
+                                    })
+                    )
+            }
+    )
+    void createCustomColor(
+            final DataCreateCustomColorApi data, @Parameter(hidden = true) String accessToken);
+
+    @Operation(
+            method = "PUT",
+            summary = "Edit custom color",
+            description = "Edit custom color",
+            tags = { "Customization" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Data to editing",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = DataEditCustomColorApi.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Successful editing",
+                            content = @Content
+                    ),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+                    @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden"),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found user color", value ="{" +
+                                                    "\"message\": \"Color scheme not found for user\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            )
+                                    })
+                    )
+            }
+    )
+    void editCustomColor(
+            final DataEditCustomColorApi data, @Parameter(hidden = true) String accessToken);
+
+    @Operation(
+            method = "DELETE",
+            summary = "Delete custom color",
+            description = "Delete custom color",
+            tags = { "Customization" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Successful deleting",
+                            content = @Content
+                    ),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+                    @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden"),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found user color", value ="{" +
+                                                    "\"message\": \"Color scheme not found for user\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            )
+                                    })
+                    )
+            }
+    )
+    void deleteCustomColor(
+            final DataControlAnyObjectApi data, @Parameter(hidden = true) String accessToken);
 
 }

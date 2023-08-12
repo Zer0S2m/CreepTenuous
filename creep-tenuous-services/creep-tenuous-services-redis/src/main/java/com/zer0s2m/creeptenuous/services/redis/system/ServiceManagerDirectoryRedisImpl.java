@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.services.redis.system;
 
+import com.zer0s2m.creeptenuous.models.user.UserColor;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
@@ -117,9 +118,13 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
                         .stream()
                         .map(UUID::fromString)
                         .toList())
-                .forEach(userColorDirectory -> mapColors.put(
-                        userColorDirectory.getDirectory().toString(), userColorDirectory.getColor()
-                ));
+                .forEach(userColorDirectory -> {
+                    UserColor userColor = userColorDirectory.getColor();
+                    mapColors.put(
+                            userColorDirectory.getDirectory().toString(),
+                            userColor == null ? null : userColor.getColor()
+                    );
+                });
 
         return mapColors;
     }

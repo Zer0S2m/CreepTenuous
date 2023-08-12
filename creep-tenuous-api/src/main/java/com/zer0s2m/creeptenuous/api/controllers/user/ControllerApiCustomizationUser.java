@@ -2,8 +2,7 @@ package com.zer0s2m.creeptenuous.api.controllers.user;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCustomizationUserDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
-import com.zer0s2m.creeptenuous.common.data.DataControlFileSystemObjectApi;
-import com.zer0s2m.creeptenuous.common.data.DataCreateUserColorDirectoryApi;
+import com.zer0s2m.creeptenuous.common.data.*;
 import com.zer0s2m.creeptenuous.common.exceptions.*;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.BadRequestMsg;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
@@ -58,7 +57,7 @@ public class ControllerApiCustomizationUser implements ControllerApiCustomizatio
 
         final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
         serviceCustomizationUser.setColorInDirectory(
-                data.fileSystemObject(), claims.get("login", String.class), data.color());
+                data.fileSystemObject(), claims.get("login", String.class), data.userColorId());
     }
 
     /**
@@ -81,6 +80,33 @@ public class ControllerApiCustomizationUser implements ControllerApiCustomizatio
         final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
         serviceCustomizationUser.deleteColorInDirectory(
                 data.fileSystemObject(), claims.get("login", String.class));
+    }
+
+    @Override
+    @PostMapping("/user/customization/color")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void createCustomColor(
+            final @Valid @RequestBody @NotNull DataCreateCustomColorApi data,
+            @RequestHeader(name = "Authorization") String accessToken) {
+
+    }
+
+    @Override
+    @PutMapping("/user/customization/color")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void editCustomColor(
+            final @Valid @RequestBody @NotNull DataEditCustomColorApi data,
+            @RequestHeader(name = "Authorization") String accessToken) {
+
+    }
+
+    @Override
+    @DeleteMapping("/user/customization/color")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void deleteCustomColor(
+            final @Valid @RequestBody @NotNull DataControlAnyObjectApi data,
+            @RequestHeader(name = "Authorization") String accessToken) {
+
     }
 
     /**
