@@ -9,6 +9,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.models.user.CategoryFileSystemObject;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.models.user.UserCategory;
+import com.zer0s2m.creeptenuous.models.user.UserColorCategory;
 import com.zer0s2m.creeptenuous.repository.user.CategoryFileSystemObjectRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserCategoryRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
@@ -53,8 +54,14 @@ public class ServiceCategoryUserImpl implements ServiceCategoryUser {
     public List<ContainerDataUserCategory> getAll(final String userLogin) {
         final List<ContainerDataUserCategory> userCategoryList = new ArrayList<>();
         userCategoryRepository.findAllByUserLogin(userLogin)
-                .forEach(userCategory -> userCategoryList.add(new ContainerDataUserCategory(
-                        userCategory.getId(), userCategory.getTitle())));
+                .forEach(userCategory -> {
+                    UserColorCategory userColorCategory = userCategory.getUserColorCategory();
+                    userCategoryList.add(new ContainerDataUserCategory(
+                            userCategory.getId(),
+                            userCategory.getTitle(),
+                            userColorCategory != null ? userColorCategory.getUserColor().getColor() : null
+                            ));
+                });
         return userCategoryList;
     }
 
@@ -70,7 +77,7 @@ public class ServiceCategoryUserImpl implements ServiceCategoryUser {
             throws UserNotFoundException {
         final User user = getUserByLoginUser(userLogin);
         UserCategory userCategory = userCategoryRepository.save(new UserCategory(title, user));
-        return new ContainerDataUserCategory(userCategory.getId(), userCategory.getTitle());
+        return new ContainerDataUserCategory(userCategory.getId(), userCategory.getTitle(), null);
     }
 
     /**

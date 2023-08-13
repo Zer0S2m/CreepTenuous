@@ -8,7 +8,10 @@ public record ContainerDataUserCategory(
         Long id,
 
         @Schema(description = "Category name for file objects")
-        String title
+        String title,
+
+        @Schema(description = "Category color palette", example = "#fff")
+        String color
 
 ) {
 }

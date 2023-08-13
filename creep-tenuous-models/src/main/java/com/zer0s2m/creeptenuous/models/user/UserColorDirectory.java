@@ -22,8 +22,9 @@ public class UserColorDirectory {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @Column(name = "color")
-    private String color;
+    @ManyToOne()
+    @JoinColumn(name = "user_color_id", referencedColumnName = "id")
+    private UserColor color;
 
     @Column(name = "directory")
     private UUID directory;
@@ -31,17 +32,17 @@ public class UserColorDirectory {
     public UserColorDirectory() {
     }
 
-    public UserColorDirectory(User user, String color, UUID directory) {
+    public UserColorDirectory(User user, UserColor color, UUID directory) {
         this.user = user;
         this.color = color;
         this.directory = directory;
     }
 
-    public String getColor() {
+    public UserColor getColor() {
         return color;
     }
 
-    public void setColor(String color) {
+    public void setColor(UserColor color) {
         this.color = color;
     }
 
