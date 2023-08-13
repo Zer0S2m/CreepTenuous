@@ -31,6 +31,10 @@ public class UserColor {
         this.color = color;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getColor() {
         return color;
     }
