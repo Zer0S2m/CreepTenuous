@@ -17,4 +17,6 @@ public interface UserColorRepository extends CrudRepository<UserColor, Long> {
      */
     Optional<UserColor> findByIdAndUserLogin(Long id, String user_login);
 
+    Iterable<UserColor> findAllByUserLogin(String user_login);
+
 }

@@ -27,19 +27,6 @@ public interface ControllerApiCategoryUserDoc {
             tags = { "Category" },
             security = @SecurityRequirement(name = "Bearer Authentication"),
             responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Successful get categories",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(example = "[" +
-                                            "{" +
-                                            "\"id\": 2," +
-                                            "\"title\": \"New title\"" +
-                                            "}" +
-                                            "]")
-                            )
-                    ),
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
                     @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden")
             }

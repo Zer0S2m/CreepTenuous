@@ -24,6 +24,9 @@ public class UserCategory {
     @OneToMany(mappedBy = "userCategory", cascade = CascadeType.ALL)
     private List<CategoryFileSystemObject> categoryFileSystemObjects;
 
+    @OneToOne(mappedBy = "userCategory")
+    private UserColorCategory userColorCategory;
+
     public UserCategory(String title, User user) {
         this.title = title;
         this.user = user;
@@ -42,6 +45,10 @@ public class UserCategory {
 
     public String getTitle() {
         return title;
+    }
+
+    public UserColorCategory getUserColorCategory() {
+        return userColorCategory;
     }
 
 }

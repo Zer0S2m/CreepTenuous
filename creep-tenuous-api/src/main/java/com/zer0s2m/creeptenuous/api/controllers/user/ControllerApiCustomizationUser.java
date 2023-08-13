@@ -2,6 +2,7 @@ package com.zer0s2m.creeptenuous.api.controllers.user;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCustomizationUserDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.common.containers.ContainerCustomColorApi;
 import com.zer0s2m.creeptenuous.common.data.*;
 import com.zer0s2m.creeptenuous.common.exceptions.*;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.BadRequestMsg;
@@ -15,6 +16,8 @@ import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @V1APIRestController
 public class ControllerApiCustomizationUser implements ControllerApiCustomizationUserDoc {
@@ -83,6 +86,57 @@ public class ControllerApiCustomizationUser implements ControllerApiCustomizatio
     }
 
     /**
+     * Set color scheme binding to custom category
+     *
+     * @param data        data to created
+     * @param accessToken raw access JWT token
+     * @throws NotFoundUserCategoryException not found the user category
+     * @throws NotFoundUserColorException    not found user color entity
+     * @throws UserNotFoundException         not found user color
+     */
+    @Override
+    @PutMapping("/user/customization/category/color")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void setColorInCustomCategory(
+            final @Valid @RequestBody @NotNull DataControlUserColorCategoryApi data,
+            @RequestHeader(name = "Authorization") String accessToken) throws NotFoundException {
+        final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
+        serviceCustomizationUser.setColorInCategory(
+                claims.get("login", String.class), data.userColorId(), data.userCategoryId());
+    }
+
+    /**
+     * Delete color scheme binding to custom category
+     *
+     * @param data        data to deleted
+     * @param accessToken raw access JWT token
+     * @throws NotFoundUserColorCategoryException custom category color scheme binding not found
+     */
+    @Override
+    @DeleteMapping("/user/customization/category/color")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void deleteColorInCustomCategory(
+            final @Valid @RequestBody @NotNull DataControlUserColorCategoryApi data,
+            @RequestHeader(name = "Authorization") String accessToken) throws NotFoundException {
+        final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
+        serviceCustomizationUser.deleteColorInCategory(
+                claims.get("login", String.class), data.userColorId(), data.userCategoryId());
+    }
+
+    /**
+     * Get all custom colors
+     * @param accessToken raw access JWT token
+     * @return entities user colors
+     */
+    @Override
+    @GetMapping("/user/customization/color")
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<ContainerCustomColorApi> getCustomColor(@RequestHeader(name = "Authorization") String accessToken) {
+        final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
+        return serviceCustomizationUser.getColors(claims.get("login", String.class));
+    }
+
+    /**
      * Create custom color
      * @param data data to created
      * @param accessToken raw access JWT token
@@ -92,7 +146,7 @@ public class ControllerApiCustomizationUser implements ControllerApiCustomizatio
     @PostMapping("/user/customization/color")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void createCustomColor(
-            final @Valid @RequestBody @NotNull DataCreateCustomColorApi data,
+            final @Valid @RequestBody @NotNull ContainerCustomColorApi data,
             @RequestHeader(name = "Authorization") String accessToken) throws NotFoundException {
         final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
         serviceCustomizationUser.createColor(claims.get("login", String.class), data.color());

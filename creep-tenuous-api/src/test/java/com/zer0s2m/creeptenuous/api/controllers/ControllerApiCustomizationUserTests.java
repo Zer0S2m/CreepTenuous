@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zer0s2m.creeptenuous.common.containers.ContainerCustomColorApi;
 import com.zer0s2m.creeptenuous.common.data.*;
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import com.zer0s2m.creeptenuous.models.user.User;
@@ -266,8 +267,8 @@ public class ControllerApiCustomizationUserTests {
                 MockMvcRequestBuilders.post("/api/v1/user/customization/color")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new DataCreateCustomColorApi(
-                                "color"
+                        .content(objectMapper.writeValueAsString(new ContainerCustomColorApi(
+                                "color", null
                         )))
                         .header("Authorization", accessToken)
                 )
@@ -280,8 +281,8 @@ public class ControllerApiCustomizationUserTests {
                 MockMvcRequestBuilders.post("/api/v1/user/customization/color")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new DataCreateCustomColorApi(
-                                "color"
+                        .content(objectMapper.writeValueAsString(new ContainerCustomColorApi(
+                                "color", null
                         )))
                         .header("Authorization", accessToken)
                 )
