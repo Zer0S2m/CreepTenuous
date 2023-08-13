@@ -6,7 +6,7 @@ import com.zer0s2m.creeptenuous.common.containers.ContainerCategoryFileSystemObj
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUserCategory;
 import com.zer0s2m.creeptenuous.common.data.DataControlFileSystemObjectInCategoryApi;
 import com.zer0s2m.creeptenuous.common.data.DataCreateUserCategoryApi;
-import com.zer0s2m.creeptenuous.common.data.DataDeleteUserCategoryApi;
+import com.zer0s2m.creeptenuous.common.data.DataControlAnyObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataEditUserCategoryApi;
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
@@ -95,7 +95,7 @@ public class ControllerApiCategoryUser implements ControllerApiCategoryUserDoc {
     @DeleteMapping("/user/category")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void delete(
-            final @Valid @RequestBody @NotNull DataDeleteUserCategoryApi data,
+            final @Valid @RequestBody @NotNull DataControlAnyObjectApi data,
             @RequestHeader(name = "Authorization") String accessToken) throws NotFoundException {
         final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
         serviceCategoryUser.delete(data.id(), claims.get("login", String.class));

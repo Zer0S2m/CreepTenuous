@@ -16,5 +16,4 @@ public record DataCreateCommentFileSystemObjectApi(
         @Schema(description = "File object name")
         String fileSystemObject
 
-) {
-}
+) { }

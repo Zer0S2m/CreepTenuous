@@ -10,5 +10,4 @@ public record ResponseRenameFileSystemObjectDoc(
         @Schema(description = "New file name")
         String newRealName
 
-) {
-}
+) { }

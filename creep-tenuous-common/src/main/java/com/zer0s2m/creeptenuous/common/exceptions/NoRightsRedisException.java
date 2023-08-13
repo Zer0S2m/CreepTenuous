@@ -10,7 +10,7 @@ public class NoRightsRedisException extends RuntimeException {
     }
 
     public NoRightsRedisException() {
-        super("Forbidden");
+        this("Forbidden");
     }
 
 }

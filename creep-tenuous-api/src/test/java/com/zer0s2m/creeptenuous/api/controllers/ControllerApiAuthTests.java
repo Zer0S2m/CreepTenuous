@@ -45,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestTagControllerApi
 public class ControllerApiAuthTests {
 
-    Logger logger = LogManager.getLogger(ControllerApiAuthTests.class);
+    final Logger logger = LogManager.getLogger(ControllerApiAuthTests.class);
 
     @Autowired
     private MockMvc mockMvc;
@@ -65,11 +65,11 @@ public class ControllerApiAuthTests {
     @Autowired
     private GeneratePasswordImpl generatePassword;
 
-    JwtUserRequest RECORD_1 = new JwtUserRequest("test_login", "test_password");
+    final JwtUserRequest RECORD_1 = new JwtUserRequest("test_login", "test_password");
 
-    JwtUserRequest RECORD_INVALID_PASSWORD = new JwtUserRequest("test_login", "invalid");
+    final JwtUserRequest RECORD_INVALID_PASSWORD = new JwtUserRequest("test_login", "invalid");
 
-    User RECORD_CREATE_USER = new User(
+    final User RECORD_CREATE_USER = new User(
             "test_login",
             null,
             "test_email@test.com",

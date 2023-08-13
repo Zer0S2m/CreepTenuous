@@ -1,7 +1,9 @@
 package com.zer0s2m.creeptenuous.common.enums;
 
 public enum MethodMoveDirectory {
+
     FOLDER(1),
+
     CONTENT(2);
 
     private final Integer method;
@@ -13,4 +15,5 @@ public enum MethodMoveDirectory {
     public Integer getMethod() {
         return method;
     }
+
 }

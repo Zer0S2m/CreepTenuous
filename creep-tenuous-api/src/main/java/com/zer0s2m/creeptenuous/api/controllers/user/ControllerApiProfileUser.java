@@ -54,7 +54,7 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
                 currentUser.getEmail(),
                 currentUser.getName(),
                 Set.of(currentUser.getRole()),
-                userSettings != null ? userSettings.getIsDeletingFileObjects() : false,
+                userSettings == null ? false : userSettings.getIsDeletingFileObjects(),
                 transferredUser != null ? transferredUser.getLogin() : null
         );
     }

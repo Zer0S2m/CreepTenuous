@@ -6,5 +6,4 @@ public record ExceptionFileObjectIsFrozenMsg(
 
         String message
 
-) {
-}
+) { }

@@ -10,7 +10,7 @@ public class FileObjectIsNotDirectoryTypeException extends Exception {
     }
 
     public FileObjectIsNotDirectoryTypeException() {
-        super("File object is not a directory type");
+        this("File object is not a directory type");
     }
 
 }

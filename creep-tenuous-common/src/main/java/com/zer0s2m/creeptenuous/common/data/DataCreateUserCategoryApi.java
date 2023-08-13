@@ -13,5 +13,4 @@ public record DataCreateUserCategoryApi(
         @Size(max = 128)
         String title
 
-) {
-}
+) { }

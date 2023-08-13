@@ -2,9 +2,8 @@ package com.zer0s2m.creeptenuous.api.controllers.user;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiControlUserDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
-import com.zer0s2m.creeptenuous.common.data.DataBlockUserApi;
+import com.zer0s2m.creeptenuous.common.data.DataControlUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataBlockUserTemporarilyApi;
-import com.zer0s2m.creeptenuous.common.data.DataDeleteUserApi;
 import com.zer0s2m.creeptenuous.common.exceptions.BlockingSelfUserException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionBlockingSelfUserMsg;
@@ -50,7 +49,6 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
     @Override
     @GetMapping("/user/control/list")
     @ResponseStatus(code = HttpStatus.OK)
-    @RolesAllowed("ROLE_ADMIN")
     public List<ResponseUserApi> getAllUsers() {
         return serviceControlUser.getAllUsers()
                 .stream()
@@ -74,7 +72,7 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
     @DeleteMapping("/user/control/delete")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     @RolesAllowed("ROLE_ADMIN")
-    public void deleteUserByLogin(final @Valid @RequestBody @NotNull DataDeleteUserApi data)
+    public void deleteUserByLogin(final @Valid @RequestBody @NotNull DataControlUserApi data)
             throws UserNotFoundException {
         serviceControlUser.deleteUser(data.login());
         userEventPublisher.publishDelete(data.login());
@@ -92,7 +90,7 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     @RolesAllowed("ROLE_ADMIN")
     public void blockUser(
-            final @Valid @RequestBody @NotNull DataBlockUserApi data,
+            final @Valid @RequestBody @NotNull DataControlUserApi data,
             @RequestHeader(name = "Authorization") String accessToken)
             throws UserNotFoundException, BlockingSelfUserException {
         checkBLockingSelfUser(accessToken, data.login());
@@ -127,7 +125,7 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
     @PatchMapping("/user/control/unblock")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     @RolesAllowed("ROLE_ADMIN")
-    public void unblockUser(final @Valid @RequestBody @NotNull DataBlockUserApi data) throws UserNotFoundException {
+    public void unblockUser(final @Valid @RequestBody @NotNull DataControlUserApi data) throws UserNotFoundException {
         serviceControlUser.unblockUser(data.login());
     }
 

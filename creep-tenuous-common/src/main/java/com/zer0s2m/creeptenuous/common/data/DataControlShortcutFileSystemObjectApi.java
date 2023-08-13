@@ -16,5 +16,4 @@ public record DataControlShortcutFileSystemObjectApi(
         @Schema(description = "System file object name")
         String attachedFileSystemObject
 
-) {
-}
+) { }

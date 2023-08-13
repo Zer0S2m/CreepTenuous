@@ -9,5 +9,4 @@ public record ResponseAllGrantedRightsApi(
         @Schema(description = "Information about all issued rights to all objects")
         List<ResponseGrantedRightsApi> rights
 
-) {
-}
+) { }

@@ -20,5 +20,4 @@ public record ResponseObjectUploadFileApi(
 
         @JsonIgnore
         Path systemPath
-) {
-}
+) { }

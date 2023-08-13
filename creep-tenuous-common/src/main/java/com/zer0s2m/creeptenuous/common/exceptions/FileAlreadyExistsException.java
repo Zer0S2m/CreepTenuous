@@ -8,6 +8,6 @@ public class FileAlreadyExistsException  extends RuntimeException {
     }
 
     public FileAlreadyExistsException() {
-        super(Directory.DIRECTORY_EXISTS.get());
+        this(Directory.DIRECTORY_EXISTS.get());
     }
 }

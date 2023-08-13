@@ -17,5 +17,4 @@ public record DataControlFileSystemObjectInCategoryApi(
         @Schema(description = "ID category")
         Long categoryId
 
-) {
-}
+) { }

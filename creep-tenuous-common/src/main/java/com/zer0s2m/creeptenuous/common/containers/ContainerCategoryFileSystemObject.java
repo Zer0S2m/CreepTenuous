@@ -17,5 +17,4 @@ public record ContainerCategoryFileSystemObject(
         @Schema(description = "File object name")
         String fileSystemObject
 
-) {
-}
+) { }

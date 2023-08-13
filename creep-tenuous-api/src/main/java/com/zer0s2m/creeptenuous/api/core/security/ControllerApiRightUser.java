@@ -90,7 +90,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      * @param accessToken raw JWT access token
      * @throws UserNotFoundException the user does not exist in the system
      * @throws NoExistsFileSystemObjectRedisException the file system object was not found in the database.
-     * @throws IOException signals that an I/O exception of some sort has occurred
+     * @throws IOException signals that an I/O exception to some sort has occurred
      * @throws ChangeRightsYourselfException change rights over the interaction of file system objects to itself
      */
     @Override

@@ -4,7 +4,7 @@ import com.zer0s2m.creeptenuous.common.containers.ContainerCategoryFileSystemObj
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUserCategory;
 import com.zer0s2m.creeptenuous.common.data.DataControlFileSystemObjectInCategoryApi;
 import com.zer0s2m.creeptenuous.common.data.DataCreateUserCategoryApi;
-import com.zer0s2m.creeptenuous.common.data.DataDeleteUserCategoryApi;
+import com.zer0s2m.creeptenuous.common.data.DataControlAnyObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataEditUserCategoryApi;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
@@ -144,7 +144,7 @@ public interface ControllerApiCategoryUserDoc {
                     description = "Data to created",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = DataDeleteUserCategoryApi.class)
+                            schema = @Schema(implementation = DataControlAnyObjectApi.class)
                     )
             ),
             responses = {
@@ -170,7 +170,7 @@ public interface ControllerApiCategoryUserDoc {
                     )
             }
     )
-    void delete(final DataDeleteUserCategoryApi data, @Parameter(hidden = true) String accessToken)
+    void delete(final DataControlAnyObjectApi data, @Parameter(hidden = true) String accessToken)
             throws NotFoundException;
 
     /**

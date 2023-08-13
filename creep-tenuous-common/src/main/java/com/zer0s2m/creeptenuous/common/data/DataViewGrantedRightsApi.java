@@ -11,5 +11,4 @@ public record DataViewGrantedRightsApi(
         @Schema(description = "The system name of the object in the file system")
         String systemName
 
-) {
-}
+) { }

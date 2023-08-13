@@ -1,8 +1,7 @@
 package com.zer0s2m.creeptenuous.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zer0s2m.creeptenuous.common.data.DataBlockUserApi;
-import com.zer0s2m.creeptenuous.common.data.DataDeleteUserApi;
+import com.zer0s2m.creeptenuous.common.data.DataControlUserApi;
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
@@ -93,7 +92,7 @@ public class ControllerApiControlUserTests {
                 MockMvcRequestBuilders.delete("/api/v1/user/control/delete")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new DataDeleteUserApi(RECORD_DELETE_USER.getLogin())))
+                        .content(objectMapper.writeValueAsString(new DataControlUserApi(RECORD_DELETE_USER.getLogin())))
                         .header("Authorization", "Bearer " + accessToken)
                 )
                 .andExpect(status().isNoContent());
@@ -116,7 +115,7 @@ public class ControllerApiControlUserTests {
                 MockMvcRequestBuilders.patch("/api/v1/user/control/block")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new DataBlockUserApi(
+                        .content(objectMapper.writeValueAsString(new DataControlUserApi(
                                 RECORD_DELETE_USER.getLogin())))
                         .header("Authorization", "Bearer " + accessToken)
                 )
@@ -139,7 +138,7 @@ public class ControllerApiControlUserTests {
                 MockMvcRequestBuilders.patch("/api/v1/user/control/block")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new DataBlockUserApi(
+                        .content(objectMapper.writeValueAsString(new DataControlUserApi(
                                 "not_found_user")))
                         .header("Authorization", "Bearer " + accessToken)
                 )
@@ -159,7 +158,7 @@ public class ControllerApiControlUserTests {
                 MockMvcRequestBuilders.patch("/api/v1/user/control/block")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new DataBlockUserApi(
+                        .content(objectMapper.writeValueAsString(new DataControlUserApi(
                                 RECORD_CREATE_USER.getLogin())))
                         .header("Authorization", "Bearer " + accessToken)
                 )
@@ -182,7 +181,7 @@ public class ControllerApiControlUserTests {
                 MockMvcRequestBuilders.patch("/api/v1/user/control/unblock")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new DataBlockUserApi(
+                        .content(objectMapper.writeValueAsString(new DataControlUserApi(
                                 RECORD_DELETE_USER.getLogin())))
                         .header("Authorization", "Bearer " + accessToken)
                 )

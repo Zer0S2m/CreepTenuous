@@ -1,5 +1,8 @@
 package com.zer0s2m.creeptenuous.common.enums;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Unmodifiable;
+
 import java.util.List;
 
 /**
@@ -58,7 +61,8 @@ public enum OperationRights {
      * Getting basic operations. {@link OperationRights#ALL} not included
      * @return basic operations
      */
-    static public List<OperationRights> baseOperations() {
+    @Contract(pure = true)
+    static public @Unmodifiable List<OperationRights> baseOperations() {
         return List.of(MOVE, COPY, UPLOAD, DOWNLOAD, CREATE, DELETE, SHOW, RENAME);
     }
 

@@ -17,5 +17,4 @@ public record DataCreateUserColorDirectoryApi(
         @Schema(description = "Id entity user color")
         Long userColorId
 
-) {
-}
+) { }

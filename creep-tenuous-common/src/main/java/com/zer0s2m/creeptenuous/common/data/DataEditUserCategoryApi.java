@@ -19,5 +19,4 @@ public record DataEditUserCategoryApi(
         @Size(max = 128)
         String title
 
-) {
-}
+) { }

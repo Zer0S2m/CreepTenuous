@@ -7,5 +7,4 @@ public record DataTransferredUserApi(
         @Schema(description = "Set Setting - Transfer File Objects to Designated User")
         Long userId
 
-) {
-}
+) { }

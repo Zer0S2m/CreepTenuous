@@ -17,5 +17,4 @@ public record ContainerCustomColorApi(
         @Schema(description = "ID entity", nullable = true)
         Long id
 
-) {
-}
+) { }

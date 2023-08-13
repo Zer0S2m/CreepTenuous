@@ -13,5 +13,4 @@ public record ContainerDataUserCategory(
         @Schema(description = "Category color palette", example = "#fff")
         String color
 
-) {
-}
+) { }

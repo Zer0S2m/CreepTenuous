@@ -13,5 +13,4 @@ public record ContainerGrantedRight(
         @Schema(description = "Rights")
         List<OperationRights> rights
 
-) {
-}
+) { }

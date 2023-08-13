@@ -76,4 +76,5 @@ public class UserRepositoryDBTests {
                 UserRole.ROLE_USER
         );
     }
+
 }

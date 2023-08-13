@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.nio.file.Path;
 
 public record ContainerInfoFileSystemObject(
+
         @JsonIgnore
         Path source,
 
@@ -20,4 +21,5 @@ public record ContainerInfoFileSystemObject(
 
         @Schema(description = "Whether the filesystem object is a directory")
         Boolean isDirectory
+
 ) { }

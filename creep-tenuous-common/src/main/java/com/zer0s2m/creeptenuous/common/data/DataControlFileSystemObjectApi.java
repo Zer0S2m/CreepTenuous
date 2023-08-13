@@ -11,5 +11,4 @@ public record DataControlFileSystemObjectApi(
         @Schema(description = "Name file system object")
         String fileSystemObject
 
-) {
-}
+) { }

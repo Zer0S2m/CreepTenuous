@@ -3,7 +3,7 @@ package com.zer0s2m.creeptenuous.api.controllers.user;
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCommentFileSystemObjectUserDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataCreateCommentFileSystemObjectApi;
-import com.zer0s2m.creeptenuous.common.data.DataDeleteCommentFileSystemObjectApi;
+import com.zer0s2m.creeptenuous.common.data.DataControlAnyObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataEditCommentFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundCommentFileSystemObjectException;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
@@ -99,7 +99,7 @@ public class ControllerApiCommentFileSystemObjectUser implements ControllerApiCo
     @DeleteMapping("/common/comment/file-system-object")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void delete(
-            final @Valid @RequestBody @NotNull DataDeleteCommentFileSystemObjectApi data,
+            final @Valid @RequestBody @NotNull DataControlAnyObjectApi data,
             final @RequestHeader(name = "Authorization") String accessToken)
             throws NotFoundException {
         final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));

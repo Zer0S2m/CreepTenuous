@@ -3,7 +3,7 @@ package com.zer0s2m.creeptenuous.api.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.common.data.DataControlFileSystemObjectInCategoryApi;
 import com.zer0s2m.creeptenuous.common.data.DataCreateUserCategoryApi;
-import com.zer0s2m.creeptenuous.common.data.DataDeleteUserCategoryApi;
+import com.zer0s2m.creeptenuous.common.data.DataControlAnyObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataEditUserCategoryApi;
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import com.zer0s2m.creeptenuous.models.user.CategoryFileSystemObject;
@@ -142,7 +142,7 @@ public class ControllerApiCategoryUserTests {
                 MockMvcRequestBuilders.delete("/api/v1/user/category")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new DataDeleteUserCategoryApi(
+                        .content(objectMapper.writeValueAsString(new DataControlAnyObjectApi(
                                 userCategory.getId()
                         )))
                         .header("Authorization", accessToken)
@@ -158,7 +158,7 @@ public class ControllerApiCategoryUserTests {
                 MockMvcRequestBuilders.delete("/api/v1/user/category")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new DataDeleteUserCategoryApi(
+                        .content(objectMapper.writeValueAsString(new DataControlAnyObjectApi(
                                 123123L
                         )))
                         .header("Authorization", accessToken)
