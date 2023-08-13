@@ -4,16 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.common.containers.ContainerCustomColorApi;
 import com.zer0s2m.creeptenuous.common.data.*;
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
-import com.zer0s2m.creeptenuous.models.user.User;
-import com.zer0s2m.creeptenuous.models.user.UserColor;
-import com.zer0s2m.creeptenuous.models.user.UserColorDirectory;
+import com.zer0s2m.creeptenuous.models.user.*;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
-import com.zer0s2m.creeptenuous.repository.user.UserColorDirectoryRepository;
-import com.zer0s2m.creeptenuous.repository.user.UserColorRepository;
-import com.zer0s2m.creeptenuous.repository.user.UserRepository;
+import com.zer0s2m.creeptenuous.repository.user.*;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
 import org.junit.jupiter.api.Assertions;
@@ -32,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
@@ -56,6 +53,12 @@ public class ControllerApiCustomizationUserTests {
 
     @Autowired
     private UserColorRepository userColorRepository;
+
+    @Autowired
+    private UserCategoryRepository userCategoryRepository;
+
+    @Autowired
+    private UserColorCategoryRepository userColorCategoryRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -260,6 +263,16 @@ public class ControllerApiCustomizationUserTests {
     }
 
     @Test
+    public void getCustomColor_success() throws Exception {
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.get("/api/v1/user/customization/color")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("Authorization", accessToken)
+                )
+                .andExpect(status().isOk());
+    }
+
+    @Test
     public void createCustomColor_success() throws Exception {
         userRepository.save(RECORD_CREATE_USER);
 
@@ -353,6 +366,106 @@ public class ControllerApiCustomizationUserTests {
                         )))
                         .header("Authorization", accessToken)
                 )
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void setColorInCustomCategory_success() throws Exception {
+        User user = userRepository.save(RECORD_CREATE_USER);
+        UserColor userColor = userColorRepository.save(new UserColor(user, "color"));
+        UserCategory userCategory = userCategoryRepository.save(new UserCategory(
+                "category", user));
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/user/customization/category/color")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataControlUserColorCategoryApi(
+                                userColor.getId(), userCategory.getId()
+                        )))
+                        .header("Authorization", accessToken)
+                )
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void setColorInCustomCategory_fail_notFoundUserColor() throws Exception {
+        userRepository.save(RECORD_CREATE_USER);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/user/customization/category/color")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataControlUserColorCategoryApi(
+                                123123L, 123123L
+                        )))
+                        .header("Authorization", accessToken)
+                )
+                .andExpect(content().json("{" +
+                        "\"message\": \"Color scheme not found for user\"," +
+                        "\"status\": 404" +
+                        "}"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void setColorInCustomCategory_fail_notFoundUserCategory() throws Exception {
+        User user = userRepository.save(RECORD_CREATE_USER);
+        UserColor userColor = userColorRepository.save(new UserColor(user, "color"));
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/v1/user/customization/category/color")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataControlUserColorCategoryApi(
+                                userColor.getId(), 123123L
+                        )))
+                        .header("Authorization", accessToken)
+                )
+                .andExpect(content().json("{" +
+                        "\"message\": \"Not found category\"," +
+                        "\"status\": 404" +
+                        "}"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void deleteColorInCustomCategory_success() throws Exception {
+        User user = userRepository.save(RECORD_CREATE_USER);
+        UserColor userColor = userColorRepository.save(new UserColor(user, "color"));
+        UserCategory userCategory = userCategoryRepository.save(new UserCategory(
+                "category", user));
+        UserColorCategory userColorCategory = userColorCategoryRepository.save(new UserColorCategory(
+                user, userColor, userCategory));
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.delete("/api/v1/user/customization/category/color")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataControlUserColorCategoryApi(
+                                userColor.getId(), userCategory.getId()
+                        )))
+                        .header("Authorization", accessToken)
+                )
+                .andExpect(status().isNoContent());
+        Assertions.assertFalse(userColorCategoryRepository.existsById(userColorCategory.getId()));
+    }
+
+    @Test
+    public void deleteColorInCustomCategory_fail_notFoundUserCategory() throws Exception {
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.delete("/api/v1/user/customization/category/color")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DataControlUserColorCategoryApi(
+                                123123L, 123123L
+                        )))
+                        .header("Authorization", accessToken)
+                )
+                .andExpect(content().json("{" +
+                        "\"message\": \"Custom category color scheme binding not found\"," +
+                        "\"status\": 404" +
+                        "}"))
                 .andExpect(status().isNotFound());
     }
 

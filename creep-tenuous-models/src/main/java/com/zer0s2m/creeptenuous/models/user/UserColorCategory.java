@@ -41,4 +41,8 @@ public class UserColorCategory {
         return userColor;
     }
 
+    public Long getId() {
+        return id;
+    }
+
 }

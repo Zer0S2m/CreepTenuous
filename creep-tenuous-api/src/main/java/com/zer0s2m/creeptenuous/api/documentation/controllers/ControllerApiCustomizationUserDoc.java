@@ -149,8 +149,8 @@ public interface ControllerApiCustomizationUserDoc {
                             content = @Content(
                                     mediaType = "application/json",
                                     examples = {
-                                            @ExampleObject(name = "Not found color in category", value ="{" +
-                                                    "\"message\": \"Custom category color scheme binding not found\"," +
+                                            @ExampleObject(name = "Not found user category", value ="{" +
+                                                    "\"message\": \"Not found category\"," +
                                                     "\"statusCode\": 404" +
                                                     "}"
                                             ),
