@@ -30,4 +30,5 @@ public class DataDeleteDirectoryApiValidationTests extends BaseValidationDataApi
         );
         setErrorInvalidData(getValidator(), invalidDataDeleteDirectory);
     }
+
 }

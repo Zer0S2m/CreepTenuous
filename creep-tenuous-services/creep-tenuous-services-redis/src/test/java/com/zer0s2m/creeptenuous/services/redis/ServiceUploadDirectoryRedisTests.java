@@ -82,4 +82,5 @@ public class ServiceUploadDirectoryRedisTests {
             directoryRedisRepository.delete(directoryRedis.get());
         }
     }
+
 }

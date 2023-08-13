@@ -57,4 +57,5 @@ public class ServiceDeleteDirectoryRedisTests {
 
         Assertions.assertFalse(directoryRedisRepository.existsById(systemName));
     }
+
 }

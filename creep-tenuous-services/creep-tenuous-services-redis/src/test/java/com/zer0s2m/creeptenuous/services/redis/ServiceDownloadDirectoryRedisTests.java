@@ -78,4 +78,5 @@ public class ServiceDownloadDirectoryRedisTests {
         directoryRedisRepository.delete(directoryRedis);
         fileRedisRepository.delete(fileRedis);
     }
+
 }

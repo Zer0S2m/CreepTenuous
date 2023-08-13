@@ -160,4 +160,5 @@ public class DocsConfiguration {
         );
         responseNotFound.setDescription("File system object not found");
     }
+
 }

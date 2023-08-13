@@ -47,13 +47,15 @@ public class ServiceDownloadFileTests {
     @Autowired
     private RootPath rootPath;
 
-    private final String nameTestFile1 = "test_image_1.jpeg";
-
     private final String failNameTestFile = "fail_name_test_file.fail_extension";
 
     @Test
     public void downloadFileAndCompareHeaders_success() throws IOException {
-        Path sourcePath = Path.of("src/main/resources/test/", nameTestFile1);
+        ClassLoader classLoader = getClass().getClassLoader();
+
+        String nameTestFile1 = "test_image_1.jpeg";
+
+        Path sourcePath = Path.of(classLoader.getResource(nameTestFile1).getPath());
         Path targetPath = Path.of(rootPath.getRootPath(), nameTestFile1);
         Files.copy(sourcePath, targetPath);
 
@@ -104,4 +106,5 @@ public class ServiceDownloadFileTests {
                 )
         );
     }
+
 }

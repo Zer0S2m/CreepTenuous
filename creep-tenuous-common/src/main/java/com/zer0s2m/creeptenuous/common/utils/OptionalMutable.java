@@ -28,4 +28,5 @@ public final class OptionalMutable<T> {
     public boolean isEmpty() {
         return this.value == null;
     }
+
 }

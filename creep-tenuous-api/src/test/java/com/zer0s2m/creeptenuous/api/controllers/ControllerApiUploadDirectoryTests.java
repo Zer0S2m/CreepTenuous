@@ -60,7 +60,8 @@ public class ControllerApiUploadDirectoryTests {
     @Test
     public void uploadDirectory_success() throws Exception {
         String testFileZip = "test-zip.zip";
-        File testFile = new File("src/main/resources/test/" + testFileZip);
+
+        File testFile = new File("src/test/resources/" + testFileZip);
         InputStream targetStream = new FileInputStream(testFile);
 
         mockMvc.perform(
@@ -106,7 +107,7 @@ public class ControllerApiUploadDirectoryTests {
         directoryRedisRepository.save(directoryRedis);
 
         String testFileZip = "test-zip.zip";
-        File testFile = new File("src/main/resources/test/" + testFileZip);
+        File testFile = new File("src/test/resources/" + testFileZip);
         InputStream targetStream = new FileInputStream(testFile);
 
         mockMvc.perform(
@@ -147,7 +148,7 @@ public class ControllerApiUploadDirectoryTests {
         rightUserFileSystemObjectRedisRepository.save(right);
 
         String testFileZip = "test-zip.zip";
-        File testFile = new File("src/main/resources/test/" + testFileZip);
+        File testFile = new File("src/test/resources/" + testFileZip);
         InputStream targetStream = new FileInputStream(testFile);
 
         mockMvc.perform(
@@ -195,7 +196,7 @@ public class ControllerApiUploadDirectoryTests {
         frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
 
         String testFileZip = "test-zip.zip";
-        File testFile = new File("src/main/resources/test/" + testFileZip);
+        File testFile = new File("src/test/resources/" + testFileZip);
         InputStream targetStream = new FileInputStream(testFile);
 
         mockMvc.perform(

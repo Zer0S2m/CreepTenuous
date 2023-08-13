@@ -17,4 +17,5 @@ public class ExceptionNotDirectoryMsg {
     public Integer getStatus() {
         return status;
     }
+
 }

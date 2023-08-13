@@ -86,4 +86,5 @@ public class ServiceCopyFileRedisTests {
 
         Assertions.assertEquals(0, fileRedisList.size());
     }
+
 }

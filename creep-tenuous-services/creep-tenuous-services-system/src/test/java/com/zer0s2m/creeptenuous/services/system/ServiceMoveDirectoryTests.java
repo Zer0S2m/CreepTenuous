@@ -32,6 +32,7 @@ import java.util.List;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceMoveDirectoryTests {
+
     Logger logger = LogManager.getLogger(ServiceMoveDirectoryTests.class);
 
     @Autowired
@@ -41,7 +42,9 @@ public class ServiceMoveDirectoryTests {
     private ServiceBuildDirectoryPath serviceBuildDirectoryPath;
 
     List<String> DIRECTORIES_1 = List.of("test_folder1");
+
     List<String> DIRECTORIES_2 = List.of("test_folder1", "test_folder2");
+
     List<String> DIRECTORIES_3 = List.of("test_folder3");
 
     @Test
@@ -125,4 +128,5 @@ public class ServiceMoveDirectoryTests {
 
         FileSystemUtils.deleteRecursively(Path.of(serviceBuildDirectoryPath.build(DIRECTORIES_3)));
     }
+
 }

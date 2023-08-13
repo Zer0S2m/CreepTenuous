@@ -65,8 +65,7 @@ public class ControllerApiUploadFileTests {
 
     @Test
     public void uploadOneFile_success() throws Exception {
-        File testFile = new File("src/main/resources/test/" + nameTestFile1);
-        InputStream targetStream = new FileInputStream(testFile);
+        InputStream targetStream = this.getClass().getResourceAsStream("/" + nameTestFile1);
 
         UtilsActionForFiles.preparePreliminaryFiles(nameTestFile1, new ArrayList<>(), logger, buildDirectoryPath);
 
@@ -84,10 +83,8 @@ public class ControllerApiUploadFileTests {
 
     @Test
     public void uploadMoreOneFile_success() throws Exception {
-        File testFile1 = new File("src/main/resources/test/" + nameTestFile1);
-        File testFile2 = new File("src/main/resources/test/" + nameTestFile2);
-        InputStream targetStream1 = new FileInputStream(testFile1);
-        InputStream targetStream2 = new FileInputStream(testFile2);
+        InputStream targetStream1 = this.getClass().getResourceAsStream("/" + nameTestFile1);
+        InputStream targetStream2 = this.getClass().getResourceAsStream("/" + nameTestFile2);
 
         mockMvc.perform(
                 multipart("/api/v1/file/upload")
@@ -117,8 +114,7 @@ public class ControllerApiUploadFileTests {
 
     @Test
     public void uploadFile_fail_invalidPathDirectory() throws Exception {
-        File testFile = new File("src/main/resources/test/" + nameTestFile2);
-        InputStream targetStream = new FileInputStream(testFile);
+        InputStream targetStream = this.getClass().getResourceAsStream("/" + nameTestFile2);
 
         mockMvc.perform(
                 multipart("/api/v1/file/upload")
@@ -148,8 +144,7 @@ public class ControllerApiUploadFileTests {
                 new ArrayList<>());
         directoryRedisRepository.save(directoryRedis);
 
-        File testFile = new File("src/main/resources/test/" + nameTestFile2);
-        InputStream targetStream = new FileInputStream(testFile);
+        InputStream targetStream = this.getClass().getResourceAsStream("/" + nameTestFile2);
 
         mockMvc.perform(
                         multipart("/api/v1/file/upload")
@@ -183,8 +178,7 @@ public class ControllerApiUploadFileTests {
         directoryRedisRepository.save(directoryRedis);
         rightUserFileSystemObjectRedisRepository.save(right);
 
-        File testFile = new File("src/main/resources/test/" + nameTestFile2);
-        InputStream targetStream = new FileInputStream(testFile);
+        InputStream targetStream = this.getClass().getResourceAsStream("/" + nameTestFile2);
 
         mockMvc.perform(
                 multipart("/api/v1/file/upload")
@@ -225,8 +219,7 @@ public class ControllerApiUploadFileTests {
         directoryRedisRepository.save(directoryRedis);
         rightUserFileSystemObjectRedisRepository.save(right);
 
-        File testFile = new File("src/main/resources/test/" + nameTestFile2);
-        InputStream targetStream = new FileInputStream(testFile);
+        InputStream targetStream = this.getClass().getResourceAsStream("/" + nameTestFile2);
 
         mockMvc.perform(
                 multipart("/api/v1/file/upload")

@@ -10,4 +10,5 @@ public class FileAlreadyExistsException  extends RuntimeException {
     public FileAlreadyExistsException() {
         this(Directory.DIRECTORY_EXISTS.get());
     }
+
 }

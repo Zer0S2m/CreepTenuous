@@ -62,4 +62,5 @@ public class ServiceUploadFileRedisTests {
         Assertions.assertEquals(systemName, fileRedis.getSystemNameFile());
         fileRedisRepository.delete(fileRedis);
     }
+
 }

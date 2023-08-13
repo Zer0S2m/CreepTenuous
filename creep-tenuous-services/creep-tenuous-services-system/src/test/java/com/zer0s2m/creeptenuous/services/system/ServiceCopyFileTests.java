@@ -36,6 +36,7 @@ import java.util.Objects;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceCopyFileTests {
+
     Logger logger = LogManager.getLogger(ServiceCopyFileTests.class);
 
     @Autowired
@@ -169,4 +170,5 @@ public class ServiceCopyFileTests {
                 )
         );
     }
+
 }

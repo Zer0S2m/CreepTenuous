@@ -80,7 +80,7 @@ public class ControllerApiDownloadFileTests {
 
     @Test
     public void downloadFile_success() throws Exception {
-        Path sourcePath = Path.of("src/main/resources/test/", nameTestFile1);
+        Path sourcePath = Path.of("src/test/resources/", nameTestFile1);
         Path targetPath = Path.of(rootPath.getRootPath(), nameTestFile1);
         Files.copy(sourcePath, targetPath);
 
@@ -247,7 +247,7 @@ public class ControllerApiDownloadFileTests {
     public void downloadFile_success_forbidden() throws Exception {
         final Path testDirectoryPath = Path.of(rootPath.getRootPath(), "testFolder1");
         Files.createDirectory(testDirectoryPath);
-        Path sourcePath = Path.of("src/main/resources/test/", nameTestFile1);
+        Path sourcePath = Path.of("src/test/resources/", nameTestFile1);
         Path targetPath = Path.of(testDirectoryPath.toString(), nameTestFile1);
         Files.copy(sourcePath, targetPath);
 

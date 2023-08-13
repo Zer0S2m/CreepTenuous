@@ -37,4 +37,5 @@ public class DataDownloadDirectoryApiValidationTests extends BaseValidationDataA
         );
         setErrorInvalidData(getValidator(), invalidDataDownloadDirectory);
     }
+
 }

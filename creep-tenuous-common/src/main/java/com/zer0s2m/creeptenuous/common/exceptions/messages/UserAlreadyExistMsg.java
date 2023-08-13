@@ -17,4 +17,5 @@ public class UserAlreadyExistMsg {
     public Integer getStatus() {
         return status;
     }
+
 }
