@@ -52,7 +52,7 @@ public class ServiceCreateFileRedisTests {
 
         FileRedis fileRedis = serviceCreateFileRedis.create(data);
 
-        Assertions.assertEquals(fileRedis.getSystemNameFile(), systemName);
+        Assertions.assertEquals(fileRedis.getSystemName(), systemName);
 
         fileRedisRepository.delete(fileRedis);
     }

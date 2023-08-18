@@ -86,8 +86,8 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
         userAllUserLogins.remove(userLogin);
 
         List<String> namesFileSystemObject = new ArrayList<>();
-        directoryRedisIterable.forEach(obj -> namesFileSystemObject.add(obj.getSystemNameDirectory()));
-        fileRedisIterable.forEach(obj -> namesFileSystemObject.add(obj.getSystemNameFile()));
+        directoryRedisIterable.forEach(obj -> namesFileSystemObject.add(obj.getSystemName()));
+        fileRedisIterable.forEach(obj -> namesFileSystemObject.add(obj.getSystemName()));
 
         List<String> idsRights = new ArrayList<>();
         namesFileSystemObject.forEach(name -> userAllUserLogins.forEach(login ->

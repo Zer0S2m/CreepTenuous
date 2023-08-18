@@ -113,7 +113,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
             throw new NoExistsFileSystemObjectRedisException();
         }
 
-        Path sourceDirectory = Path.of(directoryRedis.getPathDirectory());
+        Path sourceDirectory = Path.of(directoryRedis.getPath());
 
         List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(sourceDirectory);
         List<String> namesFileSystemObject = attached
@@ -192,7 +192,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
             throw new NoExistsFileSystemObjectRedisException();
         }
 
-        Path sourceDirectory = Path.of(directoryRedis.getPathDirectory());
+        Path sourceDirectory = Path.of(directoryRedis.getPath());
 
         List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(sourceDirectory);
         List<String> namesFileSystemObject = attached

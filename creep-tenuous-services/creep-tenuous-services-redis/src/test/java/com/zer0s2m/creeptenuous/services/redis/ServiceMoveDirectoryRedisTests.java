@@ -103,12 +103,12 @@ public class ServiceMoveDirectoryRedisTests {
 
         if (directoryRedis.isPresent()) {
             DirectoryRedis directoryRedisReady = directoryRedis.get();
-            Assertions.assertEquals(newSystemPath.toString(), directoryRedisReady.getPathDirectory());
+            Assertions.assertEquals(newSystemPath.toString(), directoryRedisReady.getPath());
             directoryRedisRepository.delete(directoryRedisReady);
         }
         if (fileRedis.isPresent()) {
             FileRedis fileRedisReady = fileRedis.get();
-            Assertions.assertEquals(newSystemPath.toString(), fileRedisReady.getPathFile());
+            Assertions.assertEquals(newSystemPath.toString(), fileRedisReady.getPath());
             fileRedisRepository.delete(fileRedisReady);
         }
     }

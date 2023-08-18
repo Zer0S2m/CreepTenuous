@@ -22,6 +22,7 @@
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <spring.boot.main>com.zer0s2m.creeptenuous.api.CreepTenuousApiApplication</spring.boot.main>
+    <trimStackTrace>true</trimStackTrace>
   </properties>
   <modules>
     <module>creep-tenuous-starter-test</module>
@@ -150,6 +151,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <trimStackTrace>${trimStackTrace}</trimStackTrace>
+        </configuration>
       </plugin>
     </plugins>
   </build>

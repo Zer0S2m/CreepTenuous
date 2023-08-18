@@ -55,11 +55,11 @@ public class ServiceUploadFileRedisTests {
 
         Iterable<FileRedis> fileRedisList = serviceUploadFileRedis.upload(dataUploadFiles);
         fileRedisList.forEach(obj ->
-                Assertions.assertEquals(systemName, obj.getSystemNameFile()));
+                Assertions.assertEquals(systemName, obj.getSystemName()));
         fileRedisRepository.deleteAll(fileRedisList);
 
         FileRedis fileRedis = serviceUploadFileRedis.upload(dataUploadFiles.get(0));
-        Assertions.assertEquals(systemName, fileRedis.getSystemNameFile());
+        Assertions.assertEquals(systemName, fileRedis.getSystemName());
         fileRedisRepository.delete(fileRedis);
     }
 

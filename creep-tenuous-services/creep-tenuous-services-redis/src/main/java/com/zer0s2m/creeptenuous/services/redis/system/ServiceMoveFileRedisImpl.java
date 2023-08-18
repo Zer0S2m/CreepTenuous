@@ -42,7 +42,7 @@ public class ServiceMoveFileRedisImpl extends BaseServiceFileSystemRedisManagerR
 
         if (objRedis.isPresent()) {
             FileRedis readyObjRedis = objRedis.get();
-            readyObjRedis.setPathFile(systemPath.toString());
+            readyObjRedis.setPath(systemPath.toString());
 
             push(readyObjRedis);
         }
@@ -59,7 +59,7 @@ public class ServiceMoveFileRedisImpl extends BaseServiceFileSystemRedisManagerR
     @Override
     public Iterable<FileRedis> move(Path systemPath, List<String> systemNameFile) {
         Iterable<FileRedis> objsRedis = fileRedisRepository.findAllById(systemNameFile);
-        objsRedis.forEach(objRedis -> objRedis.setPathFile(systemPath.toString()));
+        objsRedis.forEach(objRedis -> objRedis.setPath(systemPath.toString()));
         push(objsRedis);
         return objsRedis;
     }

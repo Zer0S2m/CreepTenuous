@@ -31,7 +31,7 @@ public class ServiceDeleteDirectoryRedisImpl extends BaseServiceFileSystemRedisM
 
     /**
      * Delete object in redis
-     * @param namesFileSystemObject system name directory id {@link DirectoryRedis#getRealNameDirectory()}
+     * @param namesFileSystemObject system name directory id {@link DirectoryRedis#getRealName()}
      */
     @Override
     public void delete(List<String> namesFileSystemObject) {

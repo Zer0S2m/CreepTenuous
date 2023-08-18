@@ -105,7 +105,7 @@ class UserDeleteEventHandler implements ApplicationListener<UserDeleteEvent> {
         List<DirectoryRedis> directoryRedisList = serviceRedisManagerResources
                 .getResourceDirectoryRedisByLoginUser(userLogin);
         directoryRedisList.forEach(directoryRedis -> directoryPaths.add(
-                Path.of(directoryRedis.getPathDirectory())));
+                Path.of(directoryRedis.getPath())));
 
         directoryPaths.forEach(source -> {
             if (Files.exists(source)) {
@@ -128,7 +128,7 @@ class UserDeleteEventHandler implements ApplicationListener<UserDeleteEvent> {
         List<FileRedis> fileRedisList = serviceRedisManagerResources
                 .getResourceFileRedisByLoginUser(userLogin);
         fileRedisList.forEach(fileRedis -> filePaths.add(
-                Path.of(fileRedis.getPathFile())));
+                Path.of(fileRedis.getPath())));
 
         filePaths.forEach(source -> {
             if (Files.exists(source)) {

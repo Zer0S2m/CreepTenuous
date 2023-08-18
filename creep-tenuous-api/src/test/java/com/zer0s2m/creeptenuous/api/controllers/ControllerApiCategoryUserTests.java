@@ -187,7 +187,7 @@ public class ControllerApiCategoryUserTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new DataControlFileSystemObjectInCategoryApi(
-                                directoryRedis.getSystemNameDirectory(), userCategory.getId()
+                                directoryRedis.getSystemName(), userCategory.getId()
                         )))
                         .header("Authorization", accessToken)
                 )
@@ -225,7 +225,7 @@ public class ControllerApiCategoryUserTests {
                 new ArrayList<>()
         ));
         categoryFileSystemObjectRepository.save(new CategoryFileSystemObject(
-                user, userCategory, UUID.fromString(directoryRedis.getSystemNameDirectory())
+                user, userCategory, UUID.fromString(directoryRedis.getSystemName())
         ));
 
         this.mockMvc.perform(
@@ -233,7 +233,7 @@ public class ControllerApiCategoryUserTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new DataControlFileSystemObjectInCategoryApi(
-                                directoryRedis.getSystemNameDirectory(), userCategory.getId()
+                                directoryRedis.getSystemName(), userCategory.getId()
                         )))
                         .header("Authorization", accessToken)
                 )

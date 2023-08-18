@@ -48,12 +48,12 @@ public class ServiceRenameFileSystemObjectRedisImpl extends BaseServiceFileSyste
 
         if (fileRedisOptional.isPresent()) {
             FileRedis fileRedis = fileRedisOptional.get();
-            fileRedis.setRealNameFile(newRealName);
+            fileRedis.setRealName(newRealName);
             fileRedisRepository.save(fileRedis);
         }
         if (directoryRedisOptional.isPresent()) {
             DirectoryRedis directoryRedis = directoryRedisOptional.get();
-            directoryRedis.setRealNameDirectory(newRealName);
+            directoryRedis.setRealName(newRealName);
             directoryRedisRepository.save(directoryRedis);
         }
     }

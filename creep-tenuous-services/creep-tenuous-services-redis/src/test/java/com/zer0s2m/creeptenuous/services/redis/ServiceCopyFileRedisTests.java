@@ -61,7 +61,7 @@ public class ServiceCopyFileRedisTests {
         );
 
         fileRedisList.forEach(obj -> {
-            Assertions.assertEquals(newSystemName, obj.getSystemNameFile());
+            Assertions.assertEquals(newSystemName, obj.getSystemName());
             fileRedisRepository.delete(obj);
         });
     }

@@ -42,8 +42,8 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
 
     /**
      * Get data file system object
-     * @param systemNamesFileSystemObject system path object ids {@link DirectoryRedis#getRealNameDirectory()}
-     *                                    or {@link FileRedis#getRealNameFile()}
+     * @param systemNamesFileSystemObject system path object ids {@link DirectoryRedis#getRealName()} ()}
+     *                                    or {@link FileRedis#getRealName()}
      * @return json array
      */
     @Override
@@ -56,18 +56,18 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
 
         directoryRedis.forEach(objRedis -> buildJSON(
                 data,
-                objRedis.getSystemNameDirectory(),
+                objRedis.getSystemName(),
                 objRedis.getIsFile(),
                 objRedis.getIsDirectory(),
-                objRedis.getRealNameDirectory(),
-                mapColors.getOrDefault(objRedis.getSystemNameDirectory(), null)
+                objRedis.getRealName(),
+                mapColors.getOrDefault(objRedis.getSystemName(), null)
         ));
         fileRedis.forEach(objRedis -> buildJSON(
                 data,
-                objRedis.getSystemNameFile(),
+                objRedis.getSystemName(),
                 objRedis.getIsFile(),
                 objRedis.getIsDirectory(),
-                objRedis.getRealNameFile(),
+                objRedis.getRealName(),
                 null
         ));
 

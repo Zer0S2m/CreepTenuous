@@ -34,8 +34,8 @@ public class ServiceDownloadDirectorySelectRedisImpl extends BaseServiceFileSyst
 
     /**
      * Get info directory for download directory
-     * @param systemPathObject system path object ids {@link DirectoryRedis#getRealNameDirectory()}
-     *                         or {@link FileRedis#getRealNameFile()}
+     * @param systemPathObject system path object ids {@link DirectoryRedis#getRealName()}
+     *                         or {@link FileRedis#getRealName()}
      * @return map info directory
      *         <p><b>Key</b> - system name file object</p>
      *         <p><b>Value</b> - real name system file object</p>

@@ -53,7 +53,7 @@ public class ServiceCopyFileRedisImpl extends BaseServiceFileSystemRedisManagerR
             FileRedis newObjRedis = ServiceCreateFileRedis.getObjRedis(
                     existingObjRedis.getLogin(),
                     existingObjRedis.getRole(),
-                    existingObjRedis.getRealNameFile(),
+                    existingObjRedis.getRealName(),
                     newSystemFileName.get(i),
                     target.get(i).toString(),
                     new ArrayList<>()

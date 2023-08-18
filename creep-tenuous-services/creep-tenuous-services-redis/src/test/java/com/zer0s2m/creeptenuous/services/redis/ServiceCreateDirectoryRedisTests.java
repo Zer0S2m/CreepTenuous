@@ -51,7 +51,7 @@ public class ServiceCreateDirectoryRedisTests {
 
         DirectoryRedis directoryRedis = serviceCreateDirectoryRedis.create(data);
 
-        Assertions.assertEquals(directoryRedis.getSystemNameDirectory(), systemName);
+        Assertions.assertEquals(directoryRedis.getSystemName(), systemName);
 
         directoryRedisRepository.delete(directoryRedis);
     }
