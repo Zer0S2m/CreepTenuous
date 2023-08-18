@@ -145,4 +145,10 @@ public interface ControllerApiProfileUserDoc {
     void setTransferredUserId(
             final DataTransferredUserApi data, @Parameter(hidden = true) String accessToken) throws UserNotFoundException;
 
+    void setFileObjectsExclusion(
+            String accessToken);
+
+    void deleteFileObjectsExclusion(
+            String accessToken);
+
 }

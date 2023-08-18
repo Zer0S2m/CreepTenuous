@@ -95,4 +95,20 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
         serviceProfileUser.setTransferredUserSettings(userInfo.getLogin(), data.userId());
     }
 
+    @Override
+    @PostMapping("/user/profile/settings/exclusions-file-objects")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void setFileObjectsExclusion(
+            String accessToken) {
+
+    }
+
+    @Override
+    @DeleteMapping("/user/profile/settings/exclusions-file-objects")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void deleteFileObjectsExclusion(
+            String accessToken) {
+
+    }
+
 }

@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.services.user.impl;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.models.user.UserSettings;
+import com.zer0s2m.creeptenuous.repository.user.UserFileObjectsExclusionRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserSettingsRepository;
 import com.zer0s2m.creeptenuous.services.user.ServiceProfileUser;
@@ -21,10 +22,16 @@ public class ServiceProfileUserImpl implements ServiceProfileUser {
 
     private final UserSettingsRepository userSettingsRepository;
 
+    private final UserFileObjectsExclusionRepository userFileObjectsExclusionRepository;
+
     @Autowired
-    public ServiceProfileUserImpl(UserRepository userRepository, UserSettingsRepository userSettingsRepository) {
+    public ServiceProfileUserImpl(
+            UserRepository userRepository,
+            UserSettingsRepository userSettingsRepository,
+            UserFileObjectsExclusionRepository userFileObjectsExclusionRepository) {
         this.userRepository = userRepository;
         this.userSettingsRepository = userSettingsRepository;
+        this.userFileObjectsExclusionRepository = userFileObjectsExclusionRepository;
     }
 
     /**
@@ -94,6 +101,16 @@ public class ServiceProfileUserImpl implements ServiceProfileUser {
             cleanUserSettings.setTransferredUser(transferredUser);
             userSettingsRepository.save(cleanUserSettings);
         }
+    }
+
+    @Override
+    public void setFileObjectsExclusion() {
+
+    }
+
+    @Override
+    public void deleteFileObjectsExclusion() {
+
     }
 
 }

@@ -31,4 +31,8 @@ public interface ServiceProfileUser {
      */
     void setTransferredUserSettings(String login, Long transferUserId) throws UserNotFoundException;
 
+    void setFileObjectsExclusion();
+
+    void deleteFileObjectsExclusion();
+
 }
