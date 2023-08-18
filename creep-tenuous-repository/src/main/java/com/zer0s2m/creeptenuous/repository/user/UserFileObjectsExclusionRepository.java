@@ -17,6 +17,6 @@ public interface UserFileObjectsExclusionRepository extends CrudRepository<UserF
      * @param user_login user login. Must not be {@literal null}.
      * @return deleted count entities
      */
-    boolean deleteAllByFileSystemObjectInAndUserLogin(Collection<UUID> fileSystemObject, String user_login);
+    long deleteAllByFileSystemObjectInAndUserLogin(Collection<UUID> fileSystemObject, String user_login);
 
 }
