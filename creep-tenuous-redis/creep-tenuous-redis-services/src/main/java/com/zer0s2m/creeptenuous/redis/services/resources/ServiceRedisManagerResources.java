@@ -147,7 +147,7 @@ public interface ServiceRedisManagerResources {
      * @param userLogin user login
      * @return if exists
      */
-    boolean checkIfFilesRedisExistBySystemNamesAndUserLogin(Collection<String> systemNames, String userLogin);
+    long checkIfFilesRedisExistBySystemNamesAndUserLogin(Collection<String> systemNames, String userLogin);
 
     /**
      * Check if directories exist by system names and username
@@ -155,7 +155,7 @@ public interface ServiceRedisManagerResources {
      * @param userLogin user login
      * @return if exists
      */
-    boolean checkIfDirectoryRedisExistBySystemNamesAndUserLogin(Collection<String> systemNames, String userLogin);
+    long checkIfDirectoryRedisExistBySystemNamesAndUserLogin(Collection<String> systemNames, String userLogin);
 
     /**
      * Check if a file object is a directory type

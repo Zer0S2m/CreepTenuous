@@ -208,9 +208,15 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
      * @return if exists
      */
     @Override
-    public boolean checkIfFilesRedisExistBySystemNamesAndUserLogin(
-            Collection<String> systemNames, String userLogin) {
-        return true;
+    public long checkIfFilesRedisExistBySystemNamesAndUserLogin(
+            @NotNull Collection<String> systemNames, String userLogin) {
+        return getResourceFileRedisByLoginUserAndInSystemNames(
+                userLogin,
+                systemNames
+                        .stream()
+                        .map(UUID::fromString)
+                        .toList()
+        ).size();
     }
 
     /**
@@ -220,9 +226,15 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
      * @return if exists
      */
     @Override
-    public boolean checkIfDirectoryRedisExistBySystemNamesAndUserLogin(
-            Collection<String> systemNames, String userLogin) {
-        return true;
+    public long checkIfDirectoryRedisExistBySystemNamesAndUserLogin(
+            @NotNull Collection<String> systemNames, String userLogin) {
+        return getResourceDirectoryRedisByLoginUserAndInSystemNames(
+                userLogin,
+                systemNames
+                        .stream()
+                        .map(UUID::fromString)
+                        .toList()
+        ).size();
     }
 
     /**

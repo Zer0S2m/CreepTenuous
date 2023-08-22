@@ -75,7 +75,7 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
     public void deleteUserByLogin(final @Valid @RequestBody @NotNull DataControlUserApi data)
             throws UserNotFoundException {
         userEventPublisher.publishDelete(data.login());
-//        serviceControlUser.deleteUser(data.login());
+        serviceControlUser.deleteUser(data.login());
     }
 
     /**

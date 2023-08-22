@@ -129,12 +129,12 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
                 .distinct()
                 .toList();
 
-        long countFileRedis = serviceRedisManagerResources.getResourceFileRedisByLoginUser(
-                userInfo.getLogin()).size();
-        long countDirectoryRedis = serviceRedisManagerResources.getResourceDirectoryRedisByLoginUser(
-                userInfo.getLogin()).size();
+        long countFileRedis = serviceRedisManagerResources.checkIfFilesRedisExistBySystemNamesAndUserLogin(
+                systemNames, userInfo.getLogin()
+        );
+        long countDirectoryRedis = serviceRedisManagerResources.checkIfDirectoryRedisExistBySystemNamesAndUserLogin(
+                systemNames, userInfo.getLogin());
 
-        // TODO: Change the logic of checking for the existence of file objects by system names
         if (countFileRedis + countDirectoryRedis < systemNames.size()) {
             throw new NotFoundException("Not found file objects");
         }
