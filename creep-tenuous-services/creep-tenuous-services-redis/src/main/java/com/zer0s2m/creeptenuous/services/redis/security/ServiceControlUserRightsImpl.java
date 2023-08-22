@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.base.BaseRedis;
+import com.zer0s2m.creeptenuous.redis.models.base.IBaseRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.JwtRedisRepository;
@@ -16,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 /**
@@ -44,6 +42,13 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
     private Iterable<DirectoryRedis> directoryRedisIterable;
 
     private Iterable<FileRedis> fileRedisIterable;
+
+    private Collection<UUID> fileObjectsExclusions = null;
+
+    /**
+     * the setting determines whether the distribution of file objects will be performed or they will be deleted
+     */
+    private boolean isDistribution = false;
 
     @Autowired
     public ServiceControlUserRightsImpl(
@@ -72,6 +77,38 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
     }
 
     /**
+     *  Remove filesystem objects from redis by user login and system names
+     * @param userLogin user login. Must not be {@literal null}.
+     * @param systemNames system names of file objects. Must not contain {@literal null} elements.
+     */
+    @Override
+    public void removeFileSystemObjectsBySystemNames(
+            String userLogin, @NotNull Collection<UUID> systemNames) {
+        setFileSystemObjects(userLogin);
+
+        List<String> systemNamesStr = systemNames
+                .stream()
+                .map(UUID::toString)
+                .toList();
+
+        Iterable<String> directoryRedisIterableForDelete = StreamSupport
+                .stream(directoryRedisIterable
+                        .spliterator(), false)
+                .map(IBaseRedis::getSystemName)
+                .filter(systemNamesStr::contains)
+                .toList();
+        Iterable<String> fileRedisIterableForDelete = StreamSupport
+                .stream(fileRedisIterable
+                        .spliterator(), false)
+                .map(IBaseRedis::getSystemName)
+                .filter(systemNamesStr::contains)
+                .toList();
+
+        directoryRedisRepository.deleteAllById(directoryRedisIterableForDelete);
+        fileRedisRepository.deleteAllById(fileRedisIterableForDelete);
+    }
+
+    /**
      * Remove granted permissions for user
      * @param userLogin user login
      */
@@ -85,15 +122,37 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
                 .forEach(jwtRedis -> userAllUserLogins.add(jwtRedis.getLogin()));
         userAllUserLogins.remove(userLogin);
 
-        List<String> namesFileSystemObject = new ArrayList<>();
-        directoryRedisIterable.forEach(obj -> namesFileSystemObject.add(obj.getSystemName()));
-        fileRedisIterable.forEach(obj -> namesFileSystemObject.add(obj.getSystemName()));
+        List<String> namesFileSystemObject = getNamesFileSystemObjectFilterByFileObjectsExclusions(
+                isDistribution ? fileObjectsExclusions : null
+        );
 
         List<String> idsRights = new ArrayList<>();
         namesFileSystemObject.forEach(name -> userAllUserLogins.forEach(login ->
                 idsRights.add(name + ManagerRights.SEPARATOR_UNIQUE_KEY.get() + login)));
 
         rightUserFileSystemObjectRedisRepository.deleteAllById(idsRights);
+    }
+
+    /**
+     * Get all system names of file objects and filter by names that are in the exclusion list
+     * {@link ServiceControlUserRights#setFileObjectsExclusions(Collection)}
+     * @param systemNames system names of file objects
+     * @return filtered list of system names
+     */
+    private @NotNull List<String> getNamesFileSystemObjectFilterByFileObjectsExclusions(Collection<UUID> systemNames) {
+        List<String> namesFileSystemObject = new ArrayList<>();
+
+        directoryRedisIterable.forEach(obj -> namesFileSystemObject.add(obj.getSystemName()));
+        fileRedisIterable.forEach(obj -> namesFileSystemObject.add(obj.getSystemName()));
+
+        if (systemNames != null) {
+            return namesFileSystemObject
+                    .stream()
+                    .filter(systemName -> systemNames.contains(UUID.fromString(systemName)))
+                    .toList();
+        }
+
+        return namesFileSystemObject;
     }
 
     /**
@@ -111,6 +170,12 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
                 rightUserFileSystemObjectRedisRepository.findAll(Example.of(rightUserFileSystemObjectRedisExample));
 
         List<String> namesFileSystemObject = getNamesFileSystemObjectFromRights(rightUserFileSystemObjectRedis);
+        if (isDistribution && fileObjectsExclusions != null) {
+            namesFileSystemObject = namesFileSystemObject
+                    .stream()
+                    .filter(systemName -> fileObjectsExclusions.contains(UUID.fromString(systemName)))
+                    .toList();
+        }
 
         List<DirectoryRedis> directoryRedisList = serviceRedisManagerResources.getResourceDirectoryRedis(
                 namesFileSystemObject);
@@ -341,6 +406,26 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
                                         .getFileSystemObject()
                                         .split(ManagerRights.SEPARATOR_UNIQUE_KEY.get())[0]))
                         .toList());
+    }
+
+    /**
+     * Set system names of file objects to exclude. When distribution will be deleted.
+     * <p>Set if file objects will be distributed in the future and <b>not deleted</b></p>
+     * @param fileObjectsExclusions system names of file objects
+     */
+    @Override
+    public void setFileObjectsExclusions(Collection<UUID> fileObjectsExclusions) {
+        this.fileObjectsExclusions = fileObjectsExclusions;
+    }
+
+    /**
+     * Set the setting for the class. Responsible whether in the future
+     * the distribution of objects or they will be deleted
+     * @param isDistribution is the distribution
+     */
+    @Override
+    public void setIsDistribution(boolean isDistribution) {
+        this.isDistribution = isDistribution;
     }
 
 }

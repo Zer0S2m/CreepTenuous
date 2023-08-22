@@ -134,7 +134,8 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
         long countDirectoryRedis = serviceRedisManagerResources.getResourceDirectoryRedisByLoginUser(
                 userInfo.getLogin()).size();
 
-        if (countFileRedis + countDirectoryRedis != systemNames.size()) {
+        // TODO: Change the logic of checking for the existence of file objects by system names
+        if (countFileRedis + countDirectoryRedis < systemNames.size()) {
             throw new NotFoundException("Not found file objects");
         }
 
