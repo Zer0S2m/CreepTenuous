@@ -43,7 +43,9 @@ public interface ServiceControlUserRights {
     void removeJwtTokensFotUser(String userLogin);
 
     /**
-     * Migrate assigned rights from a remote user to another
+     * Transferring assigned rights from a remote user to another.
+     * <p>If the owner had rights to other file objects (except the user to which they
+     * will be transferred), then they should be transferred to the new</p>
      * @param ownerUserLogin owner user login
      * @param transferUserLogin login of the user to whom the data will be transferred
      */
@@ -57,7 +59,8 @@ public interface ServiceControlUserRights {
     void migrateFileSystemObjects(String ownerUserLogin, String transferUserLogin);
 
     /**
-     * Remove rights assigned to a migrated user
+     * Remove the rights assigned to the migrated user. Necessary so that an already assigned
+     * user does not have rights to their own new file objects
      * @param ownerUserLogin owner user login
      * @param transferUserLogin login of the user to whom the data will be transferred
      */

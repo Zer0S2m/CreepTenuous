@@ -24,7 +24,6 @@
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-models</artifactId>
-      <version>0.0.9-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

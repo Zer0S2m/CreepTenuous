@@ -107,9 +107,10 @@ class UserDeleteEventHandler implements ApplicationListener<UserDeleteEvent> {
             }
 
             User transferredUser = transferredUserRaw.getValue();
-            serviceControlUserRights.migrateAssignedPermissionsForUser(userLogin, transferredUser.getLogin());
-            serviceControlUserRights.migrateFileSystemObjects(userLogin, transferredUser.getLogin());
             serviceControlUserRights.deleteAssignedPermissionsForUser(userLogin, transferredUser.getLogin());
+            serviceControlUserRights.migrateAssignedPermissionsForUser(userLogin, transferredUser.getLogin());
+            serviceControlUserRights.removeAssignedPermissionsForUser(userLogin);
+            serviceControlUserRights.migrateFileSystemObjects(userLogin, transferredUser.getLogin());
         }
     }
 
