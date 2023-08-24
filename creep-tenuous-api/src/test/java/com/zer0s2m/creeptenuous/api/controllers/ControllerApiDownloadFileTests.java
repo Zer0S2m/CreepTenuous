@@ -5,7 +5,6 @@ import com.zer0s2m.creeptenuous.api.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.NoSuchFileExists;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.models.FrozenFileSystemObjectRedis;
@@ -36,6 +35,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -76,8 +76,6 @@ public class ControllerApiDownloadFileTests {
 
     private final String nameTestFile1 = "test_image_1.jpeg";
 
-    private final String failNameTestFile = "fail_name_test_file.fail_extension";
-
     @Test
     public void downloadFile_success() throws Exception {
         Path sourcePath = Path.of("src/test/resources/", nameTestFile1);
@@ -109,29 +107,27 @@ public class ControllerApiDownloadFileTests {
 
     @Test
     public void downloadFile_fail_notFoundFile() throws Exception {
+        String systemName = UUID.randomUUID().toString();
+
         mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("/api/v1/file/download")
                         .content(objectMapper.writeValueAsString(new DataDownloadFileApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),
-                                failNameTestFile,
-                                failNameTestFile
+                                systemName,
+                                systemName
                         )))
                         .header("Authorization", accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isNotFound())
-                .andExpect(content().json(
-                        objectMapper.writeValueAsString(
-                                new NoSuchFileExists(rootPath.getRootPath() + "/" + failNameTestFile)
-                        )
-                ));
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void downloadFile_fail_invalidPathDirectory() throws Exception {
+        String failNameTestFile = "fail_name_test_file.fail_extension";
         mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("/api/v1/file/download")

@@ -15,18 +15,16 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 @SpringBootTest(classes = {
         ServiceDownloadFileImpl.class,
@@ -55,7 +53,7 @@ public class ServiceDownloadFileTests {
 
         String nameTestFile1 = "test_image_1.jpeg";
 
-        Path sourcePath = Path.of(classLoader.getResource(nameTestFile1).getPath());
+        Path sourcePath = Path.of(Objects.requireNonNull(classLoader.getResource(nameTestFile1)).getPath());
         Path targetPath = Path.of(rootPath.getRootPath(), nameTestFile1);
         Files.copy(sourcePath, targetPath);
 
@@ -63,14 +61,13 @@ public class ServiceDownloadFileTests {
 
         logger.info("Copy file: " + targetPath);
 
-        ContainerDataDownloadFile<ByteArrayResource, String> dataFile = service.download(
+        ContainerDataDownloadFile<StreamingResponseBody, String> dataFile = service.download(
                 new ArrayList<>(),
                 nameTestFile1
         );
 
         Assertions.assertEquals(dataFile.filename(), nameTestFile1);
         Assertions.assertEquals(dataFile.mimeType(), fileTypeMap.getContentType(targetPath.toFile()));
-        Assertions.assertTrue(dataFile.byteContent().contentLength() > 0);
 
         UtilsActionForFiles.deleteFileAndWriteLog(targetPath, logger);
         Assertions.assertFalse(Files.exists(targetPath));
@@ -81,7 +78,6 @@ public class ServiceDownloadFileTests {
                 headers.getContentType()).toString(),
                 MediaType.IMAGE_JPEG_VALUE
         );
-        Assertions.assertTrue(headers.getContentLength() > 0);
         Assertions.assertEquals(headers.getContentDisposition().getFilename(), nameTestFile1);
     }
 
@@ -90,7 +86,7 @@ public class ServiceDownloadFileTests {
         Assertions.assertThrows(
                 NoSuchFileException.class,
                 () -> service.download(
-                        new ArrayList<>(),
+                        List.of(UUID.randomUUID().toString(), UUID.randomUUID().toString()),
                         failNameTestFile
                 )
         );
