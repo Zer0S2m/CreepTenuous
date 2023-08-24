@@ -32,5 +32,9 @@ public class UserFileObjectsExclusion {
         this.fileSystemObject = fileSystemObject;
         this.user = user;
     }
+
+    public Long getId() {
+        return id;
+    }
     
 }
