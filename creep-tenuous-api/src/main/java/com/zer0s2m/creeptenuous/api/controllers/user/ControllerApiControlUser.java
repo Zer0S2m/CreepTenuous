@@ -74,8 +74,8 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
     @RolesAllowed("ROLE_ADMIN")
     public void deleteUserByLogin(final @Valid @RequestBody @NotNull DataControlUserApi data)
             throws UserNotFoundException {
-        serviceControlUser.deleteUser(data.login());
         userEventPublisher.publishDelete(data.login());
+        serviceControlUser.deleteUser(data.login());
     }
 
     /**

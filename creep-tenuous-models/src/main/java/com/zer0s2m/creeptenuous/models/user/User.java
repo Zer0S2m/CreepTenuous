@@ -23,7 +23,7 @@ public class User implements UserDetails {
 
     @Id
     @Column(name = "id")
-    @SequenceGenerator(name = "UserSequence", sequenceName = "user_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "UserSequence", sequenceName = "\"user_id_seq\"", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "UserSequence")
     private Long id;
 

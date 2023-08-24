@@ -1,5 +1,8 @@
 package com.zer0s2m.creeptenuous.redis.services.security;
 
+import java.util.Collection;
+import java.util.UUID;
+
 /**
  * Interface to implement to control user rights, such as:
  * <ul>
@@ -9,10 +12,17 @@ package com.zer0s2m.creeptenuous.redis.services.security;
 public interface ServiceControlUserRights {
 
     /**
-     * remove filesystem objects from redis
+     * Remove filesystem objects from redis
      * @param userLogin user login
      */
     void removeFileSystemObjects(String userLogin);
+
+    /**
+     *  Remove filesystem objects from redis by user login and system names
+     * @param userLogin user login. Must not be {@literal null}.
+     * @param systemNames system names of file objects. Must not contain {@literal null} elements.
+     */
+    void removeFileSystemObjectsBySystemNames(String userLogin, Collection<UUID> systemNames);
 
     /**
      * Remove granted permissions for user
@@ -33,7 +43,9 @@ public interface ServiceControlUserRights {
     void removeJwtTokensFotUser(String userLogin);
 
     /**
-     * Migrate assigned rights from a remote user to another
+     * Transferring assigned rights from a remote user to another.
+     * <p>If the owner had rights to other file objects (except the user to which they
+     * will be transferred), then they should be transferred to the new</p>
      * @param ownerUserLogin owner user login
      * @param transferUserLogin login of the user to whom the data will be transferred
      */
@@ -47,10 +59,25 @@ public interface ServiceControlUserRights {
     void migrateFileSystemObjects(String ownerUserLogin, String transferUserLogin);
 
     /**
-     * Remove rights assigned to a migrated user
+     * Remove the rights assigned to the migrated user. Necessary so that an already assigned
+     * user does not have rights to their own new file objects
      * @param ownerUserLogin owner user login
      * @param transferUserLogin login of the user to whom the data will be transferred
      */
     void deleteAssignedPermissionsForUser(String ownerUserLogin, String transferUserLogin);
+
+    /**
+     * Set system names of file objects to exclude. When distribution will be deleted.
+     * <p>Set if file objects will be distributed in the future and <b>not deleted</b></p>
+     * @param fileObjectsExclusions system names of file objects
+     */
+    void setFileObjectsExclusions(Collection<UUID> fileObjectsExclusions);
+
+    /**
+     * Set the setting for the class. Responsible whether in the future
+     * the distribution of objects or they will be deleted
+     * @param isDistribution is the distribution
+     */
+    void setIsDistribution(boolean isDistribution);
 
 }

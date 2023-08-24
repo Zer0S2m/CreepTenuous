@@ -1,7 +1,9 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
+import com.zer0s2m.creeptenuous.common.data.DataControlFileObjectsExclusionApi;
 import com.zer0s2m.creeptenuous.common.data.DataIsDeletingFileObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataTransferredUserApi;
+import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.http.ResponseUserApi;
 import io.swagger.v3.oas.annotations.Operation;
@@ -98,7 +100,7 @@ public interface ControllerApiProfileUserDoc {
     /**
      * Set setting - transfer file objects to designated user
      * @param data setting data
-     * @param accessToken wat access JWT token
+     * @param accessToken raw access JWT token
      * @throws UserNotFoundException not exists user
      */
     @Operation(
@@ -143,6 +145,101 @@ public interface ControllerApiProfileUserDoc {
             }
     )
     void setTransferredUserId(
-            final DataTransferredUserApi data, @Parameter(hidden = true) String accessToken) throws UserNotFoundException;
+            final DataTransferredUserApi data, @Parameter(hidden = true) String accessToken)
+            throws UserNotFoundException;
+
+    /**
+     * Set file objects to exclusions when deleting a user and then allocating them
+     * @param data data to set
+     * @param accessToken raw access JWT token
+     * @throws UserNotFoundException not exists user
+     * @throws NotFoundException not exists file objects
+     */
+    @Operation(
+            method = "DELETE",
+            summary = "Set file objects to exclusions when deleting a user and then allocating them",
+            description = "Set file objects to exclusions when deleting a user and then allocating them",
+            tags = { "User" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Successful",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(ref = "#/components/schemas/Unauthorized")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found user", value = "{" +
+                                                    "\"message\": \"User is not found.\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            ),
+                                            @ExampleObject(name = "Not found objects", value = "{" +
+                                                    "\"message\": \"Not found file objects.\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            ),
+                                    })
+                    )
+            }
+    )
+    void setFileObjectsExclusion(
+            final DataControlFileObjectsExclusionApi data, @Parameter(hidden = true) String accessToken)
+            throws NotFoundException;
+
+    /**
+     * Remove file objects from exclusion on user deletion and then allocate them
+     * @param data data to deleted
+     * @param accessToken raw access JWT token
+     * @throws UserNotFoundException not exists user
+     */
+    @Operation(
+            method = "DELETE",
+            summary = "Remove file objects from exclusion on user deletion and then allocate them",
+            description = "Remove file objects from exclusion on user deletion and then allocate them",
+            tags = { "User" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Successful",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(ref = "#/components/schemas/Unauthorized")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found user", value = "{" +
+                                                    "\"message\": \"User is not found.\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            )
+                                    })
+                    )
+            }
+    )
+    void deleteFileObjectsExclusion(
+            final DataControlFileObjectsExclusionApi data, @Parameter(hidden = true) String accessToken)
+            throws NotFoundException;
 
 }
