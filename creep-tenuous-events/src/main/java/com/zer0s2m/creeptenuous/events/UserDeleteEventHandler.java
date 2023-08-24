@@ -2,8 +2,10 @@ package com.zer0s2m.creeptenuous.events;
 
 import com.zer0s2m.creeptenuous.common.utils.OptionalMutable;
 import com.zer0s2m.creeptenuous.common.query.IFileObjectsExclusions;
+import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.models.user.UserSettings;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceControlUserRights;
 import com.zer0s2m.creeptenuous.repository.user.UserFileObjectsExclusionRepository;
@@ -92,26 +94,81 @@ class UserDeleteEventHandler implements ApplicationListener<UserDeleteEvent> {
         } else if (transferredUserRaw.getValue() != null) {
             IFileObjectsExclusions fileObjectsExclusions = getFileObjectsExclusions(userLogin);
             if (fileObjectsExclusions != null) {
-                deleteFilesBySystemNames(
-                        userLogin, fileObjectsExclusions.getFileSystemObjects());
-                deleteDirectoriesBySystemNames(
-                        userLogin, fileObjectsExclusions.getFileSystemObjects());
+                List<UUID> fileSystemObjectsExclusions;
+                try {
+                    fileSystemObjectsExclusions = getNamesFileSystemObjectExclusions(
+                            getPathsDirectoryInExclusions(fileObjectsExclusions));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                System.out.println(fileSystemObjectsExclusions);
+
+                deleteFilesBySystemNames(userLogin, fileSystemObjectsExclusions);
+                deleteDirectoriesBySystemNames(userLogin, fileSystemObjectsExclusions);
 
                 // Setting a parameter for distribution after stinging files from exclusions
-                serviceControlUserRights.setFileObjectsExclusions(fileObjectsExclusions.getFileSystemObjects());
+                serviceControlUserRights.setFileObjectsExclusions(fileSystemObjectsExclusions);
                 serviceControlUserRights.setIsDistribution(true);
                 serviceControlUserRights.removeAssignedPermissionsForUser(userLogin);
                 serviceControlUserRights.removeGrantedPermissionsForUser(userLogin);
-                serviceControlUserRights.removeFileSystemObjectsBySystemNames(
-                        userLogin, fileObjectsExclusions.getFileSystemObjects());
+                serviceControlUserRights.removeFileSystemObjectsBySystemNames(userLogin,
+                        fileSystemObjectsExclusions);
             }
 
+            serviceControlUserRights.setFileObjectsExclusions(null);
+            serviceControlUserRights.setIsDistribution(false);
             User transferredUser = transferredUserRaw.getValue();
             serviceControlUserRights.deleteAssignedPermissionsForUser(userLogin, transferredUser.getLogin());
             serviceControlUserRights.migrateAssignedPermissionsForUser(userLogin, transferredUser.getLogin());
             serviceControlUserRights.removeAssignedPermissionsForUser(userLogin);
             serviceControlUserRights.migrateFileSystemObjects(userLogin, transferredUser.getLogin());
         }
+    }
+
+    /**
+     * Get system directory paths from user exclusion
+     * @param fileObjectsExclusions projection to get file objects that are in exclusions and aggregate by users
+     * @return system directory path
+     */
+    private @NotNull List<Path> getPathsDirectoryInExclusions(
+            @NotNull IFileObjectsExclusions fileObjectsExclusions) {
+        List<Path> pathsDirectoryInExclusions = new ArrayList<>();
+        List<String> fileSystemObjectsStr = fileObjectsExclusions.getFileSystemObjects()
+                .stream()
+                .map(UUID::toString)
+                .toList();
+        List<DirectoryRedis> directoryRedisList = serviceRedisManagerResources
+                .getResourceDirectoryRedisByLoginUser(fileObjectsExclusions.getUserLogin());
+
+        for (DirectoryRedis directoryRedis : directoryRedisList) {
+            if (fileSystemObjectsStr.contains(directoryRedis.getSystemName())) {
+                pathsDirectoryInExclusions.add(Path.of(directoryRedis.getPath()));
+            }
+        }
+
+        return pathsDirectoryInExclusions;
+    }
+
+    /**
+     * Get the system names of file objects that are in exclusions using the directory iteration method
+     * @param paths system paths of file objects
+     * @return system names of file objects that are in exclusions
+     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     */
+    private @NotNull List<UUID> getNamesFileSystemObjectExclusions(@NotNull List<Path> paths) throws IOException {
+        Set<String> systemNames = new HashSet<>();
+
+        for (Path path : paths) {
+            systemNames.addAll(
+                    WalkDirectoryInfo.getNamesFileSystemObject(path));
+            systemNames.add(path.getFileName().toString());
+        }
+
+        return systemNames
+                .stream()
+                .map(UUID::fromString)
+                .toList();
     }
 
     /**

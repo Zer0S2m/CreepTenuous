@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.enums.ManagerRights;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.models.user.User;
+import com.zer0s2m.creeptenuous.models.user.UserFileObjectsExclusion;
 import com.zer0s2m.creeptenuous.models.user.UserSettings;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
@@ -89,6 +90,9 @@ public class UserDeleteEventHandlerTests {
     private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
     @Autowired
+    private UserFileObjectsExclusionRepository userFileObjectsExclusionRepository;
+
+    @Autowired
     private JwtRedisRepository jwtRedisRepository;
 
     @Autowired
@@ -108,11 +112,18 @@ public class UserDeleteEventHandlerTests {
             "test_name_2"
     );
 
+    final User USER_3 = new User(
+            "test_login_3",
+            "test_password_3",
+            "test_email_3@test.com",
+            "test_name_3"
+    );
+
     private void createDirectoryRedis(String systemName, String path, List<String> userLogins) {
         directoryRedisRepository.save(new DirectoryRedis(
                 USER.getLogin(),
                 "ROLE_USER",
-                "directory",
+                systemName,
                 systemName,
                 path,
                 userLogins
@@ -123,7 +134,7 @@ public class UserDeleteEventHandlerTests {
         directoryRedisRepository.save(new DirectoryRedis(
                 login,
                 "ROLE_USER",
-                "directory",
+                systemName,
                 systemName,
                 path,
                 userLogins
@@ -134,7 +145,7 @@ public class UserDeleteEventHandlerTests {
         fileRedisRepository.save(new FileRedis(
                 USER.getLogin(),
                 "ROLE_USER",
-                "directory",
+                systemName,
                 systemName,
                 path,
                 userLogins
@@ -313,6 +324,47 @@ public class UserDeleteEventHandlerTests {
         directoryRedisRepository.deleteAllById(List.of(
                 systemNameDirectory1, systemNameDirectory2, systemNameDirectory3));
         fileRedisRepository.deleteById(systemNameFile1);
+    }
+
+    @Test
+    public void deleteAllFileObjects_success_full_fileObjectsExclusions() throws Exception {
+        User user2 = userRepository.save(USER_2);
+        User user3 = userRepository.save(USER_3);
+        UserSettings userSettings = new UserSettings(user2, user3);
+
+        userSettings.setIsDeletingFileObjects(false);
+        userSettingsRepository.save(userSettings);
+
+        UUID systemNameDirectory1 = UUID.randomUUID();
+        UUID systemNameDirectory2 = UUID.randomUUID();
+        UUID systemNameDirectory3 = UUID.randomUUID();
+
+        Path pathDirectory1 = Path.of(rootPath.getRootPath(), systemNameDirectory1.toString());
+        Path pathDirectory2 = Path.of(rootPath.getRootPath(), systemNameDirectory2.toString());
+        Path pathDirectory3 = Path.of(rootPath.getRootPath(),
+                systemNameDirectory1.toString(), systemNameDirectory3.toString());
+
+        Files.createDirectory(pathDirectory1);
+        Files.createDirectory(pathDirectory2);
+        Files.createDirectory(pathDirectory3);
+
+        createDirectoryRedis(user2.getLogin(), systemNameDirectory1.toString(),
+                pathDirectory1.toString(), new ArrayList<>());
+        createDirectoryRedis(user2.getLogin(), systemNameDirectory2.toString(),
+                pathDirectory2.toString(), new ArrayList<>());
+        createDirectoryRedis(user2.getLogin(), systemNameDirectory3.toString(),
+                pathDirectory3.toString(), new ArrayList<>());
+
+        userFileObjectsExclusionRepository.save(new UserFileObjectsExclusion(systemNameDirectory1, user2));
+
+        UserDeleteEvent userDeleteEvent = new UserDeleteEvent(userEventPublisher);
+        userDeleteEvent.setUserLogin(user2.getLogin());
+
+        Assertions.assertDoesNotThrow(() -> userDeleteEventHandler.onApplicationEvent(userDeleteEvent));
+        Assertions.assertFalse(Files.exists(pathDirectory1));
+        Assertions.assertFalse(Files.exists(pathDirectory3));
+        Assertions.assertFalse(directoryRedisRepository.existsById(systemNameDirectory1.toString()));
+        Assertions.assertFalse(directoryRedisRepository.existsById(systemNameDirectory3.toString()));
     }
 
 }
