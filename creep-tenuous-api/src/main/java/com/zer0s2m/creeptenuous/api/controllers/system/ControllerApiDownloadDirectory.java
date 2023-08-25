@@ -23,16 +23,14 @@ import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -99,7 +97,7 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
      */
     @Override
     @PostMapping(path = "/directory/download")
-    public final @NotNull ResponseEntity<Resource> download(
+    public final @NotNull ResponseEntity<StreamingResponseBody> download(
             final @Valid @RequestBody @NotNull DataDownloadDirectoryApi data,
             @RequestHeader(name = "Authorization") String accessToken) throws IOException,
             InvocationTargetException, NoSuchMethodException, InstantiationException,
@@ -154,15 +152,12 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
                 data.systemParents(),
                 data.systemDirectoryName()
         );
-        ByteArrayResource contentBytes = new ByteArrayResource(Files.readAllBytes(sourceZipArchive));
-        ResponseEntity<Resource> resourceResponseEntity = ResponseEntity
+        StreamingResponseBody responseBody = serviceDownloadDirectory.getZipFileInStream(sourceZipArchive);
+
+        return ResponseEntity
                 .ok()
-                .headers(serviceDownloadDirectorySetHeaders.collectHeaders(sourceZipArchive, contentBytes))
-                .body(contentBytes);
-
-        Files.delete(sourceZipArchive);
-
-        return resourceResponseEntity;
+                .headers(serviceDownloadDirectorySetHeaders.collectHeaders(sourceZipArchive))
+                .body(responseBody);
     }
 
     /**
@@ -184,7 +179,7 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
      */
     @Override
     @PostMapping(path = "/directory/download/select")
-    public ResponseEntity<Resource> downloadSelect(
+    public ResponseEntity<StreamingResponseBody> downloadSelect(
             final @Valid @RequestBody @NotNull DataDownloadDirectorySelectApi data,
             @RequestHeader(name = "Authorization") String accessToken) throws IOException, InvocationTargetException,
             NoSuchMethodException, InstantiationException, IllegalAccessException, FileObjectIsFrozenException {
@@ -231,16 +226,16 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
         serviceDownloadDirectorySelect.setMap(resource);
 
-        Path sourceZipArchive = AtomicSystemCallManager.call(serviceDownloadDirectorySelect, data.attached());
-        ByteArrayResource contentBytes = new ByteArrayResource(Files.readAllBytes(sourceZipArchive));
-        ResponseEntity<Resource> resourceResponseEntity = ResponseEntity
+        Path sourceZipArchive = AtomicSystemCallManager.call(
+                serviceDownloadDirectorySelect,
+                data.attached()
+        );
+        StreamingResponseBody responseBody = serviceDownloadDirectorySelect.getZipFileInStream(sourceZipArchive);
+
+        return ResponseEntity
                 .ok()
-                .headers(serviceDownloadDirectorySetHeaders.collectHeaders(sourceZipArchive, contentBytes))
-                .body(contentBytes);
-
-        Files.delete(sourceZipArchive);
-
-        return resourceResponseEntity;
+                .headers(serviceDownloadDirectorySetHeaders.collectHeaders(sourceZipArchive))
+                .body(responseBody);
     }
 
 }

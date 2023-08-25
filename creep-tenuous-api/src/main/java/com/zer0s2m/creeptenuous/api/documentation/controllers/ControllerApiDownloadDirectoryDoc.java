@@ -12,8 +12,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -56,7 +56,7 @@ public interface ControllerApiDownloadDirectoryDoc {
                             description = "Successful directory download",
                             content = @Content(
                                     mediaType = "application/zip",
-                                    schema = @Schema(implementation = Resource.class)
+                                    schema = @Schema(implementation = StreamingResponseBody.class)
                             )
                     ),
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
@@ -64,7 +64,7 @@ public interface ControllerApiDownloadDirectoryDoc {
                     @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFoundDirectory")
             }
     )
-    ResponseEntity<Resource> download(
+    ResponseEntity<StreamingResponseBody> download(
             final DataDownloadDirectoryApi data,
             @Parameter(hidden = true) String accessToken
     ) throws IOException, InvocationTargetException, NoSuchMethodException,
@@ -106,7 +106,7 @@ public interface ControllerApiDownloadDirectoryDoc {
                             description = "Successful file system objects selectively download",
                             content = @Content(
                                     mediaType = "application/zip",
-                                    schema = @Schema(implementation = Resource.class)
+                                    schema = @Schema(implementation = StreamingResponseBody.class)
                             )
                     ),
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
@@ -114,7 +114,7 @@ public interface ControllerApiDownloadDirectoryDoc {
                     @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFoundFileObjectSystem")
             }
     )
-    ResponseEntity<Resource> downloadSelect(
+    ResponseEntity<StreamingResponseBody> downloadSelect(
             final DataDownloadDirectorySelectApi data,
             @Parameter(hidden = true) String accessToken
     ) throws IOException, InvocationTargetException, NoSuchMethodException,

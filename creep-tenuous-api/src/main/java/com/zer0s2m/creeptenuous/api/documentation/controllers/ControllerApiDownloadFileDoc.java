@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -43,7 +42,7 @@ public interface ControllerApiDownloadFileDoc {
                             responseCode = "200",
                             description = "Successful file download",
                             content = @Content(
-                                    schema = @Schema(implementation = Resource.class)
+                                    schema = @Schema(implementation = StreamingResponseBody.class)
                             )
                     ),
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),

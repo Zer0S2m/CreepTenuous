@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Service for servicing the download of a catalog in a zip archive
  */
-public interface ServiceDownloadDirectory {
+public interface ServiceDownloadDirectory extends ServiceDownloadDirectoryStream {
 
      /**
       * Download directory archive zip
