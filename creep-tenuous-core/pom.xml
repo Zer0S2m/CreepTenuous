@@ -17,6 +17,7 @@
   </properties>
   <modules>
     <module>creep-tenuous-core-atomic</module>
+    <module>creep-tenuous-core-balancer</module>
   </modules>
 
   <dependencies>
@@ -27,6 +28,11 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-core-atomic</artifactId>
+        <version>0.0.10-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.zer0s2m</groupId>
+        <artifactId>creep-tenuous-core-balancer</artifactId>
         <version>0.0.10-SNAPSHOT</version>
       </dependency>
     </dependencies>
