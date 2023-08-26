@@ -5,10 +5,10 @@
   <parent>
     <groupId>com.zer0s2m</groupId>
     <artifactId>creep-tenuous-redis</artifactId>
-    <version>0.0.9-SNAPSHOT</version>
+    <version>0.0.10-SNAPSHOT</version>
   </parent>
   <artifactId>creep-tenuous-redis-events</artifactId>
-  <version>0.0.9-SNAPSHOT</version>
+  <version>0.0.10-SNAPSHOT</version>
   <name>creep-tenuous-redis-events</name>
   <description>creep-tenuous-redis-events</description>
   <properties>
