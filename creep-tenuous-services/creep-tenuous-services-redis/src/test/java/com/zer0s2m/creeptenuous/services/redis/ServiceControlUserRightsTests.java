@@ -24,6 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @SpringBootTest(classes = {
@@ -199,16 +200,19 @@ public class ServiceControlUserRightsTests {
         createFileRedisRepository(userLogin2, systemNameFile, List.of(userLogin));
 
         Assertions.assertDoesNotThrow(() -> serviceControlUserRights.removeAssignedPermissionsForUser(userLogin));
-        final List<String> userLoginDirectory = directoryRedisRepository
-                .findById(systemNameFolder)
+
+        Optional<DirectoryRedis> directoryRedis = directoryRedisRepository.findById(systemNameFolder);
+        Optional<FileRedis> fileRedis = fileRedisRepository.findById(systemNameFile);
+        Assertions.assertTrue(directoryRedis.isPresent());
+        Assertions.assertTrue(fileRedis.isPresent());
+
+        final List<String> userLoginDirectory = directoryRedis
+                .get()
+                .getUserLogins();
+        final List<String> userLoginFile = fileRedis
                 .get()
                 .getUserLogins();
         Assertions.assertTrue(userLoginDirectory == null || userLoginDirectory.size() == 0);
-
-        final List<String> userLoginFile = fileRedisRepository
-                .findById(systemNameFile)
-                .get()
-                .getUserLogins();
         Assertions.assertTrue(userLoginFile == null || userLoginFile.size() == 0);
 
         directoryRedisRepository.deleteById(systemNameFolder);
@@ -228,7 +232,7 @@ public class ServiceControlUserRightsTests {
         serviceControlUserRights.setFileObjectsExclusions(List.of(UUID.fromString(systemNameFolder)));
 
         rightUserFileSystemObjectRedisRepository.save(new RightUserFileSystemObjectRedis(
-                idRightFolder + userLogin, userLogin, List.of(OperationRights.SHOW)
+                idRightFolder, userLogin, List.of(OperationRights.SHOW)
         ));
         rightUserFileSystemObjectRedisRepository.save(new RightUserFileSystemObjectRedis(
                 idRightFile, userLogin, List.of(OperationRights.SHOW)
@@ -239,12 +243,15 @@ public class ServiceControlUserRightsTests {
 
         Assertions.assertDoesNotThrow(() -> serviceControlUserRights.removeAssignedPermissionsForUser(userLogin));
 
-        final List<String> userLoginDirectory = directoryRedisRepository
-                .findById(systemNameFolder)
+        Optional<DirectoryRedis> directoryRedis = directoryRedisRepository.findById(systemNameFolder);
+        Optional<FileRedis> fileRedis = fileRedisRepository.findById(systemNameFile);
+        Assertions.assertTrue(directoryRedis.isPresent());
+        Assertions.assertTrue(fileRedis.isPresent());
+
+        final List<String> userLoginDirectory = directoryRedis
                 .get()
                 .getUserLogins();
-        final List<String> userLoginFile = fileRedisRepository
-                .findById(systemNameFile)
+        final List<String> userLoginFile = fileRedis
                 .get()
                 .getUserLogins();
 
@@ -290,6 +297,60 @@ public class ServiceControlUserRightsTests {
 
         directoryRedisRepository.deleteById(systemNameFolder1.toString());
         fileRedisRepository.deleteById(systemNameFile2.toString());
+    }
+
+    @Test
+    public void migrateFileSystemObjects_success() {
+        final String systemNameFolder1 = UUID.randomUUID().toString();
+        final String systemNameFile1 = UUID.randomUUID().toString();
+
+        createDirectoryRedisRepository(userLogin, systemNameFolder1, new ArrayList<>());
+        createFileRedisRepository(userLogin, systemNameFile1, new ArrayList<>());
+
+        Assertions.assertDoesNotThrow(
+                () -> serviceControlUserRights.migrateFileSystemObjects(userLogin, "user_login_2"));
+
+        Optional<DirectoryRedis> directoryRedis = directoryRedisRepository.findById(systemNameFolder1);
+        Optional<FileRedis> fileRedis = fileRedisRepository.findById(systemNameFile1);
+
+        Assertions.assertTrue(directoryRedis.isPresent());
+        Assertions.assertTrue(fileRedis.isPresent());
+        Assertions.assertEquals("user_login_2", directoryRedis.get().getLogin());
+        Assertions.assertEquals("user_login_2", fileRedis.get().getLogin());
+
+        directoryRedisRepository.deleteById(systemNameFolder1);
+        fileRedisRepository.deleteById(systemNameFile1);
+    }
+
+    @Test
+    public void migrateAssignedPermissionsForUser_success() {
+        String userLogin2 = "user_login_2";
+        String systemNameFolder1 = UUID.randomUUID().toString();
+        String systemNameFile1 = UUID.randomUUID().toString();
+        String idRightFolder = systemNameFolder1 + ManagerRights.SEPARATOR_UNIQUE_KEY.get() + userLogin;
+        String idNewRightFolder = systemNameFolder1 + ManagerRights.SEPARATOR_UNIQUE_KEY.get() + userLogin2;
+        String idRightFile = systemNameFile1 + ManagerRights.SEPARATOR_UNIQUE_KEY.get() + userLogin;
+        String idNewRightFile = systemNameFile1 + ManagerRights.SEPARATOR_UNIQUE_KEY.get() + userLogin2;
+
+        rightUserFileSystemObjectRedisRepository.save(new RightUserFileSystemObjectRedis(
+                idRightFolder, userLogin, List.of(OperationRights.SHOW)));
+        rightUserFileSystemObjectRedisRepository.save(new RightUserFileSystemObjectRedis(
+                idRightFile, userLogin, List.of(OperationRights.SHOW)));
+
+        createDirectoryRedisRepository(userLogin, systemNameFolder1, new ArrayList<>());
+        createFileRedisRepository(userLogin, systemNameFile1, new ArrayList<>());
+
+        Assertions.assertDoesNotThrow(
+                () -> serviceControlUserRights.migrateAssignedPermissionsForUser(
+                        userLogin, userLogin2));
+        Assertions.assertTrue(
+                rightUserFileSystemObjectRedisRepository.existsById(idNewRightFolder));
+        Assertions.assertTrue(
+                rightUserFileSystemObjectRedisRepository.existsById(idNewRightFile));
+
+        directoryRedisRepository.deleteById(systemNameFolder1);
+        fileRedisRepository.deleteById(systemNameFile1);
+        rightUserFileSystemObjectRedisRepository.deleteAllById(List.of(idNewRightFolder, idNewRightFile));
     }
 
 }

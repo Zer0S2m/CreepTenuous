@@ -15,6 +15,7 @@ import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.base.BaseRedis;
+import com.zer0s2m.creeptenuous.redis.models.base.IBaseRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.JwtRedisRepository;
@@ -814,33 +815,11 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
      * @param operation type of transaction
      * @return sorted files data
      */
+    @SuppressWarnings("unchecked")
     private List<FileRedis> conductorOperationFileRedis(
             @NotNull List<FileRedis> fileRedisList, OperationRights operation
     ) {
-        List<RightUserFileSystemObjectRedis> rightUserFileSystemObjectRedis = (List<RightUserFileSystemObjectRedis>)
-                rightUserFileSystemObjectRedisRepository
-                        .findAllById(fileRedisList.stream()
-                                .map(obj -> buildUniqueKey(obj.getSystemName(), getLoginUser()))
-                                .collect(Collectors.toList()));
-
-        return fileRedisList
-                .stream()
-                .filter(obj -> {
-                    if (obj.getLogin().equals(getLoginUser())) {
-                        return true;
-                    }
-                    for (RightUserFileSystemObjectRedis right : rightUserFileSystemObjectRedis) {
-                        if (right.getRight() == null) {
-                            return false;
-                        }
-                        if ((obj.getSystemName().equals(unpackingUniqueKey(right.getFileSystemObject()))
-                                && right.getRight().contains(operation))) {
-                            return true;
-                        }
-                    }
-                    return false;
-                })
-                .toList();
+        return (List<FileRedis>) getConductorOperationFromBaseRedis(fileRedisList, operation);
     }
 
     /**
@@ -849,17 +828,43 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
      * @param operation type of transaction
      * @return sorted directory data
      */
+    @SuppressWarnings("unchecked")
     private List<DirectoryRedis> conductorOperationDirectoryRedis(
             @NotNull List<DirectoryRedis> directoryRedisList,
             OperationRights operation
     ) {
-        List<RightUserFileSystemObjectRedis> rightUserFileSystemObjectRedis = (List<RightUserFileSystemObjectRedis>)
+        return (List<DirectoryRedis>) getConductorOperationFromBaseRedis(directoryRedisList, operation);
+    }
+
+    /**
+     * Gey a list of rights for interacting with file objects based on the basic
+     * entities of file objects in Redis
+     * @param baseRedis basic file object entities in Redis
+     * @return rights for interacting with file objects
+     */
+    private @NotNull List<RightUserFileSystemObjectRedis> getRightUserFileSystemObjectRedisFromBaseRedis(
+            @NotNull List<? extends IBaseRedis> baseRedis) {
+        return (List<RightUserFileSystemObjectRedis>)
                 rightUserFileSystemObjectRedisRepository
-                        .findAllById(directoryRedisList.stream()
+                        .findAllById(baseRedis.stream()
                                 .map(obj -> buildUniqueKey(obj.getSystemName(), getLoginUser()))
                                 .collect(Collectors.toList()));
+    }
 
-        return directoryRedisList
+    /**
+     * Sort basic file object entities in Redis by permission type
+     * @param baseRedis basic file object entities in Redis
+     * @param operation type of transaction
+     * @return basic file object entities in Redis
+     */
+    private List<? extends IBaseRedis> getConductorOperationFromBaseRedis(
+            @NotNull List<? extends IBaseRedis> baseRedis,
+            OperationRights operation
+    ) {
+        List<RightUserFileSystemObjectRedis> rightUserFileSystemObjectRedis =
+                getRightUserFileSystemObjectRedisFromBaseRedis(baseRedis);
+
+        return baseRedis
                 .stream()
                 .filter(obj -> {
                     if (obj.getLogin().equals(getLoginUser())) {

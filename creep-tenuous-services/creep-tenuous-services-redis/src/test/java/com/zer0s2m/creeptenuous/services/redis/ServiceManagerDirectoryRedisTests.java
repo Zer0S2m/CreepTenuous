@@ -1,12 +1,16 @@
 package com.zer0s2m.creeptenuous.services.redis;
 
 import com.zer0s2m.creeptenuous.core.services.Distribution;
+import com.zer0s2m.creeptenuous.models.user.UserColor;
+import com.zer0s2m.creeptenuous.models.user.UserColorDirectory;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserColorDirectoryRepository;
+import com.zer0s2m.creeptenuous.repository.user.UserColorRepository;
+import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.starter.test.mock.User;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceManagerDirectoryRedisImpl;
@@ -15,22 +19,28 @@ import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @SpringBootTest(classes = {
         DirectoryRedisRepository.class,
         FileRedisRepository.class,
         FrozenFileSystemObjectRedisRepository.class,
         UserColorDirectoryRepository.class,
+        UserRepository.class,
+        UserColorRepository.class,
         JwtProvider.class,
         ServiceManagerDirectoryRedisImpl.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceRedis
+@Transactional
 @ContextConfiguration(classes = { ConfigServices.class })
 public class ServiceManagerDirectoryRedisTests {
 
@@ -43,6 +53,15 @@ public class ServiceManagerDirectoryRedisTests {
     @Autowired
     private FileRedisRepository fileRedisRepository;
 
+    @Autowired
+    private UserColorDirectoryRepository userColorDirectoryRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserColorRepository userColorRepository;
+
     @BeforeEach
     void setUp() {
         serviceManagerDirectoryRedis.setAccessToken(UtilsAuthAction.generateAccessToken());
@@ -53,24 +72,22 @@ public class ServiceManagerDirectoryRedisTests {
         String systemNameDirectory = Distribution.getUUID();
         String systemNameFile = Distribution.getUUID();
 
-        DirectoryRedis directoryRedis = new DirectoryRedis(
+        DirectoryRedis directoryRedis = directoryRedisRepository.save(new DirectoryRedis(
                 User.LOGIN.get(),
                 User.ROLE_USER.get(),
                 "test_1",
                 systemNameDirectory,
                 Path.of(systemNameDirectory).toString(),
                 new ArrayList<>()
-        );
-        directoryRedisRepository.save(directoryRedis);
-        FileRedis fileRedis = new FileRedis(
+        ));
+        FileRedis fileRedis = fileRedisRepository.save(new FileRedis(
                 User.LOGIN.get(),
                 User.ROLE_USER.get(),
                 "test_1",
                 systemNameFile,
                 Path.of(systemNameFile).toString(),
                 new ArrayList<>()
-        );
-        fileRedisRepository.save(fileRedis);
+        ));
 
         List<Object> dataBuild = serviceManagerDirectoryRedis.build(List.of(systemNameDirectory, systemNameFile));
 
@@ -78,6 +95,38 @@ public class ServiceManagerDirectoryRedisTests {
 
         directoryRedisRepository.delete(directoryRedis);
         fileRedisRepository.delete(fileRedis);
+    }
+
+    @Test
+    @Rollback
+    public void build_success_setColorDirectory() {
+        String systemNameDirectory = Distribution.getUUID();
+
+        com.zer0s2m.creeptenuous.models.user.User user =
+                userRepository.save(new com.zer0s2m.creeptenuous.models.user.User(
+                User.LOGIN.get(),
+                "password",
+                "test_email@email.test",
+                "name"
+        ));
+        UserColor userColor = userColorRepository.save(new UserColor(user, "color"));
+        userColorDirectoryRepository.save(new UserColorDirectory(
+                user, userColor, UUID.fromString(systemNameDirectory)));
+
+        DirectoryRedis directoryRedis = directoryRedisRepository.save(new DirectoryRedis(
+                User.LOGIN.get(),
+                User.ROLE_USER.get(),
+                "test_1",
+                systemNameDirectory,
+                Path.of(systemNameDirectory).toString(),
+                new ArrayList<>()
+        ));
+
+        List<Object> dataBuild = serviceManagerDirectoryRedis.build(List.of(systemNameDirectory));
+
+        Assertions.assertEquals(1, dataBuild.size());
+
+        directoryRedisRepository.delete(directoryRedis);
     }
 
     @Test
