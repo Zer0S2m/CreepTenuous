@@ -1,8 +1,8 @@
-package com.zer0s2m.creeptenuous.core.handlers.impl;
+package com.zer0s2m.creeptenuous.core.atomic.handlers.impl;
 
-import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
-import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
-import com.zer0s2m.creeptenuous.core.handlers.ServiceFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.handlers.ServiceFileSystemExceptionHandler;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +32,11 @@ public class ServiceFileSystemExceptionHandlerOperationUpload implements Service
      * Handling an exception thrown by the file system. Each handler must be
      * responsible for one type of operation {@link ContextAtomicFileSystem.Operations}
      * <p>After handling the exception, call atomic mode handling
-     * {@link com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem#handleOperation(ContextAtomicFileSystem.Operations, String)}
+     * {@link ContextAtomicFileSystem#handleOperation(ContextAtomicFileSystem.Operations, String)}
      * to clear the context</p>
      * @param t exception
      * @param operationsData Data about the operation from the file system. Are in the context of atomic mode
-     *                       {@link com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem#getOperationsData()}
+     *                       {@link ContextAtomicFileSystem#getOperationsData()}
      */
     public void handleException(Throwable t, @NotNull HashMap<String, HashMap<String, Object>> operationsData) {
         operationsData.forEach((uniqueName, operationData) -> {

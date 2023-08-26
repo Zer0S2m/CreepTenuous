@@ -8,7 +8,7 @@ import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseCopyDirectoryApi;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
-import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCopyDirectoryRedis;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCopyDirectoryImpl;

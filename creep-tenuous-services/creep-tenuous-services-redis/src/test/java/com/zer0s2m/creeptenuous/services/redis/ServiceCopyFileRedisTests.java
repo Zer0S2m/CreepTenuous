@@ -1,6 +1,5 @@
 package com.zer0s2m.creeptenuous.services.redis;
 
-import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
@@ -18,6 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @SpringBootTest(classes = {
         DirectoryRedisRepository.class,
@@ -44,8 +44,8 @@ public class ServiceCopyFileRedisTests {
 
     @Test
     public void copy_success() {
-        final String systemName1 = Distribution.getUUID();
-        final String newSystemName = Distribution.getUUID();
+        final String systemName1 = UUID.randomUUID().toString();
+        final String newSystemName = UUID.randomUUID().toString();
         final Path path1 = Path.of(systemName1);
         serviceCopyFileRedis.push(new FileRedis(
                 User.LOGIN.get(),
@@ -68,8 +68,8 @@ public class ServiceCopyFileRedisTests {
 
     @Test
     public void copyNotExistsObjects_fail() {
-        final String systemName1 = Distribution.getUUID();
-        final String newSystemName = Distribution.getUUID();
+        final String systemName1 = UUID.randomUUID().toString();
+        final String newSystemName = UUID.randomUUID().toString();
         final Path path1 = Path.of(systemName1);
         fileRedisRepository.save(new FileRedis(
                 User.LOGIN.get(),
@@ -81,7 +81,7 @@ public class ServiceCopyFileRedisTests {
         ));
 
         List<FileRedis> fileRedisList = serviceCopyFileRedis.copy(
-                path1, Distribution.getUUID(), newSystemName
+                path1, UUID.randomUUID().toString(), newSystemName
         );
 
         Assertions.assertEquals(0, fileRedisList.size());

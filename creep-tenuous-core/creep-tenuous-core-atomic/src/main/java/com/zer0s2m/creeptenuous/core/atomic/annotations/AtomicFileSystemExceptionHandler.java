@@ -1,13 +1,14 @@
-package com.zer0s2m.creeptenuous.core.annotations;
+package com.zer0s2m.creeptenuous.core.atomic.annotations;
 
-import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
-import com.zer0s2m.creeptenuous.core.handlers.ServiceFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.core.atomic.handlers.ServiceFileSystemExceptionHandler;
 
 import java.lang.annotation.*;
 
 /**
  * A set of rules for error handling, works in conjunction with {@link AtomicFileSystem}
- * and system call manager for atomic mode {@link com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager}
+ * and system call manager for atomic mode {@link AtomicSystemCallManager}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
@@ -40,7 +41,7 @@ public @interface AtomicFileSystemExceptionHandler {
 
     /**
      * Type of operation when handling an exception, necessary for
-     * {@link com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager}
+     * {@link AtomicSystemCallManager}
      * @return type operation
      */
     ContextAtomicFileSystem.Operations operation();

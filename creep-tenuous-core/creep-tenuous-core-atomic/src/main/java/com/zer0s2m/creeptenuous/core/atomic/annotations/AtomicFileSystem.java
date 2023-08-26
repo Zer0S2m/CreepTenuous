@@ -1,10 +1,12 @@
-package com.zer0s2m.creeptenuous.core.annotations;
+package com.zer0s2m.creeptenuous.core.atomic.annotations;
+
+import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 
 import java.lang.annotation.*;
 
 /**
  * <b>Annotation</b> for error handling via method call via system manager
- * {@link com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager}
+ * {@link AtomicSystemCallManager}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
@@ -19,7 +21,7 @@ public @interface AtomicFileSystem {
 
     /**
      * Error handlers called by method via system manager call
-     * {@link com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager}
+     * {@link AtomicSystemCallManager}
      * @return handlers exception {@link AtomicFileSystemExceptionHandler#exception()}
      */
     AtomicFileSystemExceptionHandler[] handlers();

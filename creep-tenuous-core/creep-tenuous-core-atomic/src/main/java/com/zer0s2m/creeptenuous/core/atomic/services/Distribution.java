@@ -1,8 +1,9 @@
-package com.zer0s2m.creeptenuous.core.services;
+package com.zer0s2m.creeptenuous.core.atomic.services;
 
 import java.util.UUID;
 
 public final class Distribution {
+
     /**
      * Get random name file
      * @return <b>uuid</b> string

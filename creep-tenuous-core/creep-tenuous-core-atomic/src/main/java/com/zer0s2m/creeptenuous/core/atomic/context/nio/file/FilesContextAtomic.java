@@ -1,6 +1,6 @@
-package com.zer0s2m.creeptenuous.core.context.nio.file;
+package com.zer0s2m.creeptenuous.core.atomic.context.nio.file;
 
-import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

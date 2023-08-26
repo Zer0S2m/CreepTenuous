@@ -1,10 +1,10 @@
-package com.zer0s2m.creeptenuous.core.handlers;
+package com.zer0s2m.creeptenuous.core.atomic.handlers;
 
-import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystem;
-import com.zer0s2m.creeptenuous.core.annotations.AtomicFileSystemExceptionHandler;
-import com.zer0s2m.creeptenuous.core.annotations.CoreServiceFileSystem;
-import com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem;
-import com.zer0s2m.creeptenuous.core.services.AtomicServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -59,7 +59,7 @@ public final class AtomicSystemCallManager {
      * Call a method through the system manager to handle <b>exceptions</b> and push them up.
      * <p>The name of the method is given in: {@link CoreServiceFileSystem#method}</p>
      * <p>An atomic mode context is <b><u>required</u></b> to invoke exception handling
-     * {@link com.zer0s2m.creeptenuous.core.context.ContextAtomicFileSystem}</p>
+     * {@link ContextAtomicFileSystem}</p>
      * <p>Subsequent call to the specified operation handler in
      * {@link AtomicFileSystemExceptionHandler#operation()}</p>
      * <p>If the method takes one of the arguments that the class has {@link ArrayList},
@@ -77,6 +77,7 @@ public final class AtomicSystemCallManager {
      * @throws IllegalAccessException an IllegalAccessException is thrown when an application
      *                                tries to reflectively create an instance
      */
+    @SuppressWarnings("unchecked")
     public static <T> T call(AtomicServiceFileSystem instance, Object @NotNull ... args)
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?>[] argTypes = new Class<?>[args.length];

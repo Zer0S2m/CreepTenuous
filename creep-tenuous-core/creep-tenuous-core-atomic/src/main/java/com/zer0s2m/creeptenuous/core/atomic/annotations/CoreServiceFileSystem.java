@@ -1,6 +1,6 @@
-package com.zer0s2m.creeptenuous.core.annotations;
+package com.zer0s2m.creeptenuous.core.atomic.annotations;
 
-import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 
 import java.lang.annotation.*;
 

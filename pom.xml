@@ -27,7 +27,6 @@
   <modules>
     <module>creep-tenuous-starter-test</module>
     <module>creep-tenuous-common</module>
-    <module>creep-tenuous-core</module>
     <module>creep-tenuous-api</module>
     <module>creep-tenuous-events</module>
     <module>creep-tenuous-services</module>
@@ -36,6 +35,7 @@
     <module>creep-tenuous-repository</module>
     <module>creep-tenuous-models</module>
     <module>creep-tenuous-integration</module>
+    <module>creep-tenuous-core</module>
   </modules>
   <dependencies>
   </dependencies>
@@ -75,11 +75,6 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-common</artifactId>
-        <version>0.0.10-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>com.zer0s2m</groupId>
-        <artifactId>creep-tenuous-core</artifactId>
         <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -130,6 +125,11 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-events</artifactId>
+        <version>0.0.10-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.zer0s2m</groupId>
+        <artifactId>creep-tenuous-core-atomic</artifactId>
         <version>0.0.10-SNAPSHOT</version>
       </dependency>
     </dependencies>
