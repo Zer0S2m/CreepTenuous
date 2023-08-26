@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -152,6 +149,26 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
     }
 
     /**
+     * Get data about object directories by user login and system names
+     * @param userLogin user login. Must not be {@literal null}.
+     * @param systemNames system names of file objects. Must not contain {@literal null} elements.
+     * @return result
+     */
+    @Override
+    public List<DirectoryRedis> getResourceDirectoryRedisByLoginUserAndInSystemNames(
+            final String userLogin, @NotNull Collection<UUID> systemNames) {
+        List<String> systemNamesStr = systemNames
+                .stream()
+                .map(UUID::toString)
+                .toList();
+
+        return getResourceDirectoryRedis(systemNamesStr)
+                .stream()
+                .filter(obj -> obj.getLogin().equals(userLogin))
+                .toList();
+    }
+
+    /**
      * Get data about object files by user login
      * @param userLogin user login. Must not be {@literal null}.
      * @return result
@@ -162,6 +179,72 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
         fileRedisExample.setLogin(userLogin);
 
         return getResources(fileRedisRepository.findAll(Example.of(fileRedisExample)));
+    }
+
+    /**
+     * Get data about object files by user login and system names
+     * @param userLogin user login. Must not be {@literal null}.
+     * @param systemNames system names of file objects. Must not contain {@literal null} elements.
+     * @return result
+     */
+    @Override
+    public List<FileRedis> getResourceFileRedisByLoginUserAndInSystemNames(
+            final String userLogin, @NotNull Collection<UUID> systemNames) {
+        List<String> systemNamesStr = systemNames
+                .stream()
+                .map(UUID::toString)
+                .toList();
+
+        return getResourceFileRedis(systemNamesStr)
+                .stream()
+                .filter(obj -> obj.getLogin().equals(userLogin))
+                .toList();
+    }
+
+    /**
+     * Check if files exist by system names and username
+     * @param systemNames system names of file objects
+     * @param userLogin user login
+     * @return if exists
+     */
+    @Override
+    public long checkIfFilesRedisExistBySystemNamesAndUserLogin(
+            @NotNull Collection<String> systemNames, String userLogin) {
+        return getResourceFileRedisByLoginUserAndInSystemNames(
+                userLogin,
+                systemNames
+                        .stream()
+                        .map(UUID::fromString)
+                        .toList()
+        ).size();
+    }
+
+    /**
+     * Check if directories exist by system names and username
+     * @param systemNames system names of file objects
+     * @param userLogin user login
+     * @return if exists
+     */
+    @Override
+    public long checkIfDirectoryRedisExistBySystemNamesAndUserLogin(
+            @NotNull Collection<String> systemNames, String userLogin) {
+        return getResourceDirectoryRedisByLoginUserAndInSystemNames(
+                userLogin,
+                systemNames
+                        .stream()
+                        .map(UUID::fromString)
+                        .toList()
+        ).size();
+    }
+
+    /**
+     * Check if a file object is a directory type
+     * @param id id must not be {@literal null}.
+     * @return verified
+     */
+    @Override
+    public boolean checkFileObjectDirectoryType(final String id) {
+        return directoryRedisRepository.existsById(id);
     }
 
 }

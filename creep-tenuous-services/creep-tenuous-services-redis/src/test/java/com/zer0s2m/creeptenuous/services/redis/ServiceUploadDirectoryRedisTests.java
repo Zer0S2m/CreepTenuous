@@ -73,13 +73,14 @@ public class ServiceUploadDirectoryRedisTests {
         Optional<DirectoryRedis> directoryRedis = directoryRedisRepository.findById(systemNameDirectory);
 
         if (fileRedis.isPresent()) {
-            Assertions.assertEquals(systemNameFile, fileRedis.get().getSystemNameFile());
+            Assertions.assertEquals(systemNameFile, fileRedis.get().getSystemName());
             fileRedisRepository.delete(fileRedis.get());
         }
 
         if (directoryRedis.isPresent()) {
-            Assertions.assertEquals(systemNameDirectory, directoryRedis.get().getSystemNameDirectory());
+            Assertions.assertEquals(systemNameDirectory, directoryRedis.get().getSystemName());
             directoryRedisRepository.delete(directoryRedis.get());
         }
     }
+
 }

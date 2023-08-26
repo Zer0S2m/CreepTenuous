@@ -4,7 +4,9 @@ import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Gathers resources to modify data in Redis.
@@ -115,10 +117,51 @@ public interface ServiceRedisManagerResources {
     List<DirectoryRedis> getResourceDirectoryRedisByLoginUser(String userLogin);
 
     /**
+     * Get data about object directories by user login and system names
+     * @param userLogin user login. Must not be {@literal null}.
+     * @param systemNames system names of file objects. Must not contain {@literal null} elements.
+     * @return result
+     */
+    List<DirectoryRedis> getResourceDirectoryRedisByLoginUserAndInSystemNames(
+            String userLogin, Collection<UUID> systemNames);
+
+    /**
      * Get data about object files by user login
      * @param userLogin user login. Must not be {@literal null}.
      * @return result
      */
     List<FileRedis> getResourceFileRedisByLoginUser(String userLogin);
+
+    /**
+     * Get data about object files by user login and system names
+     * @param userLogin user login. Must not be {@literal null}.
+     * @param systemNames system names of file objects. Must not contain {@literal null} elements.
+     * @return result
+     */
+    List<FileRedis> getResourceFileRedisByLoginUserAndInSystemNames(
+            String userLogin, Collection<UUID> systemNames);
+
+    /**
+     * Check if files exist by system names and username
+     * @param systemNames system names of file objects
+     * @param userLogin user login
+     * @return if exists
+     */
+    long checkIfFilesRedisExistBySystemNamesAndUserLogin(Collection<String> systemNames, String userLogin);
+
+    /**
+     * Check if directories exist by system names and username
+     * @param systemNames system names of file objects
+     * @param userLogin user login
+     * @return if exists
+     */
+    long checkIfDirectoryRedisExistBySystemNamesAndUserLogin(Collection<String> systemNames, String userLogin);
+
+    /**
+     * Check if a file object is a directory type
+     * @param id id must not be {@literal null}.
+     * @return verified
+     */
+    boolean checkFileObjectDirectoryType(final String id);
 
 }

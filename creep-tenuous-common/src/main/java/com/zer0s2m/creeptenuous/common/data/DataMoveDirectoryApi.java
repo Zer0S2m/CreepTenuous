@@ -18,6 +18,7 @@ import java.util.List;
  * @param method method moving - {@link MethodMoveDirectory}
  */
 public record DataMoveDirectoryApi(
+
         @NotNull(message = "Please provide source directory (Not NULL)")
         @Schema(description = "Parts of real system paths (directories) - source")
         List<String> parents,
@@ -47,4 +48,5 @@ public record DataMoveDirectoryApi(
         @NotNull(message = "Please provide method copy (Not NULL)")
         @Schema(description = "Copy method", allowableValues = { "1", "2" }, format = "int32")
         Integer method
+
 ) { }

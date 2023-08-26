@@ -17,4 +17,5 @@ public class FileAlreadyExistsMsg {
     public Integer getStatus() {
         return status;
     }
+
 }

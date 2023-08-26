@@ -37,7 +37,7 @@ build-scip-tests:
 	mvn clean package spring-boot:repackage -Dmaven.test.skip
 
 run:
-	$(java_bin) -jar creep-tenuous-api/target/creep-tenuous-api-0.0.8-SNAPSHOT.jar
+	$(java_bin) -jar creep-tenuous-api/target/creep-tenuous-api-0.0.10-SNAPSHOT.jar
 
 move-integration-key-implants:
 	mv integration-main-system.pem ./creep-tenuous-integration/creep-tenuous-integration-implants/src/main/resources/keys

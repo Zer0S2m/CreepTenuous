@@ -16,5 +16,4 @@ public record DataRenameFileSystemObjectApi(
         @Schema(description = "New file name")
         String newRealName
 
-) {
-}
+) { }

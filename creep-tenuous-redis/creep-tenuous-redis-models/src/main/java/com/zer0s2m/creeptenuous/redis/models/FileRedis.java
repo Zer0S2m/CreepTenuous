@@ -1,61 +1,35 @@
 package com.zer0s2m.creeptenuous.redis.models;
 
-import com.zer0s2m.creeptenuous.redis.models.base.BaseRedis;
-import jakarta.persistence.Column;
+import com.zer0s2m.creeptenuous.redis.models.base.IBaseRedis;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.index.Indexed;
 
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @RedisHash("files")
-public class FileRedis implements BaseRedis {
-
-    @Id
-    private String systemNameFile;
-
-    @Column(name = "realNameFile")
-    private String realNameFile;
-
-    @Column(name = "pathFile")
-    private String pathFile;
-
-    @Indexed
-    @Column(name = "login")
-    private String login;
-
-    @Column(name = "role")
-    private String role;
-
-    @Column(name = "isDirectory")
-    private Boolean isDirectory;
-
-    @Column(name = "isFile")
-    private Boolean isFile;
-
-    @Column(name = "user_logins")
-    private List<String> userLogins;
+public class FileRedis extends IBaseRedis {
 
     public FileRedis() {}
 
     public FileRedis(
             String login,
             String role,
-            String realNameFile,
-            String systemNameFile,
-            String pathFile,
+            String realName,
+            String systemName,
+            String path,
             List<String> userLogins
     ) {
-        this.login = login;
-        this.role = role;
-        this.realNameFile = realNameFile;
-        this.systemNameFile = systemNameFile;
-        this.pathFile = pathFile;
-        this.userLogins = userLogins;
-        this.isDirectory = false;
-        this.isFile = true;
+        setLogin(login);
+        setRole(role);
+        setRealName(realName);
+        setSystemName(systemName);
+        setPath(path);
+        setUserLogins(userLogins);
+        setIsDirectory(false);
+        setIsFile(true);
     }
 
 }

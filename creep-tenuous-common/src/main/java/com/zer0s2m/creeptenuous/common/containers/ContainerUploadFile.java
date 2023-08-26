@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContainerUploadFile {
+
     private final List<Path> files;
 
     public ContainerUploadFile() {
@@ -18,4 +19,5 @@ public class ContainerUploadFile {
     public List<Path> getFiles() {
         return files;
     }
+
 }

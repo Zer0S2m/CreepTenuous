@@ -16,8 +16,8 @@ interface UtilsResourcesDownloadDirectory {
 
     /**
      * Get info directory for download directory
-     * @param systemPathObject system path object ids {@link DirectoryRedis#getRealNameDirectory()}
-     *                         or {@link FileRedis#getRealNameFile()}
+     * @param systemPathObject system path object ids {@link DirectoryRedis#getRealName()}
+     *                         or {@link FileRedis#getRealName()}
      * @return map info directory
      *         <p><b>Key</b> - system name file object</p>
      *         <p><b>Value</b> - real name system file object</p>
@@ -28,9 +28,9 @@ interface UtilsResourcesDownloadDirectory {
         HashMap<String, String> map = new HashMap<>();
 
         directoryRedisRepository.findAllById(systemPathObject)
-                .forEach(objRedis -> map.put(objRedis.getSystemNameDirectory(), objRedis.getRealNameDirectory()));
+                .forEach(objRedis -> map.put(objRedis.getSystemName(), objRedis.getRealName()));
         fileRedisRepository.findAllById(systemPathObject)
-                .forEach(objRedis -> map.put(objRedis.getSystemNameFile(), objRedis.getRealNameFile()));
+                .forEach(objRedis -> map.put(objRedis.getSystemName(), objRedis.getRealName()));
 
         return map;
     }

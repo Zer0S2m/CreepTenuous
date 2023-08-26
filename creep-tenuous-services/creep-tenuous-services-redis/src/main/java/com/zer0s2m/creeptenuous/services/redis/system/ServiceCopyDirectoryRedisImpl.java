@@ -65,9 +65,9 @@ public class ServiceCopyDirectoryRedisImpl extends BaseServiceFileSystemRedisMan
         HashMap<String, String> realNameFileSource = new HashMap<>();
 
         directoryRedisCopyDirectory.forEach((directoryRedis) ->
-                realNameDirectorySource.put(directoryRedis.getPathDirectory(), directoryRedis.getRealNameDirectory()));
+                realNameDirectorySource.put(directoryRedis.getPath(), directoryRedis.getRealName()));
         fileRedisCopyDirectory.forEach((fileRedis ->
-                realNameFileSource.put(fileRedis.getPathFile(), fileRedis.getRealNameFile())));
+                realNameFileSource.put(fileRedis.getPath(), fileRedis.getRealName())));
 
         attached.forEach((attach) -> {
             if (attach.isDirectory()) {

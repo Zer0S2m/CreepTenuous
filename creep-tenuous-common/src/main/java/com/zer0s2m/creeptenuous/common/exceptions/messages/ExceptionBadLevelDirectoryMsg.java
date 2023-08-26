@@ -17,4 +17,5 @@ public class ExceptionBadLevelDirectoryMsg {
     public Integer getStatus() {
         return status;
     }
+
 }

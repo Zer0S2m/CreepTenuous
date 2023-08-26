@@ -36,4 +36,5 @@ public class DataDownloadFileApiValidationTests extends BaseValidationDataApi<Da
         );
         setErrorInvalidData(getValidator(), invalidDataDownloadFile);
     }
+
 }

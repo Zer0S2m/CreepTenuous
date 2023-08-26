@@ -62,7 +62,7 @@ public class ServiceMoveFileRedisTests {
             FileRedis fileRedisReady = fileRedis.get();
             Assertions.assertEquals(
                     newSystemPath,
-                    Path.of(fileRedisReady.getPathFile())
+                    Path.of(fileRedisReady.getPath())
             );
             fileRedisRepository.delete(fileRedisReady);
         }
@@ -86,9 +86,10 @@ public class ServiceMoveFileRedisTests {
         fileRedis.forEach(obj -> {
             Assertions.assertEquals(
                     newSystemPath,
-                    Path.of(obj.getPathFile())
+                    Path.of(obj.getPath())
             );
             fileRedisRepository.delete(obj);
         });
     }
+
 }

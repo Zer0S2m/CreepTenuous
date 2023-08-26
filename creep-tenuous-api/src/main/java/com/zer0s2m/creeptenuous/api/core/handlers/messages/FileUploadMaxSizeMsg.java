@@ -17,4 +17,5 @@ public class FileUploadMaxSizeMsg {
     public Integer getStatus() {
         return status;
     }
+
 }

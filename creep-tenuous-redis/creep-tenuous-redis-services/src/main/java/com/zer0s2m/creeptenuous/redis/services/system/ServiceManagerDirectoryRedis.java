@@ -13,8 +13,8 @@ public interface ServiceManagerDirectoryRedis extends BaseServiceFileSystemRedis
 
     /**
      * Get data file system object
-     * @param systemNamesFileSystemObject system path object ids {@link DirectoryRedis#getRealNameDirectory()}
-     *                                    or {@link FileRedis#getRealNameFile()}
+     * @param systemNamesFileSystemObject system path object ids {@link DirectoryRedis#getRealName()}
+     *                                    or {@link FileRedis#getRealName()}
      * @return json array
      */
     List<Object> build(List<String> systemNamesFileSystemObject);

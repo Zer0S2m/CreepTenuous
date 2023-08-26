@@ -12,7 +12,7 @@ public interface ServiceDeleteDirectoryRedis extends BaseServiceFileSystemRedisM
 
     /**
      * Delete object in redis
-     * @param nameFileSystemObject system name directory id {@link DirectoryRedis#getSystemNameDirectory()}
+     * @param nameFileSystemObject system name directory id {@link DirectoryRedis#getSystemName()}
      */
     default void delete(String nameFileSystemObject) {
         delete(List.of(nameFileSystemObject));
@@ -20,7 +20,7 @@ public interface ServiceDeleteDirectoryRedis extends BaseServiceFileSystemRedisM
 
     /**
      * Delete object in redis
-     * @param namesFileSystemObject system names directory id {@link DirectoryRedis#getSystemNameDirectory()}
+     * @param namesFileSystemObject system names directory id {@link DirectoryRedis#getSystemName()}
      */
     void delete(List<String> namesFileSystemObject);
 

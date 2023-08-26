@@ -2,11 +2,14 @@ package com.zer0s2m.creeptenuous.common.data;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public record DataCopyFileApi(
+
         @Schema(description = "Real file name")
         String fileName,
 
@@ -34,19 +37,23 @@ public record DataCopyFileApi(
         @NotNull(message = "Please provide path new directory (system) (Not NULL)")
         @Schema(description = "Parts of system paths (directories) - target")
         List<String> systemToParents
+
 ) {
+
+    @Contract(pure = true)
     @Override
-    public String fileName() {
+    public @Nullable String fileName() {
         return fileName != null ? fileName.trim() : null;
     }
 
+    @Contract(pure = true)
     @Override
-    public String systemFileName() {
+    public @Nullable String systemFileName() {
         return systemFileName != null ? systemFileName.trim() : null;
     }
 
     @Override
-    public List<String> nameFiles() {
+    public @Nullable List<String> nameFiles() {
         if (nameFiles == null) {
             return null;
         }
@@ -58,7 +65,7 @@ public record DataCopyFileApi(
     }
 
     @Override
-    public List<String> systemNameFiles() {
+    public @Nullable List<String> systemNameFiles() {
         if (systemNameFiles == null) {
             return null;
         }
@@ -68,4 +75,5 @@ public record DataCopyFileApi(
         }
         return readySystemNameFiles;
     }
+
 }

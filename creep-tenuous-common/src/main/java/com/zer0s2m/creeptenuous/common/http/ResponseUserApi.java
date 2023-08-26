@@ -17,6 +17,12 @@ public record ResponseUserApi(
         String name,
 
         @Schema(description = "User roles")
-        Set<UserRole> role
+        Set<UserRole> role,
+
+        @Schema(description = "Deleting files if the user is deleted")
+        Boolean isDeletingFilesWhenDeletingUser,
+
+        @Schema(description = "transferring files to another user if the owner is deleted")
+        String passingFilesToUser
 
 ) { }

@@ -75,7 +75,7 @@ public class ControllerApiRenameFileSystemObjectTests {
 
         DirectoryRedis newDirectoryRedis = directoryRedisRepository.findById("test_test").get();
 
-        Assertions.assertEquals(newDirectoryRedis.getRealNameDirectory(), "new_test");
+        Assertions.assertEquals(newDirectoryRedis.getRealName(), "new_test");
 
         directoryRedisRepository.delete(directoryRedis);
     }

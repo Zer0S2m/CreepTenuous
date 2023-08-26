@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.zer0s2m</groupId>
   <artifactId>creep-tenuous</artifactId>
-  <version>0.0.9-SNAPSHOT</version>
+  <version>0.0.10-SNAPSHOT</version>
   <name>CreepTenuous</name>
   <description>CreepTenuous</description>
   <packaging>pom</packaging>
@@ -22,6 +22,7 @@
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <spring.boot.main>com.zer0s2m.creeptenuous.api.CreepTenuousApiApplication</spring.boot.main>
+    <trimStackTrace>true</trimStackTrace>
   </properties>
   <modules>
     <module>creep-tenuous-starter-test</module>
@@ -44,92 +45,92 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-jwt</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-redis</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-security</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-system</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-user</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-starter-test</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-common</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-core</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-integration-core</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-integration-implants</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-security</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-services</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-repository</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-models</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-events</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-repository</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-models</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-events</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.0.10-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -150,6 +151,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <trimStackTrace>${trimStackTrace}</trimStackTrace>
+        </configuration>
       </plugin>
     </plugins>
   </build>

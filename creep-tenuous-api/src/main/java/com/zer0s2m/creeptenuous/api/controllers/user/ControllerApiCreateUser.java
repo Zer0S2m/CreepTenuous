@@ -10,6 +10,7 @@ import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateDirectoryRedis;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateDirectoryImpl;
 import com.zer0s2m.creeptenuous.services.user.ServiceCreateUser;
+import jakarta.annotation.security.RolesAllowed;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,6 +48,7 @@ public class ControllerApiCreateUser implements ControllerApiCreateUserDoc {
      */
     @Override
     @PostMapping("/user/create")
+    @RolesAllowed("ROLE_ADMIN")
     @ResponseStatus(code = HttpStatus.CREATED)
     public void create(final @RequestBody User user) throws UserAlreadyExistException, IOException {
         createUser.create(user);

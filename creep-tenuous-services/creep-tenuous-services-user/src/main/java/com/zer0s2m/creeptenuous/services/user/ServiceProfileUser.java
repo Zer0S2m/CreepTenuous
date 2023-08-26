@@ -3,6 +3,9 @@ package com.zer0s2m.creeptenuous.services.user;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.models.user.User;
 
+import java.util.Collection;
+import java.util.UUID;
+
 /**
  * Interface to implement retrieval of all information about the user and its associated objects
  */
@@ -30,5 +33,27 @@ public interface ServiceProfileUser {
      * @throws UserNotFoundException not exists user
      */
     void setTransferredUserSettings(String login, Long transferUserId) throws UserNotFoundException;
+
+    /**
+     * Set file objects to exclusions when deleting a user and then allocating them
+     *
+     * @param fileSystemObject system names of file objects.
+     *                         Must not be {@literal null} nor must it contain {@literal null}.
+     * @param login            user login. Must not be {@literal null}.
+     * @throws UserNotFoundException not exists user
+     */
+    void setFileObjectsExclusion(Collection<UUID> fileSystemObject, String login)
+            throws UserNotFoundException;
+
+    /**
+     * Remove file objects from exclusion on user deletion and then allocate them
+     *
+     * @param fileSystemObject system names of file objects.
+     *                         Must not be {@literal null} nor must it contain {@literal null}.
+     * @param login            user login. Must not be {@literal null}.
+     * @throws UserNotFoundException not exists user
+     */
+    void deleteFileObjectsExclusion(Collection<UUID> fileSystemObject, String login)
+            throws UserNotFoundException;
 
 }

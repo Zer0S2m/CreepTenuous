@@ -12,12 +12,11 @@ import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadFileImpl;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.IOException;
 import java.util.List;
@@ -55,8 +54,9 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
      */
     @Override
     @PostMapping(path = "/file/download")
-    public ResponseEntity<Resource> download(final @Valid @RequestBody @NotNull DataDownloadFileApi data,
-                                             @RequestHeader(name = "Authorization") String accessToken)
+    public ResponseEntity<StreamingResponseBody> download(
+            final @Valid @RequestBody @NotNull DataDownloadFileApi data,
+            @RequestHeader(name = "Authorization") String accessToken)
             throws IOException, FileObjectIsFrozenException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
@@ -84,9 +84,9 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
             }
         }
 
-        final ContainerDataDownloadFile<ByteArrayResource, String> dataFile = serviceDownloadFile.download(
-                data.systemParents(),
-                data.systemFileName());
+        final ContainerDataDownloadFile<StreamingResponseBody, String> dataFile = serviceDownloadFile
+                .download(data.systemParents(), data.systemFileName());
+
         return ResponseEntity.ok()
                 .headers(serviceDownloadFile.collectHeaders(dataFile))
                 .body(dataFile.byteContent());

@@ -3,7 +3,6 @@ package com.zer0s2m.creeptenuous.services.system.impl;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.services.system.ServiceDownloadDirectorySetHeaders;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 
@@ -17,11 +16,10 @@ public class ServiceDownloadDirectorySetHeadersImpl implements ServiceDownloadDi
     /**
      * Collect headers for download directory
      * @param path source archive zip
-     * @param data byre data
      * @return headers
      */
     @Override
-    public HttpHeaders collectHeaders(@NotNull Path path, @NotNull ByteArrayResource data) {
+    public HttpHeaders collectHeaders(@NotNull Path path) {
         HttpHeaders headers = new HttpHeaders();
 
         headers.add(HttpHeaders.EXPIRES, "1");
@@ -32,7 +30,6 @@ public class ServiceDownloadDirectorySetHeadersImpl implements ServiceDownloadDi
                 .toString()
         );
         headers.add(HttpHeaders.CONTENT_TYPE, Directory.TYPE_APPLICATION_ZIP.get());
-        headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(data.contentLength()));
 
         return headers;
     }

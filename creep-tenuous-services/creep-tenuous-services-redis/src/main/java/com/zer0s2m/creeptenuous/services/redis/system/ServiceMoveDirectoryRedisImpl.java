@@ -62,13 +62,13 @@ public class ServiceMoveDirectoryRedisImpl extends BaseServiceFileSystemRedisMan
         Iterable<DirectoryRedis> directoryRedis = directoryRedisRepository.findAllById(namesDirectoriesIds);
 
         fileRedis.forEach(((objRedis) -> {
-            if (newPaths.containsKey(objRedis.getPathFile())) {
-                objRedis.setPathFile(newPaths.get(objRedis.getPathFile()));
+            if (newPaths.containsKey(objRedis.getPath())) {
+                objRedis.setPath(newPaths.get(objRedis.getPath()));
             }
         }));
         directoryRedis.forEach(((objRedis) -> {
-            if (newPaths.containsKey(objRedis.getPathDirectory())) {
-                objRedis.setPathDirectory(newPaths.get(objRedis.getPathDirectory()));
+            if (newPaths.containsKey(objRedis.getPath())) {
+                objRedis.setPath(newPaths.get(objRedis.getPath()));
             }
         }));
 

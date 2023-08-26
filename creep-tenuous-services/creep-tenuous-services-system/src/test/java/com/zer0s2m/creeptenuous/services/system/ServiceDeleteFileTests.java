@@ -47,12 +47,14 @@ public class ServiceDeleteFileTests {
     private final String testFile1 = "testFile1.txt";
 
     DataDeleteFileApi RECORD_1 = new DataDeleteFileApi(testFile1, testFile1, new ArrayList<>(), new ArrayList<>());
+
     DataDeleteFileApi INVALID_RECORD_NOT_IS_EXISTS = new DataDeleteFileApi(
             "notFileIsExists.txt",
             "notFileIsExists.txt",
             new ArrayList<>(),
             new ArrayList<>()
     );
+
     DataDeleteFileApi INVALID_RECORD_INVALID_PATH_DIRECTORY = new DataDeleteFileApi(
             "testFile.txt",
             "testFile.txt",
@@ -113,4 +115,5 @@ public class ServiceDeleteFileTests {
                 )
         );
     }
+
 }

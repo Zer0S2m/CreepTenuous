@@ -112,5 +112,6 @@ public class ServiceCreateUserTests {
                 UserRole.ROLE_USER
         );
     }
+
 }
 

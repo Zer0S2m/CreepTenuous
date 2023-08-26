@@ -2,11 +2,9 @@ package com.zer0s2m.creeptenuous.services.redis;
 
 import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.containers.ContainerGrantedRight;
+import com.zer0s2m.creeptenuous.common.enums.ManagerRights;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
-import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
-import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
-import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
-import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
+import com.zer0s2m.creeptenuous.common.exceptions.*;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.models.JwtRedis;
@@ -23,6 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -57,6 +58,9 @@ public class ServiceManagerRightsTests {
 
     @Autowired
     private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
+
+    @Autowired
+    private RootPath rootPath;
 
     final String systemName = "system_name_1";
 
@@ -546,6 +550,143 @@ public class ServiceManagerRightsTests {
         rightUserFileSystemObjectRedisRepository.deleteAll(List.of(
                 rightUserFileSystemObjectRedisDirectory, rightUserFileSystemObjectRedisFile,
                 rightUserFileSystemObjectRedisFile2));
+    }
+
+    @Test
+    public void checkDeletingRightsYourself_fail_notFoundRight() {
+        Assertions.assertThrows(
+                NoExistsRightException.class,
+                () -> serviceManagerRights.checkDeletingRightsYourself(null));
+    }
+
+    @Test
+    public void checkRightByOperationDirectory_success() throws Exception {
+        final JwtRedis jwtRedis = new JwtRedis(ownerUserLogin, "", "");
+        jwtRedisRepository.save(jwtRedis);
+        serviceManagerRights.setIsDirectory(true);
+        serviceManagerRights.setLoginUser(ownerUserLogin);
+
+        final String systemNameDirectory = UUID.randomUUID().toString();
+        Path pathDirectory = Path.of(rootPath.getRootPath(), systemNameDirectory);
+
+        Files.createDirectory(pathDirectory);
+
+        final DirectoryRedis directoryRedis = directoryRedisRepository.save(new DirectoryRedis(
+                ownerUserLogin,
+                "ROLE_USER",
+                systemNameDirectory,
+                systemNameDirectory,
+                pathDirectory.toString(),
+                new ArrayList<>()));
+
+        Assertions.assertDoesNotThrow(
+                () -> serviceManagerRights.checkRightByOperationDeleteDirectory(systemNameDirectory));
+        Assertions.assertDoesNotThrow(
+                () -> serviceManagerRights.checkRightByOperationMoveDirectory(systemNameDirectory));
+        Assertions.assertDoesNotThrow(
+                () -> serviceManagerRights.checkRightByOperationCopyDirectory(systemNameDirectory));
+        Assertions.assertDoesNotThrow(
+                () -> serviceManagerRights.checkRightByOperationDownloadDirectory(systemNameDirectory));
+
+        serviceManagerRights.setIsDirectory(false);
+        serviceManagerRights.setLoginUser(null);
+
+        directoryRedisRepository.delete(directoryRedis);
+        jwtRedisRepository.delete(jwtRedis);
+        Files.delete(pathDirectory);
+    }
+
+    @Test
+    public void setDirectoryPassAccess_success_isDirectory() throws IOException {
+        prepareJwtRedis();
+
+        String systemNamePart = UUID.randomUUID().toString();
+        String systemNameDirectory = UUID.randomUUID().toString();
+        String idRight = systemNamePart + ManagerRights.SEPARATOR_UNIQUE_KEY.get() + otherUserLogin;
+
+        Path partDirectory = Path.of(rootPath.getRootPath(), systemNamePart);
+        Path pathDirectory = Path.of(partDirectory.toString(), systemNameDirectory);
+
+        Files.createDirectories(pathDirectory);
+
+        DirectoryRedis directoryRedis = directoryRedisRepository.save(new DirectoryRedis(
+                ownerUserLogin,
+                "ROLE_USER",
+                "test",
+                systemNameDirectory,
+                pathDirectory.toString(),
+                List.of(otherUserLogin)));
+
+        Assertions.assertDoesNotThrow(
+                () -> serviceManagerRights.setDirectoryPassAccess(
+                        systemNameDirectory, otherUserLogin));
+        Assertions.assertTrue(rightUserFileSystemObjectRedisRepository.existsById(idRight));
+
+        Files.delete(pathDirectory);
+        Files.delete(partDirectory);
+        directoryRedisRepository.delete(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.deleteById(idRight);
+    }
+
+    @Test
+    public void setDirectoryPassAccess_success_isFile() throws IOException {
+        prepareJwtRedis();
+
+        String systemNamePart = UUID.randomUUID().toString();
+        String systemNameFile = UUID.randomUUID().toString();
+        String idRight = systemNamePart + ManagerRights.SEPARATOR_UNIQUE_KEY.get() + otherUserLogin;
+
+        Path partDirectory = Path.of(rootPath.getRootPath(), systemNamePart);
+        Path pathFile = Path.of(partDirectory.toString(), systemNameFile);
+
+        Files.createDirectory(partDirectory);
+        Files.createFile(pathFile);
+
+        FileRedis fileRedis = fileRedisRepository.save(new FileRedis(
+                ownerUserLogin,
+                "ROLE_USER",
+                "test",
+                systemNameFile,
+                pathFile.toString(),
+                List.of(otherUserLogin)));
+
+        Assertions.assertDoesNotThrow(
+                () -> serviceManagerRights.setDirectoryPassAccess(
+                        systemNameFile, otherUserLogin));
+        Assertions.assertTrue(rightUserFileSystemObjectRedisRepository.existsById(idRight));
+
+        Files.delete(pathFile);
+        Files.delete(partDirectory);
+        fileRedisRepository.delete(fileRedis);
+        rightUserFileSystemObjectRedisRepository.deleteById(idRight);
+    }
+
+    @Test
+    public void setDirectoryPassAccess_fail_notExistsDirectory() {
+        prepareJwtRedis();
+
+        String systemNamePart = UUID.randomUUID().toString();
+        String systemNameDirectory = UUID.randomUUID().toString();
+        String idRight = systemNamePart + ManagerRights.SEPARATOR_UNIQUE_KEY.get() + otherUserLogin;
+
+        Path partDirectory = Path.of(rootPath.getRootPath(), systemNamePart);
+        Path pathDirectory = Path.of(partDirectory.toString(), systemNameDirectory);
+
+        DirectoryRedis directoryRedis = directoryRedisRepository.save(new DirectoryRedis(
+                ownerUserLogin,
+                "ROLE_USER",
+                "test",
+                systemNameDirectory,
+                pathDirectory.toString(),
+                List.of(otherUserLogin)));
+
+        Assertions.assertDoesNotThrow(
+                () -> serviceManagerRights.setDirectoryPassAccess(
+                        systemNameDirectory, otherUserLogin));
+        Assertions.assertFalse(rightUserFileSystemObjectRedisRepository.existsById(idRight));
+
+        directoryRedisRepository.delete(directoryRedis);
+        rightUserFileSystemObjectRedisRepository.deleteById(idRight);
     }
 
 }

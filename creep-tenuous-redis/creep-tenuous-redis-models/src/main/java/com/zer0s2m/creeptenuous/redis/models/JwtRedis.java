@@ -24,4 +24,5 @@ public class JwtRedis implements Serializable {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
+
 }

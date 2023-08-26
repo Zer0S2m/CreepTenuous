@@ -1,8 +1,7 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
-import com.zer0s2m.creeptenuous.common.data.DataBlockUserApi;
+import com.zer0s2m.creeptenuous.common.data.DataControlUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataBlockUserTemporarilyApi;
-import com.zer0s2m.creeptenuous.common.data.DataDeleteUserApi;
 import com.zer0s2m.creeptenuous.common.exceptions.BlockingSelfUserException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.http.ResponseUserApi;
@@ -74,7 +73,7 @@ public interface ControllerApiControlUserDoc {
                     description = "Data to delete user",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = DataDeleteUserApi.class)
+                            schema = @Schema(implementation = DataControlUserApi.class)
                             )
             ),
             responses = {
@@ -110,7 +109,7 @@ public interface ControllerApiControlUserDoc {
                     )
             }
     )
-    void deleteUserByLogin(final DataDeleteUserApi data) throws UserNotFoundException;
+    void deleteUserByLogin(final DataControlUserApi data) throws UserNotFoundException;
 
     /**
      * Block a user by his login
@@ -129,7 +128,7 @@ public interface ControllerApiControlUserDoc {
                     description = "Data to block user",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = DataBlockUserApi.class)
+                            schema = @Schema(implementation = DataControlUserApi.class)
                     )
             ),
             responses = {
@@ -165,7 +164,7 @@ public interface ControllerApiControlUserDoc {
                     )
             }
     )
-    void blockUser(final DataBlockUserApi data, @Parameter(hidden = true) String accessToken)
+    void blockUser(final DataControlUserApi data, @Parameter(hidden = true) String accessToken)
             throws UserNotFoundException, BlockingSelfUserException;
 
     /**
@@ -183,7 +182,7 @@ public interface ControllerApiControlUserDoc {
                     description = "Data to unblock user",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = DataBlockUserApi.class)
+                            schema = @Schema(implementation = DataControlUserApi.class)
                     )
             ),
             responses = {
@@ -219,7 +218,7 @@ public interface ControllerApiControlUserDoc {
                     )
             }
     )
-    void unblockUser(final DataBlockUserApi data) throws UserNotFoundException;
+    void unblockUser(final DataControlUserApi data) throws UserNotFoundException;
 
     /**
      * Blocking a user by his login for a while

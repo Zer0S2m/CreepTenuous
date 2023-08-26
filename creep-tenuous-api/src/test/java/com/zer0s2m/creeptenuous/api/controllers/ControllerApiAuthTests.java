@@ -17,8 +17,6 @@ import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.services.security.GeneratePasswordImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.mock.CollectionTokens;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -45,8 +43,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestTagControllerApi
 public class ControllerApiAuthTests {
 
-    Logger logger = LogManager.getLogger(ControllerApiAuthTests.class);
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -65,11 +61,11 @@ public class ControllerApiAuthTests {
     @Autowired
     private GeneratePasswordImpl generatePassword;
 
-    JwtUserRequest RECORD_1 = new JwtUserRequest("test_login", "test_password");
+    final JwtUserRequest RECORD_1 = new JwtUserRequest("test_login", "test_password");
 
-    JwtUserRequest RECORD_INVALID_PASSWORD = new JwtUserRequest("test_login", "invalid");
+    final JwtUserRequest RECORD_INVALID_PASSWORD = new JwtUserRequest("test_login", "invalid");
 
-    User RECORD_CREATE_USER = new User(
+    final User RECORD_CREATE_USER = new User(
             "test_login",
             null,
             "test_email@test.com",
@@ -81,8 +77,6 @@ public class ControllerApiAuthTests {
     public void loginUser_success() throws Exception {
         RECORD_CREATE_USER.setPassword(generatePassword.generation("test_password"));
         userRepository.save(RECORD_CREATE_USER);
-
-        logger.info("Create user: " + RECORD_CREATE_USER);
 
         MvcResult result = this.mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/v1/auth/login")
@@ -97,9 +91,6 @@ public class ControllerApiAuthTests {
         DocumentContext responseContent = JsonPath.parse(responseContentStr);
         String accessToken = responseContent.read("accessToken");
         String refreshToken = responseContent.read("refreshToken");
-
-        logger.info("Get access token: " + accessToken);
-        logger.info("Get refresh token: " + refreshToken);
 
         Assertions.assertTrue(jwtProvider.validateAccessToken(accessToken));
         Assertions.assertTrue(jwtProvider.validateRefreshToken(refreshToken));
@@ -128,8 +119,6 @@ public class ControllerApiAuthTests {
         RECORD_CREATE_USER.setPassword(generatePassword.generation("test_password"));
         userRepository.save(RECORD_CREATE_USER);
 
-        logger.info("Create user: " + RECORD_CREATE_USER);
-
         this.mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/v1/auth/login")
                         .accept(MediaType.APPLICATION_JSON)
@@ -152,8 +141,6 @@ public class ControllerApiAuthTests {
         RECORD_CREATE_USER.setDateOfBrith(new Date());
         userRepository.save(RECORD_CREATE_USER);
 
-        logger.info("Create user: " + RECORD_CREATE_USER);
-
         this.mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/v1/auth/login")
                         .accept(MediaType.APPLICATION_JSON)
@@ -173,12 +160,8 @@ public class ControllerApiAuthTests {
         RECORD_CREATE_USER.setPassword(generatePassword.generation("test_password"));
         userRepository.save(RECORD_CREATE_USER);
 
-        logger.info("Create user: " + RECORD_CREATE_USER);
-
         CollectionTokens<String, String> tokens = getTokens();
         String refreshToken = tokens.refreshToken();
-
-        logger.info("Get refresh token: " + refreshToken);
 
         Assertions.assertTrue(jwtProvider.validateRefreshToken(refreshToken));
 
@@ -197,8 +180,6 @@ public class ControllerApiAuthTests {
         String responseContentAccessTokenStr = resultRefreshToken.getResponse().getContentAsString();
         DocumentContext responseContentAccessToken = JsonPath.parse(responseContentAccessTokenStr);
         String accessToken = responseContentAccessToken.read("accessToken");
-
-        logger.info("Get access token: " + accessToken);
 
         Assertions.assertTrue(jwtProvider.validateAccessToken(accessToken));
 
@@ -229,12 +210,8 @@ public class ControllerApiAuthTests {
         RECORD_CREATE_USER.setPassword(generatePassword.generation("test_password"));
         userRepository.save(RECORD_CREATE_USER);
 
-        logger.info("Create user: " + RECORD_CREATE_USER);
-
         CollectionTokens<String, String> tokens = getTokens();
         String refreshToken = tokens.refreshToken();
-
-        logger.info("Get refresh token: " + refreshToken);
 
         Assertions.assertTrue(jwtProvider.validateRefreshToken(refreshToken));
 

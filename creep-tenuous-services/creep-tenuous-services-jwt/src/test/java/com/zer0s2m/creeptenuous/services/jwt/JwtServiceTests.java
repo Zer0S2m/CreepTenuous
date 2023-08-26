@@ -15,8 +15,6 @@ import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.services.redis.jwt.ServiceJwtRedisImpl;
 import com.zer0s2m.creeptenuous.services.security.GeneratePasswordImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -40,8 +38,6 @@ import org.springframework.transaction.annotation.Transactional;
 @TestTagService
 @ContextConfiguration(classes = { ConfigServices.class })
 public class JwtServiceTests {
-
-    Logger logger = LogManager.getLogger(JwtServiceTests.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -88,8 +84,6 @@ public class JwtServiceTests {
         RECORD_USER.setPassword(generatePassword.generation("test_password"));
         userRepository.save(RECORD_USER);
 
-        logger.info("Create user for tests: " + RECORD_USER);
-
         JwtResponse response = jwtService.login(RECORD_USER_REQUEST);
 
         Assertions.assertTrue(jwtProvider.validateAccessToken(response.accessToken()));
@@ -104,8 +98,6 @@ public class JwtServiceTests {
         RECORD_USER.setPassword(generatePassword.generation("test_password"));
         RECORD_USER.setActivity(false);
         userRepository.save(RECORD_USER);
-
-        logger.info("Create user for tests: " + RECORD_USER);
 
         Assertions.assertThrows(
                 AccountIsBlockedException.class,
@@ -123,8 +115,6 @@ public class JwtServiceTests {
             AccountIsBlockedException {
         RECORD_USER.setPassword(generatePassword.generation("test_password"));
         userRepository.save(RECORD_USER);
-
-        logger.info("Create user for tests: " + RECORD_USER);
 
         JwtResponse response = jwtService.login(RECORD_USER_REQUEST);
 
@@ -162,8 +152,6 @@ public class JwtServiceTests {
         RECORD_USER.setPassword(generatePassword.generation("test_password"));
         userRepository.save(RECORD_USER);
 
-        logger.info("Create user for tests: " + RECORD_USER);
-
         JwtResponse response = jwtService.login(RECORD_USER_REQUEST);
 
         Assertions.assertTrue(jwtProvider.validateRefreshToken(response.refreshToken()));
@@ -188,8 +176,6 @@ public class JwtServiceTests {
         RECORD_USER.setPassword(generatePassword.generation("test_password"));
         userRepository.save(RECORD_USER);
 
-        logger.info("Create user for tests: " + RECORD_USER);
-
         JwtResponse response = jwtService.login(RECORD_USER_REQUEST);
 
         Assertions.assertTrue(jwtProvider.validateRefreshToken(response.refreshToken()));
@@ -209,8 +195,6 @@ public class JwtServiceTests {
             AccountIsBlockedException {
         RECORD_USER.setPassword(generatePassword.generation("test_password"));
         userRepository.save(RECORD_USER);
-
-        logger.info("Create user for tests: " + RECORD_USER);
 
         JwtResponse response = jwtService.login(RECORD_USER_REQUEST);
 
@@ -260,8 +244,6 @@ public class JwtServiceTests {
         RECORD_USER.setPassword(generatePassword.generation("test_password"));
         userRepository.save(RECORD_USER);
 
-        logger.info("Create user for tests: " + RECORD_USER);
-
         Assertions.assertThrows(
                 UserNotValidPasswordException.class,
                 () -> jwtService.login(INVALID_RECORD_USER_REQUEST_PASSWORD)
@@ -278,9 +260,6 @@ public class JwtServiceTests {
         RECORD_USER_INVALID.setPassword(generatePassword.generation("password"));
         userRepository.save(RECORD_USER);
         userRepository.save(RECORD_USER_INVALID);
-
-        logger.info("Create user for tests: " + RECORD_USER);
-        logger.info("Create user for tests: " + RECORD_USER_INVALID);
 
         JwtResponse responseInvalid = jwtService.login(INVALID_RECORD_USER_REQUEST);
 
@@ -299,8 +278,6 @@ public class JwtServiceTests {
     public void generateAccessToken_fail_invalidRefreshToken() {
         RECORD_USER.setPassword(generatePassword.generation("test_password"));
         userRepository.save(RECORD_USER);
-
-        logger.info("Create user for tests: " + RECORD_USER);
 
         String refreshToken = jwtProvider.generateRefreshToken(
                 new JwtUserRequest(
@@ -328,9 +305,6 @@ public class JwtServiceTests {
         userRepository.save(RECORD_USER);
         userRepository.save(RECORD_USER_INVALID);
 
-        logger.info("Create user for tests: " + RECORD_USER);
-        logger.info("Create user for tests: " + RECORD_USER_INVALID);
-
         JwtResponse responseInvalid = jwtService.login(INVALID_RECORD_USER_REQUEST);
 
         userRepository.delete(RECORD_USER_INVALID);
@@ -348,8 +322,6 @@ public class JwtServiceTests {
     public void generateRefreshToken_fail_invalidRefreshToken() {
         RECORD_USER.setPassword(generatePassword.generation("test_password"));
         userRepository.save(RECORD_USER);
-
-        logger.info("Create user for tests: " + RECORD_USER);
 
         String refreshToken = jwtProvider.generateRefreshToken(
                 new JwtUserRequest(
@@ -374,8 +346,6 @@ public class JwtServiceTests {
             AccountIsBlockedException {
         RECORD_USER.setPassword(generatePassword.generation("test_password"));
         userRepository.save(RECORD_USER);
-
-        logger.info("Create user for tests: " + RECORD_USER);
 
         JwtResponse response = jwtService.login(RECORD_USER_REQUEST);
 

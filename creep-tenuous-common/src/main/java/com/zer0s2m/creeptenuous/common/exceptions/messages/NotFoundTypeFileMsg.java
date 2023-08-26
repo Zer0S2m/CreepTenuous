@@ -17,4 +17,5 @@ public class NotFoundTypeFileMsg {
     public Integer getStatus() {
         return status;
     }
+
 }

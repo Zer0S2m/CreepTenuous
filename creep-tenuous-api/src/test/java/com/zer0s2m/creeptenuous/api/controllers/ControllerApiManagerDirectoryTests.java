@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,13 +59,15 @@ public class ControllerApiManagerDirectoryTests {
 
     @Test
     public void getDirectories_success() throws Exception {
-        final Path directoryPath = Path.of(rootPath.getRootPath(), "directory");
+        String systemName = UUID.randomUUID().toString();
+
+        final Path directoryPath = Path.of(rootPath.getRootPath(), systemName);
         Files.createDirectory(directoryPath);
 
         DirectoryRedis directoryRedis = new DirectoryRedis(
                 UtilsAuthAction.LOGIN,
                 UtilsAuthAction.ROLE_USER,
-                "directory",
+                systemName,
                 "directory",
                 directoryPath.toString(),
                 new ArrayList<>());
@@ -77,7 +80,7 @@ public class ControllerApiManagerDirectoryTests {
                         .content(objectMapper.writeValueAsString(new DataManagerDirectoryApi(
                                 1,
                                 List.of("directory"),
-                                List.of("directory")
+                                List.of(systemName)
                         )))
                         .header("Authorization", accessToken)
                 )
@@ -89,18 +92,20 @@ public class ControllerApiManagerDirectoryTests {
 
     @Test
     public void getDirectories_success_forbidden() throws Exception {
-        final Path directoryPath = Path.of(rootPath.getRootPath(), "directory");
+        String systemName = UUID.randomUUID().toString();
+
+        final Path directoryPath = Path.of(rootPath.getRootPath(), systemName);
         Files.createDirectory(directoryPath);
 
         DirectoryRedis directoryRedis = new DirectoryRedis(
                 "login",
                 UtilsAuthAction.ROLE_USER,
                 "directory",
-                "directory",
+                systemName,
                 directoryPath.toString(),
                 List.of(UtilsAuthAction.LOGIN));
         RightUserFileSystemObjectRedis rightDirectory = new RightUserFileSystemObjectRedis(
-                "directory" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                systemName + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
                 List.of(OperationRights.SHOW));
         rightUserFileSystemObjectRedisRepository.save(rightDirectory);
         directoryRedisRepository.save(directoryRedis);
@@ -112,7 +117,7 @@ public class ControllerApiManagerDirectoryTests {
                         .content(objectMapper.writeValueAsString(new DataManagerDirectoryApi(
                                 1,
                                 List.of("directory"),
-                                List.of("directory")
+                                List.of(systemName)
                         )))
                         .header("Authorization", accessToken)
                 )

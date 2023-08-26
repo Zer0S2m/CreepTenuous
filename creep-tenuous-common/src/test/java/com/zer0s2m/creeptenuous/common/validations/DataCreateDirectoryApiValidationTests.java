@@ -30,4 +30,5 @@ public class DataCreateDirectoryApiValidationTests extends BaseValidationDataApi
         );
         setErrorInvalidData(getValidator(), invalidDataCreateDirectory);
     }
+
 }

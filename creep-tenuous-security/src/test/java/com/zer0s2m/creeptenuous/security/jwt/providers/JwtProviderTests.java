@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagService
 public class JwtProviderTests {
+
     JwtProvider jwtProvider;
 
     JwtUserRequest RECORD_1 = new JwtUserRequest("login", "password");
@@ -44,4 +45,5 @@ public class JwtProviderTests {
     public void validateRefreshToken_fail() {
         Assertions.assertFalse(jwtProvider.validateRefreshToken("invalidRefreshToken"));
     }
+
 }

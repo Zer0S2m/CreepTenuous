@@ -17,4 +17,5 @@ public class ExceptionNoRightsRedisMsg {
     public Integer getStatus() {
         return status;
     }
+
 }

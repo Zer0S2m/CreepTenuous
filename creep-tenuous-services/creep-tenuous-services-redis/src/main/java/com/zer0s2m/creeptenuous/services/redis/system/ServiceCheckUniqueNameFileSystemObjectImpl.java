@@ -43,12 +43,12 @@ public class ServiceCheckUniqueNameFileSystemObjectImpl implements ServiceCheckU
 
         directoryRedisList.forEach(directoryRedis -> {
             if (directoryRedis.getLogin().equals(userLogin)) {
-                realNamesFileSystemObject.add(directoryRedis.getRealNameDirectory());
+                realNamesFileSystemObject.add(directoryRedis.getRealName());
             }
         });
         fileRedisList.forEach(fileRedis -> {
             if (fileRedis.getLogin().equals(userLogin)) {
-                realNamesFileSystemObject.add(fileRedis.getRealNameFile());
+                realNamesFileSystemObject.add(fileRedis.getRealName());
             }
         });
 

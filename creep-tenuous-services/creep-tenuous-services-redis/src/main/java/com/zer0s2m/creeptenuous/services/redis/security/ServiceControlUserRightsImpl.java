@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.base.BaseRedis;
+import com.zer0s2m.creeptenuous.redis.models.base.IBaseRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.JwtRedisRepository;
@@ -16,10 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
@@ -44,6 +43,13 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
     private Iterable<DirectoryRedis> directoryRedisIterable;
 
     private Iterable<FileRedis> fileRedisIterable;
+
+    private Collection<UUID> fileObjectsExclusions = null;
+
+    /**
+     * the setting determines whether the distribution of file objects will be performed or they will be deleted
+     */
+    private boolean isDistribution = false;
 
     @Autowired
     public ServiceControlUserRightsImpl(
@@ -72,6 +78,38 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
     }
 
     /**
+     *  Remove filesystem objects from redis by user login and system names
+     * @param userLogin user login. Must not be {@literal null}.
+     * @param systemNames system names of file objects. Must not contain {@literal null} elements.
+     */
+    @Override
+    public void removeFileSystemObjectsBySystemNames(
+            String userLogin, @NotNull Collection<UUID> systemNames) {
+        setFileSystemObjects(userLogin);
+
+        List<String> systemNamesStr = systemNames
+                .stream()
+                .map(UUID::toString)
+                .toList();
+
+        Iterable<String> directoryRedisIterableForDelete = StreamSupport
+                .stream(directoryRedisIterable
+                        .spliterator(), false)
+                .map(IBaseRedis::getSystemName)
+                .filter(systemNamesStr::contains)
+                .toList();
+        Iterable<String> fileRedisIterableForDelete = StreamSupport
+                .stream(fileRedisIterable
+                        .spliterator(), false)
+                .map(IBaseRedis::getSystemName)
+                .filter(systemNamesStr::contains)
+                .toList();
+
+        directoryRedisRepository.deleteAllById(directoryRedisIterableForDelete);
+        fileRedisRepository.deleteAllById(fileRedisIterableForDelete);
+    }
+
+    /**
      * Remove granted permissions for user
      * @param userLogin user login
      */
@@ -85,15 +123,37 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
                 .forEach(jwtRedis -> userAllUserLogins.add(jwtRedis.getLogin()));
         userAllUserLogins.remove(userLogin);
 
-        List<String> namesFileSystemObject = new ArrayList<>();
-        directoryRedisIterable.forEach(obj -> namesFileSystemObject.add(obj.getSystemNameDirectory()));
-        fileRedisIterable.forEach(obj -> namesFileSystemObject.add(obj.getSystemNameFile()));
+        List<String> namesFileSystemObject = getNamesFileSystemObjectFilterByFileObjectsExclusions(
+                isDistribution ? fileObjectsExclusions : null
+        );
 
         List<String> idsRights = new ArrayList<>();
         namesFileSystemObject.forEach(name -> userAllUserLogins.forEach(login ->
                 idsRights.add(name + ManagerRights.SEPARATOR_UNIQUE_KEY.get() + login)));
 
         rightUserFileSystemObjectRedisRepository.deleteAllById(idsRights);
+    }
+
+    /**
+     * Get all system names of file objects and filter by names that are in the exclusion list
+     * {@link ServiceControlUserRights#setFileObjectsExclusions(Collection)}
+     * @param systemNames system names of file objects
+     * @return filtered list of system names
+     */
+    private @NotNull List<String> getNamesFileSystemObjectFilterByFileObjectsExclusions(Collection<UUID> systemNames) {
+        List<String> namesFileSystemObject = new ArrayList<>();
+
+        directoryRedisIterable.forEach(obj -> namesFileSystemObject.add(obj.getSystemName()));
+        fileRedisIterable.forEach(obj -> namesFileSystemObject.add(obj.getSystemName()));
+
+        if (systemNames != null) {
+            return namesFileSystemObject
+                    .stream()
+                    .filter(systemName -> systemNames.contains(UUID.fromString(systemName)))
+                    .toList();
+        }
+
+        return namesFileSystemObject;
     }
 
     /**
@@ -111,6 +171,12 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
                 rightUserFileSystemObjectRedisRepository.findAll(Example.of(rightUserFileSystemObjectRedisExample));
 
         List<String> namesFileSystemObject = getNamesFileSystemObjectFromRights(rightUserFileSystemObjectRedis);
+        if (isDistribution && fileObjectsExclusions != null) {
+            namesFileSystemObject = namesFileSystemObject
+                    .stream()
+                    .filter(systemName -> fileObjectsExclusions.contains(UUID.fromString(systemName)))
+                    .toList();
+        }
 
         List<DirectoryRedis> directoryRedisList = serviceRedisManagerResources.getResourceDirectoryRedis(
                 namesFileSystemObject);
@@ -159,19 +225,39 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
     }
 
     /**
+     * Remove user login from filesystem object when granted permission
+     * @param fileSystemObject file system objects
+     * @param userLogin user login
+     * @return cleared file objects from user login
+     * @param <E> file object type
+     */
+    private <E extends BaseRedis> List<E> removeUserLoginFileSystemObject(
+            @NotNull Iterable<E> fileSystemObject, String userLogin) {
+        return removeUserLoginFileSystemObject(
+                StreamSupport
+                        .stream(Spliterators.spliteratorUnknownSize(
+                                fileSystemObject.iterator(), Spliterator.ORDERED), false)
+                        .collect(Collectors.toList()),
+                userLogin
+        );
+    }
+
+    /**
      * Migrate new user login from filesystem object when granting permission
      * @param fileSystemObject file system objects
      * @param newUserLogin new login of the user to whom the data is transferred
+     * @param oldUserLogin previous owner's login
      * @return clean set of objects with new assigned user
      * @param <E> file object type
      */
     private <E extends BaseRedis> List<E> migrateUserLoginFileSystemObject(
-            @NotNull List<E> fileSystemObject, String newUserLogin) {
+            @NotNull List<E> fileSystemObject, String oldUserLogin, String newUserLogin) {
         return fileSystemObject
                 .stream()
                 .peek(obj -> {
                     List<String> userLogins = obj.getUserLogins();
                     if (userLogins != null) {
+                        userLogins.remove(oldUserLogin);
                         userLogins.add(newUserLogin);
                         obj.setUserLogins(userLogins);
                     } else {
@@ -245,7 +331,9 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
     }
 
     /**
-     * Migrate assigned rights from a remote user to another
+     * Transferring assigned rights from a remote user to another.
+     * <p>If the owner had rights to other file objects (except the user to which they
+     * will be transferred), then they should be transferred to the new</p>
      * @param ownerUserLogin owner user login
      * @param transferUserLogin login of the user to whom the data will be transferred
      */
@@ -279,12 +367,31 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
         List<DirectoryRedis> directoryRedisRaw = removeUserLoginFileSystemObject(directoryRedisList, ownerUserLogin);
         List<FileRedis> fileRedisRaw = removeUserLoginFileSystemObject(fileRedisList, ownerUserLogin);
         List<DirectoryRedis> directoryRedisClean = migrateUserLoginFileSystemObject(
-                directoryRedisRaw, transferUserLogin);
-        List<FileRedis> fileRedisClean = migrateUserLoginFileSystemObject(fileRedisRaw, transferUserLogin);
+                directoryRedisRaw, ownerUserLogin, transferUserLogin);
+        List<FileRedis> fileRedisClean = migrateUserLoginFileSystemObject(
+                fileRedisRaw, ownerUserLogin, transferUserLogin);
 
         directoryRedisRepository.saveAll(directoryRedisClean);
         fileRedisRepository.saveAll(fileRedisClean);
         rightUserFileSystemObjectRedisRepository.saveAll(rightUserFileSystemObjectRedisClean);
+
+        deleteAssignedPermissionsForUserAfterMigrate(transferUserLogin);
+    }
+
+    /**
+     * Delete the user entry for file object permissions if that user is the owner.
+     * <p>Apply after method {@link ServiceControlUserRights#migrateAssignedPermissionsForUser(String, String)}</p>
+     * @param userLogin user login
+     */
+    private void deleteAssignedPermissionsForUserAfterMigrate(String userLogin) {
+        setFileSystemObjects(userLogin);
+
+        List<DirectoryRedis> directoryRedisClean = removeUserLoginFileSystemObject(
+                directoryRedisIterable, userLogin);
+        List<FileRedis> fileRedisClean = removeUserLoginFileSystemObject(fileRedisIterable, userLogin);
+
+        directoryRedisRepository.saveAll(directoryRedisClean);
+        fileRedisRepository.saveAll(fileRedisClean);
     }
 
     /**
@@ -315,12 +422,15 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
     }
 
     /**
-     * Remove rights assigned to a migrated user
+     * Remove the rights assigned to the migrated user. Necessary so that an already assigned
+     * user does not have rights to their own new file objects
      * @param ownerUserLogin owner user login
      * @param transferUserLogin login of the user to whom the data will be transferred
      */
     @Override
     public void deleteAssignedPermissionsForUser(String ownerUserLogin, String transferUserLogin) {
+        setFileSystemObjects(ownerUserLogin);
+
         RightUserFileSystemObjectRedis rightUserFileSystemObjectRedisExample = new RightUserFileSystemObjectRedis();
         rightUserFileSystemObjectRedisExample.setLogin(transferUserLogin);
 
@@ -329,9 +439,13 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
                         .stream(Spliterators.spliteratorUnknownSize(
                                 rightUserFileSystemObjectRedisRepository
                                         .findAll(Example.of(rightUserFileSystemObjectRedisExample))
-                                        .iterator(), Spliterator.ORDERED), false)
+                                        .iterator(),
+                                Spliterator.ORDERED), false)
                         .toList();
-        List<String> namesFileSystemObjects = getNamesFileSystemObjectFromRights(rightUserFileSystemObjectRedis);
+
+        List<String> namesFileSystemObjects = new ArrayList<>();
+        fileRedisIterable.forEach(fileRedis -> namesFileSystemObjects.add(fileRedis.getSystemName()));
+        directoryRedisIterable.forEach(directoryRedis -> namesFileSystemObjects.add(directoryRedis.getSystemName()));
 
         rightUserFileSystemObjectRedisRepository.deleteAll(
                 rightUserFileSystemObjectRedis
@@ -341,6 +455,26 @@ public class ServiceControlUserRightsImpl implements ServiceControlUserRights {
                                         .getFileSystemObject()
                                         .split(ManagerRights.SEPARATOR_UNIQUE_KEY.get())[0]))
                         .toList());
+    }
+
+    /**
+     * Set system names of file objects to exclude. When distribution will be deleted.
+     * <p>Set if file objects will be distributed in the future and <b>not deleted</b></p>
+     * @param fileObjectsExclusions system names of file objects
+     */
+    @Override
+    public void setFileObjectsExclusions(Collection<UUID> fileObjectsExclusions) {
+        this.fileObjectsExclusions = fileObjectsExclusions;
+    }
+
+    /**
+     * Set the setting for the class. Responsible whether in the future
+     * the distribution of objects or they will be deleted
+     * @param isDistribution is the distribution
+     */
+    @Override
+    public void setIsDistribution(boolean isDistribution) {
+        this.isDistribution = isDistribution;
     }
 
 }

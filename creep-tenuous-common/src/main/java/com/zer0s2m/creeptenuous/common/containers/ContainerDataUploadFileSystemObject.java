@@ -14,6 +14,7 @@ import java.nio.file.Path;
  * @param isDirectory
  */
 public record ContainerDataUploadFileSystemObject(
+
         @Schema(description = "The system name of the object in the file system")
         String realName,
 
@@ -28,5 +29,5 @@ public record ContainerDataUploadFileSystemObject(
 
         @Schema(description = "Whether the filesystem object is a directory")
         Boolean isDirectory
-) {
-}
+
+) { }

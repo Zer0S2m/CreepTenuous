@@ -68,4 +68,14 @@ public interface WalkDirectoryInfo {
         }
     }
 
+    /**
+     * Get file object names from directory path
+     * @param dir source path
+     * @return file object names
+     * @throws IOException if an I/O error occurs or the parent directory does not exist
+     */
+    static Set<String> getNamesFileSystemObject(@NotNull Path dir) throws IOException {
+        return getNamesFileSystemObject(dir.toString());
+    }
+
 }

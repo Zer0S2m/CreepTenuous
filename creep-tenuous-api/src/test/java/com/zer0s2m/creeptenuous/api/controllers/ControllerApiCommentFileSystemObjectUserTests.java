@@ -2,7 +2,7 @@ package com.zer0s2m.creeptenuous.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.common.data.DataCreateCommentFileSystemObjectApi;
-import com.zer0s2m.creeptenuous.common.data.DataDeleteCommentFileSystemObjectApi;
+import com.zer0s2m.creeptenuous.common.data.DataControlAnyObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataEditCommentFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import com.zer0s2m.creeptenuous.models.common.CommentFileSystemObject;
@@ -156,7 +156,7 @@ public class ControllerApiCommentFileSystemObjectUserTests {
                 MockMvcRequestBuilders.delete("/api/v1/common/comment/file-system-object")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new DataDeleteCommentFileSystemObjectApi(
+                        .content(objectMapper.writeValueAsString(new DataControlAnyObjectApi(
                                 commentFileSystemObject.getId()
                         )))
                         .header("Authorization", accessToken)
@@ -173,7 +173,7 @@ public class ControllerApiCommentFileSystemObjectUserTests {
                 MockMvcRequestBuilders.delete("/api/v1/common/comment/file-system-object")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new DataDeleteCommentFileSystemObjectApi(
+                        .content(objectMapper.writeValueAsString(new DataControlAnyObjectApi(
                                 11111L
                         )))
                         .header("Authorization", accessToken)

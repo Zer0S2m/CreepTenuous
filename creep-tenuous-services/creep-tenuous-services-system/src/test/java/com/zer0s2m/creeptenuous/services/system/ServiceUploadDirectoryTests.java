@@ -44,8 +44,10 @@ public class ServiceUploadDirectoryTests {
 
     @Test
     public void uploadDirectory_success() throws IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+
         String testFileZip = "test-zip.zip";
-        File testFile = new File("src/main/resources/test/" + testFileZip);
+        File testFile = new File(classLoader.getResource(testFileZip).getFile());
 
         Path path = Files.copy(
                 testFile.toPath(),
@@ -85,4 +87,5 @@ public class ServiceUploadDirectoryTests {
                 )
         );
     }
+
 }

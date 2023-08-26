@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public record DataDeleteDirectoryApi(
+
         @NotNull(message = "Please provide path directory (Not NULL)")
         @Schema(description = "Parts of real system paths (directories)")
         List<String> parents,
@@ -24,4 +25,5 @@ public record DataDeleteDirectoryApi(
         @NotBlank(message = "Please provide name folder (system)")
         @Schema(description = "System directory name")
         String systemDirectoryName
+
 ) { }

@@ -46,7 +46,7 @@ public class ControllerApiAuth implements ControllerApiAuthDoc {
      */
     @Override
     @PostMapping(value = "/auth/login")
-    public JwtResponse login(final @Valid @RequestBody JwtUserRequest user) throws UserNotFoundException,
+    public JwtResponse login(final @Valid @RequestBody @NotNull JwtUserRequest user) throws UserNotFoundException,
             UserNotValidPasswordException, AccountIsBlockedException {
         if (serviceBlockUserRedis.check(user.login())) {
             throw new AccountIsBlockedException();

@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.IOException;
 
@@ -42,7 +42,7 @@ public interface ControllerApiDownloadFileDoc {
                             responseCode = "200",
                             description = "Successful file download",
                             content = @Content(
-                                    schema = @Schema(implementation = Resource.class)
+                                    schema = @Schema(implementation = StreamingResponseBody.class)
                             )
                     ),
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
@@ -50,7 +50,7 @@ public interface ControllerApiDownloadFileDoc {
                     @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFoundDirectory")
             }
     )
-    ResponseEntity<Resource> download(
+    ResponseEntity<StreamingResponseBody> download(
             final DataDownloadFileApi data,
             @Parameter(hidden = true) String accessToken
     ) throws IOException, FileObjectIsFrozenException;

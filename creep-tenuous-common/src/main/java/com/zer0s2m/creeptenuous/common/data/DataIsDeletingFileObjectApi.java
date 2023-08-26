@@ -7,5 +7,4 @@ public record DataIsDeletingFileObjectApi(
         @Schema(description = "Responsible for deleting the user's file objects if it is deleted")
         boolean isDelete
 
-) {
-}
+) { }

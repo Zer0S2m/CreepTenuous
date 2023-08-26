@@ -23,7 +23,7 @@ public class User implements UserDetails {
 
     @Id
     @Column(name = "id")
-    @SequenceGenerator(name = "UserSequence", sequenceName = "user_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "UserSequence", sequenceName = "\"user_id_seq\"", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "UserSequence")
     private Long id;
 
@@ -56,7 +56,10 @@ public class User implements UserDetails {
     private boolean activity;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private UserSettings user;
+    private UserSettings userSettings;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserCategory> userCategories;
 
     public User(String login, String password, String email, String name) {
         this.password = password;
@@ -163,6 +166,10 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public UserSettings getUserSettings() {
+        return userSettings;
     }
 
 }

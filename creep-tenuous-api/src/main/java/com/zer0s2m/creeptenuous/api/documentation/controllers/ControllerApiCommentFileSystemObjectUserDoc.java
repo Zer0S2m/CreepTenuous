@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataCreateCommentFileSystemObjectApi;
-import com.zer0s2m.creeptenuous.common.data.DataDeleteCommentFileSystemObjectApi;
+import com.zer0s2m.creeptenuous.common.data.DataControlAnyObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataEditCommentFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
 import com.zer0s2m.creeptenuous.models.common.CommentFileSystemObject;
@@ -138,7 +138,7 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
                     description = "Data to created",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = DataDeleteCommentFileSystemObjectApi.class)
+                            schema = @Schema(implementation = DataControlAnyObjectApi.class)
                     )
             ),
             responses = {
@@ -164,7 +164,7 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
                     )
             }
     )
-    void delete(final DataDeleteCommentFileSystemObjectApi data,
+    void delete(final DataControlAnyObjectApi data,
                 final @Parameter(hidden = true) String accessToken) throws NotFoundException;
 
     /**

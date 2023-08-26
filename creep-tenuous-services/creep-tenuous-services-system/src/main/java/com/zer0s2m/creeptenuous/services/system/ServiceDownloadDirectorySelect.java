@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Interface for downloading a directory as a selection of file objects
  */
-public interface ServiceDownloadDirectorySelect {
+public interface ServiceDownloadDirectorySelect extends ServiceDownloadDirectoryStream {
 
     /**
      * Download selectively file objects

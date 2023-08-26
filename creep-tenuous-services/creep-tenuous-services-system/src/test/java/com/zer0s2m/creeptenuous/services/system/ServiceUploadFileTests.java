@@ -35,18 +35,19 @@ import java.util.List;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceUploadFileTests {
+
     Logger logger = LogManager.getLogger(ServiceUploadFileTests.class);
 
     @Autowired
     private ServiceUploadFileImpl service;
 
     private final String nameTestFile1 = "test_image_1.jpeg";
+
     private final String nameTestFile2 = "test_image_2.jpeg";
 
     @Test
     public void uploadOneFile_success() throws IOException {
-        File testFile = Path.of("src/main/resources/test/", nameTestFile1).toFile();
-        InputStream targetStream = new FileInputStream(testFile);
+        InputStream targetStream = this.getClass().getResourceAsStream("/" + nameTestFile1);
 
         List<ResponseObjectUploadFileApi> containerList = service.upload(
                 List.of(getMockFile(nameTestFile1, targetStream)),
@@ -62,10 +63,8 @@ public class ServiceUploadFileTests {
 
     @Test
     public void uploadMoreOneFile_success() throws IOException {
-        File testFile1 = Path.of("src/main/resources/test/" + nameTestFile1).toFile();
-        File testFile2 = Path.of("src/main/resources/test/" + nameTestFile2).toFile();
-        InputStream targetStream1 = new FileInputStream(testFile1);
-        InputStream targetStream2 = new FileInputStream(testFile2);
+        InputStream targetStream1 = this.getClass().getResourceAsStream("/" + nameTestFile1);
+        InputStream targetStream2 = this.getClass().getResourceAsStream("/" + nameTestFile2);
 
         List<ResponseObjectUploadFileApi> containerList = service.upload(
                 Arrays.asList(
@@ -107,4 +106,5 @@ public class ServiceUploadFileTests {
                 )
         );
     }
+
 }

@@ -32,24 +32,31 @@ import java.util.Arrays;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceCreateFileTests {
+
     Logger logger = LogManager.getLogger(ServiceCreateFileTests.class);
 
     @Autowired
     private ServiceCreateFile service;
 
     private final String nameTestFile1 = "tesFile_1";
+
     private final String nameTestFile2 = "tesFile_2";
+
     private final String nameTestFile3 = "tesFile_3";
 
     DataCreateFileApi RECORD_1 = new DataCreateFileApi(1, nameTestFile1, new ArrayList<>(), new ArrayList<>());
+
     DataCreateFileApi RECORD_2 = new DataCreateFileApi(2, nameTestFile2, new ArrayList<>(), new ArrayList<>());
+
     DataCreateFileApi RECORD_3 = new DataCreateFileApi(3, nameTestFile3, new ArrayList<>(), new ArrayList<>());
+
     DataCreateFileApi INVALID_RECORD_TYPE_FILE = new DataCreateFileApi(
             9999,
             "failFile",
             new ArrayList<>(),
             new ArrayList<>()
     );
+
     DataCreateFileApi INVALID_RECORD_PATH_DIRECTORY = new DataCreateFileApi(
             1,
             "failFile",
@@ -119,4 +126,5 @@ public class ServiceCreateFileTests {
                 )
         );
     }
+
 }
