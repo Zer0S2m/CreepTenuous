@@ -7,6 +7,7 @@ import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
+import com.zer0s2m.creeptenuous.repository.user.CategoryFileSystemObjectRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserColorDirectoryRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserColorRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
@@ -32,6 +33,7 @@ import java.util.UUID;
         FileRedisRepository.class,
         FrozenFileSystemObjectRedisRepository.class,
         UserColorDirectoryRepository.class,
+        CategoryFileSystemObjectRepository.class,
         UserRepository.class,
         UserColorRepository.class,
         JwtProvider.class,

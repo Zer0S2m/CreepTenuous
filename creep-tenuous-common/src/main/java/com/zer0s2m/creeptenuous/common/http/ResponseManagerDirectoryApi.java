@@ -18,7 +18,8 @@ public record ResponseManagerDirectoryApi(
                         "\"systemName\": \"string\"," +
                         "\"isFile\": false," +
                         "\"isDirectory\": true," +
-                        "\"color\": \"#fff\"" +
+                        "\"color\": \"#fff\"," +
+                        "\"categoryId\": 1" +
                         "}"
         )
         List<Object> objects
