@@ -3,7 +3,7 @@ package com.zer0s2m.creeptenuous.api.documentation.controllers;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectoryApi;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectApi;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
-import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectoryImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectorySelectImpl;
 import io.swagger.v3.oas.annotations.Operation;

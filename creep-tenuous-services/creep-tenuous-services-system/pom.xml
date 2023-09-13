@@ -50,7 +50,7 @@
 
     <dependency>
       <groupId>com.zer0s2m</groupId>
-      <artifactId>creep-tenuous-core</artifactId>
+      <artifactId>creep-tenuous-core-atomic</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>

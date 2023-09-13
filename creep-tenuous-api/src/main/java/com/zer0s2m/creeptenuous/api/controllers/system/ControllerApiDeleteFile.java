@@ -5,7 +5,7 @@ import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
-import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.events.FileRedisEventPublisher;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDeleteFileRedis;

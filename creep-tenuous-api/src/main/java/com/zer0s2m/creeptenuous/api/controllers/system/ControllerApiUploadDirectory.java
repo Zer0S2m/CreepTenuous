@@ -5,7 +5,7 @@ import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadDirectoryApi;
-import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceUploadDirectoryRedis;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceUploadDirectoryImpl;

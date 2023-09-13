@@ -1,7 +1,6 @@
 package com.zer0s2m.creeptenuous.services.redis;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateFile;
-import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
@@ -16,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.nio.file.Path;
+import java.util.UUID;
 
 @SpringBootTest(classes = {
         DirectoryRedisRepository.class,
@@ -42,7 +42,7 @@ public class ServiceCreateFileRedisTests {
 
     @Test
     public void create_success() {
-        String systemName = Distribution.getUUID();
+        String systemName = UUID.randomUUID().toString();
         ContainerDataCreateFile data = new ContainerDataCreateFile(
                 "test",
                 systemName,

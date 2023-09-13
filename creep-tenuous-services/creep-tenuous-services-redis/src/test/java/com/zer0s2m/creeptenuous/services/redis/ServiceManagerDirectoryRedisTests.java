@@ -1,6 +1,5 @@
 package com.zer0s2m.creeptenuous.services.redis;
 
-import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.models.user.UserColor;
 import com.zer0s2m.creeptenuous.models.user.UserColorDirectory;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
@@ -69,8 +68,8 @@ public class ServiceManagerDirectoryRedisTests {
 
     @Test
     public void build_success() {
-        String systemNameDirectory = Distribution.getUUID();
-        String systemNameFile = Distribution.getUUID();
+        String systemNameDirectory = UUID.randomUUID().toString();
+        String systemNameFile = UUID.randomUUID().toString();
 
         DirectoryRedis directoryRedis = directoryRedisRepository.save(new DirectoryRedis(
                 User.LOGIN.get(),
@@ -100,7 +99,7 @@ public class ServiceManagerDirectoryRedisTests {
     @Test
     @Rollback
     public void build_success_setColorDirectory() {
-        String systemNameDirectory = Distribution.getUUID();
+        String systemNameDirectory = UUID.randomUUID().toString();
 
         com.zer0s2m.creeptenuous.models.user.User user =
                 userRepository.save(new com.zer0s2m.creeptenuous.models.user.User(
