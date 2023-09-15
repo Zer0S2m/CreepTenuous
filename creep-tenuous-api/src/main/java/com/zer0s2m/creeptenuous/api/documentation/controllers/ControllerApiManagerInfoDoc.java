@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataManagerInfoApi;
+import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseManagerInfoApi;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,6 +12,14 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 public interface ControllerApiManagerInfoDoc {
 
+    /**
+     * Get information about file objects by system names.
+     *
+     * @param data        Data system names
+     * @param accessToken Raw JWT access token.
+     * @return Information about file objects
+     * @throws FileObjectIsFrozenException file object is frozen.
+     */
     @Operation(
             method = "POST",
             summary = "Get information about file objects",
@@ -38,6 +47,7 @@ public interface ControllerApiManagerInfoDoc {
             }
     )
     ResponseManagerInfoApi getInfoFileObjectsBySystemNames(
-            final DataManagerInfoApi data, @Parameter(hidden = true) String accessToken);
+            final DataManagerInfoApi data, @Parameter(hidden = true) String accessToken)
+            throws FileObjectIsFrozenException;
 
 }
