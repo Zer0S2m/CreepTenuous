@@ -13,4 +13,5 @@ public record ResponseCreateRightUserApi(
 
         @Schema(description = "The name of the operation to resolve the interaction")
         OperationRights right
+
 ) { }

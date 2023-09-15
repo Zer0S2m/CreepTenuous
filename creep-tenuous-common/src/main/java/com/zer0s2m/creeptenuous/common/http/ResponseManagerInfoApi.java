@@ -4,13 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
-public record ResponseManagerDirectoryApi(
-
-        @Schema(description = "Parts of system paths (directories) - source")
-        List<String> systemParents,
-
-        @Schema(description = "Nesting level")
-        Integer level,
+public record ResponseManagerInfoApi(
 
         @Schema(
                 description = "Information array of file objects",
