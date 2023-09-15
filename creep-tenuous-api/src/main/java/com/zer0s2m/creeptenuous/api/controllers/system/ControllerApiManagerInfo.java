@@ -62,7 +62,10 @@ public class ControllerApiManagerInfo implements ControllerApiManagerInfoDoc {
             }
         }
 
-        return new ResponseManagerInfoApi(serviceManagerDirectoryRedis.build(data.systemNames()));
+        return new ResponseManagerInfoApi(
+                serviceManagerDirectoryRedis.build(
+                        serviceManagerRights.permissionFiltering(data.systemNames(), operationRights)
+                ));
     }
 
 }
