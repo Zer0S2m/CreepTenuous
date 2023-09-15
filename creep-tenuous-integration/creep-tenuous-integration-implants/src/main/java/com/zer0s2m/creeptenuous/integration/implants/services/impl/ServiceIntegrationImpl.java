@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.integration.implants.services.impl;
 
 import com.zer0s2m.creeptenuous.integration.core.ServiceIntegrationJwt;
+import com.zer0s2m.creeptenuous.integration.implants.http.ResponseStatisticsApi;
 import com.zer0s2m.creeptenuous.integration.implants.services.ServiceIntegration;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,8 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Service for a layer of calling third-party methods from an internal ecosystem service
@@ -43,21 +46,44 @@ public class ServiceIntegrationImpl implements ServiceIntegration {
      */
     @Override
     public void run() {
-        final String url = url();
+        restTemplate.postForEntity(urlRunClean(), prePost(), Void.class);
+    }
+
+    /**
+     * Get statistics on all deleted objects
+     * @return objects
+     */
+    @Override
+    public List<ResponseStatisticsApi> getStatistics() {
+        ResponseStatisticsApi[] dataResponse = restTemplate
+                .postForEntity(urlStatistics(), prePost(), ResponseStatisticsApi[].class)
+                .getBody();
+
+        if (dataResponse != null) {
+            return List.of(dataResponse);
+        }
+        return new ArrayList<>();
+    }
+
+    @Contract(" -> new")
+    private @NotNull HttpEntity<String> prePost() {
         final JSONObject dataIntegrationApi = new JSONObject();
         final HttpHeaders headers = new HttpHeaders();
 
         dataIntegrationApi.put("token", serviceIntegrationJwt.generateToken(rsaKeys.getPrivateKey()));
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        final HttpEntity<String> entity = new HttpEntity<>(dataIntegrationApi.toString(), headers);
-
-        restTemplate.postForEntity(url, entity, Void.class);
+        return new HttpEntity<>(dataIntegrationApi.toString(), headers);
     }
 
     @Contract(pure = true)
-    private @NotNull String url() {
+    private @NotNull String urlRunClean() {
         return "http://" + host + ":" + port + "/api/v1/integration/run-clean";
+    }
+
+    @Contract(pure = true)
+    private @NotNull String urlStatistics() {
+        return "http://" + host + ":" + port + "/api/v1/integration/statistics";
     }
 
 }
