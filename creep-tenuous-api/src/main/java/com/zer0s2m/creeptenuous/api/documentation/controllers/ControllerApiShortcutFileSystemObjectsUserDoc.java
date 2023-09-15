@@ -132,6 +132,7 @@ public interface ControllerApiShortcutFileSystemObjectsUserDoc {
             method = "GET",
             summary = "Show a shortcut to a file object",
             description = "Show a shortcut to a file object for quick access to it",
+            security = @SecurityRequirement(name = "Bearer Authentication"),
             tags = { "Common" },
             responses = {
                     @ApiResponse(

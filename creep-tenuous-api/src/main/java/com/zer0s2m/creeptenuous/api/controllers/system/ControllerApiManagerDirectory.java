@@ -46,7 +46,8 @@ public class ControllerApiManagerDirectory implements ControllerApiManagerDirect
     /**
      * Manager directory - get all directories by level
      *
-     * @param data data manager directory
+     * @param data        data manager directory
+     * @param accessToken Raw JWT access token
      * @return result manager build info in directory
      * @throws IOException                     if an I/O error occurs or the parent directory does not exist
      * @throws NotValidLevelDirectoryException invalid level directory
