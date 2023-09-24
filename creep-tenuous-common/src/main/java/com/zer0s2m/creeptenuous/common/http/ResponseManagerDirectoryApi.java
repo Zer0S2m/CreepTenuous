@@ -6,6 +6,9 @@ import java.util.List;
 
 public record ResponseManagerDirectoryApi(
 
+        @Schema(description = "Parts of system paths (directories) - real names")
+        List<String> parents,
+
         @Schema(description = "Parts of system paths (directories) - source")
         List<String> systemParents,
 

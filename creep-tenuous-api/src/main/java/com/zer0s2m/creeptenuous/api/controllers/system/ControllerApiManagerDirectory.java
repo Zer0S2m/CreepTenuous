@@ -89,7 +89,7 @@ public class ControllerApiManagerDirectory implements ControllerApiManagerDirect
 
         List<Object> result = serviceManagerDirectoryRedis.build(rawDataOptional.getValue().namesSystemFileObject());
 
-        return new ResponseManagerDirectoryApi(data.systemParents(), data.level(), result);
+        return new ResponseManagerDirectoryApi(data.parents(), data.systemParents(), data.level(), result);
     }
 
     @ExceptionHandler(NotValidLevelDirectoryException.class)
