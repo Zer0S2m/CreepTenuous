@@ -23,6 +23,12 @@ public record ResponseUserApi(
         Boolean isDeletingFilesWhenDeletingUser,
 
         @Schema(description = "transferring files to another user if the owner is deleted")
-        String passingFilesToUser
+        String passingFilesToUser,
+
+        @Schema(description = "Is the user blocked")
+        Boolean isBlocked,
+
+        @Schema(description = "Is the user temporarily blocked")
+        Boolean isTemporarilyBlocked
 
 ) { }
