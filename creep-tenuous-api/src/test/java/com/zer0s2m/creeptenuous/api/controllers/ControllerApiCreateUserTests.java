@@ -2,10 +2,12 @@ package com.zer0s2m.creeptenuous.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.common.enums.UserAlready;
+import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.UserAlreadyExistMsg;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
+import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
 import com.zer0s2m.creeptenuous.starter.test.mock.MockUserModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,6 +44,16 @@ public class ControllerApiCreateUserTests {
     @Autowired
     private UserRepository userRepository;
 
+    User RECORD_ADMIN = new User(
+            UtilsAuthAction.LOGIN,
+            "test_password",
+            "test_admin@test_admin.com",
+            "test_admin",
+            UserRole.ROLE_ADMIN
+    );
+
+    private final String accessToken = UtilsAuthAction.builderHeader(UtilsAuthAction.generateAccessToken(true));
+
     MockUserModel RECORD_1 = new MockUserModel(
             "test_login",
             "test_password",
@@ -72,6 +84,7 @@ public class ControllerApiCreateUserTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_1))
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isCreated());
         logger.info("Create user: " + RECORD_1);
@@ -88,6 +101,7 @@ public class ControllerApiCreateUserTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_1))
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().json(
@@ -111,6 +125,7 @@ public class ControllerApiCreateUserTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(RECORD_1))
+                        .header("Authorization", accessToken)
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().json(

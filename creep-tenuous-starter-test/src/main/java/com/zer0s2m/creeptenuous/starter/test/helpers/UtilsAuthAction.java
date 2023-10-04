@@ -18,6 +18,7 @@ import java.util.Date;
 public interface UtilsAuthAction {
 
     String ROLE_USER = "ROLE_USER";
+    String ROLE_ADMIN = "ROLE_ADMIN";
     String LOGIN = "test_login";
 
     Key SECRET = Keys.hmacShaKeyFor(Decoders.BASE64.decode(
@@ -38,6 +39,25 @@ public interface UtilsAuthAction {
                 .setExpiration(Date.from(accessExpirationInstant))
                 .signWith(SECRET)
                 .claim("role", ROLE_USER)
+                .claim("login", LOGIN)
+                .compact();
+    }
+
+    /**
+     * Generate JWT access token
+     * @param isAdmin Is admin
+     * @return JWT access token
+     */
+    static String generateAccessToken(Boolean isAdmin) {
+        final Instant accessExpirationInstant = LocalDateTime.now()
+                .plusDays(1)
+                .atZone(ZoneId.systemDefault())
+                .toInstant();
+        return Jwts.builder()
+                .setSubject(LOGIN)
+                .setExpiration(Date.from(accessExpirationInstant))
+                .signWith(SECRET)
+                .claim("role", isAdmin ? ROLE_ADMIN : ROLE_USER)
                 .claim("login", LOGIN)
                 .compact();
     }
