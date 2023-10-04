@@ -300,4 +300,46 @@ public interface ControllerApiProfileUserDoc {
     ResponseUploadAvatarUserApi uploadAvatar(MultipartFile file, @Parameter(hidden = true) String accessToken)
             throws UploadAvatarForUserException, IOException;
 
+    /**
+     * Removing an avatar for a user.
+     * @param accessToken Raw access JWT token.
+     * @throws UserNotFoundException he user does not exist in the system.
+     * @throws IOException Signals that an I/O exception to some sort has occurred.
+     */
+    @Operation(
+            method = "DELETE",
+            summary = "Removing an avatar for a user",
+            description = "Removing an avatar for a user",
+            tags = { "User" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Successful",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(ref = "#/components/schemas/Unauthorized")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found user", value = "{" +
+                                                    "\"message\": \"User is not found.\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            )
+                                    })
+                    )
+            }
+    )
+    void deleteAvatar(@Parameter(hidden = true) String accessToken) throws UserNotFoundException, IOException;
+
 }

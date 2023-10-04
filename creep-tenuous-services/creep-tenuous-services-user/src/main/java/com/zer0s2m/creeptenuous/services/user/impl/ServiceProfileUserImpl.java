@@ -211,4 +211,24 @@ public class ServiceProfileUserImpl implements ServiceProfileUser {
         return targetAvatar;
     }
 
+    /**
+     * Removing an avatar for a user.
+     * @param login User login.
+     * @throws UserNotFoundException he user does not exist in the system.
+     * @throws IOException Signals that an I/O exception to some sort has occurred.
+     */
+    @Override
+    public void deleteAvatar(final String login) throws UserNotFoundException, IOException {
+        User user = userRepository.findByLogin(login);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+
+        if (user.getAvatar() != null) {
+            Files.deleteIfExists(Path.of(user.getAvatar()));
+        }
+
+        userRepository.updateAvatar(null, login);
+    }
+
 }

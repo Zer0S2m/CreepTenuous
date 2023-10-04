@@ -70,4 +70,12 @@ public interface ServiceProfileUser {
     String uploadAvatar(final MultipartFile file, final String login)
             throws UploadAvatarForUserException, IOException;
 
+    /**
+     * Removing an avatar for a user.
+     * @param login User login.
+     * @throws UserNotFoundException he user does not exist in the system.
+     * @throws IOException Signals that an I/O exception to some sort has occurred.
+     */
+    void deleteAvatar(final String login) throws UserNotFoundException, IOException;
+
 }

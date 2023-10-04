@@ -210,4 +210,21 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
         );
     }
 
+    /**
+     * Removing an avatar for a user.
+     * @param accessToken Raw access JWT token.
+     * @throws UserNotFoundException he user does not exist in the system.
+     * @throws IOException Signals that an I/O exception to some sort has occurred.
+     */
+    @Override
+    @DeleteMapping("/user/profile/settings/avatar")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void deleteAvatar(@RequestHeader(name = "Authorization") String accessToken)
+            throws UserNotFoundException, IOException {
+        Claims claimsAccess = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
+        JwtAuthentication userInfo = JwtUtils.generate(claimsAccess);
+
+        serviceProfileUser.deleteAvatar(userInfo.getLogin());
+    }
+
 }
