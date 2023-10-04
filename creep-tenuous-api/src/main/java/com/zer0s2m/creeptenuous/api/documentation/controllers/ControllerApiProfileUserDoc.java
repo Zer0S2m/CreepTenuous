@@ -4,15 +4,22 @@ import com.zer0s2m.creeptenuous.common.data.DataControlFileObjectsExclusionApi;
 import com.zer0s2m.creeptenuous.common.data.DataIsDeletingFileObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataTransferredUserApi;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
+import com.zer0s2m.creeptenuous.common.exceptions.UploadAvatarForUserException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
+import com.zer0s2m.creeptenuous.common.http.ResponseUploadAvatarUserApi;
 import com.zer0s2m.creeptenuous.common.http.ResponseUserApi;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 public interface ControllerApiProfileUserDoc {
 
@@ -241,5 +248,56 @@ public interface ControllerApiProfileUserDoc {
     void deleteFileObjectsExclusion(
             final DataControlFileObjectsExclusionApi data, @Parameter(hidden = true) String accessToken)
             throws NotFoundException;
+
+    /**
+     * Upload an avatar for the user by his login.
+     * @param file Uploaded file.
+     * @param accessToken Raw access JWT token.
+     * @return Upload avatar.
+     * @throws UploadAvatarForUserException Exceptions for loading an avatar for a user.
+     * @throws IOException Signals that an I/O exception of some sort has occurred.
+     */
+    @Operation(
+            method = "POST",
+            summary = "Upload an avatar for a user",
+            description = "Upload an avatar for a user",
+            tags = { "User" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            requestBody = @RequestBody(
+                    description = "User avatar download data",
+                    required = true,
+                    content = @Content(
+                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                            schema = @Schema(
+                                    name = "avatar",
+                                    description = "Image as avatar",
+                                    requiredMode = Schema.RequiredMode.REQUIRED,
+                                    type = "string",
+                                    format = "binary"
+                            )
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = ResponseUploadAvatarUserApi.class
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(ref = "#/components/schemas/Unauthorized")
+                            )
+                    )
+            }
+    )
+    ResponseUploadAvatarUserApi uploadAvatar(MultipartFile file, @Parameter(hidden = true) String accessToken)
+            throws UploadAvatarForUserException, IOException;
 
 }

@@ -59,16 +59,25 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
     public List<ResponseUserApi> getAllUsers() {
         return serviceControlUser.getAllUsers()
                 .stream()
-                .map(user -> new ResponseUserApi(
-                        user.getLogin(),
-                        user.getEmail(),
-                        user.getName(),
-                        Set.of(user.getRole()),
-                        null,
-                        null,
-                        !user.isAccountNonLocked(),
-                        serviceBlockUserRedis.check(user.getLogin())
-                ))
+                .map(user -> {
+                    String avatar = user.getAvatar();
+                    if (avatar != null) {
+                        String[] avatarSplit = avatar.split("/");
+                        avatar = "avatars/" + avatarSplit[avatarSplit.length - 1];
+                    }
+
+                    return new ResponseUserApi(
+                            user.getLogin(),
+                            user.getEmail(),
+                            user.getName(),
+                            Set.of(user.getRole()),
+                            null,
+                            null,
+                            !user.isAccountNonLocked(),
+                            serviceBlockUserRedis.check(user.getLogin()),
+                            avatar
+                    );
+                })
                 .collect(Collectors.toList());
     }
 

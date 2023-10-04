@@ -6,7 +6,9 @@ import com.zer0s2m.creeptenuous.common.data.DataControlFileObjectsExclusionApi;
 import com.zer0s2m.creeptenuous.common.data.DataIsDeletingFileObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataTransferredUserApi;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
+import com.zer0s2m.creeptenuous.common.exceptions.UploadAvatarForUserException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
+import com.zer0s2m.creeptenuous.common.http.ResponseUploadAvatarUserApi;
 import com.zer0s2m.creeptenuous.common.http.ResponseUserApi;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.models.user.UserSettings;
@@ -21,7 +23,9 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -61,6 +65,12 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
         UserSettings userSettings = currentUser.getUserSettings();
         User transferredUser = userSettings != null ? userSettings.getTransferredUser() : null;
 
+        String avatar = currentUser.getAvatar();
+        if (avatar != null) {
+            String[] avatarSplit = avatar.split("/");
+            avatar = "avatars/" + avatarSplit[avatarSplit.length - 1];
+        }
+
         return new ResponseUserApi(
                 currentUser.getLogin(),
                 currentUser.getEmail(),
@@ -69,7 +79,8 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
                 userSettings == null ? false : userSettings.getIsDeletingFileObjects(),
                 transferredUser != null ? transferredUser.getLogin() : null,
                 currentUser.isAccountNonLocked(),
-                false
+                false,
+                avatar
         );
     }
 
@@ -172,6 +183,31 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
                         .map(UUID::fromString)
                         .collect(Collectors.toList()),
                 userInfo.getLogin());
+    }
+
+    /**
+     * Upload an avatar for the user by his login.
+     * @param file Uploaded file.
+     * @param accessToken Raw access JWT token.
+     * @return Upload avatar.
+     * @throws UploadAvatarForUserException Exceptions for loading an avatar for a user.
+     * @throws IOException Signals that an I/O exception of some sort has occurred.
+     */
+    @Override
+    @PostMapping("/user/profile/settings/avatar")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseUploadAvatarUserApi uploadAvatar(
+            @RequestParam("avatar") MultipartFile file,
+            @RequestHeader(name = "Authorization") String accessToken)
+            throws UploadAvatarForUserException, IOException {
+        Claims claimsAccess = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
+        JwtAuthentication userInfo = JwtUtils.generate(claimsAccess);
+
+        String avatarTitle = serviceProfileUser.uploadAvatar(file, userInfo.getLogin());
+
+        return new ResponseUploadAvatarUserApi(
+                "avatars/" + avatarTitle
+        );
     }
 
 }
