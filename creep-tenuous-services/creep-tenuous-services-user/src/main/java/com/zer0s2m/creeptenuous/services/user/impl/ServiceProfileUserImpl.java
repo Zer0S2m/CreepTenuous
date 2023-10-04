@@ -168,10 +168,19 @@ public class ServiceProfileUserImpl implements ServiceProfileUser {
      * @return Title avatar.
      * @throws IOException Signals that an I/O exception to some sort has occurred.
      * @throws UploadAvatarForUserException Exceptions for loading an avatar for a user.
+     * @throws UserNotFoundException The user does not exist in the system.
      */
     @Override
     public String uploadAvatar(final @NotNull MultipartFile file, final String login)
-            throws UploadAvatarForUserException, IOException {
+            throws UploadAvatarForUserException, IOException, UserNotFoundException {
+        User user = userRepository.findByLogin(login);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        if (user.getAvatar() != null) {
+            deleteAvatar(login);
+        }
+
         Path avatar = uploadAvatar(file);
         try {
             userRepository.updateAvatar(avatar.toString(), login);

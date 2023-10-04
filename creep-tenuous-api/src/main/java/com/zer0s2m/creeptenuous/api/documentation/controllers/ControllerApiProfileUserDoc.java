@@ -255,10 +255,11 @@ public interface ControllerApiProfileUserDoc {
      * @param accessToken Raw access JWT token.
      * @return Upload avatar.
      * @throws UploadAvatarForUserException Exceptions for loading an avatar for a user.
-     * @throws IOException Signals that an I/O exception of some sort has occurred.
+     * @throws IOException Signals that an I/O exception to some sort has occurred.
+     * @throws UserNotFoundException The user does not exist in the system.
      */
     @Operation(
-            method = "POST",
+            method = "PUT",
             summary = "Upload an avatar for a user",
             description = "Upload an avatar for a user",
             tags = { "User" },
@@ -294,11 +295,24 @@ public interface ControllerApiProfileUserDoc {
                                     mediaType = "application/json",
                                     schema = @Schema(ref = "#/components/schemas/Unauthorized")
                             )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(name = "Not found user", value = "{" +
+                                                    "\"message\": \"User is not found.\"," +
+                                                    "\"statusCode\": 404" +
+                                                    "}"
+                                            )
+                                    })
                     )
             }
     )
     ResponseUploadAvatarUserApi uploadAvatar(MultipartFile file, @Parameter(hidden = true) String accessToken)
-            throws UploadAvatarForUserException, IOException;
+            throws UploadAvatarForUserException, IOException, UserNotFoundException;
 
     /**
      * Removing an avatar for a user.

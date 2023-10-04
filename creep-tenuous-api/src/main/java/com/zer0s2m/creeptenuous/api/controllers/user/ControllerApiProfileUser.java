@@ -191,15 +191,16 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
      * @param accessToken Raw access JWT token.
      * @return Upload avatar.
      * @throws UploadAvatarForUserException Exceptions for loading an avatar for a user.
-     * @throws IOException Signals that an I/O exception of some sort has occurred.
+     * @throws IOException Signals that an I/O exception to some sort has occurred.
+     * @throws UserNotFoundException The user does not exist in the system.
      */
     @Override
-    @PostMapping("/user/profile/settings/avatar")
+    @PutMapping("/user/profile/settings/avatar")
     @ResponseStatus(code = HttpStatus.OK)
     public ResponseUploadAvatarUserApi uploadAvatar(
             @RequestParam("avatar") MultipartFile file,
             @RequestHeader(name = "Authorization") String accessToken)
-            throws UploadAvatarForUserException, IOException {
+            throws UploadAvatarForUserException, IOException, UserNotFoundException {
         Claims claimsAccess = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
         JwtAuthentication userInfo = JwtUtils.generate(claimsAccess);
 
