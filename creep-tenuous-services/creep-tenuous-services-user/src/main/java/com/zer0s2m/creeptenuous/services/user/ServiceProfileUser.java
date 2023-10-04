@@ -1,8 +1,11 @@
 package com.zer0s2m.creeptenuous.services.user;
 
+import com.zer0s2m.creeptenuous.common.exceptions.UploadAvatarForUserException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.models.user.User;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -55,5 +58,25 @@ public interface ServiceProfileUser {
      */
     void deleteFileObjectsExclusion(Collection<UUID> fileSystemObject, String login)
             throws UserNotFoundException;
+
+    /**
+     * Upload an avatar for the user by his login.
+     * @param file Uploaded file.
+     * @param login Login user.
+     * @return Title avatar.
+     * @throws IOException Signals that an I/O exception to some sort has occurred.
+     * @throws UploadAvatarForUserException Exceptions for loading an avatar for a user.
+     * @throws UserNotFoundException The user does not exist in the system.
+     */
+    String uploadAvatar(final MultipartFile file, final String login)
+            throws UploadAvatarForUserException, IOException, UserNotFoundException;
+
+    /**
+     * Removing an avatar for a user.
+     * @param login User login.
+     * @throws UserNotFoundException he user does not exist in the system.
+     * @throws IOException Signals that an I/O exception to some sort has occurred.
+     */
+    void deleteAvatar(final String login) throws UserNotFoundException, IOException;
 
 }

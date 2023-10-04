@@ -32,6 +32,9 @@ public class User implements UserDetails {
     @Column(name = "login", nullable = false, unique = true)
     private String login;
 
+    @Column(name = "avatar")
+    private String avatar;
+
     @JsonProperty
     @Basic
     @Column(name = "email")
@@ -170,6 +173,14 @@ public class User implements UserDetails {
 
     public UserSettings getUserSettings() {
         return userSettings;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getAvatar() {
+        return avatar;
     }
 
 }

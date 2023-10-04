@@ -29,6 +29,9 @@ public record ResponseUserApi(
         Boolean isBlocked,
 
         @Schema(description = "Is the user temporarily blocked")
-        Boolean isTemporarilyBlocked
+        Boolean isTemporarilyBlocked,
+
+        @Schema(description = "Uploaded avatar for the user")
+        String avatar
 
 ) { }
