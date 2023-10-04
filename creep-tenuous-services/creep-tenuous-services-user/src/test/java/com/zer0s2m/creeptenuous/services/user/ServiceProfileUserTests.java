@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.services.user;
 
+import com.zer0s2m.creeptenuous.common.components.UploadAvatar;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.models.user.UserFileObjectsExclusion;
@@ -27,7 +28,8 @@ import java.util.UUID;
         ServiceProfileUserImpl.class,
         UserRepository.class,
         UserSettingsRepository.class,
-        UserFileObjectsExclusionRepository.class
+        UserFileObjectsExclusionRepository.class,
+        UploadAvatar.class
 })
 @Transactional
 @Rollback

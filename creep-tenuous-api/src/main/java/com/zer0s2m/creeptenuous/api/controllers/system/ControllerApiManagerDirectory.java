@@ -46,7 +46,8 @@ public class ControllerApiManagerDirectory implements ControllerApiManagerDirect
     /**
      * Manager directory - get all directories by level
      *
-     * @param data data manager directory
+     * @param data        data manager directory
+     * @param accessToken Raw JWT access token
      * @return result manager build info in directory
      * @throws IOException                     if an I/O error occurs or the parent directory does not exist
      * @throws NotValidLevelDirectoryException invalid level directory
@@ -88,7 +89,7 @@ public class ControllerApiManagerDirectory implements ControllerApiManagerDirect
 
         List<Object> result = serviceManagerDirectoryRedis.build(rawDataOptional.getValue().namesSystemFileObject());
 
-        return new ResponseManagerDirectoryApi(data.systemParents(), data.level(), result);
+        return new ResponseManagerDirectoryApi(data.parents(), data.systemParents(), data.level(), result);
     }
 
     @ExceptionHandler(NotValidLevelDirectoryException.class)

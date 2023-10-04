@@ -147,7 +147,8 @@ public class ControllerApiManagerDirectoryTests {
         directoryRedisRepository.save(directoryRedis);
         frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
 
-        mockMvc.perform(MockMvcRequestBuilders
+        mockMvc.perform(
+                MockMvcRequestBuilders
                         .post("/api/v1/directory")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new DataManagerDirectoryApi(

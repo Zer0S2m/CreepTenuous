@@ -2,7 +2,6 @@ package com.zer0s2m.creeptenuous.services.redis;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataMoveDirectory;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
-import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
@@ -22,6 +21,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @SpringBootTest(classes = {
         DirectoryRedisRepository.class,
@@ -51,9 +51,9 @@ public class ServiceMoveDirectoryRedisTests {
 
     @Test
     public void move_success() {
-        String systemNameDirectory = Distribution.getUUID();
-        String systemNameFile = Distribution.getUUID();
-        Path newSystemPath = Path.of(Distribution.getUUID());
+        String systemNameDirectory = UUID.randomUUID().toString();
+        String systemNameFile = UUID.randomUUID().toString();
+        Path newSystemPath = Path.of(UUID.randomUUID().toString());
         final Path pathSystemDirectory = Path.of(systemNameDirectory);
         final Path pathSystemFile = Path.of(systemNameFile);
         List<ContainerInfoFileSystemObject> attached = new ArrayList<>();
@@ -93,7 +93,7 @@ public class ServiceMoveDirectoryRedisTests {
                 Path.of("test_1"),
                 Path.of("test_2"),
                 attached,
-                Distribution.getUUID()
+                UUID.randomUUID().toString()
         );
 
         serviceMoveDirectoryRedis.move(data);

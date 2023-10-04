@@ -9,6 +9,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionBlockingSelfUserMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseUserApi;
 import com.zer0s2m.creeptenuous.events.UserEventPublisher;
+import com.zer0s2m.creeptenuous.redis.services.user.ServiceBlockUserRedis;
 import com.zer0s2m.creeptenuous.security.jwt.domain.JwtAuthentication;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
@@ -30,14 +31,20 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
 
     private final ServiceControlUser serviceControlUser;
 
+    private final ServiceBlockUserRedis serviceBlockUserRedis;
+
     private final UserEventPublisher userEventPublisher;
 
     private final JwtProvider jwtProvider;
 
     @Autowired
-    public ControllerApiControlUser(ServiceControlUser serviceControlUser, UserEventPublisher userEventPublisher,
-                                    JwtProvider jwtProvider) {
+    public ControllerApiControlUser(
+            ServiceControlUser serviceControlUser,
+            ServiceBlockUserRedis serviceBlockUserRedis,
+            UserEventPublisher userEventPublisher,
+            JwtProvider jwtProvider) {
         this.serviceControlUser = serviceControlUser;
+        this.serviceBlockUserRedis = serviceBlockUserRedis;
         this.userEventPublisher = userEventPublisher;
         this.jwtProvider = jwtProvider;
     }
@@ -52,14 +59,25 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
     public List<ResponseUserApi> getAllUsers() {
         return serviceControlUser.getAllUsers()
                 .stream()
-                .map(user -> new ResponseUserApi(
-                        user.getLogin(),
-                        user.getEmail(),
-                        user.getName(),
-                        Set.of(user.getRole()),
-                        null,
-                        null
-                ))
+                .map(user -> {
+                    String avatar = user.getAvatar();
+                    if (avatar != null) {
+                        String[] avatarSplit = avatar.split("/");
+                        avatar = "avatars/" + avatarSplit[avatarSplit.length - 1];
+                    }
+
+                    return new ResponseUserApi(
+                            user.getLogin(),
+                            user.getEmail(),
+                            user.getName(),
+                            Set.of(user.getRole()),
+                            null,
+                            null,
+                            !user.isAccountNonLocked(),
+                            serviceBlockUserRedis.check(user.getLogin()),
+                            avatar
+                    );
+                })
                 .collect(Collectors.toList());
     }
 

@@ -1,6 +1,5 @@
 package com.zer0s2m.creeptenuous.services.redis;
 
-import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
@@ -19,6 +18,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @SpringBootTest(classes = {
         DirectoryRedisRepository.class,
@@ -45,8 +45,8 @@ public class ServiceMoveFileRedisTests {
 
     @Test
     public void moveOneFile_success() {
-        String systemName = Distribution.getUUID();
-        Path newSystemPath = Path.of(Distribution.getUUID(), systemName);
+        String systemName = UUID.randomUUID().toString();
+        Path newSystemPath = Path.of(UUID.randomUUID().toString(), systemName);
         fileRedisRepository.save(new FileRedis(
                 User.LOGIN.get(),
                 User.ROLE_USER.get(),
@@ -70,8 +70,8 @@ public class ServiceMoveFileRedisTests {
 
     @Test
     public void moveMoreOneFile_success() {
-        String systemName = Distribution.getUUID();
-        Path newSystemPath = Path.of(Distribution.getUUID(), systemName);
+        String systemName = UUID.randomUUID().toString();
+        Path newSystemPath = Path.of(UUID.randomUUID().toString(), systemName);
         fileRedisRepository.save(new FileRedis(
                 User.LOGIN.get(),
                 User.ROLE_USER.get(),

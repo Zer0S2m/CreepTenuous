@@ -63,11 +63,6 @@
       <artifactId>creep-tenuous-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.zer0s2m</groupId>
-      <artifactId>creep-tenuous-core</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>

@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.integration.implants.api;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.integration.implants.doc.ControllerApiIntegrationDoc;
 import com.zer0s2m.creeptenuous.integration.implants.http.ResponseServerUnavailableApi;
+import com.zer0s2m.creeptenuous.integration.implants.http.ResponseStatisticsApi;
 import com.zer0s2m.creeptenuous.integration.implants.services.ServiceIntegration;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.client.RestClientException;
+
+import java.util.List;
 
 /**
  * Controller responsible for integrating a third-party service for cleaning file storage
@@ -36,6 +39,18 @@ public class ControllerApiIntegration implements ControllerApiIntegrationDoc {
     @RolesAllowed("ROLE_ADMIN")
     public void run() {
         serviceIntegration.run();
+    }
+
+    /**
+     * Get statistics on all deleted objects
+     * @return objects
+     */
+    @Override
+    @GetMapping("/integration/implants/statistics")
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    @RolesAllowed("ROLE_ADMIN")
+    public List<ResponseStatisticsApi> getStatistics() {
+        return serviceIntegration.getStatistics();
     }
 
     @ExceptionHandler(RestClientException.class)

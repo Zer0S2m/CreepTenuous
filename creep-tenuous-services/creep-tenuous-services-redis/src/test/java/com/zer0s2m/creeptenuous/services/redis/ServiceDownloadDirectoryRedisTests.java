@@ -1,6 +1,5 @@
 package com.zer0s2m.creeptenuous.services.redis;
 
-import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
@@ -20,6 +19,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 @SpringBootTest(classes = {
         DirectoryRedisRepository.class,
@@ -49,8 +49,8 @@ public class ServiceDownloadDirectoryRedisTests {
 
     @Test
     public void getResource_success() {
-        String systemNameDirectory = Distribution.getUUID();
-        String systemNameFile = Distribution.getUUID();
+        String systemNameDirectory = UUID.randomUUID().toString();
+        String systemNameFile = UUID.randomUUID().toString();
         DirectoryRedis directoryRedis = directoryRedisRepository.save(new DirectoryRedis(
                 User.LOGIN.get(),
                 User.ROLE_USER.get(),

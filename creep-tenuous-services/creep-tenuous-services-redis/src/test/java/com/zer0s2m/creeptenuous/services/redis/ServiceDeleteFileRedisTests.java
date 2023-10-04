@@ -1,6 +1,5 @@
 package com.zer0s2m.creeptenuous.services.redis;
 
-import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
@@ -17,6 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.UUID;
 
 @SpringBootTest(classes = {
         DirectoryRedisRepository.class,
@@ -43,7 +43,7 @@ public class ServiceDeleteFileRedisTests {
 
     @Test
     public void delete_success() {
-        String systemName = Distribution.getUUID();
+        String systemName = UUID.randomUUID().toString();
         final Path path = Path.of(systemName);
         fileRedisRepository.save(new FileRedis(
                 User.LOGIN.get(),

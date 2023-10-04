@@ -5,6 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
 public record ResponseManagerDirectoryApi(
+
+        @Schema(description = "Parts of system paths (directories) - real names")
+        List<String> parents,
+
         @Schema(description = "Parts of system paths (directories) - source")
         List<String> systemParents,
 
@@ -12,14 +16,18 @@ public record ResponseManagerDirectoryApi(
         Integer level,
 
         @Schema(
-                description = "Category information array",
-                example = "{" +
+                description = "Information array of file objects",
+                example = "[" +
+                        "{" +
                         "\"realName\": \"string\"," +
                         "\"systemName\": \"string\"," +
                         "\"isFile\": false," +
                         "\"isDirectory\": true," +
-                        "\"color\": \"#fff\"" +
-                        "}"
+                        "\"color\": \"#fff\"," +
+                        "\"categoryId\": 1" +
+                        "}" +
+                        "]"
         )
         List<Object> objects
+
 ) { }

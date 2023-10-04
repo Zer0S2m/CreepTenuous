@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.io.IOException;
 
@@ -24,6 +25,7 @@ public interface ControllerApiCreateUserDoc {
             summary = "Creating a user",
             description = "Creating a user in the system",
             tags = { "User" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Data for creating a user in the system",
                     content = @Content(

@@ -1,7 +1,6 @@
 package com.zer0s2m.creeptenuous.services.redis;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFileSystemObject;
-import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
@@ -20,6 +19,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @SpringBootTest(classes = {
         DirectoryRedisRepository.class,
@@ -49,8 +49,8 @@ public class ServiceUploadDirectoryRedisTests {
 
     @Test
     public void upload_success() {
-        String systemNameFile = Distribution.getUUID();
-        String systemNameDirectory = Distribution.getUUID();
+        String systemNameFile = UUID.randomUUID().toString();
+        String systemNameDirectory = UUID.randomUUID().toString();
         List<ContainerDataUploadFileSystemObject> data = new ArrayList<>();
         data.add(new ContainerDataUploadFileSystemObject(
                 "test",

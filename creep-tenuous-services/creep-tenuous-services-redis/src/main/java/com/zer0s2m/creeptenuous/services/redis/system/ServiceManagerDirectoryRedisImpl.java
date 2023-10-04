@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.services.redis.system;
 
+import com.zer0s2m.creeptenuous.common.query.IMapFileObjectToCategory;
 import com.zer0s2m.creeptenuous.models.user.UserColor;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
@@ -7,6 +8,7 @@ import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceManagerDirectoryRedis;
+import com.zer0s2m.creeptenuous.repository.user.CategoryFileSystemObjectRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserColorDirectoryRepository;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisManagerRightsAccessImpl;
@@ -27,22 +29,26 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
 
     private final UserColorDirectoryRepository userColorDirectoryRepository;
 
+    private final CategoryFileSystemObjectRepository categoryFileSystemObjectRepository;
+
     @Autowired
     public ServiceManagerDirectoryRedisImpl(
             DirectoryRedisRepository directoryRedisRepository,
             FileRedisRepository fileRedisRepository,
             FrozenFileSystemObjectRedisRepository frozenFileSystemObjectRedisRepository,
             UserColorDirectoryRepository userColorDirectoryRepository,
+            CategoryFileSystemObjectRepository categoryFileSystemObjectRepository,
             JwtProvider jwtProvider) {
         super(directoryRedisRepository, fileRedisRepository, frozenFileSystemObjectRedisRepository,
                 jwtProvider);
 
         this.userColorDirectoryRepository = userColorDirectoryRepository;
+        this.categoryFileSystemObjectRepository = categoryFileSystemObjectRepository;
     }
 
     /**
      * Get data file system object
-     * @param systemNamesFileSystemObject system path object ids {@link DirectoryRedis#getRealName()} ()}
+     * @param systemNamesFileSystemObject system path object ids {@link DirectoryRedis#getRealName()}
      *                                    or {@link FileRedis#getRealName()}
      * @return json array
      */
@@ -54,13 +60,21 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
         Iterable<FileRedis> fileRedis = fileRedisRepository.findAllById(systemNamesFileSystemObject);
         Map<String, String> mapColors = getUserColorsDirectory(systemNamesFileSystemObject);
 
+        List<IMapFileObjectToCategory> fileObjectSettingToCategory = categoryFileSystemObjectRepository
+                .getMapFileObjectSettingToCategory(getLoginUser());
+        HashMap<String, Integer> mapFileObjectToCategories = new HashMap<>();
+        fileObjectSettingToCategory.forEach((entity) ->
+                entity.getFileSystemObjects().forEach((fileObject)
+                        -> mapFileObjectToCategories.put(fileObject.toString(), entity.getUserCategoryId())));
+
         directoryRedis.forEach(objRedis -> buildJSON(
                 data,
                 objRedis.getSystemName(),
                 objRedis.getIsFile(),
                 objRedis.getIsDirectory(),
                 objRedis.getRealName(),
-                mapColors.getOrDefault(objRedis.getSystemName(), null)
+                mapColors.getOrDefault(objRedis.getSystemName(), null),
+                mapFileObjectToCategories.get(objRedis.getSystemName())
         ));
         fileRedis.forEach(objRedis -> buildJSON(
                 data,
@@ -68,7 +82,8 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
                 objRedis.getIsFile(),
                 objRedis.getIsDirectory(),
                 objRedis.getRealName(),
-                null
+                null,
+                mapFileObjectToCategories.get(objRedis.getSystemName())
         ));
 
         if (data.length() > 0) {
@@ -86,6 +101,7 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
      * @param isDirectory is directory
      * @param realName real name file system object
      * @param color color directory
+     * @param categoryId custom category
      */
     private void buildJSON(
             @NotNull JSONArray data,
@@ -93,7 +109,8 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
             Boolean isFile,
             Boolean isDirectory,
             String realName,
-            String color
+            String color,
+            Integer categoryId
     ) {
         JSONObject obj = new JSONObject();
 
@@ -102,6 +119,7 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
         obj.put("isFile", isFile);
         obj.put("isDirectory", isDirectory);
         obj.put("color", color);
+        obj.put("categoryId", categoryId);
 
         data.put(obj);
     }

@@ -1,7 +1,6 @@
 package com.zer0s2m.creeptenuous.services.redis;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
-import com.zer0s2m.creeptenuous.core.services.Distribution;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
@@ -23,6 +22,7 @@ import org.springframework.test.context.ContextConfiguration;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @SpringBootTest(classes = {
         DirectoryRedisRepository.class,
@@ -52,8 +52,8 @@ public class ServiceCopyDirectoryRedisTests {
 
     @Test
     public void copy_success() {
-        String newSystemNameDirectory = Distribution.getUUID();
-        String newSystemNameFile = Distribution.getUUID();
+        String newSystemNameDirectory = UUID.randomUUID().toString();
+        String newSystemNameFile = UUID.randomUUID().toString();
         final Path pathDirectory = Path.of(newSystemNameDirectory);
         final Path pathFile = Path.of(newSystemNameFile);
         List<ContainerInfoFileSystemObject> data = new ArrayList<>();

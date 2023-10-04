@@ -13,7 +13,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.messages.FileAlreadyExistsMsg;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.NotFoundTypeFileMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateFileApi;
 import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
-import com.zer0s2m.creeptenuous.core.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCheckUniqueNameFileSystemObject;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateFileRedis;
