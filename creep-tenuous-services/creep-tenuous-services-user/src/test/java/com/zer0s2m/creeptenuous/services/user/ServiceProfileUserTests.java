@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.services.user;
 
 import com.zer0s2m.creeptenuous.common.components.UploadAvatar;
+import com.zer0s2m.creeptenuous.common.exceptions.UploadAvatarForUserException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.models.user.UserFileObjectsExclusion;
@@ -16,10 +17,16 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -49,6 +56,11 @@ public class ServiceProfileUserTests {
 
     @Autowired
     private UserFileObjectsExclusionRepository userFileObjectsExclusionRepository;
+
+    @Autowired
+    private UploadAvatar uploadAvatar;
+
+    final private String nameTestFile1 = "test_image_1.jpeg";
 
     User RECORD_USER = new User(
             "test_login",
@@ -184,7 +196,7 @@ public class ServiceProfileUserTests {
     }
 
     @Test
-    public void deleteFFileObjectsExclusion_success() {
+    public void deleteFileObjectsExclusion_success() {
         User user = userRepository.save(RECORD_USER);
         UUID systemName = UUID.randomUUID();
 
@@ -199,11 +211,126 @@ public class ServiceProfileUserTests {
     }
 
     @Test
-    public void deleteFFileObjectsExclusion_fail_userNotFound() {
+    public void deleteFileObjectsExclusion_fail_userNotFound() {
         Assertions.assertThrows(
                 UserNotFoundException.class,
                 () -> serviceProfileUser.deleteFileObjectsExclusion(
                         List.of(UUID.randomUUID()), "login_user_not_found"));
+    }
+
+    @Test
+    public void uploadFile_success_avatarNotIsNull() throws IOException {
+        Path pathAvatar1 = Path.of(uploadAvatar.getUploadAvatarDir(), nameTestFile1);
+
+        try (InputStream inputAvatar = this.getClass().getResourceAsStream("/" + nameTestFile1)) {
+            RECORD_USER.setAvatar(pathAvatar1.toString());
+            userRepository.save(RECORD_USER);
+
+            assert inputAvatar != null;
+            Files.copy(inputAvatar, pathAvatar1);
+        }
+
+        String titleAvatar = Assertions.assertDoesNotThrow(
+                () -> serviceProfileUser.uploadAvatar(
+                        new MockMultipartFile(
+                                "file",
+                                "file.jpeg",
+                                MediaType.IMAGE_JPEG_VALUE,
+                                this.getClass().getResourceAsStream("/" + nameTestFile1)
+                        ), RECORD_USER.getLogin())
+        );
+        Path pathAvatar2 = Path.of(uploadAvatar.getUploadAvatarDir(), titleAvatar);
+
+        Assertions.assertTrue(Files.exists(pathAvatar2));
+        Assertions.assertFalse(Files.exists(pathAvatar1));
+
+        Files.deleteIfExists(pathAvatar2);
+    }
+
+    @Test
+    public void uploadFile_success_avatarIsNull() throws IOException {
+        userRepository.save(RECORD_USER);
+
+        String titleAvatar = Assertions.assertDoesNotThrow(
+                () -> serviceProfileUser.uploadAvatar(
+                        new MockMultipartFile(
+                                "file",
+                                "file.jpeg",
+                                MediaType.IMAGE_JPEG_VALUE,
+                                this.getClass().getResourceAsStream("/" + nameTestFile1)
+                        ), RECORD_USER.getLogin())
+        );
+        Path pathAvatar = Path.of(uploadAvatar.getUploadAvatarDir(), titleAvatar);
+
+        Assertions.assertTrue(Files.exists(pathAvatar));
+
+        Files.deleteIfExists(pathAvatar);
+    }
+
+    @Test
+    public void uploadFile_success_avatarInvalidPath() {
+        userRepository.save(RECORD_USER);
+
+        Assertions.assertThrows(
+                UploadAvatarForUserException.class,
+                () -> serviceProfileUser.uploadAvatar(
+                        new MockMultipartFile(
+                                "file",
+                                "file_1..1.jpeg",
+                                MediaType.IMAGE_JPEG_VALUE,
+                                this.getClass().getResourceAsStream("/" + nameTestFile1)
+                        ), RECORD_USER.getLogin())
+        );
+    }
+
+    @Test
+    public void uploadFile_fail_notFoundUser() {
+        Assertions.assertThrows(
+                UserNotFoundException.class,
+                () -> serviceProfileUser.uploadAvatar(
+                        new MockMultipartFile(
+                                "file",
+                                "file.jpeg",
+                                MediaType.IMAGE_JPEG_VALUE,
+                                this.getClass().getResourceAsStream("/" + nameTestFile1)
+                        ), "login_user_not_found"));
+    }
+
+    @Test
+    public void deleteAvatar_success_avatarIsNull() {
+        userRepository.save(RECORD_USER);
+
+        Assertions.assertDoesNotThrow(
+                () -> serviceProfileUser.deleteAvatar(RECORD_USER.getLogin()));
+
+        User user = userRepository.findByLogin(RECORD_USER.getLogin());
+
+        Assertions.assertNull(user.getAvatar());
+    }
+
+    @Test
+    public void deleteAvatar_success_avatarNotIsNull() throws IOException {
+        Path pathAvatar = Path.of(uploadAvatar.getUploadAvatarDir(), nameTestFile1);
+
+        try (InputStream inputAvatar = this.getClass().getResourceAsStream("/" + nameTestFile1)) {
+            RECORD_USER.setAvatar(pathAvatar.toString());
+            userRepository.save(RECORD_USER);
+
+            assert inputAvatar != null;
+            Files.copy(inputAvatar, pathAvatar);
+        }
+
+        Assertions.assertDoesNotThrow(
+                () -> serviceProfileUser.deleteAvatar(RECORD_USER.getLogin()));
+
+        Assertions.assertFalse(Files.exists(pathAvatar));
+    }
+
+    @Test
+    public void deleteAvatar_fail_userNotFound() {
+        Assertions.assertThrows(
+                UserNotFoundException.class,
+                () -> serviceProfileUser.deleteAvatar("login_user_not_found"));
     }
 
 }
