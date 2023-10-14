@@ -22,19 +22,25 @@ public interface ServiceCommentFileSystemObject {
      * Create Comment for File System Object
      * @param comment Comment for file object
      * @param fileSystemObject File object name
+     * @param parentId The parent comment to which the new comment will be linked
      * @param userId user id
      * @return comment
+     * @throws NotFoundException not found comments for filesystem objects
      */
-    CommentFileSystemObject create(String comment, String fileSystemObject, Long userId);
+    CommentFileSystemObject create(String comment, String fileSystemObject, Long parentId, Long userId)
+            throws NotFoundException;
 
     /**
      * Create Comment for File System Object
      * @param comment Comment for file object
      * @param fileSystemObject File object name
+     * @param parentId The parent comment to which the new comment will be linked
      * @param login user login
      * @return comment
+     * @throws NotFoundException not found comments for filesystem objects
      */
-    CommentFileSystemObject create(String comment, String fileSystemObject, String login);
+    CommentFileSystemObject create(String comment, String fileSystemObject, Long parentId, String login)
+            throws NotFoundException;
 
     /**
      * Delete comment file system object

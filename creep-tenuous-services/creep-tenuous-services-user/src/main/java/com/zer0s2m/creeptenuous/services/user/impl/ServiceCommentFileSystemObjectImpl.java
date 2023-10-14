@@ -2,12 +2,14 @@ package com.zer0s2m.creeptenuous.services.user.impl;
 
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundCommentFileSystemObjectException;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
+import com.zer0s2m.creeptenuous.common.utils.OptionalMutable;
 import com.zer0s2m.creeptenuous.models.common.CommentFileSystemObject;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.repository.common.CommentFileSystemObjectRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.services.user.ServiceCommentFileSystemObject;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,36 +50,56 @@ public class ServiceCommentFileSystemObjectImpl implements ServiceCommentFileSys
      * Create Comment for File System Object
      * @param comment Comment for file object
      * @param fileSystemObject File object name
+     * @param parentId The parent comment to which the new comment will be linked
      * @param userId user id
      * @return comment
+     * @throws NotFoundException not found comments for filesystem objects
      */
     @Override
-    public CommentFileSystemObject create(String comment, String fileSystemObject, Long userId) {
-        return create(comment, fileSystemObject, getUser(userId));
+    public CommentFileSystemObject create(
+            String comment, String fileSystemObject, @Nullable Long parentId, Long userId)
+            throws NotFoundException {
+        return create(comment, fileSystemObject, parentId, getUser(userId));
     }
 
     /**
      * Create Comment for File System Object
      * @param comment Comment for file object
      * @param fileSystemObject File object name
+     * @param parentId The parent comment to which the new comment will be linked
      * @param login user login
      * @return comment
+     * @throws NotFoundException not found comments for filesystem objects
      */
     @Override
-    public CommentFileSystemObject create(String comment, String fileSystemObject, String login) {
-        return create(comment, fileSystemObject, getUser(login));
+    public CommentFileSystemObject create(
+            String comment, String fileSystemObject, @Nullable Long parentId, String login)
+            throws NotFoundException {
+        return create(comment, fileSystemObject, parentId, getUser(login));
     }
 
     /**
      * Create Comment for File System Object
      * @param comment Comment for file object
      * @param fileSystemObject File object name
+     * @param parentId The parent comment to which the new comment will be linked
      * @param user target user
      * @return comment
+     * @throws NotFoundException not found comments for filesystem objects
      */
-    private @NotNull CommentFileSystemObject create(String comment, String fileSystemObject, User user) {
+    private @NotNull CommentFileSystemObject create(
+            String comment, String fileSystemObject, @Nullable Long parentId, User user)
+            throws NotFoundException {
+        OptionalMutable<CommentFileSystemObject> parentComment = new OptionalMutable<>(null);
+        if (parentId != null) {
+            Optional<CommentFileSystemObject> parentCommentFromDB = repository.findById(parentId);
+            if (parentCommentFromDB.isEmpty()) {
+                throw new NotFoundCommentFileSystemObjectException();
+            }
+            parentComment.setValue(parentCommentFromDB.get());
+        }
         final CommentFileSystemObject obj = new CommentFileSystemObject(
-                user, comment, UUID.fromString(fileSystemObject));
+                user, comment, UUID.fromString(fileSystemObject), parentComment.getValue().getId());
         return repository.save(obj);
     }
 

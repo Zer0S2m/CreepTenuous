@@ -64,6 +64,7 @@ public class ServiceCommentFileSystemObjectTests {
                 () -> serviceCommentFileSystemObject.create(
                         "Comment",
                         UUID.randomUUID().toString(),
+                        null,
                         user.getId())
         );
     }
@@ -76,6 +77,7 @@ public class ServiceCommentFileSystemObjectTests {
                 () -> serviceCommentFileSystemObject.create(
                         "Comment",
                         UUID.randomUUID().toString(),
+                        null,
                         user.getLogin())
         );
     }
@@ -87,7 +89,8 @@ public class ServiceCommentFileSystemObjectTests {
                 commentFileSystemObjectRepository.save(new CommentFileSystemObject(
                         user,
                         "comment",
-                        UUID.randomUUID()));
+                        UUID.randomUUID(),
+                        null));
 
         Assertions.assertDoesNotThrow(
                 () -> serviceCommentFileSystemObject.delete(commentFileSystemObject.getId(), user.getLogin())
@@ -110,7 +113,8 @@ public class ServiceCommentFileSystemObjectTests {
                 commentFileSystemObjectRepository.save(new CommentFileSystemObject(
                         user,
                         "comment",
-                        UUID.randomUUID()));
+                        UUID.randomUUID(),
+                        null));
 
         Assertions.assertDoesNotThrow(
                 () -> serviceCommentFileSystemObject.edit(

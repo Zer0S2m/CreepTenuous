@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zer0s2m.creeptenuous.models.user.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -46,10 +47,21 @@ public class CommentFileSystemObject {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    public CommentFileSystemObject(User user, String comment, UUID fileSystemObject) {
+    @lombok.Getter
+    @lombok.Setter
+    @Column(name = "parent_id")
+    private Long parentId;
+
+    public CommentFileSystemObject(
+            User user,
+            String comment,
+            UUID fileSystemObject,
+            @Nullable Long parentId
+    ) {
         this.user = user;
         this.comment = comment;
         this.fileSystemObject = fileSystemObject;
+        this.parentId = parentId;
         this.createdAt = LocalDateTime.now();
     }
 

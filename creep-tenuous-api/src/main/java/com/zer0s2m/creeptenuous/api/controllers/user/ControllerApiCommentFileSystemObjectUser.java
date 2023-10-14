@@ -86,7 +86,7 @@ public class ControllerApiCommentFileSystemObjectUser implements ControllerApiCo
 
         final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
         return serviceCommentFileSystemObject.create(
-                data.comment(), data.fileSystemObject(), claims.get("login", String.class));
+                data.comment(), data.fileSystemObject(), data.parentId(), claims.get("login", String.class));
     }
 
     /**

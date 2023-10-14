@@ -118,7 +118,8 @@ public class ControllerApiCommentFileSystemObjectUserTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new DataCreateCommentFileSystemObjectApi(
                                 "Comment",
-                                systemName
+                                systemName,
+                                null
                         )))
                         .header("Authorization", accessToken)
                 )
@@ -135,7 +136,8 @@ public class ControllerApiCommentFileSystemObjectUserTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new DataCreateCommentFileSystemObjectApi(
                                 "Comment",
-                                        "not_found_file_system_object"
+                                        "not_found_file_system_object",
+                                null
                         )))
                         .header("Authorization", accessToken)
                 )
@@ -149,7 +151,8 @@ public class ControllerApiCommentFileSystemObjectUserTests {
         CommentFileSystemObject commentFileSystemObject = new CommentFileSystemObject(
                 user,
                 "comment",
-                UUID.randomUUID());
+                UUID.randomUUID(),
+                null);
         commentFileSystemObject = commentFileSystemObjectRepository.save(commentFileSystemObject);
 
         this.mockMvc.perform(
@@ -188,7 +191,8 @@ public class ControllerApiCommentFileSystemObjectUserTests {
         CommentFileSystemObject commentFileSystemObject = new CommentFileSystemObject(
                 user,
                 "comment",
-                UUID.randomUUID());
+                UUID.randomUUID(),
+                null);
         commentFileSystemObject = commentFileSystemObjectRepository.save(commentFileSystemObject);
 
         this.mockMvc.perform(
