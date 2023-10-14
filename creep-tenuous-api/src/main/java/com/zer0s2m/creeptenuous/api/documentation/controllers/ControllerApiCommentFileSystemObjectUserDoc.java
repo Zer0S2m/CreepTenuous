@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
+import com.zer0s2m.creeptenuous.common.containers.ContainerCommentFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataCreateCommentFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataControlAnyObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataEditCommentFileSystemObjectApi;
@@ -33,20 +34,7 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Successful get",
-                            content = @Content(
-                                    examples = {
-                                            @ExampleObject(name = "Comments", value = "[\n" +
-                                                    "{" +
-                                                    "\"id\": 4," +
-                                                    "\"comment\": \"Comment\"," +
-                                                    "\"fileSystemObject\": \"8159f622-2dc3-4d56-a29d-e5c9cdfbb25c\"," +
-                                                    "\"createdAt\": \"2023-10-14T12:30:20.583808\"" +
-                                                    "}" +
-                                                    "]"
-                                            )
-                                    }
-                            )
+                            description = "Successful get"
                     ),
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
                     @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden"),
@@ -65,7 +53,7 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
                     )
             }
     )
-    List<CommentFileSystemObject> list(
+    List<ContainerCommentFileSystemObject> list(
             final String fileSystemObject, final @Parameter(hidden = true) String accessToken)
             throws NotFoundException;
 
@@ -99,7 +87,8 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
                                             "\"id\": 3," +
                                             "\"comment\": \"Comment\"," +
                                             "\"fileSystemObject\": \"73a21b4b-b513-46ee-ad9c-623105829ba9\"," +
-                                            "\"createdAt\": \"2023-10-14T12:30:20.583808\"" +
+                                            "\"createdAt\": \"2023-10-14T12:30:20.583808\"," +
+                                            "\"parentId\": 1" +
                                             "}")
                             )
                     ),
@@ -199,7 +188,8 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
                                             "\"id\": 3," +
                                             "\"comment\": \"Comment\"," +
                                             "\"fileSystemObject\": \"73a21b4b-b513-46ee-ad9c-623105829ba9\"," +
-                                            "\"createdAt\": \"2023-10-14T12:30:20.583808\"" +
+                                            "\"createdAt\": \"2023-10-14T12:30:20.583808\"," +
+                                            "\"parentId\": 1" +
                                             "}")
                             )
                     ),

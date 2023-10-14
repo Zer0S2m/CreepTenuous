@@ -1,6 +1,9 @@
 package com.zer0s2m.creeptenuous.services.user;
 
+import com.zer0s2m.creeptenuous.common.containers.ContainerCommentFileSystemObject;
+import com.zer0s2m.creeptenuous.common.exceptions.NotFoundCommentFileSystemObjectException;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
+import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.models.common.CommentFileSystemObject;
 
 import java.util.List;
@@ -19,22 +22,41 @@ public interface ServiceCommentFileSystemObject {
     List<CommentFileSystemObject> list(String fileSystemObject, String userLogin);
 
     /**
-     * Create Comment for File System Object
-     * @param comment Comment for file object
-     * @param fileSystemObject File object name
-     * @param userId user id
-     * @return comment
+     * Collect comments into a tree structure.
+     * @param comments Collection of comments.
+     * @return Comments in a tree structure.
      */
-    CommentFileSystemObject create(String comment, String fileSystemObject, Long userId);
+    List<ContainerCommentFileSystemObject> collect(Iterable<CommentFileSystemObject> comments);
 
     /**
      * Create Comment for File System Object
      * @param comment Comment for file object
      * @param fileSystemObject File object name
+     * @param parentId The parent comment to which the new comment will be linked
+     * @param userId user id
+     * @return comment
+     * @throws NotFoundException not found object.
+     * @throws NotFoundCommentFileSystemObjectException The exception is for not found comments for
+     * filesystem objects
+     * @throws UserNotFoundException The user does not exist in the system.
+     */
+    CommentFileSystemObject create(String comment, String fileSystemObject, Long parentId, Long userId)
+            throws NotFoundException;
+
+    /**
+     * Create Comment for File System Object
+     * @param comment Comment for file object
+     * @param fileSystemObject File object name
+     * @param parentId The parent comment to which the new comment will be linked
      * @param login user login
      * @return comment
+     * @throws NotFoundException not found object.
+     * @throws NotFoundCommentFileSystemObjectException The exception is for not found comments for
+     * filesystem objects
+     * @throws UserNotFoundException The user does not exist in the system.
      */
-    CommentFileSystemObject create(String comment, String fileSystemObject, String login);
+    CommentFileSystemObject create(String comment, String fileSystemObject, Long parentId, String login)
+            throws NotFoundException;
 
     /**
      * Delete comment file system object

@@ -14,6 +14,9 @@ public record DataCreateCommentFileSystemObjectApi(
         @NotNull(message = "Please provide name file system object (Not NULL)")
         @NotBlank(message = "Please provide name file system object")
         @Schema(description = "File object name")
-        String fileSystemObject
+        String fileSystemObject,
+
+        @Schema(description = "The parent comment to which the new comment will be linked")
+        Long parentId
 
 ) { }
