@@ -101,6 +101,7 @@ public class ControllerApiCommentFileSystemObjectUserTests {
     @Test
     @Rollback
     public void create_success() throws Exception {
+        userRepository.save(RECORD_USER);
         final String systemName = UUID.randomUUID().toString();
 
         directoryRedisRepository.save(new DirectoryRedis(

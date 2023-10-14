@@ -1,7 +1,9 @@
 package com.zer0s2m.creeptenuous.services.user;
 
+import com.zer0s2m.creeptenuous.common.containers.ContainerCommentFileSystemObject;
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundCommentFileSystemObjectException;
+import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.models.common.CommentFileSystemObject;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.repository.common.CommentFileSystemObjectRepository;
@@ -18,7 +20,9 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.StreamSupport;
 
 @SpringBootTest(classes = {
         ServiceCommentFileSystemObjectImpl.class,
@@ -50,10 +54,55 @@ public class ServiceCommentFileSystemObjectTests {
     );
 
     @Test
-    public void getList_success() {
+    public void getList_successNotParent() {
         Assertions.assertDoesNotThrow(
                 () -> serviceCommentFileSystemObject.list(UUID.randomUUID().toString(), "login")
         );
+    }
+
+    @Test
+    public void getListAndCollect_success_byParents() {
+        final User user = userRepository.save(RECORD_USER);
+        final UUID systemName = UUID.randomUUID();
+
+        CommentFileSystemObject comment1 = commentFileSystemObjectRepository.save(
+                new CommentFileSystemObject(
+                        user,
+                        "Comment",
+                        systemName,
+                        null));
+        CommentFileSystemObject comment2 = commentFileSystemObjectRepository.save(
+                new CommentFileSystemObject(
+                        user,
+                        "Comment",
+                        systemName,
+                        comment1.getId()));
+        commentFileSystemObjectRepository.save(
+                new CommentFileSystemObject(
+                        user,
+                        "Comment",
+                        systemName,
+                        comment2.getId()));
+        commentFileSystemObjectRepository.save(
+                new CommentFileSystemObject(
+                        user,
+                        "Comment",
+                        systemName,
+                        null));
+
+        List<CommentFileSystemObject> comments = Assertions.assertDoesNotThrow(
+                () -> serviceCommentFileSystemObject.list(
+                        systemName.toString(), user.getLogin())
+        );
+        Assertions.assertFalse(comments.isEmpty());
+
+        Iterable<ContainerCommentFileSystemObject> commentsCollected = Assertions.assertDoesNotThrow(
+                () -> serviceCommentFileSystemObject.collect(comments));
+        List<ContainerCommentFileSystemObject> commentFileSystemObjectList = StreamSupport
+                .stream(commentsCollected.spliterator(), false)
+                .toList();
+
+        Assertions.assertFalse(commentFileSystemObjectList.isEmpty());
     }
 
     @Test
@@ -70,6 +119,57 @@ public class ServiceCommentFileSystemObjectTests {
     }
 
     @Test
+    public void create_success_byIdUserAndParentIdComment() {
+        final User user = userRepository.save(RECORD_USER);
+        UUID systemName =  UUID.randomUUID();
+
+        CommentFileSystemObject commentFileSystemObject = commentFileSystemObjectRepository.save(
+                new CommentFileSystemObject(
+                        user,
+                        "Comment",
+                        systemName,
+                        null));
+
+        CommentFileSystemObject createdCommentFileSystemObject = Assertions.assertDoesNotThrow(
+                () -> serviceCommentFileSystemObject.create(
+                        "Comment",
+                        systemName.toString(),
+                        commentFileSystemObject.getId(),
+                        user.getId())
+        );
+
+        Assertions.assertEquals(
+                createdCommentFileSystemObject.getParentId(),
+                commentFileSystemObject.getId()
+        );
+    }
+
+    @Test
+    public void create_fail_byIdUserAndNotFoundParentIdComment() {
+        final User user = userRepository.save(RECORD_USER);
+
+        Assertions.assertThrows(
+                NotFoundCommentFileSystemObjectException.class,
+                () -> serviceCommentFileSystemObject.create(
+                        "Comment",
+                        UUID.randomUUID().toString(),
+                        9999L,
+                        user.getId())
+        );
+    }
+
+    @Test
+    public void create_fail_byIdUserNotFound() {
+        Assertions.assertThrows(
+                UserNotFoundException.class,
+                () -> serviceCommentFileSystemObject.create(
+                        "Comment",
+                        UUID.randomUUID().toString(),
+                        null,
+                        99999L));
+    }
+
+    @Test
     public void create_success_byLoginUser() {
         final User user = userRepository.save(RECORD_USER);
 
@@ -80,6 +180,17 @@ public class ServiceCommentFileSystemObjectTests {
                         null,
                         user.getLogin())
         );
+    }
+
+    @Test
+    public void create_fail_byLoginUserNotFound() {
+        Assertions.assertThrows(
+                UserNotFoundException.class,
+                () -> serviceCommentFileSystemObject.create(
+                        "Comment",
+                        UUID.randomUUID().toString(),
+                        null,
+                        "login_user_not_found"));
     }
 
     @Test

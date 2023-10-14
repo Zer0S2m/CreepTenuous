@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.services.user.impl;
 import com.zer0s2m.creeptenuous.common.containers.ContainerCommentFileSystemObject;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundCommentFileSystemObjectException;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
+import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.utils.OptionalMutable;
 import com.zer0s2m.creeptenuous.models.common.CommentFileSystemObject;
 import com.zer0s2m.creeptenuous.models.user.User;
@@ -136,7 +137,10 @@ public class ServiceCommentFileSystemObjectImpl implements ServiceCommentFileSys
      * @param parentId The parent comment to which the new comment will be linked
      * @param userId user id
      * @return comment
-     * @throws NotFoundException not found comments for filesystem objects
+     * @throws NotFoundException not found object.
+     * @throws NotFoundCommentFileSystemObjectException The exception is for not found comments for
+     * filesystem objects
+     * @throws UserNotFoundException The user does not exist in the system.
      */
     @Override
     public CommentFileSystemObject create(
@@ -152,7 +156,11 @@ public class ServiceCommentFileSystemObjectImpl implements ServiceCommentFileSys
      * @param parentId The parent comment to which the new comment will be linked
      * @param login user login
      * @return comment
-     * @throws NotFoundException not found comments for filesystem objects
+     * @throws NotFoundException not found object.
+     * @throws NotFoundCommentFileSystemObjectException The exception is for not found comments for
+     * filesystem objects
+     * @throws UserNotFoundException The user does not exist in the system.
+     * @
      */
     @Override
     public CommentFileSystemObject create(
@@ -169,6 +177,8 @@ public class ServiceCommentFileSystemObjectImpl implements ServiceCommentFileSys
      * @param user target user
      * @return comment
      * @throws NotFoundException not found comments for filesystem objects
+     * @throws NotFoundCommentFileSystemObjectException The exception is for not found comments for
+     * filesystem objects
      */
     private @NotNull CommentFileSystemObject create(
             String comment, String fileSystemObject, @Nullable Long parentId, User user)
@@ -227,18 +237,28 @@ public class ServiceCommentFileSystemObjectImpl implements ServiceCommentFileSys
      * Get user by id
      * @param id user id
      * @return user
+     * @throws NotFoundException The user does not exist in the system.
      */
-    private @NotNull User getUser(Long id) {
-        return userRepository.findById(id).get();
+    private @NotNull User getUser(Long id) throws NotFoundException {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException();
+        }
+        return user.get();
     }
 
     /**
      * Get user by login
      * @param login user login
      * @return user
+     * @throws UserNotFoundException The user does not exist in the system
      */
-    private User getUser(String login) {
-        return userRepository.findByLogin(login);
+    private @NotNull User getUser(String login) throws NotFoundException {
+        User user = userRepository.findByLogin(login);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        return user;
     }
 
 }

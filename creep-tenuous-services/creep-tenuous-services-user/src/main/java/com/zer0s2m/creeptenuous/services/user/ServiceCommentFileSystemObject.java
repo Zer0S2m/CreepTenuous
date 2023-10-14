@@ -1,7 +1,9 @@
 package com.zer0s2m.creeptenuous.services.user;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerCommentFileSystemObject;
+import com.zer0s2m.creeptenuous.common.exceptions.NotFoundCommentFileSystemObjectException;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
+import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.models.common.CommentFileSystemObject;
 
 import java.util.List;
@@ -33,7 +35,10 @@ public interface ServiceCommentFileSystemObject {
      * @param parentId The parent comment to which the new comment will be linked
      * @param userId user id
      * @return comment
-     * @throws NotFoundException not found comments for filesystem objects
+     * @throws NotFoundException not found object.
+     * @throws NotFoundCommentFileSystemObjectException The exception is for not found comments for
+     * filesystem objects
+     * @throws UserNotFoundException The user does not exist in the system.
      */
     CommentFileSystemObject create(String comment, String fileSystemObject, Long parentId, Long userId)
             throws NotFoundException;
@@ -45,7 +50,10 @@ public interface ServiceCommentFileSystemObject {
      * @param parentId The parent comment to which the new comment will be linked
      * @param login user login
      * @return comment
-     * @throws NotFoundException not found comments for filesystem objects
+     * @throws NotFoundException not found object.
+     * @throws NotFoundCommentFileSystemObjectException The exception is for not found comments for
+     * filesystem objects
+     * @throws UserNotFoundException The user does not exist in the system.
      */
     CommentFileSystemObject create(String comment, String fileSystemObject, Long parentId, String login)
             throws NotFoundException;
