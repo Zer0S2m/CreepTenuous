@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -78,6 +79,7 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
                     objRedis.getIsFile(),
                     objRedis.getIsDirectory(),
                     objRedis.getRealName(),
+                    objRedis.getCreatedAt(),
                     colorDirectoryInfo != null ? colorDirectoryInfo.color() : null,
                     colorDirectoryInfo != null ? colorDirectoryInfo.colorId() : null,
                     mapFileObjectToCategories.get(objRedis.getSystemName())
@@ -89,6 +91,7 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
                 objRedis.getIsFile(),
                 objRedis.getIsDirectory(),
                 objRedis.getRealName(),
+                objRedis.getCreatedAt(),
                 null,
                 null,
                 mapFileObjectToCategories.get(objRedis.getSystemName())
@@ -108,6 +111,7 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
      * @param isFile is file
      * @param isDirectory is directory
      * @param realName real name file system object
+     * @param createdAt File object creation date
      * @param color color directory
      * @param colorId color ID
      * @param categoryId custom category
@@ -118,6 +122,7 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
             Boolean isFile,
             Boolean isDirectory,
             String realName,
+            LocalDateTime createdAt,
             String color,
             Long colorId,
             Long categoryId
@@ -128,6 +133,7 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
         obj.put("realName", realName);
         obj.put("isFile", isFile);
         obj.put("isDirectory", isDirectory);
+        obj.put("createdAt", createdAt != null ? createdAt.toString() : null);
         obj.put("color", color);
         obj.put("colorId", colorId);
         obj.put("categoryId", categoryId);
