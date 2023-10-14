@@ -50,6 +50,7 @@ public class CommentFileSystemObject {
     @lombok.Getter
     @lombok.Setter
     @Column(name = "parent_id")
+    @JsonProperty
     private Long parentId;
 
     public CommentFileSystemObject(

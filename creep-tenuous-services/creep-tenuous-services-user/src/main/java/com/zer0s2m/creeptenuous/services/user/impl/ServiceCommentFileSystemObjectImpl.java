@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.services.user.impl;
 
+import com.zer0s2m.creeptenuous.common.containers.ContainerCommentFileSystemObject;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundCommentFileSystemObjectException;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
 import com.zer0s2m.creeptenuous.common.utils.OptionalMutable;
@@ -13,9 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Service for interacting with comments for file system objects
@@ -44,6 +43,90 @@ public class ServiceCommentFileSystemObjectImpl implements ServiceCommentFileSys
     @Override
     public List<CommentFileSystemObject> list(String fileSystemObject, String userLogin) {
         return repository.findAllByFileSystemObjectAndUser_Login(UUID.fromString(fileSystemObject), userLogin);
+    }
+
+    /**
+     * Collect comments into a tree structure.
+     * @param comments Collection of comments.
+     * @return Comments in a tree structure.
+     */
+    @Override
+    public List<ContainerCommentFileSystemObject> collect(
+            @NotNull Iterable<CommentFileSystemObject> comments) {
+        List<ContainerCommentFileSystemObject> commentFileSystemObjects = new ArrayList<>();
+
+        Map<Long, CommentFileSystemObject> idComments = new HashMap<>();
+        // Key - comment ID
+        // Value - Children's Collection
+        Map<Long, List<Long>> commentsMap = new HashMap<>();
+
+        comments.forEach(comment -> {
+            if (comment.getParentId() != null) {
+                commentsMap.computeIfAbsent(comment.getParentId(), k -> new ArrayList<>());
+                commentsMap.get(comment.getParentId()).add(comment.getId());
+            }
+            idComments.put(comment.getId(), comment);
+        });
+
+        for (CommentFileSystemObject comment : comments) {
+            if (comment.getParentId() != null) {
+                continue;
+            }
+
+            if (!commentsMap.containsKey(comment.getId())) {
+                commentFileSystemObjects.add(new ContainerCommentFileSystemObject(
+                        comment.getId(),
+                        comment.getComment(),
+                        comment.getFileSystemObject(),
+                        comment.getCreatedAt(),
+                        null,
+                        new ArrayList<>()
+                ));
+            } else {
+                commentFileSystemObjects.add(collectCommentChilds(commentsMap, idComments, comment, null));
+            }
+        }
+
+        return commentFileSystemObjects;
+    }
+
+    private @NotNull ContainerCommentFileSystemObject collectCommentChilds(
+            @NotNull Map<Long, List<Long>> commentsMap,
+            Map<Long, CommentFileSystemObject> comments,
+            @NotNull CommentFileSystemObject currentComment,
+            @Nullable Long parentId) {
+        ContainerCommentFileSystemObject commentFileSystemObject = new ContainerCommentFileSystemObject(
+                currentComment.getId(),
+                currentComment.getComment(),
+                currentComment.getFileSystemObject(),
+                currentComment.getCreatedAt(),
+                parentId,
+                new ArrayList<>()
+        );
+
+        List<Long> childIds = commentsMap.get(currentComment.getId());
+
+        childIds.forEach(childId -> {
+            CommentFileSystemObject comment = comments.get(childId);
+
+            if (commentsMap.containsKey(childId)) {
+                Map<Long, List<Long>> commentsMapCopy = new HashMap<>(commentsMap);
+                commentsMap.remove(childId);
+                commentFileSystemObject.childs().add(
+                        collectCommentChilds(commentsMapCopy, comments,comment , currentComment.getId()));
+            } else {
+                commentFileSystemObject.childs().add(new ContainerCommentFileSystemObject(
+                        comment.getId(),
+                        comment.getComment(),
+                        comment.getFileSystemObject(),
+                        comment.getCreatedAt(),
+                        comment.getParentId(),
+                        new ArrayList<>()
+                ));
+            }
+        });
+
+        return commentFileSystemObject;
     }
 
     /**
@@ -99,7 +182,10 @@ public class ServiceCommentFileSystemObjectImpl implements ServiceCommentFileSys
             parentComment.setValue(parentCommentFromDB.get());
         }
         final CommentFileSystemObject obj = new CommentFileSystemObject(
-                user, comment, UUID.fromString(fileSystemObject), parentComment.getValue().getId());
+                user,
+                comment,
+                UUID.fromString(fileSystemObject),
+                parentComment.getValue() != null ? parentComment.getValue().getId() : null);
         return repository.save(obj);
     }
 
