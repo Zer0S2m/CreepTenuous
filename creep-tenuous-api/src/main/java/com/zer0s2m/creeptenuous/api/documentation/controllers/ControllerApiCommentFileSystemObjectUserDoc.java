@@ -40,7 +40,8 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
                                                     "{" +
                                                     "\"id\": 4," +
                                                     "\"comment\": \"Comment\"," +
-                                                    "\"fileSystemObject\": \"8159f622-2dc3-4d56-a29d-e5c9cdfbb25c\"" +
+                                                    "\"fileSystemObject\": \"8159f622-2dc3-4d56-a29d-e5c9cdfbb25c\"," +
+                                                    "\"createdAt\": \"2023-10-14T12:30:20.583808\"" +
                                                     "}" +
                                                     "]"
                                             )
@@ -97,7 +98,8 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
                                     schema = @Schema(example = "{" +
                                             "\"id\": 3," +
                                             "\"comment\": \"Comment\"," +
-                                            "\"fileSystemObject\": \"73a21b4b-b513-46ee-ad9c-623105829ba9\"\n" +
+                                            "\"fileSystemObject\": \"73a21b4b-b513-46ee-ad9c-623105829ba9\"," +
+                                            "\"createdAt\": \"2023-10-14T12:30:20.583808\"" +
                                             "}")
                             )
                     ),
@@ -196,7 +198,8 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
                                     schema = @Schema(example = "{" +
                                             "\"id\": 3," +
                                             "\"comment\": \"Comment\"," +
-                                            "\"fileSystemObject\": \"73a21b4b-b513-46ee-ad9c-623105829ba9\"\n" +
+                                            "\"fileSystemObject\": \"73a21b4b-b513-46ee-ad9c-623105829ba9\"," +
+                                            "\"createdAt\": \"2023-10-14T12:30:20.583808\"" +
                                             "}")
                             )
                     ),
