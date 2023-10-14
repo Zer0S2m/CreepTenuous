@@ -24,6 +24,7 @@ public record ResponseManagerDirectoryApi(
                         "\"isFile\": false," +
                         "\"isDirectory\": true," +
                         "\"color\": \"#fff\"," +
+                        "\"colorId\": 1," +
                         "\"categoryId\": 1" +
                         "}" +
                         "]"

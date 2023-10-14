@@ -59,8 +59,9 @@ public class ServiceCategoryUserImpl implements ServiceCategoryUser {
                     userCategoryList.add(new ContainerDataUserCategory(
                             userCategory.getId(),
                             userCategory.getTitle(),
-                            userColorCategory != null ? userColorCategory.getUserColor().getColor() : null
-                            ));
+                            userColorCategory != null ? userColorCategory.getUserColor().getColor() : null,
+                            userColorCategory != null ? userColorCategory.getUserColor().getId() : null
+                    ));
                 });
         return userCategoryList;
     }
@@ -77,7 +78,7 @@ public class ServiceCategoryUserImpl implements ServiceCategoryUser {
             throws UserNotFoundException {
         final User user = getUserByLoginUser(userLogin);
         UserCategory userCategory = userCategoryRepository.save(new UserCategory(title, user));
-        return new ContainerDataUserCategory(userCategory.getId(), userCategory.getTitle(), null);
+        return new ContainerDataUserCategory(userCategory.getId(), userCategory.getTitle(), null, null);
     }
 
     /**
