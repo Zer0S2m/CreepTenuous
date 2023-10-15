@@ -1,7 +1,6 @@
 package com.zer0s2m.creeptenuous.core.balancer;
 
 import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
-import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagCore;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.*;
 
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@TestTagCore
+@Tag("core")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class FileBalancerTests {
 

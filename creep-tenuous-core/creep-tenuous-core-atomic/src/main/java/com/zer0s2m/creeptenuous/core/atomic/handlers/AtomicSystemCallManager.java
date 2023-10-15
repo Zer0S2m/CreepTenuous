@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.ClassUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -47,6 +46,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * }</pre>
  */
 public final class AtomicSystemCallManager {
+
+    /** The CGLIB class separator: {@code "$$"}. */
+    public static final String CGLIB_CLASS_SEPARATOR = "$$";
 
     private static final Logger logger = LoggerFactory.getLogger(AtomicSystemCallManager.class);
 
@@ -98,7 +100,7 @@ public final class AtomicSystemCallManager {
         AtomicBoolean isServiceCoreFileSystem = new AtomicBoolean(false);
         String method = null;
 
-        Class<?> instanceFromProxy = ClassUtils.getUserClass(instance.getClass());
+        Class<?> instanceFromProxy = getUserClass(instance.getClass());
         Annotation [] annotationsClass = instanceFromProxy.getAnnotations();
 
         for (Annotation as : annotationsClass) {
@@ -185,6 +187,23 @@ public final class AtomicSystemCallManager {
     @Contract(pure = true)
     private static boolean checkIsUnixPath(@NotNull String class_) {
         return class_.equals("sun.nio.fs.UnixPath");
+    }
+
+    /**
+     * Return the user-defined class for the given class: usually simply the given
+     * class, but the original class in case of a CGLIB-generated subclass.
+     * @param clazz the class to check
+     * @return the user-defined class
+     * @see #CGLIB_CLASS_SEPARATOR
+     */
+    private static @NotNull Class<?> getUserClass(@NotNull Class<?> clazz) {
+        if (clazz.getName().contains(CGLIB_CLASS_SEPARATOR)) {
+            Class<?> superclass = clazz.getSuperclass();
+            if (superclass != null && superclass != Object.class) {
+                return superclass;
+            }
+        }
+        return clazz;
     }
 
 }

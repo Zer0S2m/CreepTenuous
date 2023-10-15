@@ -19,10 +19,8 @@
     <module>creep-tenuous-core-atomic</module>
     <module>creep-tenuous-core-balancer</module>
   </modules>
-
   <dependencies>
   </dependencies>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -34,6 +32,30 @@
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-core-balancer</artifactId>
         <version>0.0.11-SNAPSHOT</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>2.0.9</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jetbrains</groupId>
+        <artifactId>annotations</artifactId>
+        <version>24.0.1</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.13.2</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>5.10.0</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
