@@ -7,6 +7,7 @@ import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseObjectUploadFileApi;
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadFileApi;
+import com.zer0s2m.creeptenuous.common.utils.UtilsDataApi;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceUploadFileRedis;
@@ -18,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @V1APIRestController
 public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
@@ -93,15 +93,27 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
                     if (obj.success()) {
                         return new ContainerDataUploadFile(
                                 obj.realFileName(),
-                                obj.systemFileName(),
+                                UtilsDataApi.clearFileExtensions(obj.systemFileName()),
                                 obj.realPath(),
                                 obj.systemPath()
                         );
                     }
                     return null;
                 })
-                .collect(Collectors.toList()));
-        return new ResponseUploadFileApi(data);
+                .toList());
+
+        List<ResponseObjectUploadFileApi> readyData = data
+                .stream()
+                .map(response -> new ResponseObjectUploadFileApi(
+                        response.realFileName(),
+                        UtilsDataApi.clearFileExtensions(response.systemFileName()),
+                        response.success(),
+                        response.realPath(),
+                        response.systemPath()
+                ))
+                .toList();
+
+        return new ResponseUploadFileApi(readyData);
     }
 
 }

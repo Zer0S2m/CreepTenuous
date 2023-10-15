@@ -11,6 +11,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisE
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsRightException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.common.http.ResponseGrantedRightsApi;
+import com.zer0s2m.creeptenuous.common.utils.UtilsDataApi;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
@@ -173,7 +174,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
         List<DirectoryRedis> directoryRedisCurrent = serviceRedisManagerResources.getResourceDirectoryRedis(
                 List.of(fileSystemObject));
 
-        if (getIsDirectory() && directoryRedisCurrent.size() != 0 && directoryRedisCurrent.get(0).getIsDirectory()) {
+        if (getIsDirectory() && !directoryRedisCurrent.isEmpty() && directoryRedisCurrent.get(0).getIsDirectory()) {
             List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(
                     Path.of(directoryRedisCurrent.get(0).getPath()));
             List<String> namesFileSystemObject = attached
@@ -358,7 +359,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
                     .replace(rootPath.getRootPath() + Directory.SEPARATOR.get(), "")
                     .replace(Directory.SEPARATOR.get() + nameFileSystemObject, "");
             List<String> systemParents = new ArrayList<>(List.of(sourceStr.split(Directory.SEPARATOR.get())));
-            if (systemParents.size() > 0) {
+            if (!systemParents.isEmpty()) {
                 addRight(buildObj(systemParents, loginUser, baseOperationRights),
                         baseOperationRights);
             }
@@ -380,7 +381,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
         List<OperationRights> operationRightsList = right.getRight();
         if (operationRightsList != null && operationRightsList.remove(operationRights)) {
-            if (operationRightsList.size() == 0) {
+            if (operationRightsList.isEmpty()) {
                 deleteUserLoginsToRedisObj(unpackingUniqueKey(right.getFileSystemObject()), right.getLogin());
                 rightUserFileSystemObjectRedisRepository.delete(right);
             } else {
@@ -427,7 +428,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
                 .map(this::unpackingUniqueKey)
                 .toList();
 
-        if (right.size() >= 1) {
+        if (!right.isEmpty()) {
             List<DirectoryRedis> directoryRedisList = deleteUserLoginFromRedisFileSystemObjects(
                     serviceRedisManagerResources
                             .getResourceDirectoryRedis(idsFileSystemObject),
@@ -789,9 +790,12 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     @Override
     public List<String> permissionFiltering(List<String> fileSystemObjects, OperationRights right) {
         List<String> readyFileSystemObjects = new ArrayList<>();
-        Iterable<FileRedis> fileRedis = serviceRedisManagerResources.getResourceFileRedis(fileSystemObjects);
+
+        final List<String> clearFileSystemObjects = UtilsDataApi.clearFileExtensions(fileSystemObjects);
+
+        Iterable<FileRedis> fileRedis = serviceRedisManagerResources.getResourceFileRedis(clearFileSystemObjects);
         Iterable<DirectoryRedis> directoryRedis = serviceRedisManagerResources.getResourceDirectoryRedis(
-                fileSystemObjects);
+                clearFileSystemObjects);
 
         fileRedis.forEach(obj -> {
             if ((obj.getUserLogins() != null && obj.getUserLogins().contains(getLoginUser())) ||

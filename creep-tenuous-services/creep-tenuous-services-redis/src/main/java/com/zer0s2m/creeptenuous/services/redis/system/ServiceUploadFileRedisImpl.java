@@ -68,14 +68,22 @@ public class ServiceUploadFileRedisImpl extends BaseServiceFileSystemRedisManage
 
         List<FileRedis> fileRedisList = dataCreatedFile
                 .stream()
-                .map(obj -> ServiceCreateFileRedis.getObjRedis(
-                        loginUser,
-                        roleUser,
-                        obj.realNameFile(),
-                        obj.systemNameFile(),
-                        obj.systemPathFile().toString(),
-                        new ArrayList<>()
-                ))
+                .map(obj -> {
+                    String systemName = obj.systemNameFile();
+                    if (systemName.contains(".")) {
+                        String[] splitSystemName = systemName.split("\\.");
+                        systemName = splitSystemName[0];
+                    }
+
+                    return ServiceCreateFileRedis.getObjRedis(
+                            loginUser,
+                            roleUser,
+                            obj.realNameFile(),
+                            systemName,
+                            obj.systemPathFile().toString(),
+                            new ArrayList<>()
+                    );
+                })
                 .collect(Collectors.toList());
 
         return fileRedisRepository.saveAll(fileRedisList);
