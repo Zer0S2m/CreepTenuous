@@ -6,9 +6,12 @@ import com.zer0s2m.creeptenuous.common.containers.ContainerDataDownloadFile;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
+import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadFileImpl;
+import com.zer0s2m.creeptenuous.services.system.utils.UtilsFiles;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +35,19 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
 
     private final BaseServiceFileSystemRedisManagerRightsAccess baseServiceFileSystemRedis;
 
+    private final ServiceRedisManagerResources serviceRedisManagerResources;
+
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiDownloadFile(ServiceDownloadFileImpl serviceDownloadFile,
-                                     BaseServiceFileSystemRedisManagerRightsAccess baseServiceFileSystemRedis,
-                                     ServiceManagerRights serviceManagerRights) {
+    public ControllerApiDownloadFile(
+            ServiceDownloadFileImpl serviceDownloadFile,
+            BaseServiceFileSystemRedisManagerRightsAccess baseServiceFileSystemRedis,
+            ServiceRedisManagerResources serviceRedisManagerResources,
+            ServiceManagerRights serviceManagerRights) {
         this.serviceDownloadFile = serviceDownloadFile;
         this.baseServiceFileSystemRedis = baseServiceFileSystemRedis;
+        this.serviceRedisManagerResources = serviceRedisManagerResources;
         this.serviceManagerRights = serviceManagerRights;
     }
 
@@ -84,8 +92,15 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
             }
         }
 
+        String systemFileName = data.systemFileName();
+
+        FileRedis fileRedis = serviceRedisManagerResources.getResourceFileRedis(data.systemFileName());
+        if (fileRedis != null) {
+            systemFileName = UtilsFiles.getNameFileRawStr(fileRedis.getPath());
+        }
+
         final ContainerDataDownloadFile<StreamingResponseBody, String> dataFile = serviceDownloadFile
-                .download(data.systemParents(), data.systemFileName());
+                .download(data.systemParents(), systemFileName);
 
         return ResponseEntity.ok()
                 .headers(serviceDownloadFile.collectHeaders(dataFile))
