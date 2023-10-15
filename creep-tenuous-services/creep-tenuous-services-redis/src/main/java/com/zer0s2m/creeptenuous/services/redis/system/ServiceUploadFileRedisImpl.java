@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.services.redis.system;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFile;
+import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFileFragment;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,7 +23,9 @@ import java.util.stream.Collectors;
  * Service for loading file system objects and writing to Redis
  */
 @Service("service-upload-file-redis")
-public class ServiceUploadFileRedisImpl extends BaseServiceFileSystemRedisManagerRightsAccessImpl implements ServiceUploadFileRedis {
+public class ServiceUploadFileRedisImpl
+        extends BaseServiceFileSystemRedisManagerRightsAccessImpl
+        implements ServiceUploadFileRedis {
 
     @Autowired
     public ServiceUploadFileRedisImpl(
@@ -34,22 +38,22 @@ public class ServiceUploadFileRedisImpl extends BaseServiceFileSystemRedisManage
     }
 
     /**
-     * Push data in redis create file
-     * @param dataCreatedFile data upload file
+     * Push data in redis create file.
+     * @param dataCreatedFile Data upload file.
+     * @return Created data.
      */
     @Override
     public FileRedis upload(@NotNull ContainerDataUploadFile dataCreatedFile) {
         String loginUser = accessClaims.get("login", String.class);
         String roleUser = accessClaims.get("role", String.class);
 
-        FileRedis objRedis = ServiceCreateFileRedis.getObjRedis(
+        FileRedis objRedis = new FileRedis(
                 loginUser,
                 roleUser,
                 dataCreatedFile.realNameFile(),
                 dataCreatedFile.systemNameFile(),
                 dataCreatedFile.systemPathFile().toString(),
-                new ArrayList<>()
-        );
+                new ArrayList<>());
 
         push(objRedis);
 
@@ -57,9 +61,9 @@ public class ServiceUploadFileRedisImpl extends BaseServiceFileSystemRedisManage
     }
 
     /**
-     * Push data in redis create file
-     *
-     * @param dataCreatedFile data upload files
+     * Push data in redis create file.
+     * @param dataCreatedFile Data upload files.
+     * @return Created data
      */
     @Override
     public Iterable<FileRedis> upload(@NotNull List<ContainerDataUploadFile> dataCreatedFile) {
@@ -91,11 +95,51 @@ public class ServiceUploadFileRedisImpl extends BaseServiceFileSystemRedisManage
 
     /**
      * Push in redis one object
+     *
      * @param objRedis must not be {@literal null}.
      */
     @Override
     public void push(FileRedis objRedis) {
         fileRedisRepository.save(objRedis);
+    }
+
+    /**
+     * Push a file to Redis that is fragmented.
+     * @param dataUploadFileFragment Fragmented file data.
+     * @return Created data.
+     */
+    @Override
+    public FileRedis uploadFragment(ContainerDataUploadFileFragment dataUploadFileFragment) {
+        return new FileRedis();
+    }
+
+    /**
+     * Push a file to Redis that is fragmented.
+     * @param dataUploadFileFragment Fragmented file data.
+     * @return Created data.
+     */
+    @Override
+    public Iterable<FileRedis> uploadFragment(
+            @NotNull List<ContainerDataUploadFileFragment> dataUploadFileFragment) {
+        final String loginUser = accessClaims.get("login", String.class);
+        final String roleUser = accessClaims.get("role", String.class);
+        List<FileRedis> fileRedis = new ArrayList<>();
+
+        dataUploadFileFragment.forEach(uploadFile -> fileRedis.add(new FileRedis(
+                loginUser,
+                roleUser,
+                uploadFile.originalName(),
+                uploadFile.systemName(),
+                uploadFile.systemPath().toString(),
+                new ArrayList<>(),
+                true,
+                uploadFile.partsFragments()
+                        .stream()
+                        .map(Path::toString)
+                        .toList()
+        )));
+
+        return fileRedisRepository.saveAll(fileRedis);
     }
 
 }

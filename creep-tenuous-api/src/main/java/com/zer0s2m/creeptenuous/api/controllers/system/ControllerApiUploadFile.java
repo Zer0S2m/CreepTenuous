@@ -11,6 +11,7 @@ import com.zer0s2m.creeptenuous.common.http.ResponseObjectUploadFileApi;
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadFileApi;
 import com.zer0s2m.creeptenuous.common.utils.UtilsDataApi;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceUploadFileRedis;
 import com.zer0s2m.creeptenuous.services.system.ServiceUploadFile;
@@ -89,6 +90,7 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
             }
         }
 
+        // Use file fragmentation during development to obtain more detailed information
         if (SystemMode.isSplitFileInUpload()) {
             uploadFragment(files, systemParents);
         }
@@ -152,7 +154,10 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
         List<ContainerDataUploadFileFragment> dataUploadFileFragments =
                 serviceUploadFile.uploadFragment(inputStreams, originalFileNames, systemParents);
 
-        System.out.println(dataUploadFileFragments);
+        Iterable<FileRedis> fileRedis = serviceUploadFileRedis.uploadFragment(
+                dataUploadFileFragments);
+
+        fileRedis.forEach(System.out::println);
     }
 
 }
