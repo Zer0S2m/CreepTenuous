@@ -138,10 +138,7 @@ public class FileBalancerTests {
         Set<Path> allParts = Assertions.assertDoesNotThrow(
                 () -> FileBalancer.getAllParts(pathList.get(0)));
 
-        allParts.forEach(part -> {
-            Assertions.assertTrue(Files.exists(part));
-            System.out.println(part);
-        });
+        allParts.forEach(part -> Assertions.assertTrue(Files.exists(part)));
     }
 
     @Test

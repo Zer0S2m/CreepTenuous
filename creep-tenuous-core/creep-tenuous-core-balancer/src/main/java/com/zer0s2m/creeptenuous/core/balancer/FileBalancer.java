@@ -8,6 +8,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,6 +16,10 @@ import java.util.stream.Stream;
  * The main interface for implementing the class responsible for splitting and restoring files
  */
 public interface FileBalancer {
+
+    Logger logger = Logger.getLogger("file-balancer");
+
+    String MODE = System.getenv("CT_MODE");
 
     /**
      * Unit of measurement - how many parts the file will be split into
@@ -75,6 +80,15 @@ public interface FileBalancer {
             }
         }
 
+        if (Objects.equals(MODE, "dev")) {
+            final String[] msg = {
+                    "File splitting [" + source + "]\n" +
+                    "Parts of a fragmented file:\n"
+            };
+            paths.forEach(path -> msg[0] = msg[0] + "\t" + path + "\n");
+            logger.info(msg[0].trim());
+        }
+
         return paths;
     }
 
@@ -103,6 +117,10 @@ public interface FileBalancer {
             for (Path sourceFile : sourceFiles) {
                 Files.copy(sourceFile, mergingStream);
             }
+        }
+
+        if (Objects.equals(MODE, "dev")) {
+            logger.info("Recovering a fragmented file " + sourceFiles + " -> " + into);
         }
 
         return into;
