@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.0.5</version>
+    <version>3.1.4</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>com.zer0s2m</groupId>
@@ -38,6 +38,11 @@
     <module>creep-tenuous-core</module>
   </modules>
   <dependencies>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>2.2</version>
+    </dependency>
   </dependencies>
 
   <dependencyManagement>
@@ -136,6 +141,45 @@
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-core-balancer</artifactId>
         <version>0.0.11-SNAPSHOT</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jetbrains</groupId>
+        <artifactId>annotations</artifactId>
+        <version>24.0.1</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>2.0.9</version>
+      </dependency>
+      <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>20230227</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-api</artifactId>
+        <version>0.11.5</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
+        <version>2.2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <version>2.2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.18.30</version>
+        <scope>provided</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
