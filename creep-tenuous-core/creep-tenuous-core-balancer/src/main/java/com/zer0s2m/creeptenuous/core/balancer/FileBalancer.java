@@ -7,8 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The main interface for implementing the class responsible for splitting and restoring files
@@ -83,6 +84,7 @@ public interface FileBalancer {
      * @param into path to the file that will be assembled from parts
      * @return assembled file
      * @throws IOException signals that an I/O exception to some sort has occurred
+     * @throws FileNotFoundException File not found
      * @throws FileIsDirectoryException the exception indicates that the source file object is a directory
      */
     @Contract("_, _ -> param2")
@@ -90,6 +92,9 @@ public interface FileBalancer {
         for (Path sourceFile : sourceFiles) {
             if (Files.isDirectory(sourceFile)) {
                 throw new FileIsDirectoryException();
+            }
+            if (!Files.exists(sourceFile)) {
+                throw new FileNotFoundException(sourceFile.toString());
             }
         }
 
@@ -101,6 +106,34 @@ public interface FileBalancer {
         }
 
         return into;
+    }
+
+    /**
+     * Find all other parts of a file in the file's parent directory based on one of them.
+     * @param part One of the parts of the fragmented file.
+     * @return A collection of paths to all parts of a file in an ordered form.
+     * @throws FileIsDirectoryException The exception indicates that the source file object is a directory.
+     */
+    @Contract("_ -> new")
+    static @NotNull Set<Path> getAllParts(@NotNull Path part) throws FileIsDirectoryException {
+        if (Files.isDirectory(part)) {
+            throw new FileIsDirectoryException();
+        }
+
+        String fileName = part.getFileName().toString();
+        String destFileName = fileName.substring(0, fileName.lastIndexOf('.'));
+
+        try (final Stream<Path> stream = Files.list(part.getParent())) {
+            return stream
+                    .filter(file -> !Files.isDirectory(file))
+                    .filter(file -> file.getFileName().toString().matches(destFileName + "[.]\\d+"))
+                    .collect(Collectors.toSet())
+                    .stream()
+                    .sorted()
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
