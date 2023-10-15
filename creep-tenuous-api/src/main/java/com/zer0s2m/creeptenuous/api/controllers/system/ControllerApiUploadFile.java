@@ -2,7 +2,9 @@ package com.zer0s2m.creeptenuous.api.controllers.system;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiUploadFileDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.common.components.SystemMode;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFile;
+import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFileFragment;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseObjectUploadFileApi;
@@ -11,13 +13,18 @@ import com.zer0s2m.creeptenuous.common.utils.UtilsDataApi;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceUploadFileRedis;
+import com.zer0s2m.creeptenuous.services.system.ServiceUploadFile;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceUploadFileImpl;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 @V1APIRestController
@@ -25,14 +32,14 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
 
     static final OperationRights operationRights = OperationRights.UPLOAD;
 
-    private final ServiceUploadFileImpl serviceUploadFile;
+    private final ServiceUploadFile serviceUploadFile;
 
     private final ServiceUploadFileRedis serviceUploadFileRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiUploadFile(ServiceUploadFileImpl serviceUploadFile,
+    public ControllerApiUploadFile(ServiceUploadFile serviceUploadFile,
                                    ServiceUploadFileRedis serviceUploadFileRedis,
                                    ServiceManagerRights serviceManagerRights) {
         this.serviceUploadFile = serviceUploadFile;
@@ -66,7 +73,7 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
             final @RequestParam("systemParents") List<String> systemParents,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws InvocationTargetException, NoSuchMethodException, InstantiationException,
-            IllegalAccessException, FileObjectIsFrozenException {
+            IllegalAccessException, FileObjectIsFrozenException, IOException {
         serviceUploadFileRedis.setAccessToken(accessToken);
         serviceUploadFileRedis.setIsException(false);
 
@@ -80,6 +87,10 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
             if (isFrozen) {
                 throw new FileObjectIsFrozenException();
             }
+        }
+
+        if (SystemMode.isSplitFileInUpload()) {
+            uploadFragment(files, systemParents);
         }
 
         List<ResponseObjectUploadFileApi> data = AtomicSystemCallManager.call(
@@ -114,6 +125,34 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
                 .toList();
 
         return new ResponseUploadFileApi(readyData);
+    }
+
+    /**
+     * Upload files and then fragment them.
+     * @param files Files.
+     * @param systemParents System names of directories from which the directory path will be
+     *                      collected where the file will be downloaded
+     * @throws IOException If an I/O error occurs or the parent directory does not exist.
+     */
+    private void uploadFragment(
+            final @NotNull List<MultipartFile> files, final List<String> systemParents)
+            throws IOException {
+        final List<InputStream> inputStreams = new ArrayList<>();
+        final List<String> originalFileNames = new ArrayList<>();
+
+        files.forEach(file -> {
+            try {
+                inputStreams.add(file.getInputStream());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            originalFileNames.add(file.getOriginalFilename());
+        });
+
+        List<ContainerDataUploadFileFragment> dataUploadFileFragments =
+                serviceUploadFile.uploadFragment(inputStreams, originalFileNames, systemParents);
+
+        System.out.println(dataUploadFileFragments);
     }
 
 }

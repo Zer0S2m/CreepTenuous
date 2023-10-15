@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -73,5 +74,5 @@ public interface ControllerApiUploadFileDoc {
             ) List<String> systemParents,
             @Parameter(hidden = true) String accessToken
     ) throws InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException, FileObjectIsFrozenException;
+            InstantiationException, IllegalAccessException, FileObjectIsFrozenException, IOException;
 }
