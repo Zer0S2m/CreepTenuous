@@ -110,7 +110,7 @@ public class ServiceUploadFileRedisImpl
      */
     @Override
     public FileRedis uploadFragment(ContainerDataUploadFileFragment dataUploadFileFragment) {
-        return new FileRedis();
+        return uploadFragment(List.of(dataUploadFileFragment)).iterator().next();
     }
 
     /**

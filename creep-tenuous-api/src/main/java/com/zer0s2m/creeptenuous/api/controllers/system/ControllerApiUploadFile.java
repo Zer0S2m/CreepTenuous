@@ -91,7 +91,7 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
         }
 
         // Use file fragmentation during development to obtain more detailed information
-        if (SystemMode.isSplitFileInUpload()) {
+        if (SystemMode.isSplitModeFragmentFile()) {
             uploadFragment(files, systemParents);
         }
 
@@ -133,7 +133,7 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
      * Upload files and then fragment them.
      * @param files Files.
      * @param systemParents System names of directories from which the directory path will be
-     *                      collected where the file will be downloaded
+     *                      collected where the file will be downloaded.
      * @throws IOException If an I/O error occurs or the parent directory does not exist.
      */
     private void uploadFragment(

@@ -2,10 +2,12 @@ package com.zer0s2m.creeptenuous.api.controllers.system;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiDownloadFileDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.common.components.SystemMode;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataDownloadFile;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
+import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
@@ -65,7 +67,7 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
     public ResponseEntity<StreamingResponseBody> download(
             final @Valid @RequestBody @NotNull DataDownloadFileApi data,
             @RequestHeader(name = "Authorization") String accessToken)
-            throws IOException, FileObjectIsFrozenException {
+            throws IOException, FileObjectIsFrozenException, FileIsDirectoryException {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.setIsWillBeCreated(false);
 
@@ -99,11 +101,34 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
             systemFileName = UtilsFiles.getNameFileRawStr(fileRedis.getPath());
         }
 
+        // Use file fragmentation during development to obtain more detailed information
+        if (SystemMode.isSplitModeFragmentFile()) {
+            return downloadFragment(data.systemParents(), systemFileName);
+        }
+
         final ContainerDataDownloadFile<StreamingResponseBody, String> dataFile = serviceDownloadFile
                 .download(data.systemParents(), systemFileName);
 
         return ResponseEntity.ok()
                 .headers(serviceDownloadFile.collectHeaders(dataFile))
+                .body(dataFile.byteContent());
+    }
+
+    /**
+     * Download a file that is fragmented.
+     *
+     * @param systemParents System names of directories from which the directory path will be
+     *                      collected where the file.
+     * @param systemName    System name of the file object.
+     * @return Stream to download a file.
+     */
+    private @NotNull ResponseEntity<StreamingResponseBody> downloadFragment(
+            final List<String> systemParents, final String systemName
+    ) throws IOException, FileIsDirectoryException {
+        final ContainerDataDownloadFile<StreamingResponseBody, String> dataFile = serviceDownloadFile
+                .downloadFragment(systemParents, systemName);
+
+        return ResponseEntity.ok()
                 .body(dataFile.byteContent());
     }
 

@@ -139,12 +139,18 @@ public interface FileBalancer {
         }
 
         String fileName = part.getFileName().toString();
-        String destFileName = fileName.substring(0, fileName.lastIndexOf('.'));
+        String destFileName;
+        if (fileName.contains(".")) {
+            destFileName = fileName.substring(0, fileName.lastIndexOf('.'));
+        } else {
+            destFileName = fileName;
+        }
 
         try (final Stream<Path> stream = Files.list(part.getParent())) {
             return stream
                     .filter(file -> !Files.isDirectory(file))
-                    .filter(file -> file.getFileName().toString().matches(destFileName + "[.]\\d+"))
+                    .filter(file -> file.getFileName().toString().matches(
+                            destFileName + "([.][a-z]+[.]\\d+|[.]\\d+)"))
                     .collect(Collectors.toSet())
                     .stream()
                     .sorted()

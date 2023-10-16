@@ -12,7 +12,7 @@ final public class SystemMode {
      * Give permission to split a file when uploading it in development mode.
      * @return Permission.
      */
-    public static boolean isSplitFileInUpload() {
+    public static boolean isSplitModeFragmentFile() {
         return Objects.equals(CT_MODE, "dev") && Objects.equals(CT_MODE_FILE_BALANCER, "split");
     }
 

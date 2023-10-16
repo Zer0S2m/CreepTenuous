@@ -32,7 +32,9 @@ public interface ServiceUploadFileRedis extends BaseServiceRedis<FileRedis>, Bas
      * @param dataUploadFileFragment Fragmented file data.
      * @return Created data.
      */
-    FileRedis uploadFragment(ContainerDataUploadFileFragment dataUploadFileFragment);
+    default FileRedis uploadFragment(ContainerDataUploadFileFragment dataUploadFileFragment) {
+        return uploadFragment(List.of(dataUploadFileFragment)).iterator().next();
+    }
 
     /**
      * Push a file to Redis that is fragmented.
