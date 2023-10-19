@@ -74,12 +74,7 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicSer
     public List<ContainerInfoFileSystemObject> copy(List<String> systemParents, List<String> systemToParents,
                                                     String systemNameDirectory, Integer method) throws IOException {
         Path source = Paths.get(buildDirectoryPath.build(systemParents), systemNameDirectory);
-
-        if (Objects.equals(method, MethodCopyDirectory.FOLDER.getMethod())) {
-            this.target = Paths.get(buildDirectoryPath.build(systemToParents));
-        } else {
-            this.target = Paths.get(buildDirectoryPath.build(systemToParents));
-        }
+        this.target = Paths.get(buildDirectoryPath.build(systemToParents));
 
         try (Stream<Path> stream = Files.walk(source)) {
             stream.forEach(targetWalk -> {

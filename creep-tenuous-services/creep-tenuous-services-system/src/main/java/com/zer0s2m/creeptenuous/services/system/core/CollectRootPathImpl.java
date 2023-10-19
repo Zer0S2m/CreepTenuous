@@ -33,7 +33,7 @@ public final class CollectRootPathImpl implements CollectRootPath, CheckIsExists
     public @NotNull String collect(@NotNull String rawPath) throws NoSuchFileException {
         String path = this.rootPath.getRootPath();
 
-        if (rawPath.length() != 0 && Objects.equals(rawPath.charAt(0), '/')) {
+        if (!rawPath.isEmpty() && Objects.equals(rawPath.charAt(0), '/')) {
             path = path + Directory.SEPARATOR.get() + rawPath;
         } else {
             path = path + rawPath;

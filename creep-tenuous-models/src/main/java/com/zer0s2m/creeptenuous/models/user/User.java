@@ -3,6 +3,8 @@ package com.zer0s2m.creeptenuous.models.user;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,48 +18,67 @@ import java.util.List;
 @Table(name = "\"user\"")
 public class User implements UserDetails {
 
+    @Getter
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     @JsonProperty
     private UserRole role;
 
+    @Getter
+    @Setter
     @Id
     @Column(name = "id")
     @SequenceGenerator(name = "UserSequence", sequenceName = "\"user_id_seq\"", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "UserSequence")
     private Long id;
 
+    @Getter
+    @Setter
     @JsonProperty
     @Basic
     @Column(name = "login", nullable = false, unique = true)
     private String login;
 
+    @Getter
+    @Setter
     @Column(name = "avatar")
     private String avatar;
 
+    @Getter
+    @Setter
     @JsonProperty
     @Basic
     @Column(name = "email")
     private String email;
 
+    @Getter
+    @Setter
     @JsonProperty
     @Basic
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Getter
+    @Setter
     @JsonProperty
     @Basic
     @Column(name = "name")
     private String name;
 
+    @Getter
+    @Setter
     @Basic
     @CreationTimestamp
     @Column(name = "date_of_birth")
     private Date dateOfBrith;
 
+    @Getter
+    @Setter
     @Column(name = "activity")
     private boolean activity;
 
+    @Getter
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserSettings userSettings;
 
@@ -81,74 +102,14 @@ public class User implements UserDetails {
 
     public User() {}
 
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     @Override
     public String getUsername() {
         return getLogin();
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-}
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
-
-    public void setActivity(boolean activity) {
-        this.activity = activity;
-    }
-
-    public Date getDateOfBrith() {
-        return dateOfBrith;
-    }
-
-    public void setDateOfBrith(Date dateOfBrith) {
-        this.dateOfBrith = dateOfBrith;
     }
 
     @Override
@@ -169,18 +130,6 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public UserSettings getUserSettings() {
-        return userSettings;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getAvatar() {
-        return avatar;
     }
 
 }

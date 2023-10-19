@@ -22,7 +22,7 @@ import java.util.HashMap;
  */
 public final class ContextAtomicFileSystem {
 
-    Logger logger = LoggerFactory.getLogger(ContextAtomicFileSystem.class);
+    private final Logger logger = LoggerFactory.getLogger(ContextAtomicFileSystem.class);
 
     private final String keyClassName = "_class";
 

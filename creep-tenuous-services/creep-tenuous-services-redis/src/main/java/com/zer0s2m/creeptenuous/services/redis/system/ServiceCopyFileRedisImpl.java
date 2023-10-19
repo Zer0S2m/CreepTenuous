@@ -44,7 +44,7 @@ public class ServiceCopyFileRedisImpl extends BaseServiceFileSystemRedisManagerR
         List<FileRedis> existingObjsRedis = (List<FileRedis>) fileRedisRepository.findAllById(existingSystemNameFile);
         List<FileRedis> newObjsRedis = new ArrayList<>();
 
-        if (existingObjsRedis.size() == 0) {
+        if (existingObjsRedis.isEmpty()) {
             return new ArrayList<>();
         }
 

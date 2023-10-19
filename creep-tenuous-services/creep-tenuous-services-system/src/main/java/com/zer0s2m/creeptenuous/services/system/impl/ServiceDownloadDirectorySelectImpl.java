@@ -94,25 +94,28 @@ public class ServiceDownloadDirectorySelectImpl
      * @return merged archive path
      * @throws NoSuchFileException file that does not exist.
      */
-    private @NotNull Path mergeZipArchives(@NotNull List<Path> paths) throws NoSuchFileException {
-        final ZipFile zipFile = new ZipFile(
-                Path.of(buildDirectoryPath.build(), "data-" + Distribution.getUUID() + ".zip").toFile());
-
-        paths.forEach(path -> {
-            ZipFile zipFileToMerge = new ZipFile(new File(path.toString()));
-            try {
-                for (FileHeader fileHeader : zipFileToMerge.getFileHeaders()) {
-                    try (InputStream inputStream = zipFileToMerge.getInputStream(fileHeader)) {
-                        ZipParameters zipParameters = getZipParametersFromFileHeader(fileHeader);
-                        zipFile.addStream(inputStream, zipParameters);
+    private @NotNull Path mergeZipArchives(@NotNull List<Path> paths) throws IOException {
+        try (final ZipFile zipFile = new ZipFile(
+                Path.of(buildDirectoryPath.build(), "data-" + Distribution.getUUID() + ".zip").toFile())) {
+            paths.forEach(path -> {
+                try (final ZipFile zipFileToMerge = new ZipFile(new File(path.toString()))) {
+                    try {
+                        for (FileHeader fileHeader : zipFileToMerge.getFileHeaders()) {
+                            try (InputStream inputStream = zipFileToMerge.getInputStream(fileHeader)) {
+                                ZipParameters zipParameters = getZipParametersFromFileHeader(fileHeader);
+                                zipFile.addStream(inputStream, zipParameters);
+                            }
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+            });
 
-        return zipFile.getFile().toPath();
+            return zipFile.getFile().toPath();
+        }
     }
 
     private @NotNull ZipParameters getZipParametersFromFileHeader(@NotNull FileHeader fileHeader) {

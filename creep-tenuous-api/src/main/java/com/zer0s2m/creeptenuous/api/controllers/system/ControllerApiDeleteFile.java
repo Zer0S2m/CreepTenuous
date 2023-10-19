@@ -48,6 +48,7 @@ public class ControllerApiDeleteFile implements ControllerApiDeleteFileDoc {
 
     /**
      * Delete file
+     * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceDeleteFileImpl#delete(String, List)}
      *
      * @param file        file delete data
      * @param accessToken raw JWT access token

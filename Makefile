@@ -1,7 +1,5 @@
 #!make
 include .env
-VARS:=$(shell sed -ne 's/ *\#.*$$//; /./ s/=.*$$// p' .env )
-$(foreach v,$(VARS),$(eval $(shell echo export $(v)="$($(v))")))
 
 docker_compose_bin := $(shell command -v docker-compose 2> /dev/null)
 java_bin := $(shell command -v java 2> /dev/null)

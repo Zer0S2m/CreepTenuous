@@ -72,7 +72,7 @@ public interface FilesContextAtomic {
      * Move or rename a file to a target file. Add data in context {@link ContextAtomicFileSystem}
      * of <b>atomic mode</b>
      * @param source the path to the file to move
-     * @param target the path to the target file (may be associated with a different provider to the source path)
+     * @param target the path to the target file (maybe associated with a different provider to the source path)
      * @param options options specifying how the move should be done
      * @return the path to the target file
      * @throws IOException if an I/O error occurs
@@ -86,7 +86,7 @@ public interface FilesContextAtomic {
      * Copy or rename a file to a target file. Add data in context {@link ContextAtomicFileSystem}
      * of <b>atomic mode</b>
      * @param source the path to the file to copy
-     * @param target the path to the target file (may be associated with a different provider to the source path)
+     * @param target the path to the target file (maybe associated with a different provider to the source path)
      * @param options options specifying how the move should be done
      * @return the path to the target file
      * @throws IOException if an I/O error occurs

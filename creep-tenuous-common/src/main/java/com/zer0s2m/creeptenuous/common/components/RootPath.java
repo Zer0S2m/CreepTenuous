@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.common.components;
 
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,7 @@ import java.util.Objects;
 /**
  * The main system component that provides the starting point for getting and setting the file share root
  */
+@Getter
 @Component
 public final class RootPath {
 
@@ -20,10 +22,6 @@ public final class RootPath {
         } else {
             this.rootPath = rootPath;
         }
-    }
-
-    public String getRootPath() {
-        return this.rootPath;
     }
 
 }

@@ -76,7 +76,7 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
      *                                              using the newInstance method in class {@code Class}.
      * @throws IllegalAccessException               An IllegalAccessException is thrown when an application
      *                                              tries to reflectively create an instance
-     * @throws IOException                          signals that an I/O exception of some sort has occurred
+     * @throws IOException                          signals that an I/O exception to some sort has occurred
      * @throws ExistsFileSystemObjectRedisException uniqueness of the name in the system under different directory levels
      * @throws FileObjectIsFrozenException          file object is frozen
      */

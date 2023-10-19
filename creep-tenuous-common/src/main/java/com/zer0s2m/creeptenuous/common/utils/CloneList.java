@@ -13,13 +13,13 @@ public interface CloneList {
         List<E> newList1 = cloneOneLevel(list1);
         List<E> newList2 = cloneOneLevel(list2);
 
-        if (newList1.size() == 0 && newList2.size() != 0) {
+        if (newList1.isEmpty() && !newList2.isEmpty()) {
             return newList2;
         }
-        if (newList2.size() == 0 && newList1.size() != 0) {
+        if (newList2.isEmpty() && !newList1.isEmpty()) {
             return newList1;
         }
-        if (newList2.size() == 0) {
+        if (newList2.isEmpty()) {
             return new ArrayList<>();
         }
 

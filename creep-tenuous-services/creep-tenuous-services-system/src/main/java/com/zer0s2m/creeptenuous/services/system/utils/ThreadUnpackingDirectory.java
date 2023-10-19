@@ -7,6 +7,8 @@ import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.services.Distribution;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -33,7 +35,7 @@ public class ThreadUnpackingDirectory extends Thread {
     /**
      * Context for working with the file system in <b>atomic mode</b>
      */
-    ContextAtomicFileSystem contextAtomicFileSystem = ContextAtomicFileSystem.getInstance();
+    private final ContextAtomicFileSystem contextAtomicFileSystem = ContextAtomicFileSystem.getInstance();
 
     public ThreadUnpackingDirectory(String name, List<Path> files, Path outputDirectory) {
         this.setName(name);
@@ -62,7 +64,7 @@ public class ThreadUnpackingDirectory extends Thread {
      * @throws IOException system error
      */
     private void unpacking(
-            ZipInputStream zipInputStream,
+            @NotNull ZipInputStream zipInputStream,
             File outputDirectoryFile
     ) throws IOException {
         ZipEntry zipEntryDir = zipInputStream.getNextEntry();
@@ -101,7 +103,7 @@ public class ThreadUnpackingDirectory extends Thread {
      * @return ready file for file system
      * @throws IOException system error
      */
-    private File newFile(File destinationDir, ZipEntry zipEntryDir) throws IOException {
+    private @NotNull File newFile(File destinationDir, ZipEntry zipEntryDir) throws IOException {
         List<String> systemPartPaths = buildHashMapPathFiles(zipEntryDir);
         String newFileName = String.join(File.separator, systemPartPaths);
         if (zipEntryDir.isDirectory()) {
@@ -126,7 +128,7 @@ public class ThreadUnpackingDirectory extends Thread {
      * Write operation data to atomic mode context
      * @param file dest file
      */
-    private void addOperationDataUpload(File file) {
+    private void addOperationDataUpload(@NotNull File file) {
         HashMap<String, Object> operationData = new HashMap<>();
 
         Path target = file.toPath();
@@ -145,7 +147,8 @@ public class ThreadUnpackingDirectory extends Thread {
      * @param realName real name file system object
      * @return info file system object
      */
-    private ContainerDataUploadFileSystemObject buildFinalData(File file, String realName) {
+    @Contract("_, _ -> new")
+    private @NotNull ContainerDataUploadFileSystemObject buildFinalData(@NotNull File file, String realName) {
         return new ContainerDataUploadFileSystemObject(
                 realName,
                 file.getName(),
@@ -160,7 +163,7 @@ public class ThreadUnpackingDirectory extends Thread {
      * @param zipEntryDir object in <b>zip</b>
      * @return prepared parts of the <b>system path</b>
      */
-    private List<String> buildHashMapPathFiles(ZipEntry zipEntryDir) {
+    private @NotNull List<String> buildHashMapPathFiles(@NotNull ZipEntry zipEntryDir) {
         List<String> parts = Arrays.asList(zipEntryDir.getName().split(Directory.SEPARATOR.get()));
         List<String> buildParts = new ArrayList<>();
 
@@ -209,10 +212,6 @@ public class ThreadUnpackingDirectory extends Thread {
         this.callClassName = callClassName;
     }
 
-    /**
-     * Get caller class from method
-     * @return caller class from method
-     */
     public String getCallClassName() {
         return callClassName;
     }

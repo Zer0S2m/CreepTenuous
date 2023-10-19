@@ -58,7 +58,7 @@ public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc
      *                                     using the newInstance method in class {@code Class}.
      * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
      *                                     tries to reflectively create an instance
-     * @throws IOException                 signals that an I/O exception of some sort has occurred
+     * @throws IOException                 signals that an I/O exception to some sort has occurred
      * @throws FileObjectIsFrozenException file object is frozen
      */
     @Override

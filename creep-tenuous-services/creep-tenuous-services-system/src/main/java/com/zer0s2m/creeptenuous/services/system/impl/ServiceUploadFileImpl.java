@@ -41,7 +41,7 @@ import java.util.stream.IntStream;
 @CoreServiceFileSystem(method = "upload")
 public class ServiceUploadFileImpl implements ServiceUploadFile {
 
-    Logger logger = LogManager.getLogger(ServiceUploadFileImpl.class);
+    private final Logger logger = LogManager.getLogger(ServiceUploadFileImpl.class);
 
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 

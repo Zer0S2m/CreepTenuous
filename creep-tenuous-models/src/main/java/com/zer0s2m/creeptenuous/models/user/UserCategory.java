@@ -1,9 +1,12 @@
 package com.zer0s2m.creeptenuous.models.user;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
 @Entity
 @Table(name = "\"user_categories\"")
 public class UserCategory {
@@ -14,6 +17,7 @@ public class UserCategory {
     @Column(name = "id")
     private Long id;
 
+    @Setter
     @Column(name = "title")
     private String title;
 
@@ -33,22 +37,6 @@ public class UserCategory {
     }
 
     public UserCategory() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public UserColorCategory getUserColorCategory() {
-        return userColorCategory;
     }
 
 }
