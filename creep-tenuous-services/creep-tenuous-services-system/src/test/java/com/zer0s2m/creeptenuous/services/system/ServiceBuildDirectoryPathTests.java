@@ -23,8 +23,7 @@ import java.util.List;
 
 @SpringBootTest(classes = {
         ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class,
-        RootPath.class,
+        CollectRootPathImpl.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
@@ -35,8 +34,7 @@ public class ServiceBuildDirectoryPathTests {
     @Autowired
     private ServiceBuildDirectoryPath serviceBuildDirectoryPath;
 
-    @Autowired
-    private RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     List<String> DIRECTORIES_1 = Arrays.asList("test_folder1", "test_folder2");
 

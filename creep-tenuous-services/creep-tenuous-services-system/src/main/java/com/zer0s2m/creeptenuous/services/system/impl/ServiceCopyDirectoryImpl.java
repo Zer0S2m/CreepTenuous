@@ -34,7 +34,7 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicSer
 
     private final ServiceBuildDirectoryPath buildDirectoryPath;
 
-    private final String rootPath;
+    private final String rootPath = new RootPath().getRootPath();
 
     private Path target;
 
@@ -46,9 +46,8 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicSer
     private final HashMap<String, String> paths = new HashMap<>();
 
     @Autowired
-    public ServiceCopyDirectoryImpl(ServiceBuildDirectoryPath buildDirectoryPath, @NotNull RootPath rootPath) {
+    public ServiceCopyDirectoryImpl(ServiceBuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
-        this.rootPath = rootPath.getRootPath();
     }
 
     /**

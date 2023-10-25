@@ -29,8 +29,7 @@ import java.util.*;
 @SpringBootTest(classes = {
         ServiceDownloadFileImpl.class,
         ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class,
-        RootPath.class,
+        CollectRootPathImpl.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
@@ -42,8 +41,7 @@ public class ServiceDownloadFileTests {
 
     private final ConfigurableMimeFileTypeMap fileTypeMap = new ConfigurableMimeFileTypeMap();
 
-    @Autowired
-    private RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     private final String failNameTestFile = "fail_name_test_file.fail_extension";
 

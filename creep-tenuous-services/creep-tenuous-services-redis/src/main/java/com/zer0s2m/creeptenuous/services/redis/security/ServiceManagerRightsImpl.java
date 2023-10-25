@@ -79,8 +79,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
             FileRedisRepository fileRedisRepository,
             RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository,
             JwtRedisRepository jwtRedisRepository,
-            ServiceRedisManagerResources serviceRedisManagerResources,
-            RootPath rootPath
+            ServiceRedisManagerResources serviceRedisManagerResources
     ) {
         this.jwtProvider = jwtProvider;
         this.directoryRedisRepository = directoryRedisRepository;
@@ -88,7 +87,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
         this.rightUserFileSystemObjectRedisRepository = rightUserFileSystemObjectRedisRepository;
         this.jwtRedisRepository = jwtRedisRepository;
         this.serviceRedisManagerResources = serviceRedisManagerResources;
-        this.rootPath = rootPath;
+        this.rootPath = new RootPath();
     }
 
     /**

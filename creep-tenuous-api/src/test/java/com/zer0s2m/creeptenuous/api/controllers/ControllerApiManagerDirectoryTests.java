@@ -43,8 +43,7 @@ public class ControllerApiManagerDirectoryTests {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     @Autowired
     private DirectoryRedisRepository directoryRedisRepository;

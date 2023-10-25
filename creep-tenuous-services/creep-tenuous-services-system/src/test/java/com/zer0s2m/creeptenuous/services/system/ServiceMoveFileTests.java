@@ -29,8 +29,7 @@ import java.util.Objects;
 @SpringBootTest(classes = {
         ServiceMoveFileImpl.class,
         ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class,
-        RootPath.class,
+        CollectRootPathImpl.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
@@ -43,8 +42,7 @@ public class ServiceMoveFileTests {
     @Autowired
     private ServiceBuildDirectoryPath buildDirectoryPath;
 
-    @Autowired
-    private RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     DataMoveFileApi RECORD_1 = new DataMoveFileApi(
             "testFile1.txt",

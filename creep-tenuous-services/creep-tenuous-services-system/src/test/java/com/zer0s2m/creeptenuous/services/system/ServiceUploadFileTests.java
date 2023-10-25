@@ -1,6 +1,5 @@
 package com.zer0s2m.creeptenuous.services.system;
 
-import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.http.ResponseObjectUploadFileApi;
 import com.zer0s2m.creeptenuous.services.system.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
@@ -21,7 +20,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,8 +27,7 @@ import java.util.List;
 @SpringBootTest(classes = {
         ServiceUploadFileImpl.class,
         ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class,
-        RootPath.class,
+        CollectRootPathImpl.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem

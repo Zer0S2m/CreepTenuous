@@ -58,8 +58,7 @@ import java.util.UUID;
         ServiceDeleteDirectoryImpl.class,
         ServiceDeleteFileImpl.class,
         ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class,
-        RootPath.class,
+        CollectRootPathImpl.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagEvent
@@ -74,8 +73,7 @@ public class UserDeleteEventHandlerTests {
     @Autowired
     private UserEventPublisher userEventPublisher;
 
-    @Autowired
-    private RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     @Autowired
     private UserRepository userRepository;

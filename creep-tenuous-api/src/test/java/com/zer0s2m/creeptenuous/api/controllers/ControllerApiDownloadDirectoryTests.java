@@ -58,8 +58,7 @@ public class ControllerApiDownloadDirectoryTests {
     @Autowired
     private ServiceBuildDirectoryPath buildDirectoryPath;
 
-    @Autowired
-    private RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     @Autowired
     private DirectoryRedisRepository directoryRedisRepository;

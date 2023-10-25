@@ -53,8 +53,7 @@ public class ControllerApiCopyFileTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     @Autowired
     private ServiceBuildDirectoryPath buildDirectoryPath;

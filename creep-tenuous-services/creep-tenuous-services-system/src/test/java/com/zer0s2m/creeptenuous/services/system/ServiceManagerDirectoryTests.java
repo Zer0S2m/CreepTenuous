@@ -1,6 +1,5 @@
 package com.zer0s2m.creeptenuous.services.system;
 
-import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataBuilderDirectory;
 import com.zer0s2m.creeptenuous.common.exceptions.NotValidLevelDirectoryException;
 import com.zer0s2m.creeptenuous.services.system.helpers.UtilsActionForFiles;
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest(classes = {
-        RootPath.class,
         ServiceCollectDirectoryImpl.class,
         CollectRootPathImpl.class,
         ServiceBuilderDataFileSystemObjectImpl.class,

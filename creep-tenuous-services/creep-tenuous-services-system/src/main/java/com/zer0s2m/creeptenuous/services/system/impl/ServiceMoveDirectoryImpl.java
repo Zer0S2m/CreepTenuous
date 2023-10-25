@@ -35,9 +35,9 @@ public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory, AtomicSer
     private final RootPath rootPath;
 
     @Autowired
-    public ServiceMoveDirectoryImpl(ServiceBuildDirectoryPath buildDirectoryPath, RootPath rootPath) {
+    public ServiceMoveDirectoryImpl(ServiceBuildDirectoryPath buildDirectoryPath) {
         this.buildDirectoryPath = buildDirectoryPath;
-        this.rootPath = rootPath;
+        this.rootPath = new RootPath();
     }
 
     /**

@@ -58,7 +58,7 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
     private final ServiceManagerRights serviceManagerRights;
 
-    private final RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     @Autowired
     public ControllerApiDownloadDirectory(
@@ -67,8 +67,7 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
             ServiceDownloadDirectorySelectImpl serviceDownloadDirectorySelect,
             ServiceDownloadDirectoryRedis serviceDownloadDirectoryRedis,
             ServiceDownloadDirectorySelectRedis serviceDownloadDirectorySelectRedis,
-            ServiceManagerRights serviceManagerRights,
-            RootPath rootPath
+            ServiceManagerRights serviceManagerRights
     ) {
         this.buildDirectoryPath = buildDirectoryPath;
         this.serviceDownloadDirectory = serviceDownloadDirectory;
@@ -76,7 +75,6 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
         this.serviceDownloadDirectoryRedis = serviceDownloadDirectoryRedis;
         this.serviceDownloadDirectorySelectRedis = serviceDownloadDirectorySelectRedis;
         this.serviceManagerRights = serviceManagerRights;
-        this.rootPath = rootPath;
     }
 
     /**

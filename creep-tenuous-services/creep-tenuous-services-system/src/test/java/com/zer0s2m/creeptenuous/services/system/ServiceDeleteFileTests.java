@@ -27,8 +27,7 @@ import java.util.Arrays;
 @SpringBootTest(classes = {
         ServiceDeleteFileImpl.class,
         ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class,
-        RootPath.class,
+        CollectRootPathImpl.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
@@ -41,8 +40,7 @@ public class ServiceDeleteFileTests {
     @Autowired
     private ServiceBuildDirectoryPath buildDirectoryPath;
 
-    @Autowired
-    private RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     private final String testFile1 = "testFile1.txt";
 

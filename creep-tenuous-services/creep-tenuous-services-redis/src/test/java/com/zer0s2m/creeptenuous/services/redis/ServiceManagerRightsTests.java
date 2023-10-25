@@ -36,8 +36,7 @@ import java.util.UUID;
         FrozenFileSystemObjectRedisRepository.class,
         ServiceRedisManagerResourcesImpl.class,
         ServiceManagerRightsImpl.class,
-        JwtProvider.class,
-        RootPath.class,
+        JwtProvider.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceRedis
@@ -59,8 +58,7 @@ public class ServiceManagerRightsTests {
     @Autowired
     private RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
-    @Autowired
-    private RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     final String systemName = "system_name_1";
 

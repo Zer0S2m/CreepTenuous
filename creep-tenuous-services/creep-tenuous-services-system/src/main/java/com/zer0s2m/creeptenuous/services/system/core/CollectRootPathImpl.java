@@ -3,7 +3,6 @@ package com.zer0s2m.creeptenuous.services.system.core;
 import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.NoSuchFileException;
@@ -16,12 +15,7 @@ import java.util.Objects;
 @Service("collect-root-path")
 public final class CollectRootPathImpl implements CollectRootPath, CheckIsExistsDirectoryService {
 
-    private final RootPath rootPath;
-
-    @Autowired
-    public CollectRootPathImpl(RootPath rootPath) {
-        this.rootPath = rootPath;
-    }
+    private final RootPath rootPath = new RootPath();
 
     /**
      * Collect path to filesystem object and raise exception if object not found

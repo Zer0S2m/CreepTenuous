@@ -1,6 +1,5 @@
 package com.zer0s2m.creeptenuous.services.system;
 
-import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateDirectory;
 import com.zer0s2m.creeptenuous.services.system.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
@@ -25,8 +24,7 @@ import java.util.Arrays;
 @SpringBootTest(classes = {
         ServiceCreateDirectoryImpl.class,
         ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class,
-        RootPath.class,
+        CollectRootPathImpl.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem

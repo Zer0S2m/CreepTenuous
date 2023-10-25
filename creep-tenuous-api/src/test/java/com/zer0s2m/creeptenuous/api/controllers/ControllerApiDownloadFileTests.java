@@ -54,8 +54,7 @@ public class ControllerApiDownloadFileTests {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     @Autowired
     private ServiceBuildDirectoryPath buildDirectoryPath;

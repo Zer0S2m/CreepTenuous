@@ -30,8 +30,7 @@ import java.util.Objects;
 @SpringBootTest(classes = {
         ServiceCopyFileImpl.class,
         ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class,
-        RootPath.class,
+        CollectRootPathImpl.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
@@ -42,8 +41,7 @@ public class ServiceCopyFileTests {
     @Autowired
     private ServiceBuildDirectoryPath buildDirectoryPath;
 
-    @Autowired
-    private RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     @Autowired
     private ServiceCopyFileImpl service;
