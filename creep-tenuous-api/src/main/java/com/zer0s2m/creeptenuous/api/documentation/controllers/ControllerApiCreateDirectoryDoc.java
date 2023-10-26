@@ -5,8 +5,6 @@ import com.zer0s2m.creeptenuous.common.exceptions.ExistsFileSystemObjectRedisExc
 import com.zer0s2m.creeptenuous.common.exceptions.FileAlreadyExistsException;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
-import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
-import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateDirectoryImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,33 +14,32 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
 public interface ControllerApiCreateDirectoryDoc {
 
     /**
-     * Create directory
-     * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceCreateDirectoryImpl#create(List, String)}</p>
+     * Creating a directory. Supports atomic file system mode.
      *
-     * @param directoryForm directory create data
-     * @param accessToken   raw JWT access token
-     * @return result create directory
-     * @throws FileAlreadyExistsException           file already exists
+     * @param directoryForm Directory create data.
+     * @param accessToken   Raw JWT access token.
+     * @return Result create directory.
+     * @throws FileAlreadyExistsException           file already exists.
      * @throws InvocationTargetException            Exception thrown by an invoked method or constructor.
      * @throws NoSuchMethodException                Thrown when a particular method cannot be found.
      * @throws InstantiationException               Thrown when an application tries to create an instance of a class
      *                                              using the newInstance method in class {@code Class}.
      * @throws IllegalAccessException               An IllegalAccessException is thrown when an application
-     *                                              tries to reflectively create an instance
-     * @throws IOException                          signals that an I/O exception to some sort has occurred
-     * @throws ExistsFileSystemObjectRedisException uniqueness of the name in the system under different directory levels
-     * @throws FileObjectIsFrozenException          file object is frozen
+     *                                              tries to reflectively create an instance.
+     * @throws IOException                          Signals that an I/O exception to some sort has occurred.
+     * @throws ExistsFileSystemObjectRedisException Uniqueness of the name in the system under different directory
+     *                                              levels.
+     * @throws FileObjectIsFrozenException          File object is frozen.
      */
     @Operation(
             method = "POST",
             summary = "Creating a directory",
             description = "Creating a directory and assigning rights to a user",
-            tags = { "Directory" },
+            tags = {"Directory"},
             security = @SecurityRequirement(name = "Bearer Authentication"),
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Data to create a directory",
@@ -67,9 +64,9 @@ public interface ControllerApiCreateDirectoryDoc {
     )
     ResponseCreateDirectoryApi createDirectory(
             final DataCreateDirectoryApi directoryForm,
-            @Parameter(hidden = true) String accessToken
-    ) throws FileAlreadyExistsException, InvocationTargetException,
-            NoSuchMethodException, InstantiationException, IllegalAccessException,
-            IOException, ExistsFileSystemObjectRedisException, FileObjectIsFrozenException;
+            @Parameter(hidden = true) String accessToken)
+            throws FileAlreadyExistsException, InvocationTargetException, NoSuchMethodException,
+            InstantiationException, IllegalAccessException, IOException, ExistsFileSystemObjectRedisException,
+            FileObjectIsFrozenException;
 
 }

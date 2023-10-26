@@ -272,11 +272,14 @@ public final class ContextAtomicFileSystem {
      * @param operation operation handle
      */
     public void clearOperationsData(Operations operation) {
-        this.operationsData.forEach((key, operationData) -> {
-            if (operation.equals(operationData.get("operation"))) {
-                this.operationsData.remove(key);
+        HashMap<String, HashMap<String, Object>> newOperationsData = new HashMap<>(operationsData);
+        operationsData.forEach((key, operationData) -> {
+            if (!operation.equals(operationData.get("operation"))) {
+                newOperationsData.put(key, operationData);
             }
         });
+        operationsData.clear();
+        operationsData.putAll(newOperationsData);
     }
 
     /**

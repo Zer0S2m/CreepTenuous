@@ -161,7 +161,7 @@ public final class AtomicSystemCallManager {
                                 .newInstance();
                         handler.handleException(
                                 e.getCause(),
-                                contextAtomicFileSystem.getOperationsData(className)
+                                contextAtomicFileSystem.getOperationsData()
                         );
                         ContextAtomicFileSystem.Operations operation = atomicFileSystemExceptionHandler.operation();
                         if (!operations.contains(operation)) {
