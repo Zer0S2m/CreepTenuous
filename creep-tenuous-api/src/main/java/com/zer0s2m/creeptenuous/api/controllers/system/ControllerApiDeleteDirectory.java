@@ -32,7 +32,7 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
 
     private final ServiceDeleteDirectoryImpl serviceDeleteDirectory;
 
-    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath;
+    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath = new ServiceBuildDirectoryPath();
 
     private final ServiceDeleteDirectoryRedis serviceDeleteDirectoryRedis;
 
@@ -42,12 +42,10 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
 
     @Autowired
     public ControllerApiDeleteDirectory(ServiceDeleteDirectoryImpl serviceDeleteDirectory,
-                                        ServiceBuildDirectoryPath serviceBuildDirectoryPath,
                                         ServiceDeleteDirectoryRedis serviceDeleteDirectoryRedis,
                                         ServiceManagerRights serviceManagerRights,
                                         DirectoryRedisEventPublisher directoryRedisEventPublisher) {
         this.serviceDeleteDirectory = serviceDeleteDirectory;
-        this.serviceBuildDirectoryPath = serviceBuildDirectoryPath;
         this.serviceDeleteDirectoryRedis = serviceDeleteDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
         this.directoryRedisEventPublisher = directoryRedisEventPublisher;

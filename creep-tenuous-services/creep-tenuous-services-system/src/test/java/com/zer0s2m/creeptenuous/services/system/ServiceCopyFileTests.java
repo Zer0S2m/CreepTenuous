@@ -4,7 +4,6 @@ import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCopyFile;
 import com.zer0s2m.creeptenuous.common.data.DataCopyFileApi;
 import com.zer0s2m.creeptenuous.services.system.helpers.UtilsActionForFiles;
-import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCopyFileImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceFileSystem;
@@ -28,9 +27,7 @@ import java.util.List;
 import java.util.Objects;
 
 @SpringBootTest(classes = {
-        ServiceCopyFileImpl.class,
-        ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class
+        ServiceCopyFileImpl.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
@@ -38,8 +35,7 @@ public class ServiceCopyFileTests {
 
     Logger logger = LogManager.getLogger(ServiceCopyFileTests.class);
 
-    @Autowired
-    private ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     private final RootPath rootPath = new RootPath();
 

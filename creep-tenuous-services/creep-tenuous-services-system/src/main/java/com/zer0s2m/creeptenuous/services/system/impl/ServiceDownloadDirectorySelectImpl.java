@@ -18,7 +18,6 @@ import net.lingala.zip4j.model.ZipParameters;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,17 +39,12 @@ public class ServiceDownloadDirectorySelectImpl
 
     private final Logger logger = LogManager.getLogger(ServiceDownloadDirectorySelectImpl.class);
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     /**
      * info directory
      */
     private HashMap<String, String> map = null;
-
-    @Autowired
-    public ServiceDownloadDirectorySelectImpl(ServiceBuildDirectoryPath buildDirectoryPath) {
-        this.buildDirectoryPath = buildDirectoryPath;
-    }
 
     /**
      * Download selectively file objects

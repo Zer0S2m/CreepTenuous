@@ -2,7 +2,6 @@ package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.enums.MethodCopyDirectory;
 import com.zer0s2m.creeptenuous.services.system.helpers.UtilsActionForFiles;
-import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceMoveDirectoryImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceFileSystem;
@@ -23,9 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest(classes = {
-        ServiceMoveDirectoryImpl.class,
-        ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class
+        ServiceMoveDirectoryImpl.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
@@ -36,8 +33,7 @@ public class ServiceMoveDirectoryTests {
     @Autowired
     private ServiceMoveDirectoryImpl service;
 
-    @Autowired
-    private ServiceBuildDirectoryPath serviceBuildDirectoryPath;
+    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath = new ServiceBuildDirectoryPath();
 
     List<String> DIRECTORIES_1 = List.of("test_folder1");
 

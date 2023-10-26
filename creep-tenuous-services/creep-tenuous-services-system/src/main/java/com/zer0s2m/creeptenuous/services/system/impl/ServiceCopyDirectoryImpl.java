@@ -18,7 +18,6 @@ import com.zer0s2m.creeptenuous.core.atomic.services.Distribution;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.utils.UtilsFiles;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -32,7 +31,7 @@ import java.util.stream.Stream;
 @CoreServiceFileSystem(method = "copy")
 public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicServiceFileSystem {
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     private final String rootPath = new RootPath().getRootPath();
 
@@ -44,11 +43,6 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicSer
      * <b>Value</b> - new target system path
      */
     private final HashMap<String, String> paths = new HashMap<>();
-
-    @Autowired
-    public ServiceCopyDirectoryImpl(ServiceBuildDirectoryPath buildDirectoryPath) {
-        this.buildDirectoryPath = buildDirectoryPath;
-    }
 
     /**
      * Copy directory

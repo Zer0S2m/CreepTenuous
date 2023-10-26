@@ -19,8 +19,6 @@ import com.zer0s2m.creeptenuous.repository.user.UserFileObjectsExclusionReposito
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserSettingsRepository;
 import com.zer0s2m.creeptenuous.services.redis.resources.ServiceRedisManagerResourcesImpl;
-import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
-import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteDirectoryImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteFileImpl;
 import com.zer0s2m.creeptenuous.services.redis.security.ServiceControlUserRightsImpl;
@@ -56,9 +54,7 @@ import java.util.UUID;
         JwtRedisRepository.class,
         UserRepository.class,
         ServiceDeleteDirectoryImpl.class,
-        ServiceDeleteFileImpl.class,
-        ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class
+        ServiceDeleteFileImpl.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagEvent

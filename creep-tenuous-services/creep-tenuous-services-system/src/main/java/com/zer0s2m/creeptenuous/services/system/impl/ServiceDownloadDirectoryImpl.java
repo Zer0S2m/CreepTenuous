@@ -10,7 +10,6 @@ import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.CollectZipDirectory;
 import com.zer0s2m.creeptenuous.services.system.ServiceDownloadDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -26,17 +25,12 @@ import java.nio.file.Path;
 public class ServiceDownloadDirectoryImpl
         implements ServiceDownloadDirectory, CollectZipDirectory, AtomicServiceFileSystem {
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     /**
      * info directory
      */
     private HashMap<String, String> map = null;
-
-    @Autowired
-    public ServiceDownloadDirectoryImpl(ServiceBuildDirectoryPath buildDirectoryPath) {
-        this.buildDirectoryPath = buildDirectoryPath;
-    }
 
     /**
      * Download directory archive zip

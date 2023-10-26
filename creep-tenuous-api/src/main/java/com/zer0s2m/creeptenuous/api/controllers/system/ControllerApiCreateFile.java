@@ -39,7 +39,7 @@ public class ControllerApiCreateFile implements ControllerApiCreateFileDoc {
 
     private final ServiceCreateFileImpl serviceCreateFile;
 
-    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath;
+    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath = new ServiceBuildDirectoryPath();
 
     private final ServiceCreateFileRedis serviceFileRedis;
 
@@ -51,13 +51,11 @@ public class ControllerApiCreateFile implements ControllerApiCreateFileDoc {
 
     @Autowired
     public ControllerApiCreateFile(ServiceCreateFileImpl serviceCreateFile,
-                                   ServiceBuildDirectoryPath serviceBuildDirectoryPath,
                                    ServiceCreateFileRedis serviceFileRedis,
                                    ServiceManagerRights serviceManagerRights,
                                    ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject,
                                    JwtProvider jwtProvider) {
         this.serviceCreateFile = serviceCreateFile;
-        this.serviceBuildDirectoryPath = serviceBuildDirectoryPath;
         this.serviceFileRedis = serviceFileRedis;
         this.serviceManagerRights = serviceManagerRights;
         this.serviceCheckUniqueNameFileSystemObject = serviceCheckUniqueNameFileSystemObject;

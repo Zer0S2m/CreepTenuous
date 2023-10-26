@@ -3,7 +3,6 @@ package com.zer0s2m.creeptenuous.services.system;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataBuilderDirectory;
 import com.zer0s2m.creeptenuous.common.exceptions.NotValidLevelDirectoryException;
 import com.zer0s2m.creeptenuous.services.system.helpers.UtilsActionForFiles;
-import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceBuilderDataFileSystemObjectImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCollectDirectoryImpl;
@@ -22,9 +21,7 @@ import java.util.List;
 
 @SpringBootTest(classes = {
         ServiceCollectDirectoryImpl.class,
-        CollectRootPathImpl.class,
         ServiceBuilderDataFileSystemObjectImpl.class,
-        ServiceBuildDirectoryPath.class,
         ServiceManagerDirectoryImpl.class,
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -36,8 +33,7 @@ public class ServiceManagerDirectoryTests {
     @Autowired
     private ServiceManagerDirectoryImpl serviceManagerDirectory;
 
-    @Autowired
-    private ServiceBuildDirectoryPath serviceBuildDirectoryPath;
+    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath = new ServiceBuildDirectoryPath();
 
     List<String> DIRECTORIES_1 = List.of("test_folder1");
 
@@ -55,7 +51,7 @@ public class ServiceManagerDirectoryTests {
         ContainerDataBuilderDirectory data = serviceManagerDirectory.build(new ArrayList<>(), 0);
 
         Assertions.assertEquals(0, (int) data.levelDirectory());
-        Assertions.assertTrue(data.namesSystemFileObject().size() >= 1);
+        Assertions.assertFalse(data.namesSystemFileObject().isEmpty());
 
         UtilsActionForFiles.deleteFileAndWriteLog(path1, logger);
     }

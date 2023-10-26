@@ -25,15 +25,13 @@ public class ServiceManagerDirectoryImpl implements ServiceManagerDirectory {
 
     private final ServiceBuilderDataFileSystemObjectImpl builderDataFile;
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     @Autowired
     public ServiceManagerDirectoryImpl(ServiceCollectDirectoryImpl collectDirectory,
-                                       ServiceBuilderDataFileSystemObjectImpl builderDataFile,
-                                       ServiceBuildDirectoryPath buildDirectoryPath) {
+                                       ServiceBuilderDataFileSystemObjectImpl builderDataFile) {
         this.collectDirectory = collectDirectory;
         this.builderDataFile = builderDataFile;
-        this.buildDirectoryPath = buildDirectoryPath;
     }
 
     /**

@@ -1,7 +1,6 @@
 package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectPartApi;
-import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectorySelectImpl;
@@ -24,9 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @SpringBootTest(classes = {
-        ServiceDownloadDirectorySelectImpl.class,
-        ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class
+        ServiceDownloadDirectorySelectImpl.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
@@ -34,8 +31,7 @@ public class ServiceDownloadDirectorySelectTests {
 
     Logger logger = LogManager.getLogger(ServiceDownloadDirectorySelectTests.class);
 
-    @Autowired
-    private ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     @Autowired
     private ServiceDownloadDirectorySelectImpl service;

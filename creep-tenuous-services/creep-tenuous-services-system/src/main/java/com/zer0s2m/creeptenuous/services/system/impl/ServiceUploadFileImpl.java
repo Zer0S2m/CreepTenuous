@@ -19,7 +19,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,12 +42,7 @@ public class ServiceUploadFileImpl implements ServiceUploadFile {
 
     private final Logger logger = LogManager.getLogger(ServiceUploadFileImpl.class);
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
-
-    @Autowired
-    public ServiceUploadFileImpl(ServiceBuildDirectoryPath buildDirectoryPath) {
-        this.buildDirectoryPath = buildDirectoryPath;
-    }
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     /**
      * Upload files.

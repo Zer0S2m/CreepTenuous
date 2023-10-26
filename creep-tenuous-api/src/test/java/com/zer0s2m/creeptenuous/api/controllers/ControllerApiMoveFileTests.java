@@ -51,8 +51,7 @@ public class ControllerApiMoveFileTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     private final RootPath rootPath = new RootPath();
 

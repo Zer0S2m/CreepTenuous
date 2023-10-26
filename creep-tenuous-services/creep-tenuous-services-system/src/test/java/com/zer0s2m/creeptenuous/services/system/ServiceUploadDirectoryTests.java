@@ -1,7 +1,6 @@
 package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadDirectoryApi;
-import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceUploadDirectoryImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceFileSystem;
@@ -25,9 +24,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 
 @SpringBootTest(classes = {
-        ServiceUploadDirectoryImpl.class,
-        ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class
+        ServiceUploadDirectoryImpl.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
@@ -37,8 +34,7 @@ public class ServiceUploadDirectoryTests {
     @Autowired
     private ServiceUploadDirectoryImpl service;
 
-    @Autowired
-    private ServiceBuildDirectoryPath serviceBuildDirectoryPath;
+    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath = new ServiceBuildDirectoryPath();
 
     @Test
     public void uploadDirectory_success() throws IOException {

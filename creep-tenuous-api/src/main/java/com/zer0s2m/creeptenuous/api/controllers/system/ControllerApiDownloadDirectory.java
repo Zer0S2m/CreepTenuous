@@ -43,7 +43,7 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
     static final OperationRights operationRights = OperationRights.DOWNLOAD;
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     private final ServiceDownloadDirectoryImpl serviceDownloadDirectory;
 
@@ -62,14 +62,11 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
     @Autowired
     public ControllerApiDownloadDirectory(
-            ServiceBuildDirectoryPath buildDirectoryPath,
             ServiceDownloadDirectoryImpl serviceDownloadDirectory,
             ServiceDownloadDirectorySelectImpl serviceDownloadDirectorySelect,
             ServiceDownloadDirectoryRedis serviceDownloadDirectoryRedis,
             ServiceDownloadDirectorySelectRedis serviceDownloadDirectorySelectRedis,
-            ServiceManagerRights serviceManagerRights
-    ) {
-        this.buildDirectoryPath = buildDirectoryPath;
+            ServiceManagerRights serviceManagerRights) {
         this.serviceDownloadDirectory = serviceDownloadDirectory;
         this.serviceDownloadDirectorySelect = serviceDownloadDirectorySelect;
         this.serviceDownloadDirectoryRedis = serviceDownloadDirectoryRedis;

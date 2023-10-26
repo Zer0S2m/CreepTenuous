@@ -10,7 +10,6 @@ import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExcep
 import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.ServiceDeleteFile;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -24,12 +23,7 @@ import java.util.List;
 @CoreServiceFileSystem(method = "delete")
 public class ServiceDeleteFileImpl implements ServiceDeleteFile, AtomicServiceFileSystem {
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
-
-    @Autowired
-    public ServiceDeleteFileImpl(ServiceBuildDirectoryPath buildDirectoryPath) {
-        this.buildDirectoryPath = buildDirectoryPath;
-    }
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     /**
      * Delete file from file system

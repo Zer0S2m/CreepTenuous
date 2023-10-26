@@ -47,8 +47,7 @@ public class ControllerApiMoveDirectoryTests {
 
     Logger logger = LogManager.getLogger(ControllerApiMoveDirectoryTests.class);
 
-    @Autowired
-    private ServiceBuildDirectoryPath serviceBuildDirectoryPath;
+    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath = new ServiceBuildDirectoryPath();
 
     @Autowired
     private ObjectMapper objectMapper;

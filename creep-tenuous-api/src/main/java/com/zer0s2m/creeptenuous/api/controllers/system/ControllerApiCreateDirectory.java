@@ -42,7 +42,7 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
 
     private final ServiceCreateDirectoryImpl createDirectory;
 
-    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath;
+    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath = new ServiceBuildDirectoryPath();
 
     private final ServiceCreateDirectoryRedis serviceDirectoryRedis;
 
@@ -58,13 +58,11 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
     @Autowired
     public ControllerApiCreateDirectory(
             ServiceCreateDirectoryImpl createDirectory,
-            ServiceBuildDirectoryPath serviceBuildDirectoryPath,
             ServiceCreateDirectoryRedis serviceDirectoryRedis,
             ServiceManagerRights serviceManagerRights,
             ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject,
             JwtProvider jwtProvider) {
         this.createDirectory = createDirectory;
-        this.serviceBuildDirectoryPath = serviceBuildDirectoryPath;
         this.serviceDirectoryRedis = serviceDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
         this.serviceCheckUniqueNameFileSystemObject = serviceCheckUniqueNameFileSystemObject;

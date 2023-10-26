@@ -13,7 +13,6 @@ import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.ServiceCopyFile;
 import com.zer0s2m.creeptenuous.services.system.utils.UtilsFiles;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -30,12 +29,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 @CoreServiceFileSystem(method = "copy")
 public class ServiceCopyFileImpl implements ServiceCopyFile, AtomicServiceFileSystem {
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
-
-    @Autowired
-    public ServiceCopyFileImpl(ServiceBuildDirectoryPath buildDirectoryPath) {
-        this.buildDirectoryPath = buildDirectoryPath;
-    }
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     /**
      * Copy file
