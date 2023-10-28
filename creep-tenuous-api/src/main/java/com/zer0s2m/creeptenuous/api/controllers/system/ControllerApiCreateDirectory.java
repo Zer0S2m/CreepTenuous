@@ -53,8 +53,8 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
 
     private final JwtProvider jwtProvider;
 
-    private final AtomicControllerApiCreateDirectory atomicControllerApiCreateDirectory =
-            new AtomicControllerApiCreateDirectory();
+    private final AtomicFileSystemControllerApiCreateDirectory atomicFileSystemControllerApiCreateDirectory =
+            new AtomicFileSystemControllerApiCreateDirectory();
 
     @Autowired
     public ControllerApiCreateDirectory(
@@ -70,7 +70,7 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
 
     /**
      * Creating a directory. Supports atomic file system mode.
-     * <p>Called via {@link AtomicSystemCallManager} - {@link AtomicControllerApiCreateDirectory#create(DataCreateDirectoryApi, String)}</p>
+     * <p>Called via {@link AtomicSystemCallManager} - {@link AtomicFileSystemControllerApiCreateDirectory#create(DataCreateDirectoryApi, String)}</p>
      *
      * @param directoryForm Directory create data.
      * @param accessToken   Raw JWT access token.
@@ -96,7 +96,7 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
             InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
             IOException, ExistsFileSystemObjectRedisException, FileObjectIsFrozenException {
         return AtomicSystemCallManager.call(
-                atomicControllerApiCreateDirectory,
+                atomicFileSystemControllerApiCreateDirectory,
                 directoryForm,
                 accessToken
         );
@@ -109,7 +109,7 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
     }
 
     @CoreServiceFileSystem(method = "create")
-    public final class AtomicControllerApiCreateDirectory implements AtomicServiceFileSystem {
+    public final class AtomicFileSystemControllerApiCreateDirectory implements AtomicServiceFileSystem {
 
         /**
          * Creating a directory.
