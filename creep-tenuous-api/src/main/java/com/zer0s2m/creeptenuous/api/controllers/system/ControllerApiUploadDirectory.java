@@ -8,6 +8,7 @@ import com.zer0s2m.creeptenuous.common.http.ResponseUploadDirectoryApi;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceUploadDirectoryRedis;
+import com.zer0s2m.creeptenuous.services.system.ServiceUploadDirectory;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceUploadDirectoryImpl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +27,16 @@ public class ControllerApiUploadDirectory implements ControllerApiUploadDirector
 
     static final OperationRights operationRights = OperationRights.UPLOAD;
 
-    private final ServiceUploadDirectoryImpl serviceUploadDirectory;
+    private final ServiceUploadDirectory serviceUploadDirectory = new ServiceUploadDirectoryImpl();
 
     private final ServiceUploadDirectoryRedis serviceUploadDirectoryRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiUploadDirectory(ServiceUploadDirectoryImpl serviceUploadDirectory,
-                                        ServiceUploadDirectoryRedis serviceUploadDirectoryRedis,
-                                        ServiceManagerRights serviceManagerRights) {
-        this.serviceUploadDirectory = serviceUploadDirectory;
+    public ControllerApiUploadDirectory(
+            ServiceUploadDirectoryRedis serviceUploadDirectoryRedis,
+            ServiceManagerRights serviceManagerRights) {
         this.serviceUploadDirectoryRedis = serviceUploadDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
     }

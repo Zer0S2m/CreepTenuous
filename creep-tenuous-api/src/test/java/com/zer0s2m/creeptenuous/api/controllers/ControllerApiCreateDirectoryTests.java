@@ -49,8 +49,7 @@ public class ControllerApiCreateDirectoryTests {
 
     Logger logger = LogManager.getLogger(ControllerApiCreateDirectoryTests.class);
 
-    @Autowired
-    private ServiceBuildDirectoryPath serviceBuildDirectoryPath;
+    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath = new ServiceBuildDirectoryPath();
 
     @Autowired
     private ObjectMapper objectMapper;

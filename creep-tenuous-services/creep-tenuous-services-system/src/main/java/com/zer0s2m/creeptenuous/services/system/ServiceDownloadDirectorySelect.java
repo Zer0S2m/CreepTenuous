@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectPartApi;
+import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -10,7 +11,8 @@ import java.util.List;
 /**
  * Interface for downloading a directory as a selection of file objects
  */
-public interface ServiceDownloadDirectorySelect extends ServiceDownloadDirectoryStream {
+public interface ServiceDownloadDirectorySelect extends ServiceDownloadDirectoryStream,
+        CollectZipDirectory, AtomicServiceFileSystem {
 
     /**
      * Download selectively file objects

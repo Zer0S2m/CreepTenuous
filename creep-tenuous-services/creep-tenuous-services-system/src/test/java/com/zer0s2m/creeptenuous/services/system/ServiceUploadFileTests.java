@@ -2,8 +2,6 @@ package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.http.ResponseObjectUploadFileApi;
 import com.zer0s2m.creeptenuous.services.system.helpers.UtilsActionForFiles;
-import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
-import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceUploadFileImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceFileSystem;
 import org.apache.logging.log4j.LogManager;
@@ -13,8 +11,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.*;
@@ -24,19 +20,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@SpringBootTest(classes = {
-        ServiceUploadFileImpl.class,
-        ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class
-})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceUploadFileTests {
 
     Logger logger = LogManager.getLogger(ServiceUploadFileTests.class);
 
-    @Autowired
-    private ServiceUploadFileImpl service;
+    private final ServiceUploadFile service = new ServiceUploadFileImpl();
 
     private final String nameTestFile1 = "test_image_1.jpeg";
 

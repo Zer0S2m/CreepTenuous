@@ -9,6 +9,7 @@ import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.events.FileRedisEventPublisher;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDeleteFileRedis;
+import com.zer0s2m.creeptenuous.services.system.ServiceDeleteFile;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteFileImpl;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +28,7 @@ public class ControllerApiDeleteFile implements ControllerApiDeleteFileDoc {
 
     static final OperationRights operationRightsFile = OperationRights.DELETE;
 
-    private final ServiceDeleteFileImpl serviceDeleteFile;
+    private final ServiceDeleteFile serviceDeleteFile = new ServiceDeleteFileImpl();
 
     private final ServiceDeleteFileRedis serviceDeleteFileRedis;
 
@@ -36,11 +37,10 @@ public class ControllerApiDeleteFile implements ControllerApiDeleteFileDoc {
     private final FileRedisEventPublisher fileRedisEventPublisher;
 
     @Autowired
-    public ControllerApiDeleteFile(ServiceDeleteFileImpl serviceDeleteFile,
-                                   ServiceDeleteFileRedis serviceDeleteFileRedis,
-                                   ServiceManagerRights serviceManagerRights,
-                                   FileRedisEventPublisher fileRedisEventPublisher) {
-        this.serviceDeleteFile = serviceDeleteFile;
+    public ControllerApiDeleteFile(
+            ServiceDeleteFileRedis serviceDeleteFileRedis,
+            ServiceManagerRights serviceManagerRights,
+            FileRedisEventPublisher fileRedisEventPublisher) {
         this.serviceDeleteFileRedis = serviceDeleteFileRedis;
         this.serviceManagerRights = serviceManagerRights;
         this.fileRedisEventPublisher = fileRedisEventPublisher;

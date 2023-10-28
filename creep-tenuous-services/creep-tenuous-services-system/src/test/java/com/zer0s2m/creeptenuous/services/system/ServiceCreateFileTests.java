@@ -4,8 +4,6 @@ import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateFile;
 import com.zer0s2m.creeptenuous.common.data.DataCreateFileApi;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundTypeFileException;
 import com.zer0s2m.creeptenuous.services.system.helpers.UtilsActionForFiles;
-import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
-import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateFileImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceFileSystem;
 import org.apache.logging.log4j.LogManager;
@@ -14,27 +12,19 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-@SpringBootTest(classes = {
-        ServiceCreateFileImpl.class,
-        ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class
-})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceCreateFileTests {
 
     Logger logger = LogManager.getLogger(ServiceCreateFileTests.class);
 
-    @Autowired
-    private ServiceCreateFile service;
+    private final ServiceCreateFile service = new ServiceCreateFileImpl();
 
     private final String nameTestFile1 = "tesFile_1";
 

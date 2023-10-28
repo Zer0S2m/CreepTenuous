@@ -10,6 +10,7 @@ import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceMoveDirectoryRedis;
+import com.zer0s2m.creeptenuous.services.system.ServiceMoveDirectory;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceMoveDirectoryImpl;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
@@ -26,17 +27,16 @@ public class ControllerApiMoveDirectory implements ControllerApiMoveDirectoryDoc
 
     static final OperationRights operationRightsDirectory = OperationRights.SHOW;
 
-    private final ServiceMoveDirectoryImpl serviceMoveDirectory;
+    private final ServiceMoveDirectory serviceMoveDirectory = new ServiceMoveDirectoryImpl();
 
     private final ServiceMoveDirectoryRedis serviceMoveDirectoryRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiMoveDirectory(ServiceMoveDirectoryImpl serviceMoveDirectory,
-                                      ServiceMoveDirectoryRedis serviceMoveDirectoryRedis,
-                                      ServiceManagerRights serviceManagerRights) {
-        this.serviceMoveDirectory = serviceMoveDirectory;
+    public ControllerApiMoveDirectory(
+            ServiceMoveDirectoryRedis serviceMoveDirectoryRedis,
+            ServiceManagerRights serviceManagerRights) {
         this.serviceMoveDirectoryRedis = serviceMoveDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
     }

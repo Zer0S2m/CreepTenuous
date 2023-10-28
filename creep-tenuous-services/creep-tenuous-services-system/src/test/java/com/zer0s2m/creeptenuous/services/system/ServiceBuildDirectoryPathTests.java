@@ -2,7 +2,6 @@ package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.services.system.helpers.UtilsActionForFiles;
-import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceFileSystem;
 import org.apache.logging.log4j.LogManager;
@@ -11,8 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,18 +18,13 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-@SpringBootTest(classes = {
-        ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class
-})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceBuildDirectoryPathTests {
 
     Logger logger = LogManager.getLogger(ServiceBuildDirectoryPathTests.class);
 
-    @Autowired
-    private ServiceBuildDirectoryPath serviceBuildDirectoryPath;
+    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath = new ServiceBuildDirectoryPath();
 
     private final RootPath rootPath = new RootPath();
 

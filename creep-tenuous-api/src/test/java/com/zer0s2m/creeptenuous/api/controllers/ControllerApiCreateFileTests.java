@@ -54,8 +54,7 @@ public class ControllerApiCreateFileTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     @Autowired
     private DirectoryRedisRepository directoryRedisRepository;

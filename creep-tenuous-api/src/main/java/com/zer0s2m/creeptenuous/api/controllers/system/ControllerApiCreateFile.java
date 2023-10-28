@@ -19,6 +19,7 @@ import com.zer0s2m.creeptenuous.redis.services.system.ServiceCheckUniqueNameFile
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateFileRedis;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
+import com.zer0s2m.creeptenuous.services.system.ServiceCreateFile;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateFileImpl;
 import jakarta.validation.Valid;
@@ -37,9 +38,9 @@ public class ControllerApiCreateFile implements ControllerApiCreateFileDoc {
 
     static final OperationRights operationRights = OperationRights.CREATE;
 
-    private final ServiceCreateFileImpl serviceCreateFile;
+    private final ServiceCreateFile serviceCreateFile = new ServiceCreateFileImpl();
 
-    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath;
+    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath = new ServiceBuildDirectoryPath();
 
     private final ServiceCreateFileRedis serviceFileRedis;
 
@@ -50,14 +51,11 @@ public class ControllerApiCreateFile implements ControllerApiCreateFileDoc {
     private final JwtProvider jwtProvider;
 
     @Autowired
-    public ControllerApiCreateFile(ServiceCreateFileImpl serviceCreateFile,
-                                   ServiceBuildDirectoryPath serviceBuildDirectoryPath,
-                                   ServiceCreateFileRedis serviceFileRedis,
-                                   ServiceManagerRights serviceManagerRights,
-                                   ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject,
-                                   JwtProvider jwtProvider) {
-        this.serviceCreateFile = serviceCreateFile;
-        this.serviceBuildDirectoryPath = serviceBuildDirectoryPath;
+    public ControllerApiCreateFile(
+            ServiceCreateFileRedis serviceFileRedis,
+            ServiceManagerRights serviceManagerRights,
+            ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject,
+            JwtProvider jwtProvider) {
         this.serviceFileRedis = serviceFileRedis;
         this.serviceManagerRights = serviceManagerRights;
         this.serviceCheckUniqueNameFileSystemObject = serviceCheckUniqueNameFileSystemObject;

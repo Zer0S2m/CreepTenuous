@@ -8,11 +8,9 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationCreate;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.services.Distribution;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.ServiceCreateDirectory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -23,14 +21,9 @@ import java.util.List;
  */
 @ServiceFileSystem("service-create-directory")
 @CoreServiceFileSystem(method = "create")
-public class ServiceCreateDirectoryImpl implements ServiceCreateDirectory, AtomicServiceFileSystem {
+public class ServiceCreateDirectoryImpl implements ServiceCreateDirectory {
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
-
-    @Autowired
-    public ServiceCreateDirectoryImpl(ServiceBuildDirectoryPath buildDirectoryPath) {
-        this.buildDirectoryPath = buildDirectoryPath;
-    }
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     /**
      * Create directory in system

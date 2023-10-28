@@ -4,7 +4,6 @@ import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCopyFile;
 import com.zer0s2m.creeptenuous.common.data.DataCopyFileApi;
 import com.zer0s2m.creeptenuous.services.system.helpers.UtilsActionForFiles;
-import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCopyFileImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceFileSystem;
@@ -14,8 +13,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,24 +24,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-@SpringBootTest(classes = {
-        ServiceCopyFileImpl.class,
-        ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class
-})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceCopyFileTests {
 
     Logger logger = LogManager.getLogger(ServiceCopyFileTests.class);
 
-    @Autowired
-    private ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     private final RootPath rootPath = new RootPath();
 
-    @Autowired
-    private ServiceCopyFileImpl service;
+    private final ServiceCopyFile service = new ServiceCopyFileImpl();
 
     DataCopyFileApi RECORD_1 = new DataCopyFileApi(
             "testFile1.txt",

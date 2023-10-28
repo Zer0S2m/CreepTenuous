@@ -3,7 +3,6 @@ package com.zer0s2m.creeptenuous.services.system.core;
 import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.stereotype.Service;
 
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
@@ -12,7 +11,6 @@ import java.util.Objects;
 /**
  * Service for assembling the paths of file system objects. Use in end endpoints
  */
-@Service("collect-root-path")
 public final class CollectRootPathImpl implements CollectRootPath, CheckIsExistsDirectoryService {
 
     private final RootPath rootPath = new RootPath();

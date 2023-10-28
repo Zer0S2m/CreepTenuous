@@ -6,7 +6,6 @@ import com.zer0s2m.creeptenuous.core.balancer.FileBalancer;
 import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
 import com.zer0s2m.creeptenuous.services.system.ServiceDownloadFile;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -24,14 +23,9 @@ import java.util.Set;
 @ServiceFileSystem("service-download-file")
 public class ServiceDownloadFileImpl implements ServiceDownloadFile {
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     private final ConfigurableMimeFileTypeMap fileTypeMap = new ConfigurableMimeFileTypeMap();
-
-    @Autowired
-    public ServiceDownloadFileImpl(ServiceBuildDirectoryPath buildDirectoryPath) {
-        this.buildDirectoryPath = buildDirectoryPath;
-    }
 
     /**
      * Get resource for download file.

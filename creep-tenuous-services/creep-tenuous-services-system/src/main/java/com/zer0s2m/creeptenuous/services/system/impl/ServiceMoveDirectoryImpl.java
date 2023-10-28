@@ -11,12 +11,10 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationMove;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.ServiceMoveDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -28,17 +26,11 @@ import java.util.Objects;
  */
 @ServiceFileSystem("service-move-directory")
 @CoreServiceFileSystem(method = "move")
-public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory, AtomicServiceFileSystem {
+public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory {
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
-    private final RootPath rootPath;
-
-    @Autowired
-    public ServiceMoveDirectoryImpl(ServiceBuildDirectoryPath buildDirectoryPath) {
-        this.buildDirectoryPath = buildDirectoryPath;
-        this.rootPath = new RootPath();
-    }
+    private final RootPath rootPath = new RootPath();
 
     /**
      * Move directory

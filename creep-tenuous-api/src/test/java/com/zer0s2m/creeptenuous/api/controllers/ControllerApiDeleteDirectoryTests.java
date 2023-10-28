@@ -42,8 +42,7 @@ public class ControllerApiDeleteDirectoryTests {
 
     Logger logger = LogManager.getLogger(ControllerApiDeleteDirectoryTests.class);
 
-    @Autowired
-    private ServiceBuildDirectoryPath serviceBuildDirectoryPath;
+    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath = new ServiceBuildDirectoryPath();
 
     @Autowired
     private ObjectMapper objectMapper;

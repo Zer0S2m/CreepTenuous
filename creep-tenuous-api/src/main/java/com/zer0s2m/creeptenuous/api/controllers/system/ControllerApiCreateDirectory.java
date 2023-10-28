@@ -23,6 +23,7 @@ import com.zer0s2m.creeptenuous.redis.services.system.ServiceCheckUniqueNameFile
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateDirectoryRedis;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
+import com.zer0s2m.creeptenuous.services.system.ServiceCreateDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateDirectoryImpl;
 import jakarta.validation.Valid;
@@ -40,9 +41,9 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
 
     static final OperationRights operationRights = OperationRights.CREATE;
 
-    private final ServiceCreateDirectoryImpl createDirectory;
+    private final ServiceCreateDirectory createDirectory = new ServiceCreateDirectoryImpl();
 
-    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath;
+    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath = new ServiceBuildDirectoryPath();
 
     private final ServiceCreateDirectoryRedis serviceDirectoryRedis;
 
@@ -57,14 +58,10 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
 
     @Autowired
     public ControllerApiCreateDirectory(
-            ServiceCreateDirectoryImpl createDirectory,
-            ServiceBuildDirectoryPath serviceBuildDirectoryPath,
             ServiceCreateDirectoryRedis serviceDirectoryRedis,
             ServiceManagerRights serviceManagerRights,
             ServiceCheckUniqueNameFileSystemObject serviceCheckUniqueNameFileSystemObject,
             JwtProvider jwtProvider) {
-        this.createDirectory = createDirectory;
-        this.serviceBuildDirectoryPath = serviceBuildDirectoryPath;
         this.serviceDirectoryRedis = serviceDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
         this.serviceCheckUniqueNameFileSystemObject = serviceCheckUniqueNameFileSystemObject;

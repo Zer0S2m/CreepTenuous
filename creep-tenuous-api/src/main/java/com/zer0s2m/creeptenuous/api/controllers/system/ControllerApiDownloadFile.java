@@ -12,6 +12,7 @@ import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
+import com.zer0s2m.creeptenuous.services.system.ServiceDownloadFile;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadFileImpl;
 import com.zer0s2m.creeptenuous.services.system.utils.UtilsFiles;
 import jakarta.validation.Valid;
@@ -33,7 +34,7 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
 
     static final OperationRights operationRightsFile = OperationRights.DOWNLOAD;
 
-    private final ServiceDownloadFileImpl serviceDownloadFile;
+    private final ServiceDownloadFile serviceDownloadFile = new ServiceDownloadFileImpl();
 
     private final BaseServiceFileSystemRedisManagerRightsAccess baseServiceFileSystemRedis;
 
@@ -43,11 +44,9 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
 
     @Autowired
     public ControllerApiDownloadFile(
-            ServiceDownloadFileImpl serviceDownloadFile,
             BaseServiceFileSystemRedisManagerRightsAccess baseServiceFileSystemRedis,
             ServiceRedisManagerResources serviceRedisManagerResources,
             ServiceManagerRights serviceManagerRights) {
-        this.serviceDownloadFile = serviceDownloadFile;
         this.baseServiceFileSystemRedis = baseServiceFileSystemRedis;
         this.serviceRedisManagerResources = serviceRedisManagerResources;
         this.serviceManagerRights = serviceManagerRights;

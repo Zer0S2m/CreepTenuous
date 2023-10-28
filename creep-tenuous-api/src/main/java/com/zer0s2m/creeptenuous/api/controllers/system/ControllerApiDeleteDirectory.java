@@ -11,6 +11,7 @@ import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.events.DirectoryRedisEventPublisher;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDeleteDirectoryRedis;
+import com.zer0s2m.creeptenuous.services.system.ServiceDeleteDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteDirectoryImpl;
 import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
@@ -30,9 +31,9 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
 
     static final OperationRights operationRightsDirectoryShow = OperationRights.SHOW;
 
-    private final ServiceDeleteDirectoryImpl serviceDeleteDirectory;
+    private final ServiceDeleteDirectory serviceDeleteDirectory = new ServiceDeleteDirectoryImpl();
 
-    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath;
+    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath = new ServiceBuildDirectoryPath();
 
     private final ServiceDeleteDirectoryRedis serviceDeleteDirectoryRedis;
 
@@ -41,13 +42,10 @@ public class ControllerApiDeleteDirectory implements ControllerApiDeleteDirector
     private final DirectoryRedisEventPublisher directoryRedisEventPublisher;
 
     @Autowired
-    public ControllerApiDeleteDirectory(ServiceDeleteDirectoryImpl serviceDeleteDirectory,
-                                        ServiceBuildDirectoryPath serviceBuildDirectoryPath,
-                                        ServiceDeleteDirectoryRedis serviceDeleteDirectoryRedis,
-                                        ServiceManagerRights serviceManagerRights,
-                                        DirectoryRedisEventPublisher directoryRedisEventPublisher) {
-        this.serviceDeleteDirectory = serviceDeleteDirectory;
-        this.serviceBuildDirectoryPath = serviceBuildDirectoryPath;
+    public ControllerApiDeleteDirectory(
+            ServiceDeleteDirectoryRedis serviceDeleteDirectoryRedis,
+            ServiceManagerRights serviceManagerRights,
+            DirectoryRedisEventPublisher directoryRedisEventPublisher) {
         this.serviceDeleteDirectoryRedis = serviceDeleteDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
         this.directoryRedisEventPublisher = directoryRedisEventPublisher;

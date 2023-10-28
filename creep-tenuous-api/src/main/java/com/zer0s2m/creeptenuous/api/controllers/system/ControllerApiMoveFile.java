@@ -9,6 +9,7 @@ import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceMoveFileRedis;
+import com.zer0s2m.creeptenuous.services.system.ServiceMoveFile;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceMoveFileImpl;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
@@ -31,16 +32,16 @@ public class ControllerApiMoveFile implements ControllerApiMoveFileDoc {
 
     static final OperationRights operationRights = OperationRights.MOVE;
 
-    private final ServiceMoveFileImpl serviceMoveFile;
+    private final ServiceMoveFile serviceMoveFile = new ServiceMoveFileImpl();
 
     private final ServiceMoveFileRedis serviceMoveFileRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiMoveFile(ServiceMoveFileImpl serviceMoveFile, ServiceMoveFileRedis serviceMoveFileRedis,
-                                 ServiceManagerRights serviceManagerRights) {
-        this.serviceMoveFile = serviceMoveFile;
+    public ControllerApiMoveFile(
+            ServiceMoveFileRedis serviceMoveFileRedis,
+            ServiceManagerRights serviceManagerRights) {
         this.serviceMoveFileRedis = serviceMoveFileRedis;
         this.serviceManagerRights = serviceManagerRights;
     }

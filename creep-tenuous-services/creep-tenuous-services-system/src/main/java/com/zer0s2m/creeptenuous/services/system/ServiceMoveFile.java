@@ -1,5 +1,7 @@
 package com.zer0s2m.creeptenuous.services.system;
 
+import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -7,7 +9,7 @@ import java.util.List;
 /**
  * File move service
  */
-public interface ServiceMoveFile {
+public interface ServiceMoveFile extends AtomicServiceFileSystem {
 
     /**
      * Move file

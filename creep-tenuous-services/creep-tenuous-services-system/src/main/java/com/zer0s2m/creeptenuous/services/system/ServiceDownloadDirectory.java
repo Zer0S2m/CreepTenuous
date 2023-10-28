@@ -1,5 +1,7 @@
 package com.zer0s2m.creeptenuous.services.system;
 
+import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -8,7 +10,8 @@ import java.util.List;
 /**
  * Service for servicing the download of a catalog in a zip archive
  */
-public interface ServiceDownloadDirectory extends ServiceDownloadDirectoryStream {
+public interface ServiceDownloadDirectory extends ServiceDownloadDirectoryStream,
+        AtomicServiceFileSystem, CollectZipDirectory {
 
      /**
       * Download directory archive zip
