@@ -11,7 +11,6 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationCopy;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
 import com.zer0s2m.creeptenuous.services.system.ServiceCopyDirectory;
 import com.zer0s2m.creeptenuous.core.atomic.services.Distribution;
@@ -29,7 +28,7 @@ import java.util.stream.Stream;
  */
 @ServiceFileSystem("service-copy-directory")
 @CoreServiceFileSystem(method = "copy")
-public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory, AtomicServiceFileSystem {
+public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory {
 
     private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 

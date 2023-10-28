@@ -12,6 +12,7 @@ import com.zer0s2m.creeptenuous.common.http.ResponseManagerDirectoryApi;
 import com.zer0s2m.creeptenuous.common.utils.OptionalMutable;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceManagerDirectoryRedis;
+import com.zer0s2m.creeptenuous.services.system.ServiceManagerDirectory;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceManagerDirectoryImpl;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +28,7 @@ public class ControllerApiManagerDirectory implements ControllerApiManagerDirect
 
     static final OperationRights operationRights = OperationRights.SHOW;
 
-    private final ServiceManagerDirectoryImpl builderDirectory;
+    private final ServiceManagerDirectory builderDirectory = new ServiceManagerDirectoryImpl();
 
     private final ServiceManagerDirectoryRedis serviceManagerDirectoryRedis;
 
@@ -35,10 +36,8 @@ public class ControllerApiManagerDirectory implements ControllerApiManagerDirect
 
     @Autowired
     public ControllerApiManagerDirectory(
-            ServiceManagerDirectoryImpl builderDirectory,
             ServiceManagerDirectoryRedis serviceManagerDirectoryRedis,
             ServiceManagerRights serviceManagerRights) {
-        this.builderDirectory = builderDirectory;
         this.serviceManagerDirectoryRedis = serviceManagerDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
     }

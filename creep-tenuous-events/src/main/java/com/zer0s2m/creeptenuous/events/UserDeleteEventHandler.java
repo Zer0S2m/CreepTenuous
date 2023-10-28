@@ -10,6 +10,8 @@ import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerReso
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceControlUserRights;
 import com.zer0s2m.creeptenuous.repository.user.UserFileObjectsExclusionRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserSettingsRepository;
+import com.zer0s2m.creeptenuous.services.system.ServiceDeleteDirectory;
+import com.zer0s2m.creeptenuous.services.system.ServiceDeleteFile;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteDirectoryImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteFileImpl;
 import org.jetbrains.annotations.NotNull;
@@ -44,24 +46,20 @@ class UserDeleteEventHandler implements ApplicationListener<UserDeleteEvent> {
 
     private final UserFileObjectsExclusionRepository userFileObjectsExclusionRepository;
 
-    private final ServiceDeleteDirectoryImpl serviceDeleteDirectory;
+    private final ServiceDeleteDirectory serviceDeleteDirectory = new ServiceDeleteDirectoryImpl();
 
-    private final ServiceDeleteFileImpl serviceDeleteFile;
+    private final ServiceDeleteFile serviceDeleteFile = new ServiceDeleteFileImpl();
 
     @Autowired
     public UserDeleteEventHandler(
             ServiceControlUserRights serviceControlUserRights,
             ServiceRedisManagerResources serviceRedisManagerResources,
             UserSettingsRepository userSettingsRepository,
-            UserFileObjectsExclusionRepository userFileObjectsExclusionRepository,
-            ServiceDeleteDirectoryImpl serviceDeleteDirectory,
-            ServiceDeleteFileImpl serviceDeleteFile) {
+            UserFileObjectsExclusionRepository userFileObjectsExclusionRepository) {
         this.serviceControlUserRights = serviceControlUserRights;
         this.serviceRedisManagerResources = serviceRedisManagerResources;
         this.userSettingsRepository = userSettingsRepository;
         this.userFileObjectsExclusionRepository = userFileObjectsExclusionRepository;
-        this.serviceDeleteDirectory = serviceDeleteDirectory;
-        this.serviceDeleteFile = serviceDeleteFile;
     }
 
     /**

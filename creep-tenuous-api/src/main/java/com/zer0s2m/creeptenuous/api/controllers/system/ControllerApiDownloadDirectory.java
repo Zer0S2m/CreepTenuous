@@ -14,6 +14,8 @@ import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectorySelectRedis;
+import com.zer0s2m.creeptenuous.services.system.ServiceDownloadDirectory;
+import com.zer0s2m.creeptenuous.services.system.ServiceDownloadDirectorySelect;
 import com.zer0s2m.creeptenuous.services.system.ServiceDownloadDirectorySetHeaders;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectoryImpl;
@@ -45,9 +47,10 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
     private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
-    private final ServiceDownloadDirectoryImpl serviceDownloadDirectory;
+    private final ServiceDownloadDirectory serviceDownloadDirectory = new ServiceDownloadDirectoryImpl();
 
-    private final ServiceDownloadDirectorySelectImpl serviceDownloadDirectorySelect;
+    private final ServiceDownloadDirectorySelect serviceDownloadDirectorySelect =
+            new ServiceDownloadDirectorySelectImpl();
 
     private final ServiceDownloadDirectorySetHeaders serviceDownloadDirectorySetHeaders =
             new ServiceDownloadDirectorySetHeadersImpl();
@@ -62,13 +65,9 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
     @Autowired
     public ControllerApiDownloadDirectory(
-            ServiceDownloadDirectoryImpl serviceDownloadDirectory,
-            ServiceDownloadDirectorySelectImpl serviceDownloadDirectorySelect,
             ServiceDownloadDirectoryRedis serviceDownloadDirectoryRedis,
             ServiceDownloadDirectorySelectRedis serviceDownloadDirectorySelectRedis,
             ServiceManagerRights serviceManagerRights) {
-        this.serviceDownloadDirectory = serviceDownloadDirectory;
-        this.serviceDownloadDirectorySelect = serviceDownloadDirectorySelect;
         this.serviceDownloadDirectoryRedis = serviceDownloadDirectoryRedis;
         this.serviceDownloadDirectorySelectRedis = serviceDownloadDirectorySelectRedis;
         this.serviceManagerRights = serviceManagerRights;

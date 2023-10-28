@@ -8,7 +8,6 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationCopy;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.ServiceCopyFile;
 import com.zer0s2m.creeptenuous.services.system.utils.UtilsFiles;
@@ -27,7 +26,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  */
 @ServiceFileSystem("service-copy-file")
 @CoreServiceFileSystem(method = "copy")
-public class ServiceCopyFileImpl implements ServiceCopyFile, AtomicServiceFileSystem {
+public class ServiceCopyFileImpl implements ServiceCopyFile  {
 
     private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 

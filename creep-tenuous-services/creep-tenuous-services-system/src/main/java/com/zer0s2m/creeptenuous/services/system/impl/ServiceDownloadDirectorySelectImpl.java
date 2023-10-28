@@ -7,9 +7,7 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptio
 import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationDownload;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.services.Distribution;
-import com.zer0s2m.creeptenuous.services.system.CollectZipDirectory;
 import com.zer0s2m.creeptenuous.services.system.ServiceDownloadDirectorySelect;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import net.lingala.zip4j.ZipFile;
@@ -34,8 +32,7 @@ import java.util.List;
  */
 @ServiceFileSystem("service-download-directory-select")
 @CoreServiceFileSystem(method = "download")
-public class ServiceDownloadDirectorySelectImpl
-        implements ServiceDownloadDirectorySelect, CollectZipDirectory, AtomicServiceFileSystem {
+public class ServiceDownloadDirectorySelectImpl implements ServiceDownloadDirectorySelect {
 
     private final Logger logger = LogManager.getLogger(ServiceDownloadDirectorySelectImpl.class);
 

@@ -7,7 +7,6 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationDelete;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.ServiceDeleteDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 
@@ -24,7 +23,7 @@ import java.util.stream.Stream;
  */
 @ServiceFileSystem("delete-directory")
 @CoreServiceFileSystem(method = "delete")
-public class ServiceDeleteDirectoryImpl implements ServiceDeleteDirectory, AtomicServiceFileSystem {
+public class ServiceDeleteDirectoryImpl implements ServiceDeleteDirectory {
 
     private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 

@@ -9,8 +9,6 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptio
 import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationUpload;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
-import com.zer0s2m.creeptenuous.services.system.ServiceUnpackingDirectory;
 import com.zer0s2m.creeptenuous.services.system.ServiceUploadDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import org.apache.logging.log4j.LogManager;
@@ -28,8 +26,7 @@ import java.util.List;
  */
 @ServiceFileSystem("service-upload-service")
 @CoreServiceFileSystem(method = "upload")
-public class ServiceUploadDirectoryImpl implements ServiceUploadDirectory, ServiceUnpackingDirectory,
-        AtomicServiceFileSystem {
+public class ServiceUploadDirectoryImpl implements ServiceUploadDirectory {
 
     private final Logger logger = LogManager.getLogger(ServiceUploadDirectory.class);
 

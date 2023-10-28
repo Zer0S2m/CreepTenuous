@@ -2,6 +2,7 @@ package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataMoveDirectory;
 import com.zer0s2m.creeptenuous.common.enums.MethodMoveDirectory;
+import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * Service to serve the movement of directories
  */
-public interface ServiceMoveDirectory {
+public interface ServiceMoveDirectory extends AtomicServiceFileSystem {
 
     /**
      * Move directory

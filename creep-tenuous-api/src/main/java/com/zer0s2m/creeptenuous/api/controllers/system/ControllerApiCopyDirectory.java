@@ -11,6 +11,7 @@ import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCopyDirectoryRedis;
+import com.zer0s2m.creeptenuous.services.system.ServiceCopyDirectory;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCopyDirectoryImpl;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
@@ -30,17 +31,16 @@ public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc
 
     static final OperationRights operationRightsDirectory = OperationRights.SHOW;
 
-    private final ServiceCopyDirectoryImpl serviceCopyDirectory;
+    private final ServiceCopyDirectory serviceCopyDirectory = new ServiceCopyDirectoryImpl();
 
     private final ServiceCopyDirectoryRedis serviceCopyDirectoryRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiCopyDirectory(ServiceCopyDirectoryImpl serviceCopyDirectory,
-                                      ServiceCopyDirectoryRedis serviceCopyDirectoryRedis,
-                                      ServiceManagerRights serviceManagerRights) {
-        this.serviceCopyDirectory = serviceCopyDirectory;
+    public ControllerApiCopyDirectory(
+            ServiceCopyDirectoryRedis serviceCopyDirectoryRedis,
+            ServiceManagerRights serviceManagerRights) {
         this.serviceCopyDirectoryRedis = serviceCopyDirectoryRedis;
         this.serviceManagerRights = serviceManagerRights;
     }

@@ -6,8 +6,6 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptio
 import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationDownload;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
-import com.zer0s2m.creeptenuous.services.system.CollectZipDirectory;
 import com.zer0s2m.creeptenuous.services.system.ServiceDownloadDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 
@@ -22,8 +20,7 @@ import java.nio.file.Path;
  */
 @ServiceFileSystem("service-download-directory")
 @CoreServiceFileSystem(method = "download")
-public class ServiceDownloadDirectoryImpl
-        implements ServiceDownloadDirectory, CollectZipDirectory, AtomicServiceFileSystem {
+public class ServiceDownloadDirectoryImpl implements ServiceDownloadDirectory {
 
     private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 

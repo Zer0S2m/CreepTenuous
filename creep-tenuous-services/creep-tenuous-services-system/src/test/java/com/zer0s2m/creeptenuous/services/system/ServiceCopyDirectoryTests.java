@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.FileSystemUtils;
 
 import java.io.IOException;
@@ -22,17 +20,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@SpringBootTest(classes = {
-        ServiceCopyDirectoryImpl.class
-})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceCopyDirectoryTests {
 
     Logger logger = LogManager.getLogger(ServiceCopyDirectoryTests.class);
 
-    @Autowired
-    private ServiceCopyDirectoryImpl service;
+    private final ServiceCopyDirectory service = new ServiceCopyDirectoryImpl();
 
     private final ServiceBuildDirectoryPath serviceBuildDirectoryPath = new ServiceBuildDirectoryPath();
 

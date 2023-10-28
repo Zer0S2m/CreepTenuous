@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.File;
@@ -22,17 +20,14 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Objects;
 
-@SpringBootTest(classes = {
-        ServiceUploadDirectoryImpl.class
-})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceUploadDirectoryTests {
     Logger logger = LogManager.getLogger(ServiceUploadDirectoryTests.class);
 
-    @Autowired
-    private ServiceUploadDirectoryImpl service;
+    private final ServiceUploadDirectory service = new ServiceUploadDirectoryImpl();
 
     private final ServiceBuildDirectoryPath serviceBuildDirectoryPath = new ServiceBuildDirectoryPath();
 
@@ -41,7 +36,7 @@ public class ServiceUploadDirectoryTests {
         ClassLoader classLoader = getClass().getClassLoader();
 
         String testFileZip = "test-zip.zip";
-        File testFile = new File(classLoader.getResource(testFileZip).getFile());
+        File testFile = new File(Objects.requireNonNull(classLoader.getResource(testFileZip)).getFile());
 
         Path path = Files.copy(
                 testFile.toPath(),

@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.FileSystemUtils;
 
 import java.nio.file.Files;
@@ -22,17 +20,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@SpringBootTest(classes = {
-        ServiceDownloadDirectoryImpl.class
-})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceDownloadDirectoryTests {
 
     Logger logger = LogManager.getLogger(ServiceDownloadDirectoryTests.class);
 
-    @Autowired
-    private ServiceDownloadDirectoryImpl service;
+    private final ServiceDownloadDirectory service = new ServiceDownloadDirectoryImpl();
 
     private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 

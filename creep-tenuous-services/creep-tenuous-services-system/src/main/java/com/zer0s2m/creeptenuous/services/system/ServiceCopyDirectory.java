@@ -2,6 +2,7 @@ package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.enums.MethodCopyDirectory;
+import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * Directory copy service
  */
-public interface ServiceCopyDirectory {
+public interface ServiceCopyDirectory extends AtomicServiceFileSystem {
 
     /**
      * Copy directory

@@ -19,8 +19,6 @@ import com.zer0s2m.creeptenuous.repository.user.UserFileObjectsExclusionReposito
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserSettingsRepository;
 import com.zer0s2m.creeptenuous.services.redis.resources.ServiceRedisManagerResourcesImpl;
-import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteDirectoryImpl;
-import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteFileImpl;
 import com.zer0s2m.creeptenuous.services.redis.security.ServiceControlUserRightsImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagEvent;
 import org.junit.jupiter.api.Assertions;
@@ -52,9 +50,7 @@ import java.util.UUID;
         RightUserFileSystemObjectRedisRepository.class,
         ServiceRedisManagerResources.class,
         JwtRedisRepository.class,
-        UserRepository.class,
-        ServiceDeleteDirectoryImpl.class,
-        ServiceDeleteFileImpl.class
+        UserRepository.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagEvent

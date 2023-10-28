@@ -12,25 +12,19 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-@SpringBootTest(classes = {
-        ServiceCreateFileImpl.class
-})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceCreateFileTests {
 
     Logger logger = LogManager.getLogger(ServiceCreateFileTests.class);
 
-    @Autowired
-    private ServiceCreateFile service;
+    private final ServiceCreateFile service = new ServiceCreateFileImpl();
 
     private final String nameTestFile1 = "tesFile_1";
 

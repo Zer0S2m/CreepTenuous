@@ -11,6 +11,7 @@ import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCopyFileRedis;
+import com.zer0s2m.creeptenuous.services.system.ServiceCopyFile;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCopyFileImpl;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
@@ -34,16 +35,16 @@ public class ControllerApiCopyFile implements ControllerApiCopyFileDoc {
 
     static final OperationRights operationRights = OperationRights.COPY;
 
-    private final ServiceCopyFileImpl serviceCopyFile;
+    private final ServiceCopyFile serviceCopyFile = new ServiceCopyFileImpl();
 
     private final ServiceCopyFileRedis serviceCopyFileRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiCopyFile(ServiceCopyFileImpl serviceCopyFile, ServiceCopyFileRedis serviceCopyFileRedis,
-                                 ServiceManagerRights serviceManagerRights) {
-        this.serviceCopyFile = serviceCopyFile;
+    public ControllerApiCopyFile(
+            ServiceCopyFileRedis serviceCopyFileRedis,
+            ServiceManagerRights serviceManagerRights) {
         this.serviceCopyFileRedis = serviceCopyFileRedis;
         this.serviceManagerRights = serviceManagerRights;
     }

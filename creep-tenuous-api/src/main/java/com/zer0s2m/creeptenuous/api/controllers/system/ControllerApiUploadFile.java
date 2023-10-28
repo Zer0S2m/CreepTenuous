@@ -33,17 +33,16 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
 
     static final OperationRights operationRights = OperationRights.UPLOAD;
 
-    private final ServiceUploadFile serviceUploadFile;
+    private final ServiceUploadFile serviceUploadFile = new ServiceUploadFileImpl();
 
     private final ServiceUploadFileRedis serviceUploadFileRedis;
 
     private final ServiceManagerRights serviceManagerRights;
 
     @Autowired
-    public ControllerApiUploadFile(ServiceUploadFile serviceUploadFile,
-                                   ServiceUploadFileRedis serviceUploadFileRedis,
-                                   ServiceManagerRights serviceManagerRights) {
-        this.serviceUploadFile = serviceUploadFile;
+    public ControllerApiUploadFile(
+            ServiceUploadFileRedis serviceUploadFileRedis,
+            ServiceManagerRights serviceManagerRights) {
         this.serviceUploadFileRedis = serviceUploadFileRedis;
         this.serviceManagerRights = serviceManagerRights;
     }
