@@ -36,6 +36,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -358,8 +359,8 @@ public class ControllerApiCopyFileTests {
 
     @Test
     public void copyOneFile_success_forbidden() throws Exception {
-        final String fileName = "testFile.txt";
-        final String directoryName = "testDirectory";
+        final String fileName = UUID.randomUUID() + ".txt";
+        final String directoryName = UUID.randomUUID().toString();
         final Path directoryPath = Path.of(rootPath.getRootPath(), directoryName);
         final Path filePath = Path.of(rootPath.getRootPath(), fileName);
         Files.createDirectory(directoryPath);

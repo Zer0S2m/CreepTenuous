@@ -34,6 +34,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -394,7 +395,7 @@ public class ControllerApiMoveFileTests {
 
     @Test
     public void moveOneFile_success_forbidden() throws Exception {
-        final String testDirectory = "testDirectory";
+        final String testDirectory = UUID.randomUUID().toString();
         final Path testDirectoryPath = Path.of(rootPath.getRootPath(), testDirectory);
         final Path testFilePath = Path.of(rootPath.getRootPath(), testFile1);
 
@@ -512,7 +513,7 @@ public class ControllerApiMoveFileTests {
 
     @Test
     public void moveMoreOneFile_success_forbidden() throws Exception {
-        final String testDirectory = "testDirectory";
+        final String testDirectory = UUID.randomUUID().toString();
         final Path testDirectoryPath = Path.of(rootPath.getRootPath(), testDirectory);
         final Path testFilePath = Path.of(rootPath.getRootPath(), testFile1);
 
