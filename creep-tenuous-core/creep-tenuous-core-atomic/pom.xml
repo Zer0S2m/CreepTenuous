@@ -31,5 +31,9 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-core-balancer</artifactId>
+    </dependency>
   </dependencies>
 </project>

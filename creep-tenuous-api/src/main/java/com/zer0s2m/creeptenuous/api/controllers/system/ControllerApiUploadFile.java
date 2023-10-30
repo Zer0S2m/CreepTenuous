@@ -15,9 +15,9 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptio
 import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationFragmentation;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationUpload;
 import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
-import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceUploadFileRedis;
 import com.zer0s2m.creeptenuous.services.system.ServiceUploadFile;
@@ -120,10 +120,7 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
         List<ContainerDataUploadFileFragment> dataUploadFileFragments =
                 serviceUploadFile.uploadFragment(inputStreams, originalFileNames, systemParents);
 
-        Iterable<FileRedis> fileRedis = serviceUploadFileRedis.uploadFragment(
-                dataUploadFileFragments);
-
-        fileRedis.forEach(System.out::println);
+        serviceUploadFileRedis.uploadFragment(dataUploadFileFragments);
     }
 
     @CoreServiceFileSystem(method = "upload")
@@ -149,6 +146,11 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
                                 isExceptionMulti = true,
                                 handler = ServiceFileSystemExceptionHandlerOperationUpload.class,
                                 operation = ContextAtomicFileSystem.Operations.UPLOAD
+                        ),
+                        @AtomicFileSystemExceptionHandler(
+                                isExceptionMulti = true,
+                                handler = ServiceFileSystemExceptionHandlerOperationFragmentation.class,
+                                operation = ContextAtomicFileSystem.Operations.FRAGMENTATION
                         )
                 }
         )

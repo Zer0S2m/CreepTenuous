@@ -1,6 +1,8 @@
 package com.zer0s2m.creeptenuous.core.atomic.context.nio.file;
 
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.balancer.FileBalancer;
+import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -11,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileAttribute;
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -45,7 +48,8 @@ public interface FilesContextAtomic {
     /**
      * Creating a file with record data about the operation in the context {@link ContextAtomicFileSystem}
      * of <b>atomic mode</b>
-     * @param path the path to the file to create
+     *
+     * @param path  the path to the file to create
      * @param attrs an optional list of file attributes to set atomically when creating the file
      * @return the file
      * @throws IOException if an I/O error occurs or the parent directory does not exist
@@ -58,7 +62,8 @@ public interface FilesContextAtomic {
     /**
      * Creating a directory with record data about the operation in the context {@link ContextAtomicFileSystem}
      * of <b>atomic mode</b>
-     * @param dir the directory to create
+     *
+     * @param dir   the directory to create
      * @param attrs an optional list of file attributes to set atomically when creating the directory
      * @return the directory
      * @throws IOException if an I/O error occurs or the parent directory does not exist
@@ -71,8 +76,9 @@ public interface FilesContextAtomic {
     /**
      * Move or rename a file to a target file. Add data in context {@link ContextAtomicFileSystem}
      * of <b>atomic mode</b>
-     * @param source the path to the file to move
-     * @param target the path to the target file (maybe associated with a different provider to the source path)
+     *
+     * @param source  the path to the file to move
+     * @param target  the path to the target file (maybe associated with a different provider to the source path)
      * @param options options specifying how the move should be done
      * @return the path to the target file
      * @throws IOException if an I/O error occurs
@@ -85,8 +91,9 @@ public interface FilesContextAtomic {
     /**
      * Copy or rename a file to a target file. Add data in context {@link ContextAtomicFileSystem}
      * of <b>atomic mode</b>
-     * @param source the path to the file to copy
-     * @param target the path to the target file (maybe associated with a different provider to the source path)
+     *
+     * @param source  the path to the file to copy
+     * @param target  the path to the target file (maybe associated with a different provider to the source path)
      * @param options options specifying how the move should be done
      * @return the path to the target file
      * @throws IOException if an I/O error occurs
@@ -99,8 +106,9 @@ public interface FilesContextAtomic {
     /**
      * Copies all bytes from an input stream to a file. On return, the input stream will be at end of stream.
      * Add data in context {@link ContextAtomicFileSystem} of <b>atomic mode</b>
-     * @param in the input stream to read from
-     * @param target the path to the file
+     *
+     * @param in      the input stream to read from
+     * @param target  the path to the file
      * @param options options specifying how the copy should be done
      * @return the number of bytes read or written
      * @throws IOException if an I/O error occurs when reading or writing
@@ -112,6 +120,7 @@ public interface FilesContextAtomic {
 
     /**
      * Deletes a file. Add data in context {@link ContextAtomicFileSystem} of <b>atomic mode</b>
+     *
      * @param path the path to the file to delete
      * @throws IOException if an I/O error occurs
      */
@@ -123,8 +132,24 @@ public interface FilesContextAtomic {
     }
 
     /**
+     * Divide the source file into several component parts. default quantity - {@link FileBalancer#PART_COUNTER}.
+     * Add data in context {@link ContextAtomicFileSystem} of <b>atomic mode</b>
+     *
+     * @param path The path to the file that will be split in the process.
+     * @return File component paths.
+     * @throws IOException              If an I/O error occurs.
+     * @throws FileIsDirectoryException The exception indicates that the source file object is a directory.
+     */
+    static @NotNull Collection<Path> fragment(Path path) throws IOException, FileIsDirectoryException {
+        Collection<Path> fragmetns = FileBalancer.fragment(path);
+        addOperationDataFragment(path, fragmetns, stackWalker.getCallerClass().getCanonicalName());
+        return fragmetns;
+    }
+
+    /**
      * Deletes a file. Add data in context {@link ContextAtomicFileSystem} of <b>atomic mode</b>
-     * @param path the path to the file to delete
+     *
+     * @param path      the path to the file to delete
      * @param className caller class from method
      * @throws IOException if an I/O error occurs
      */
@@ -136,6 +161,7 @@ public interface FilesContextAtomic {
 
     /**
      * Moving file system object to <b>/tmp</b>
+     *
      * @param source the path to the file to transfer
      * @return the path to the target file
      * @throws IOException if an I/O error occurs
@@ -149,6 +175,7 @@ public interface FilesContextAtomic {
      * Deletes the file or directory denoted by this abstract pathname.
      * If this pathname denotes a directory, then the directory must be empty in order to be deleted.
      * Add data in context {@link ContextAtomicFileSystem} of <b>atomic mode</b>
+     *
      * @param file source file
      */
     static void deleteNoException(File file) {
@@ -160,7 +187,8 @@ public interface FilesContextAtomic {
 
     /**
      * Write operation data to atomic mode context
-     * @param path the path
+     *
+     * @param path      the path
      * @param className caller class from method
      */
     private static void addOperationDataCreate(@NotNull Path path, @NotNull String className) {
@@ -178,8 +206,9 @@ public interface FilesContextAtomic {
 
     /**
      * Write operation data to atomic mode context
-     * @param source the path source
-     * @param target the path target
+     *
+     * @param source    the path source
+     * @param target    the path target
      * @param className caller class from method
      */
     private static void addOperationDataMove(Path source, @NotNull Path target, String className) {
@@ -197,7 +226,8 @@ public interface FilesContextAtomic {
 
     /**
      * Write operation data to atomic mode context
-     * @param target the path target
+     *
+     * @param target    the path target
      * @param className caller class from method
      */
     private static void addOperationDataCopy(Path target, @NotNull String className) {
@@ -212,11 +242,12 @@ public interface FilesContextAtomic {
 
     /**
      * Write operation data to atomic mode context
-     * @param source the path source
-     * @param target the path target
+     *
+     * @param source      the path source
+     * @param target      the path target
      * @param isDirectory the path is directory
-     * @param isFile the path is file
-     * @param className caller class from method
+     * @param isFile      the path is file
+     * @param className   caller class from method
      */
     private static void addOperationDataDelete(
             Path source, @NotNull Path target, boolean isDirectory, boolean isFile, String className) {
@@ -236,7 +267,29 @@ public interface FilesContextAtomic {
 
     /**
      * Write operation data to atomic mode context
-     * @param target the path target
+     *
+     * @param source    the path source
+     * @param fragmetns file component paths
+     * @param className caller class from method
+     */
+    private static void addOperationDataFragment(
+            @NotNull Path source, Collection<Path> fragmetns, String className) {
+        HashMap<String, Object> operationData = new HashMap<>();
+
+        String systemNameFile = source.getFileName().toString();
+
+        operationData.put("_class", className);
+        operationData.put("operation", ContextAtomicFileSystem.Operations.FRAGMENTATION);
+        operationData.put("sourcePath", source);
+        operationData.put("fragments", fragmetns);
+
+        contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
+    }
+
+    /**
+     * Write operation data to atomic mode context
+     *
+     * @param target    the path target
      * @param className caller class from method
      */
     private static void addOperationDataUpload(@NotNull Path target, String className) {

@@ -45,7 +45,7 @@ public class FileBalancerTests {
         Path file = initFile();
         String systemNameFile = file.getFileName().toString();
 
-        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.split(file));
+        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file));
 
         Assertions.assertEquals(FileBalancer.PART_COUNTER, paths.size());
         Assertions.assertTrue(Files.exists(file));
@@ -67,7 +67,7 @@ public class FileBalancerTests {
         String systemNameFile = file.getFileName().toString();
         int partCounter = 2;
 
-        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.split(file, partCounter));
+        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file, partCounter));
 
         Assertions.assertEquals(partCounter, paths.size());
         Assertions.assertTrue(Files.exists(file));
@@ -84,7 +84,7 @@ public class FileBalancerTests {
 
         Assertions.assertThrows(
                 FileIsDirectoryException.class,
-                () -> FileBalancer.split(directory));
+                () -> FileBalancer.fragment(directory));
 
         Files.delete(directory);
     }
@@ -94,7 +94,7 @@ public class FileBalancerTests {
         Path file = initFile();
         Path systemNameFileInto = Path.of(pathRoot, UUID.randomUUID().toString());
 
-        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.split(file));
+        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file));
 
         Path into = Assertions.assertDoesNotThrow(() -> FileBalancer.merge(paths, systemNameFileInto));
 
@@ -119,7 +119,7 @@ public class FileBalancerTests {
         Path file = initFile();
         Path systemNameFileInto = Path.of(pathRoot, UUID.randomUUID().toString());
 
-        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.split(file));
+        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file));
         paths.add(Path.of("file_not_found"));
 
         Assertions.assertThrows(
@@ -131,7 +131,7 @@ public class FileBalancerTests {
     public void getAllParts_success() throws IOException {
         Path file = initFile();
 
-        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.split(file));
+        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file));
         List<Path> pathList = List.copyOf(paths);
 
         Set<Path> allParts = Assertions.assertDoesNotThrow(

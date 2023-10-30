@@ -100,8 +100,6 @@ class UserDeleteEventHandler implements ApplicationListener<UserDeleteEvent> {
                     throw new RuntimeException(e);
                 }
 
-                System.out.println(fileSystemObjectsExclusions);
-
                 deleteFilesBySystemNames(userLogin, fileSystemObjectsExclusions);
                 deleteDirectoriesBySystemNames(userLogin, fileSystemObjectsExclusions);
 

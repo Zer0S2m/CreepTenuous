@@ -10,7 +10,6 @@ import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationUpload;
 import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
-import com.zer0s2m.creeptenuous.core.balancer.FileBalancer;
 import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
 import com.zer0s2m.creeptenuous.services.system.ServiceUploadFile;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
@@ -71,7 +70,7 @@ public class ServiceUploadFileImpl implements ServiceUploadFile {
                 .map((file) -> {
                     try {
                         ResponseObjectUploadFileApi data = copyFileAndPushContext(
-                                file.getInputStream(), file.getOriginalFilename(), sourceDir);
+                                file.getInputStream(), file.getOriginalFilename(), sourceDir, false);
 
                         writeLogUploadFile(data);
 
@@ -104,14 +103,12 @@ public class ServiceUploadFileImpl implements ServiceUploadFile {
                     final String originalName = originFileNames.get(idx);
 
                     ResponseObjectUploadFileApi uploadFileApi = copyFileAndPushContext(
-                            inputStreams.get(idx), originalName, sourceDir);
+                            inputStreams.get(idx), originalName, sourceDir, true);
 
                     writeLogUploadFile(uploadFileApi);
 
-                    Collection<Path> fragmentedPartsFile;
-
                     try {
-                        fragmentedPartsFile = FileBalancer.split(uploadFileApi.systemPath());
+                        Collection<Path> fragmentedPartsFile = FilesContextAtomic.fragment(uploadFileApi.systemPath());
 
                         dataUploadFileFragments.add(new ContainerDataUploadFileFragment(
                                 originalName,
@@ -133,20 +130,25 @@ public class ServiceUploadFileImpl implements ServiceUploadFile {
      * @param sourceDir Directory path where the file will be copied.
      * @return Execution result.
      */
-    @Contract("_, _, _ -> new")
+    @Contract("_, _, _, _ -> new")
     private @NotNull ResponseObjectUploadFileApi copyFileAndPushContext(
-            final InputStream inputStream, final String originFileName, final @NotNull Path sourceDir) {
+            final InputStream inputStream, final String originFileName, final @NotNull Path sourceDir,
+            final boolean isFragment) {
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(originFileName));
         String newFileName = UtilsFiles.getNewFileName(originFileName);
         Path targetLocation = sourceDir.resolve(fileName);
         Path newTargetLocation = sourceDir.resolve(newFileName);
 
         try {
-            FilesContextAtomic.copy(
-                    inputStream,
-                    newTargetLocation,
-                    StandardCopyOption.REPLACE_EXISTING
-            );
+            if (!isFragment) {
+                FilesContextAtomic.copy(
+                        inputStream,
+                        newTargetLocation,
+                        StandardCopyOption.REPLACE_EXISTING
+                );
+            } else {
+                Files.copy(inputStream, newTargetLocation);
+            }
         } catch (IOException e) {
             logger.error(e);
             return new ResponseObjectUploadFileApi(

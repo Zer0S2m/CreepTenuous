@@ -38,8 +38,8 @@ public interface FileBalancer {
      * @throws IOException signals that an I/O exception to some sort has occurred
      * @throws FileIsDirectoryException the exception indicates that the source file object is a directory
      */
-    static @NotNull Collection<Path> split(Path source) throws IOException, FileIsDirectoryException {
-        return split(source, PART_COUNTER);
+    static @NotNull Collection<Path> fragment(Path source) throws IOException, FileIsDirectoryException {
+        return fragment(source, PART_COUNTER);
     }
 
     /**
@@ -50,7 +50,7 @@ public interface FileBalancer {
      * @throws IOException signals that an I/O exception to some sort has occurred
      * @throws FileIsDirectoryException the exception indicates that the source file object is a directory
      */
-    static @NotNull Collection<Path> split(Path source, int partCounter) throws IOException, FileIsDirectoryException {
+    static @NotNull Collection<Path> fragment(Path source, int partCounter) throws IOException, FileIsDirectoryException {
         if (Files.isDirectory(source)) {
             throw new FileIsDirectoryException();
         }
