@@ -186,6 +186,8 @@ public class ControllerApiMoveFileTests {
     @Test
     @DisplayName("Failed moving file")
     public void moveFile_fail_notValidParents() throws Exception {
+        final String fileName = UUID.randomUUID().toString();
+
         this.mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
@@ -193,8 +195,8 @@ public class ControllerApiMoveFileTests {
                         .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveFileApi(
-                                        "testFile.txt",
-                                        "testFile.txt",
+                                        fileName,
+                                        fileName,
                                         null,
                                         null,
                                         new ArrayList<>(),

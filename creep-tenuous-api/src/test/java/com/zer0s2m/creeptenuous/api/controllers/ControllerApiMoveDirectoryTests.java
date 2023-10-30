@@ -36,6 +36,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -285,10 +286,14 @@ public class ControllerApiMoveDirectoryTests {
 
     @Test
     public void moveDirectory_success_forbidden() throws Exception {
-        final Path testDirectorySourcePath = Path.of(rootPath.getRootPath(), "testDirectorySource");
-        final Path testDirectoryTargetPath = Path.of(rootPath.getRootPath(), "testDirectoryTarget");
-        final Path testFolderPath = Path.of(testDirectorySourcePath.toString(), "folder");
-        final Path testFile = Path.of(testFolderPath.toString(), "testFile");
+        final String testDirectorySource = UUID.randomUUID().toString();
+        final String testDirectoryTarget = UUID.randomUUID().toString();
+        final String testFolder = UUID.randomUUID().toString();
+        final String testFileName = UUID.randomUUID().toString();
+        final Path testDirectorySourcePath = Path.of(rootPath.getRootPath(), testDirectorySource);
+        final Path testDirectoryTargetPath = Path.of(rootPath.getRootPath(), testDirectoryTarget);
+        final Path testFolderPath = Path.of(testDirectorySourcePath.toString(), testFolder);
+        final Path testFile = Path.of(testFolderPath.toString(), testFileName);
 
         Files.createDirectory(testDirectorySourcePath);
         Files.createDirectory(testDirectoryTargetPath);
@@ -298,36 +303,36 @@ public class ControllerApiMoveDirectoryTests {
         DirectoryRedis directoryRedisSource = new DirectoryRedis(
                 "login",
                 "ROLE_USER",
-                "testDirectorySource",
-                "testDirectorySource",
+                testDirectorySource,
+                testDirectorySource,
                 testDirectorySourcePath.toString(),
                 List.of(UtilsAuthAction.LOGIN));
         DirectoryRedis directoryRedisTarget = new DirectoryRedis(
                 "login",
                 "ROLE_USER",
-                "testDirectoryTarget",
-                "testDirectoryTarget",
+                testDirectoryTarget,
+                testDirectoryTarget,
                 testDirectoryTargetPath.toString(),
                 List.of(UtilsAuthAction.LOGIN));
         DirectoryRedis directoryRedisFolder = new DirectoryRedis(
                 UtilsAuthAction.LOGIN,
                 "ROLE_USER",
-                "folder",
-                "folder",
+                testFolder,
+                testFolder,
                 testFolderPath.toString(),
                 new ArrayList<>());
         FileRedis fileRedis = new FileRedis(
                 UtilsAuthAction.LOGIN,
                 "ROLE_USER",
-                "testFile",
-                "testFile",
+                testFileName,
+                testFileName,
                 testFile.toString(),
                 new ArrayList<>());
         RightUserFileSystemObjectRedis rightDirectorySource = new RightUserFileSystemObjectRedis(
-                "testDirectorySource" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                testDirectorySource + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
                 List.of(OperationRights.SHOW));
         RightUserFileSystemObjectRedis rightDirectoryTarget = new RightUserFileSystemObjectRedis(
-                "testDirectoryTarget" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                testDirectoryTarget + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
                 List.of(OperationRights.SHOW, OperationRights.COPY));
         directoryRedisRepository.saveAll(List.of(directoryRedisSource, directoryRedisFolder,
                 directoryRedisTarget));
@@ -341,12 +346,12 @@ public class ControllerApiMoveDirectoryTests {
                         .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveDirectoryApi(
-                                        List.of("testDirectorySource"),
-                                        List.of("testDirectorySource"),
-                                        List.of("testDirectoryTarget"),
-                                        List.of("testDirectoryTarget"),
-                                        "folder",
-                                        "folder",
+                                        List.of(testDirectorySource),
+                                        List.of(testDirectorySource),
+                                        List.of(testDirectoryTarget),
+                                        List.of(testDirectoryTarget),
+                                        testFolder,
+                                        testFolder,
                                         2
                                 )))
                 )
@@ -362,20 +367,30 @@ public class ControllerApiMoveDirectoryTests {
 
     @Test
     public void moveDirectory_fail_isFrozenDirectorySource() throws Exception {
+        final String testDirectorySource = UUID.randomUUID().toString();
+        final String testDirectoryTarget = UUID.randomUUID().toString();
+
         DirectoryRedis directoryRedisSource = new DirectoryRedis(
                 "login",
                 "ROLE_USER",
-                "testDirectorySource",
-                "testDirectorySource",
-                "testDirectorySource",
+                testDirectorySource,
+                testDirectorySource,
+                testDirectorySource,
                 List.of(UtilsAuthAction.LOGIN));
+        DirectoryRedis directoryRedisTarget = new DirectoryRedis(
+                UtilsAuthAction.LOGIN,
+                "ROLE_USER",
+                testDirectoryTarget,
+                testDirectoryTarget,
+                testDirectoryTarget,
+                new ArrayList<>());
         RightUserFileSystemObjectRedis rightDirectorySource = new RightUserFileSystemObjectRedis(
-                "testDirectorySource" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                testDirectorySource + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
                 List.of(OperationRights.SHOW));
         FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
-                "testDirectorySource");
+                testDirectorySource);
 
-        directoryRedisRepository.save(directoryRedisSource);
+        directoryRedisRepository.saveAll(List.of(directoryRedisSource, directoryRedisTarget));
         frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
         rightUserFileSystemObjectRedisRepository.save(rightDirectorySource);
 
@@ -386,36 +401,38 @@ public class ControllerApiMoveDirectoryTests {
                         .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveDirectoryApi(
-                                        List.of("testDirectorySource"),
-                                        List.of("testDirectorySource"),
+                                        List.of(testDirectorySource),
+                                        List.of(testDirectorySource),
                                         new ArrayList<>(),
                                         new ArrayList<>(),
-                                        "folder",
-                                        "folder",
+                                        testDirectoryTarget,
+                                        testDirectoryTarget,
                                         2
                                 )))
                 )
                 .andExpect(status().isBadRequest());
 
         frozenFileSystemObjectRedisRepository.delete(frozenFileSystemObjectRedis);
-        directoryRedisRepository.delete(directoryRedisSource);
+        directoryRedisRepository.deleteAll(List.of(directoryRedisSource, directoryRedisTarget));
         rightUserFileSystemObjectRedisRepository.delete(rightDirectorySource);
     }
 
     @Test
     public void moveDirectory_fail_isFrozenDirectoryTarget() throws Exception {
+        final String testDirectoryTarget = UUID.randomUUID().toString();
+
         DirectoryRedis directoryRedisSource = new DirectoryRedis(
                 "login",
                 "ROLE_USER",
-                "testDirectoryTarget",
-                "testDirectoryTarget",
-                "testDirectoryTarget",
+                testDirectoryTarget,
+                testDirectoryTarget,
+                testDirectoryTarget,
                 List.of(UtilsAuthAction.LOGIN));
         RightUserFileSystemObjectRedis rightDirectorySource = new RightUserFileSystemObjectRedis(
-                "testDirectoryTarget" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                testDirectoryTarget + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
                 List.of(OperationRights.SHOW));
         FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
-                "testDirectoryTarget");
+                testDirectoryTarget);
 
         directoryRedisRepository.save(directoryRedisSource);
         frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
@@ -430,8 +447,8 @@ public class ControllerApiMoveDirectoryTests {
                                 new DataMoveDirectoryApi(
                                         new ArrayList<>(),
                                         new ArrayList<>(),
-                                        List.of("testDirectoryTarget"),
-                                        List.of("testDirectoryTarget"),
+                                        List.of(testDirectoryTarget),
+                                        List.of(testDirectoryTarget),
                                         "folder",
                                         "folder",
                                         2

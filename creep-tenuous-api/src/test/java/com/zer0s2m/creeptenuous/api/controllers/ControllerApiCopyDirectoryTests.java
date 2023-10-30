@@ -35,6 +35,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -345,9 +346,13 @@ public class ControllerApiCopyDirectoryTests {
 
     @Test
     public void copyDirectory_success_forbidden() throws Exception {
-        final Path testDirectorySource = Path.of(rootPath.getRootPath(), "testDirectory1");
-        final Path testDirectoryTarget = Path.of(rootPath.getRootPath(), "testDirectoryTarget");
-        final Path testFileSource = Path.of(testDirectorySource.toString(), "testFile");
+        final String testDirectorySourceName = UUID.randomUUID().toString();
+        final String testDirectoryTargetName = UUID.randomUUID().toString();
+        final String testFileName = UUID.randomUUID().toString();
+
+        final Path testDirectorySource = Path.of(rootPath.getRootPath(), testDirectorySourceName);
+        final Path testDirectoryTarget = Path.of(rootPath.getRootPath(), testDirectoryTargetName);
+        final Path testFileSource = Path.of(testDirectorySource.toString(), testFileName);
         Files.createDirectory(testDirectorySource);
         Files.createDirectory(testDirectoryTarget);
         Files.createFile(testFileSource);
@@ -355,32 +360,32 @@ public class ControllerApiCopyDirectoryTests {
         DirectoryRedis directoryRedisSource = new DirectoryRedis(
                 "login",
                 "ROLE_USER",
-                "testDirectory1",
-                "testDirectory1",
+                testDirectorySourceName,
+                testDirectorySourceName,
                 testDirectorySource.toString(),
                 List.of(UtilsAuthAction.LOGIN));
         DirectoryRedis directoryRedisTarget = new DirectoryRedis(
                 "login",
                 "ROLE_USER",
-                "testDirectoryTarget",
-                "testDirectoryTarget",
+                testDirectoryTargetName,
+                testDirectoryTargetName,
                 testDirectoryTarget.toString(),
                 List.of(UtilsAuthAction.LOGIN));
         FileRedis fileRedis = new FileRedis(
                 "login",
                 "ROLE_USER",
-                "testFile",
-                "testFile",
+                testFileName,
+                testFileName,
                 testFileSource.toString(),
                 List.of(UtilsAuthAction.LOGIN));
         RightUserFileSystemObjectRedis rightDirectorySource = new RightUserFileSystemObjectRedis(
-                "testDirectory1" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                testDirectorySourceName + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
                 List.of(OperationRights.SHOW, OperationRights.COPY));
         RightUserFileSystemObjectRedis rightDirectoryTarget = new RightUserFileSystemObjectRedis(
-                "testDirectoryTarget" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                testDirectoryTargetName + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
                 List.of(OperationRights.SHOW, OperationRights.COPY));
         RightUserFileSystemObjectRedis rightFileSource = new RightUserFileSystemObjectRedis(
-                "testFile" + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                testFileName + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
                 List.of(OperationRights.SHOW, OperationRights.COPY));
 
         directoryRedisRepository.saveAll(List.of(directoryRedisSource, directoryRedisTarget));
@@ -396,10 +401,10 @@ public class ControllerApiCopyDirectoryTests {
                         .content(objectMapper.writeValueAsString(new DataCopyDirectoryApi(
                                 new ArrayList<>(),
                                 new ArrayList<>(),
-                                List.of("testDirectoryTarget"),
-                                List.of("testDirectoryTarget"),
-                                "testDirectory1",
-                                "testDirectory1",
+                                List.of(testDirectoryTargetName),
+                                List.of(testDirectoryTargetName),
+                                testDirectorySourceName,
+                                testDirectorySourceName,
                                 1
                         )))
                 )

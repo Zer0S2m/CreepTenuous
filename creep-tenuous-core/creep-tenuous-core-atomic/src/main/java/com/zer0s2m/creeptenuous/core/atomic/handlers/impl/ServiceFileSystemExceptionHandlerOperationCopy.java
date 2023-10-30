@@ -61,7 +61,7 @@ public class ServiceFileSystemExceptionHandlerOperationCopy implements ServiceFi
             }
         });
 
-        if (!isEmpty.get()) {
+        if (!isEmpty.get() && !operationsData.isEmpty()) {
             handleException(t, operationsData);
         }
     }
