@@ -90,6 +90,7 @@ public class ControllerApiMoveDirectory implements ControllerApiMoveDirectoryDoc
          * @throws FileObjectIsFrozenException File object is frozen.
          * @throws IOException                 Signals that an I/O exception to some sort has occurred.
          */
+        @SuppressWarnings("unused")
         @AtomicFileSystem(
                 name = "move-directory",
                 handlers = {

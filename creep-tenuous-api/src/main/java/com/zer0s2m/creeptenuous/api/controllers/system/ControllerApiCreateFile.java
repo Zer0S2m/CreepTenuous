@@ -133,6 +133,7 @@ public class ControllerApiCreateFile implements ControllerApiCreateFileDoc {
          *                                              levels.
          */
         @Contract("_, _ -> new")
+        @SuppressWarnings("unused")
         @AtomicFileSystem(
                 name = "create-file",
                 handlers = {

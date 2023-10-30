@@ -123,6 +123,7 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
          *                                              levels.
          */
         @Contract("_, _ -> new")
+        @SuppressWarnings("unused")
         @AtomicFileSystem(
                 name = "create-directory",
                 handlers = {

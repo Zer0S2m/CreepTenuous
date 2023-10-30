@@ -99,6 +99,7 @@ public class ControllerApiCopyDirectory implements ControllerApiCopyDirectoryDoc
          * @throws IOException                 Signals that an I/O exception to some sort has occurred.
          */
         @Contract("_, _ -> new")
+        @SuppressWarnings("unused")
         @AtomicFileSystem(
                 name = "copy-directory",
                 handlers = {
