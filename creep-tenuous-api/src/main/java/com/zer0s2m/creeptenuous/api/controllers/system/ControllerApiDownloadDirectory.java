@@ -10,7 +10,13 @@ import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.common.utils.UtilsDataApi;
+import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationDownload;
+import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectorySelectRedis;
@@ -63,6 +69,9 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
     private final RootPath rootPath = new RootPath();
 
+    private final AtomicFileSystemControllerApiDownloadDirectory atomicFileSystemControllerApiDownloadDirectory =
+            new AtomicFileSystemControllerApiDownloadDirectory();
+
     @Autowired
     public ControllerApiDownloadDirectory(
             ServiceDownloadDirectoryRedis serviceDownloadDirectoryRedis,
@@ -74,20 +83,20 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
     }
 
     /**
-     * Download directory
-     * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceDownloadDirectoryImpl#download(List, String)}</p>
+     * Downloading a directory. Supports atomic file system mode.
+     * <p>Called via {@link AtomicSystemCallManager} - {@link AtomicFileSystemControllerApiDownloadDirectory#download(DataDownloadDirectoryApi, String)}</p>
      *
-     * @param data        directory download data
-     * @param accessToken raw JWT access token
-     * @return zip file
-     * @throws IOException                 if an I/O error occurs or the parent directory does not exist
+     * @param data        Вirectory download data.
+     * @param accessToken Кaw JWT access token.
+     * @return Zip file.
+     * @throws IOException                 Signals that an I/O exception to some sort has occurred.
      * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
      * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
      * @throws InstantiationException      Thrown when an application tries to create an instance of a class
      *                                     using the newInstance method in class {@code Class}.
      * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
-     *                                     tries to reflectively create an instance
-     * @throws FileObjectIsFrozenException file object is frozen
+     *                                     tries to reflectively create an instance.
+     * @throws FileObjectIsFrozenException File object is frozen.
      */
     @Override
     @PostMapping(path = "/directory/download")
@@ -96,80 +105,28 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
             @RequestHeader(name = "Authorization") String accessToken) throws IOException,
             InvocationTargetException, NoSuchMethodException, InstantiationException,
             IllegalAccessException, FileObjectIsFrozenException {
-        serviceManagerRights.setAccessClaims(accessToken);
-        serviceManagerRights.setIsWillBeCreated(false);
-        serviceManagerRights.setIsDirectory(true);
-
-        serviceDownloadDirectoryRedis.setAccessToken(accessToken);
-        serviceDownloadDirectoryRedis.setEnableCheckIsNameDirectory(false);
-        serviceDownloadDirectoryRedis.setIsException(false);
-        boolean isRightsSource = serviceDownloadDirectoryRedis.checkRights(
-                data.parents(),
-                data.systemParents(),
-                null);
-        boolean isRightTarget = serviceDownloadDirectoryRedis.checkRights(data.systemDirectoryName());
-
-        List<String> cloneSystemParents = CloneList.cloneOneLevel(data.systemParents());
-
-        if (!isRightsSource || !isRightTarget) {
-            if (!isRightsSource) {
-                serviceManagerRights.checkRightsByOperation(operationRightsShow, cloneSystemParents);
-
-                boolean isFrozen = serviceDownloadDirectoryRedis.isFrozenFileSystemObject(cloneSystemParents);
-                if (isFrozen) {
-                    throw new FileObjectIsFrozenException();
-                }
-            }
-            if (!isRightTarget) {
-                serviceManagerRights.checkRightByOperationDownloadDirectory(data.systemDirectoryName());
-
-                boolean isFrozen = serviceDownloadDirectoryRedis.isFrozenFileSystemObject(data.systemDirectoryName());
-                if (isFrozen) {
-                    throw new FileObjectIsFrozenException();
-                }
-            }
-        }
-
-        cloneSystemParents.add(data.systemDirectoryName());
-
-        HashMap<String, String> resource = serviceDownloadDirectoryRedis.getResource(
-                WalkDirectoryInfo.walkDirectory(Path.of(buildDirectoryPath.build(cloneSystemParents)))
-                        .stream()
-                        .map(ContainerInfoFileSystemObject::nameFileSystemObject)
-                        .collect(Collectors.toList())
+        return AtomicSystemCallManager.call(
+                atomicFileSystemControllerApiDownloadDirectory,
+                data,
+                accessToken
         );
-
-        serviceDownloadDirectory.setMap(resource);
-
-        Path sourceZipArchive = AtomicSystemCallManager.call(
-                serviceDownloadDirectory,
-                data.systemParents(),
-                data.systemDirectoryName()
-        );
-        StreamingResponseBody responseBody = serviceDownloadDirectory.getZipFileInStream(sourceZipArchive);
-
-        return ResponseEntity
-                .ok()
-                .headers(serviceDownloadDirectorySetHeaders.collectHeaders(sourceZipArchive))
-                .body(responseBody);
     }
 
     /**
-     * Download directory with selected file objects
-     * <p>Called method via {@link AtomicSystemCallManager} -
-     * {@link ServiceDownloadDirectorySelectImpl#download(List)}</p>
+     * Download directory with selected file objects. Supports atomic file system mode.
+     * <p>Called via {@link AtomicSystemCallManager} - {@link AtomicFileSystemControllerApiDownloadDirectory#download(DataDownloadDirectorySelectApi, String)}</p>
      *
-     * @param data        directory download data
-     * @param accessToken raw JWT access token
-     * @return zip file
-     * @throws IOException                 if an I/O error occurs or the parent directory does not exist
+     * @param data        Directory download data.
+     * @param accessToken Raw JWT access token.
+     * @return Zip file.
+     * @throws IOException                 Signals that an I/O exception to some sort has occurred.
      * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
      * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
      * @throws InstantiationException      Thrown when an application tries to create an instance of a class
      *                                     using the newInstance method in class {@code Class}.
      * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
-     *                                     tries to reflectively create an instance
-     * @throws FileObjectIsFrozenException file object is frozen
+     *                                     tries to reflectively create an instance.
+     * @throws FileObjectIsFrozenException File object is frozen.
      */
     @Override
     @PostMapping(path = "/directory/download/select")
@@ -177,59 +134,169 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
             final @Valid @RequestBody @NotNull DataDownloadDirectorySelectApi data,
             @RequestHeader(name = "Authorization") String accessToken) throws IOException, InvocationTargetException,
             NoSuchMethodException, InstantiationException, IllegalAccessException, FileObjectIsFrozenException {
-        serviceManagerRights.setAccessClaims(accessToken);
-        serviceManagerRights.setIsWillBeCreated(false);
+        return AtomicSystemCallManager.call(
+                atomicFileSystemControllerApiDownloadDirectory,
+                data,
+                accessToken
+        );
+    }
 
-        serviceDownloadDirectorySelectRedis.setAccessClaims(accessToken);
-        serviceDownloadDirectorySelectRedis.setEnableCheckIsNameDirectory(false);
-        serviceDownloadDirectorySelectRedis.setIsException(false);
+    @CoreServiceFileSystem(method = "download")
+    public final class AtomicFileSystemControllerApiDownloadDirectory implements AtomicServiceFileSystem {
 
-        List<String> uniqueSystemParents = UtilsDataApi.collectUniqueSystemParentsForDownloadDirectorySelect(
-                data.attached());
-        List<String> uniqueSystemName = UtilsDataApi.collectUniqueSystemNameForDownloadDirectorySelect(
-                data.attached());
-        boolean isRightsSource = serviceDownloadDirectorySelectRedis.checkRights(uniqueSystemParents);
-        boolean isRightsObjects = serviceDownloadDirectorySelectRedis.checkRights(uniqueSystemName);
-        if (!isRightsSource || !isRightsObjects) {
-            if (!isRightsSource) {
-                serviceManagerRights.checkRightsByOperation(operationRightsShow, uniqueSystemParents);
+        /**
+         * Downloading a directory.
+         *
+         * @param data        Вirectory download data.
+         * @param accessToken Кaw JWT access token.
+         * @return Zip file.
+         * @throws FileObjectIsFrozenException File object is frozen.
+         * @throws IOException                 Signals that an I/O exception to some sort has occurred.
+         */
+        @SuppressWarnings("unused")
+        @AtomicFileSystem(
+                name = "download-directory",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                isExceptionMulti = true,
+                                handler = ServiceFileSystemExceptionHandlerOperationDownload.class,
+                                operation = ContextAtomicFileSystem.Operations.DOWNLOAD
+                        )
+                }
+        )
+        public @NotNull ResponseEntity<StreamingResponseBody> download(
+                final @NotNull DataDownloadDirectoryApi data, String accessToken)
+                throws FileObjectIsFrozenException, IOException {
+            serviceManagerRights.setAccessClaims(accessToken);
+            serviceManagerRights.setIsWillBeCreated(false);
+            serviceManagerRights.setIsDirectory(true);
 
-                boolean isFrozen = serviceDownloadDirectorySelectRedis
-                        .isFrozenFileSystemObject(uniqueSystemParents);
-                if (isFrozen) {
-                    throw new FileObjectIsFrozenException();
+            serviceDownloadDirectoryRedis.setAccessToken(accessToken);
+            serviceDownloadDirectoryRedis.setEnableCheckIsNameDirectory(false);
+            serviceDownloadDirectoryRedis.setIsException(false);
+            boolean isRightsSource = serviceDownloadDirectoryRedis.checkRights(
+                    data.parents(),
+                    data.systemParents(),
+                    null);
+            boolean isRightTarget = serviceDownloadDirectoryRedis.checkRights(data.systemDirectoryName());
+
+            List<String> cloneSystemParents = CloneList.cloneOneLevel(data.systemParents());
+
+            if (!isRightsSource || !isRightTarget) {
+                if (!isRightsSource) {
+                    serviceManagerRights.checkRightsByOperation(operationRightsShow, cloneSystemParents);
+
+                    boolean isFrozen = serviceDownloadDirectoryRedis.isFrozenFileSystemObject(cloneSystemParents);
+                    if (isFrozen) {
+                        throw new FileObjectIsFrozenException();
+                    }
+                }
+                if (!isRightTarget) {
+                    serviceManagerRights.checkRightByOperationDownloadDirectory(data.systemDirectoryName());
+
+                    boolean isFrozen = serviceDownloadDirectoryRedis.isFrozenFileSystemObject(data.systemDirectoryName());
+                    if (isFrozen) {
+                        throw new FileObjectIsFrozenException();
+                    }
                 }
             }
-            if (!isRightsObjects) {
-                serviceManagerRights.checkRightsByOperation(operationRights, uniqueSystemName);
 
-                boolean isFrozen = serviceDownloadDirectorySelectRedis
-                        .isFrozenFileSystemObject(uniqueSystemName);
-                if (isFrozen) {
-                    throw new FileObjectIsFrozenException();
-                }
-            }
+            cloneSystemParents.add(data.systemDirectoryName());
+
+            HashMap<String, String> resource = serviceDownloadDirectoryRedis.getResource(
+                    WalkDirectoryInfo.walkDirectory(Path.of(buildDirectoryPath.build(cloneSystemParents)))
+                            .stream()
+                            .map(ContainerInfoFileSystemObject::nameFileSystemObject)
+                            .collect(Collectors.toList())
+            );
+
+            serviceDownloadDirectory.setMap(resource);
+
+            Path sourceZipArchive = serviceDownloadDirectory.download(
+                    data.systemParents(), data.systemDirectoryName());
+            StreamingResponseBody responseBody = serviceDownloadDirectory.getZipFileInStream(sourceZipArchive);
+
+            return ResponseEntity
+                    .ok()
+                    .headers(serviceDownloadDirectorySetHeaders.collectHeaders(sourceZipArchive))
+                    .body(responseBody);
         }
 
-        HashMap<String, String> resource = serviceDownloadDirectoryRedis.getResource(
-                WalkDirectoryInfo.walkDirectory(Path.of(rootPath.getRootPath()))
-                        .stream()
-                        .map(ContainerInfoFileSystemObject::nameFileSystemObject)
-                        .collect(Collectors.toList())
-        );
+        /**
+         * Download directory with selected file objects.
+         *
+         * @param data        Directory download data.
+         * @param accessToken Raw JWT access token.
+         * @return Zip file.
+         * @throws FileObjectIsFrozenException File object is frozen.
+         * @throws IOException                 Signals that an I/O exception to some sort has occurred.
+         */
+        @SuppressWarnings("unused")
+        @AtomicFileSystem(
+                name = "download-directory-select",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                isExceptionMulti = true,
+                                handler = ServiceFileSystemExceptionHandlerOperationDownload.class,
+                                operation = ContextAtomicFileSystem.Operations.DOWNLOAD
+                        )
+                }
+        )
+        public @NotNull ResponseEntity<StreamingResponseBody> download(
+                final @NotNull DataDownloadDirectorySelectApi data, String accessToken)
+                throws FileObjectIsFrozenException, IOException {
+            serviceManagerRights.setAccessClaims(accessToken);
+            serviceManagerRights.setIsWillBeCreated(false);
 
-        serviceDownloadDirectorySelect.setMap(resource);
+            serviceDownloadDirectorySelectRedis.setAccessClaims(accessToken);
+            serviceDownloadDirectorySelectRedis.setEnableCheckIsNameDirectory(false);
+            serviceDownloadDirectorySelectRedis.setIsException(false);
 
-        Path sourceZipArchive = AtomicSystemCallManager.call(
-                serviceDownloadDirectorySelect,
-                data.attached()
-        );
-        StreamingResponseBody responseBody = serviceDownloadDirectorySelect.getZipFileInStream(sourceZipArchive);
+            List<String> uniqueSystemParents = UtilsDataApi.collectUniqueSystemParentsForDownloadDirectorySelect(
+                    data.attached());
+            List<String> uniqueSystemName = UtilsDataApi.collectUniqueSystemNameForDownloadDirectorySelect(
+                    data.attached());
+            boolean isRightsSource = serviceDownloadDirectorySelectRedis.checkRights(uniqueSystemParents);
+            boolean isRightsObjects = serviceDownloadDirectorySelectRedis.checkRights(uniqueSystemName);
+            if (!isRightsSource || !isRightsObjects) {
+                if (!isRightsSource) {
+                    serviceManagerRights.checkRightsByOperation(operationRightsShow, uniqueSystemParents);
 
-        return ResponseEntity
-                .ok()
-                .headers(serviceDownloadDirectorySetHeaders.collectHeaders(sourceZipArchive))
-                .body(responseBody);
+                    boolean isFrozen = serviceDownloadDirectorySelectRedis
+                            .isFrozenFileSystemObject(uniqueSystemParents);
+                    if (isFrozen) {
+                        throw new FileObjectIsFrozenException();
+                    }
+                }
+                if (!isRightsObjects) {
+                    serviceManagerRights.checkRightsByOperation(operationRights, uniqueSystemName);
+
+                    boolean isFrozen = serviceDownloadDirectorySelectRedis
+                            .isFrozenFileSystemObject(uniqueSystemName);
+                    if (isFrozen) {
+                        throw new FileObjectIsFrozenException();
+                    }
+                }
+            }
+
+            HashMap<String, String> resource = serviceDownloadDirectoryRedis.getResource(
+                    WalkDirectoryInfo.walkDirectory(Path.of(rootPath.getRootPath()))
+                            .stream()
+                            .map(ContainerInfoFileSystemObject::nameFileSystemObject)
+                            .collect(Collectors.toList())
+            );
+
+            serviceDownloadDirectorySelect.setMap(resource);
+
+            Path sourceZipArchive = serviceDownloadDirectorySelect.download(data.attached());
+            StreamingResponseBody responseBody = serviceDownloadDirectorySelect.getZipFileInStream(sourceZipArchive);
+
+            return ResponseEntity
+                    .ok()
+                    .headers(serviceDownloadDirectorySetHeaders.collectHeaders(sourceZipArchive))
+                    .body(responseBody);
+        }
+
     }
 
 }
