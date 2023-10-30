@@ -70,6 +70,7 @@ public class ServiceUploadDirectoryImpl implements ServiceUploadDirectory {
      * @param zipFile zip archive
      * @return source zip file
      */
+    @Override
     public Path getNewPathZipFile(Path path, @NotNull MultipartFile zipFile) throws IOException {
         Path newPathZipFile = Path.of(String.valueOf(path), zipFile.getOriginalFilename());
         zipFile.transferTo(newPathZipFile);
@@ -82,6 +83,7 @@ public class ServiceUploadDirectoryImpl implements ServiceUploadDirectory {
      * @return system path
      * @throws NoSuchFileException no file object in file system
      */
+    @Override
     public Path getPath(List<String> systemParents) throws NoSuchFileException {
         return Path.of(buildDirectoryPath.build(systemParents));
     }
