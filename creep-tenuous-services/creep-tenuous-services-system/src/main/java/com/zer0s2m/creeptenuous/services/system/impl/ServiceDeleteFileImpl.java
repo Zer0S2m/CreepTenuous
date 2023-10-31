@@ -9,6 +9,8 @@ import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationDelete;
 import com.zer0s2m.creeptenuous.services.system.ServiceDeleteFile;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -21,6 +23,8 @@ import java.util.List;
 @ServiceFileSystem("service-delete-file")
 @CoreServiceFileSystem(method = "delete")
 public class ServiceDeleteFileImpl implements ServiceDeleteFile {
+
+    private final Logger logger = LogManager.getLogger(ServiceDeleteFile.class);
 
     private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
@@ -44,6 +48,12 @@ public class ServiceDeleteFileImpl implements ServiceDeleteFile {
     )
     public Path delete(String systemNameFile, List<String> systemParents) throws IOException {
         Path pathFile = Paths.get(buildDirectoryPath.build(systemParents), systemNameFile);
+
+        logger.info(String.format(
+                "Deleting a file: source [%s]",
+                pathFile
+        ));
+
         FilesContextAtomic.delete(pathFile);
         return pathFile;
     }
@@ -67,6 +77,11 @@ public class ServiceDeleteFileImpl implements ServiceDeleteFile {
             }
     )
     public Path delete(Path source) throws IOException {
+        logger.info(String.format(
+                "Deleting a file: source [%s]",
+                source
+        ));
+
         FilesContextAtomic.delete(source);
         return source;
     }

@@ -11,6 +11,8 @@ import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExcep
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.ServiceCopyFile;
 import com.zer0s2m.creeptenuous.services.system.utils.UtilsFiles;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -27,6 +29,8 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 @ServiceFileSystem("service-copy-file")
 @CoreServiceFileSystem(method = "copy")
 public class ServiceCopyFileImpl implements ServiceCopyFile  {
+
+    private final Logger logger = LogManager.getLogger(ServiceCopyFile.class);
 
     private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
@@ -105,6 +109,11 @@ public class ServiceCopyFileImpl implements ServiceCopyFile  {
             }
     )
     public ContainerDataCopyFile copy(Path source, Path target) throws IOException {
+        logger.info(String.format(
+                "Copying a file: source [%s] target [%s]",
+                source, target
+        ));
+
         Path newTarget = FilesContextAtomic.copy(source, target, REPLACE_EXISTING);
         return new ContainerDataCopyFile(
             newTarget, newTarget.getFileName().toString()

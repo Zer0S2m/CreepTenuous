@@ -16,6 +16,8 @@ import com.zer0s2m.creeptenuous.services.system.ServiceCopyDirectory;
 import com.zer0s2m.creeptenuous.core.atomic.services.Distribution;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.utils.UtilsFiles;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -29,6 +31,8 @@ import java.util.stream.Stream;
 @ServiceFileSystem("service-copy-directory")
 @CoreServiceFileSystem(method = "copy")
 public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory {
+
+    private final Logger logger = LogManager.getLogger(ServiceCopyDirectory.class);
 
     private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
@@ -66,7 +70,12 @@ public class ServiceCopyDirectoryImpl implements ServiceCopyDirectory {
     public List<ContainerInfoFileSystemObject> copy(List<String> systemParents, List<String> systemToParents,
                                                     String systemNameDirectory, Integer method) throws IOException {
         Path source = Paths.get(buildDirectoryPath.build(systemParents), systemNameDirectory);
-        this.target = Paths.get(buildDirectoryPath.build(systemToParents));
+        target = Paths.get(buildDirectoryPath.build(systemToParents));
+
+        logger.info(String.format(
+                "Copying a directory: source [%s] target [%s]",
+                source, target
+        ));
 
         try (Stream<Path> stream = Files.walk(source)) {
             stream.forEach(targetWalk -> {

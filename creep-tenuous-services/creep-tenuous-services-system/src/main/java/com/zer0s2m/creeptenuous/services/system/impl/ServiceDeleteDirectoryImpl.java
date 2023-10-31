@@ -9,6 +9,8 @@ import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationDelete;
 import com.zer0s2m.creeptenuous.services.system.ServiceDeleteDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,6 +26,8 @@ import java.util.stream.Stream;
 @ServiceFileSystem("delete-directory")
 @CoreServiceFileSystem(method = "delete")
 public class ServiceDeleteDirectoryImpl implements ServiceDeleteDirectory {
+
+    private final Logger logger = LogManager.getLogger(ServiceDeleteDirectory.class);
 
     private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
@@ -46,6 +50,11 @@ public class ServiceDeleteDirectoryImpl implements ServiceDeleteDirectory {
     )
     public void delete(List<String> systemParents, String systemName) throws IOException {
         Path path = Paths.get(buildDirectoryPath.build(systemParents), systemName);
+
+        logger.info(String.format(
+                "Deleting a directory: source [%s]",
+                path
+        ));
 
         if (Files.isDirectory(path)) {
             try (Stream<Path> pathStream = Files.walk(path)) {
@@ -75,6 +84,11 @@ public class ServiceDeleteDirectoryImpl implements ServiceDeleteDirectory {
             }
     )
     public void delete(Path source) throws IOException {
+        logger.info(String.format(
+                "Deleting a directory: source [%s]",
+                source
+        ));
+
         if (Files.isDirectory(source)) {
             try (Stream<Path> pathStream = Files.walk(source)) {
                 pathStream

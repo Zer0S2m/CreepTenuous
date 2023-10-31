@@ -11,6 +11,8 @@ import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExcep
 import com.zer0s2m.creeptenuous.core.atomic.services.Distribution;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.ServiceCreateDirectory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -22,6 +24,8 @@ import java.util.List;
 @ServiceFileSystem("service-create-directory")
 @CoreServiceFileSystem(method = "create")
 public class ServiceCreateDirectoryImpl implements ServiceCreateDirectory {
+
+    private final Logger logger = LogManager.getLogger(ServiceCreateDirectory.class);
 
     private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
@@ -51,6 +55,12 @@ public class ServiceCreateDirectoryImpl implements ServiceCreateDirectory {
         Path pathNewDirectory = Path.of(path.toString(), newNameDirectory);
 
         checkDirectory(pathNewDirectory);
+
+        logger.info(String.format(
+                "Creating a directory: source [%s] system name [%s]",
+                path, newNameDirectory
+        ));
+
         FilesContextAtomic.createDirectory(pathNewDirectory);
 
         return new ContainerDataCreateDirectory(nameDirectory, newNameDirectory, pathNewDirectory);

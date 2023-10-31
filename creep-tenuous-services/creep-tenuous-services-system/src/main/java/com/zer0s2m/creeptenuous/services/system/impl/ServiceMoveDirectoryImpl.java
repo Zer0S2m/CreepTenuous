@@ -14,6 +14,8 @@ import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExcep
 import com.zer0s2m.creeptenuous.services.system.ServiceMoveDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -27,6 +29,8 @@ import java.util.Objects;
 @ServiceFileSystem("service-move-directory")
 @CoreServiceFileSystem(method = "move")
 public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory {
+
+    private final Logger logger = LogManager.getLogger(ServiceMoveDirectory.class);
 
     private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
@@ -59,6 +63,12 @@ public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory {
         buildDirectoryPath.checkDirectory(currentPath);
         Path createdNewPath = builderDirectory(systemToParents, systemNameDirectory, method);
         List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(currentPath, createdNewPath);
+
+        logger.info(String.format(
+                "Moving a directory: source [%s] target [%s]",
+                currentPath, createdNewPath
+        ));
+
         return new ContainerDataMoveDirectory(
                 FilesContextAtomic.move(currentPath, createdNewPath, StandardCopyOption.REPLACE_EXISTING),
                 currentPath,

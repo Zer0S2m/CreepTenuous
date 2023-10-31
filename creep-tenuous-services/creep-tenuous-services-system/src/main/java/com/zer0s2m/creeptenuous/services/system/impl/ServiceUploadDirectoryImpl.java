@@ -53,6 +53,11 @@ public class ServiceUploadDirectoryImpl implements ServiceUploadDirectory {
     public ResponseUploadDirectoryApi upload(Path systemPath, Path source) throws IOException {
         final ContainerUploadFile container = new ContainerUploadFile();
 
+        logger.info(String.format(
+                "Uploading a directory (zip archive): source [%s] output [%s]",
+                source, systemPath
+        ));
+
         try {
             container.setFile(source);
             final List<ContainerDataUploadFileSystemObject> finalData = unpacking(
