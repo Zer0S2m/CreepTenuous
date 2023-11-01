@@ -16,6 +16,7 @@ import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
 import com.zer0s2m.creeptenuous.security.jwt.services.JwtService;
 import com.zer0s2m.creeptenuous.security.jwt.domain.JwtAuthentication;
 import com.zer0s2m.creeptenuous.security.jwt.domain.JwtRedisData;
+import com.zer0s2m.creeptenuous.services.security.GeneratePasswordImpl;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -37,7 +38,7 @@ public class JwtServiceImpl implements JwtService {
 
     final private UserRepository userRepository;
 
-    final private GeneratePassword generatePassword;
+    final private GeneratePassword generatePassword = new GeneratePasswordImpl();
 
     final private ServiceJwtRedis redisService;
 

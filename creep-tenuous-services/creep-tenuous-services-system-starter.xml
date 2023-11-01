@@ -4,42 +4,32 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.zer0s2m</groupId>
-    <artifactId>creep-tenuous-redis</artifactId>
+    <artifactId>creep-tenuous</artifactId>
     <version>0.0.11-SNAPSHOT</version>
   </parent>
-  <artifactId>creep-tenuous-redis-repository</artifactId>
+  <artifactId>creep-tenuous-services-system-starter</artifactId>
   <version>0.0.11-SNAPSHOT</version>
-  <name>creep-tenuous-redis-repository</name>
-  <description>creep-tenuous-redis-repository</description>
+  <name>creep-tenuous-services-system-starter</name>
+  <description>Starter package for interacting with the file system</description>
   <properties>
     <java.version>21</java.version>
   </properties>
   <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-redis</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-common</artifactId>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
-      <artifactId>creep-tenuous-redis-models</artifactId>
+      <artifactId>creep-tenuous-services-system</artifactId>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
-      <artifactId>creep-tenuous-starter-test</artifactId>
-      <scope>test</scope>
+      <artifactId>creep-tenuous-core-atomic</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-core-balancer</artifactId>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
 </project>

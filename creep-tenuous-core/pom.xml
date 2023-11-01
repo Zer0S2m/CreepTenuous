@@ -10,7 +10,7 @@
   <artifactId>creep-tenuous-core</artifactId>
   <version>0.0.11-SNAPSHOT</version>
   <name>creep-tenuous-core</name>
-  <description>creep-tenuous-core</description>
+  <description>System kernel for managing the atomic mode of the file system and balancing file objects</description>
   <packaging>pom</packaging>
   <properties>
     <java.version>21</java.version>

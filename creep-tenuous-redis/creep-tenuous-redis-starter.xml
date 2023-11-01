@@ -4,25 +4,32 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.zer0s2m</groupId>
-    <artifactId>creep-tenuous-services</artifactId>
+    <artifactId>creep-tenuous</artifactId>
     <version>0.0.11-SNAPSHOT</version>
   </parent>
-  <artifactId>creep-tenuous-services-security</artifactId>
+  <artifactId>creep-tenuous-redis-starter</artifactId>
   <version>0.0.11-SNAPSHOT</version>
-  <name>creep-tenuous-services-security</name>
-  <description>creep-tenuous-services-security</description>
+  <name>creep-tenuous-redis-starter</name>
+  <description>Starter package for interacting with Redis</description>
   <properties>
     <java.version>21</java.version>
   </properties>
   <dependencies>
     <dependency>
-      <groupId>de.mkammerer</groupId>
-      <artifactId>argon2-jvm-nolibs</artifactId>
-      <version>2.11</version>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-redis-events</artifactId>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
-      <artifactId>creep-tenuous-security</artifactId>
+      <artifactId>creep-tenuous-redis-models</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-redis-repository</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-redis-services</artifactId>
     </dependency>
   </dependencies>
 </project>
