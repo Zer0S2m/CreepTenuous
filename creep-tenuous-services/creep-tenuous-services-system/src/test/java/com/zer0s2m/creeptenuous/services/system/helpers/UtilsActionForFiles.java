@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface UtilsActionForFiles {
+
     static void deleteFileAndWriteLog(Path path, Logger logger) throws IOException {
         logger.info("Is deleted file or folder for tests: " + Files.deleteIfExists(path) + " (" + path + ")");
     }

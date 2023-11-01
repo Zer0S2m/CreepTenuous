@@ -2,6 +2,7 @@ package com.zer0s2m.creeptenuous.models.common;
 
 import com.zer0s2m.creeptenuous.models.user.User;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.UUID;
 
@@ -9,6 +10,7 @@ import java.util.UUID;
 @Table(name = "\"shortcuts\"")
 public class ShortcutFileSystemObject {
 
+    @Getter
     @Id
     @Column(name = "id")
     @SequenceGenerator(
@@ -23,6 +25,7 @@ public class ShortcutFileSystemObject {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    @Getter
     @Column(name = "attached_file_system_object")
     private UUID attachedFileSystemObject;
 
@@ -38,14 +41,6 @@ public class ShortcutFileSystemObject {
         this.user = user;
         this.attachedFileSystemObject = attachedFileSystemObject;
         this.toAttachedFileSystemObject = toAttachedFileSystemObject;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public UUID getAttachedFileSystemObject() {
-        return attachedFileSystemObject;
     }
 
 }

@@ -1,7 +1,9 @@
 package com.zer0s2m.creeptenuous.common.exceptions.messages;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public class ExceptionAccountIsBlockedMsg {
 
     private final String message;
@@ -10,14 +12,6 @@ public class ExceptionAccountIsBlockedMsg {
 
     public ExceptionAccountIsBlockedMsg(String message) {
         this.message = message;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public Integer getStatus() {
-        return status;
     }
 
 }

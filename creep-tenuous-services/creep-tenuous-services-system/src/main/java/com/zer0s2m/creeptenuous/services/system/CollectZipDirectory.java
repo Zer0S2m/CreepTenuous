@@ -41,7 +41,7 @@ public interface CollectZipDirectory {
         String pathToZip = source.getParent().toString();
         String realPathToZip;
 
-        if (map != null && map.size() > 0) {
+        if (map != null && !map.isEmpty()) {
             realPathToZip = Paths.get(
                     pathToZip, map.get(source.getFileName().toString()) + Directory.EXTENSION_FILE_ZIP.get()
             ).toString();
@@ -131,7 +131,7 @@ public interface CollectZipDirectory {
     private String buildRealNameSystemObject(String rawPath, HashMap<String, String> map) {
         if (map == null) {
             return rawPath;
-        } else if (map.size() == 0) {
+        } else if (map.isEmpty()) {
             return rawPath;
         }
 

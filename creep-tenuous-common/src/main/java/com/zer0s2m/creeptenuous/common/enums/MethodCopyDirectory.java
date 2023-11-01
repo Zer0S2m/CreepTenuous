@@ -1,5 +1,8 @@
 package com.zer0s2m.creeptenuous.common.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum MethodCopyDirectory {
 
     FOLDER(1),
@@ -10,10 +13,6 @@ public enum MethodCopyDirectory {
 
     MethodCopyDirectory(Integer method) {
         this.method = method;
-    }
-
-    public Integer getMethod() {
-        return method;
     }
 
 }

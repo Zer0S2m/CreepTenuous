@@ -8,12 +8,12 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationCopy;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.ServiceCopyFile;
 import com.zer0s2m.creeptenuous.services.system.utils.UtilsFiles;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -28,14 +28,11 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  */
 @ServiceFileSystem("service-copy-file")
 @CoreServiceFileSystem(method = "copy")
-public class ServiceCopyFileImpl implements ServiceCopyFile, AtomicServiceFileSystem {
+public class ServiceCopyFileImpl implements ServiceCopyFile  {
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
+    private final Logger logger = LogManager.getLogger(ServiceCopyFile.class);
 
-    @Autowired
-    public ServiceCopyFileImpl(ServiceBuildDirectoryPath buildDirectoryPath) {
-        this.buildDirectoryPath = buildDirectoryPath;
-    }
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     /**
      * Copy file
@@ -112,6 +109,11 @@ public class ServiceCopyFileImpl implements ServiceCopyFile, AtomicServiceFileSy
             }
     )
     public ContainerDataCopyFile copy(Path source, Path target) throws IOException {
+        logger.info(String.format(
+                "Copying a file: source [%s] target [%s]",
+                source, target
+        ));
+
         Path newTarget = FilesContextAtomic.copy(source, target, REPLACE_EXISTING);
         return new ContainerDataCopyFile(
             newTarget, newTarget.getFileName().toString()

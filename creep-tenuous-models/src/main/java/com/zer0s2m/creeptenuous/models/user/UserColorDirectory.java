@@ -1,6 +1,8 @@
 package com.zer0s2m.creeptenuous.models.user;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
@@ -9,6 +11,7 @@ import java.util.UUID;
 public class UserColorDirectory {
 
     @Id
+    @Getter
     @SequenceGenerator(
             name = "UserColorDirectoriesSequence",
             sequenceName = "user_color_directories_id_seq",
@@ -22,10 +25,13 @@ public class UserColorDirectory {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    @Getter
+    @Setter
     @ManyToOne()
     @JoinColumn(name = "user_color_id", referencedColumnName = "id")
     private UserColor color;
 
+    @Getter
     @Column(name = "directory")
     private UUID directory;
 
@@ -36,18 +42,6 @@ public class UserColorDirectory {
         this.user = user;
         this.color = color;
         this.directory = directory;
-    }
-
-    public UserColor getColor() {
-        return color;
-    }
-
-    public void setColor(UserColor color) {
-        this.color = color;
-    }
-
-    public UUID getDirectory() {
-        return directory;
     }
 
 }

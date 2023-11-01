@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCopyFile;
+import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * File copy service
  */
-public interface ServiceCopyFile {
+public interface ServiceCopyFile extends AtomicServiceFileSystem {
 
     /**
      * Copy file

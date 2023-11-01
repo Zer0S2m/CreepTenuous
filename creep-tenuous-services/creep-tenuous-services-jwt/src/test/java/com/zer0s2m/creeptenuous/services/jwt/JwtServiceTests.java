@@ -12,6 +12,7 @@ import com.zer0s2m.creeptenuous.security.jwt.exceptions.NoValidJwtRefreshTokenEx
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtResponse;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtUserRequest;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
+import com.zer0s2m.creeptenuous.security.services.GeneratePassword;
 import com.zer0s2m.creeptenuous.services.redis.jwt.ServiceJwtRedisImpl;
 import com.zer0s2m.creeptenuous.services.security.GeneratePasswordImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagService;
@@ -31,8 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
         JwtRedisRepository.class,
         JwtServiceImpl.class,
         JwtProvider.class,
-        ServiceJwtRedisImpl.class,
-        GeneratePasswordImpl.class
+        ServiceJwtRedisImpl.class
 })
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagService
@@ -54,8 +54,7 @@ public class JwtServiceTests {
     @Autowired
     private ServiceJwtRedisImpl redisService;
 
-    @Autowired
-    private GeneratePasswordImpl generatePassword;
+    private final GeneratePassword generatePassword = new GeneratePasswordImpl();
 
     User RECORD_USER = new User(
             "test_login",

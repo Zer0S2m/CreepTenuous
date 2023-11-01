@@ -34,6 +34,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -51,11 +52,9 @@ public class ControllerApiMoveFileTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
-    @Autowired
-    private RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     @Autowired
     private DirectoryRedisRepository directoryRedisRepository;
@@ -187,6 +186,8 @@ public class ControllerApiMoveFileTests {
     @Test
     @DisplayName("Failed moving file")
     public void moveFile_fail_notValidParents() throws Exception {
+        final String fileName = UUID.randomUUID().toString();
+
         this.mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/v1/file/move")
                         .accept(MediaType.APPLICATION_JSON)
@@ -194,8 +195,8 @@ public class ControllerApiMoveFileTests {
                         .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(
                                 new DataMoveFileApi(
-                                        "testFile.txt",
-                                        "testFile.txt",
+                                        fileName,
+                                        fileName,
                                         null,
                                         null,
                                         new ArrayList<>(),
@@ -396,7 +397,7 @@ public class ControllerApiMoveFileTests {
 
     @Test
     public void moveOneFile_success_forbidden() throws Exception {
-        final String testDirectory = "testDirectory";
+        final String testDirectory = UUID.randomUUID().toString();
         final Path testDirectoryPath = Path.of(rootPath.getRootPath(), testDirectory);
         final Path testFilePath = Path.of(rootPath.getRootPath(), testFile1);
 
@@ -514,7 +515,7 @@ public class ControllerApiMoveFileTests {
 
     @Test
     public void moveMoreOneFile_success_forbidden() throws Exception {
-        final String testDirectory = "testDirectory";
+        final String testDirectory = UUID.randomUUID().toString();
         final Path testDirectoryPath = Path.of(rootPath.getRootPath(), testDirectory);
         final Path testFilePath = Path.of(rootPath.getRootPath(), testFile1);
 

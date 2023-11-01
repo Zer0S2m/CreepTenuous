@@ -11,12 +11,12 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationMove;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.ServiceMoveDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -28,17 +28,13 @@ import java.util.Objects;
  */
 @ServiceFileSystem("service-move-directory")
 @CoreServiceFileSystem(method = "move")
-public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory, AtomicServiceFileSystem {
+public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory {
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
+    private final Logger logger = LogManager.getLogger(ServiceMoveDirectory.class);
 
-    private final RootPath rootPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
-    @Autowired
-    public ServiceMoveDirectoryImpl(ServiceBuildDirectoryPath buildDirectoryPath, RootPath rootPath) {
-        this.buildDirectoryPath = buildDirectoryPath;
-        this.rootPath = rootPath;
-    }
+    private final RootPath rootPath = new RootPath();
 
     /**
      * Move directory
@@ -67,6 +63,12 @@ public class ServiceMoveDirectoryImpl implements ServiceMoveDirectory, AtomicSer
         buildDirectoryPath.checkDirectory(currentPath);
         Path createdNewPath = builderDirectory(systemToParents, systemNameDirectory, method);
         List<ContainerInfoFileSystemObject> attached = WalkDirectoryInfo.walkDirectory(currentPath, createdNewPath);
+
+        logger.info(String.format(
+                "Moving a directory: source [%s] target [%s]",
+                currentPath, createdNewPath
+        ));
+
         return new ContainerDataMoveDirectory(
                 FilesContextAtomic.move(currentPath, createdNewPath, StandardCopyOption.REPLACE_EXISTING),
                 currentPath,

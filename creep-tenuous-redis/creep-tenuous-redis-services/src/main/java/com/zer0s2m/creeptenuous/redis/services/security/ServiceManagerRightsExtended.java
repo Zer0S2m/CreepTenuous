@@ -14,7 +14,7 @@ public interface ServiceManagerRightsExtended {
     /**
      * Checking permissions to perform some actions on a certain file object - operation {@link OperationRights#DELETE}
      * @param fileSystemObject file system object
-     * @throws IOException signals that an I/O exception of some sort has occurred
+     * @throws IOException signals that an I/O exception to some sort has occurred
      * @throws NoRightsRedisException Insufficient rights to perform the operation
      */
     void checkRightByOperationDeleteDirectory(String fileSystemObject) throws IOException, NoRightsRedisException;
@@ -22,7 +22,7 @@ public interface ServiceManagerRightsExtended {
     /**
      * Checking permissions to perform some actions on a certain file object - operation {@link OperationRights#MOVE}
      * @param fileSystemObject file system object
-     * @throws IOException signals that an I/O exception of some sort has occurred
+     * @throws IOException signals that an I/O exception to some sort has occurred
      * @throws NoRightsRedisException Insufficient rights to perform the operation
      */
     void checkRightByOperationMoveDirectory(String fileSystemObject) throws IOException, NoRightsRedisException;
@@ -30,7 +30,7 @@ public interface ServiceManagerRightsExtended {
     /**
      * Checking permissions to perform some actions on a certain file object - operation {@link OperationRights#COPY}
      * @param fileSystemObject file system object
-     * @throws IOException signals that an I/O exception of some sort has occurred
+     * @throws IOException signals that an I/O exception to some sort has occurred
      * @throws NoRightsRedisException Insufficient rights to perform the operation
      */
     void checkRightByOperationCopyDirectory(String fileSystemObject) throws IOException, NoRightsRedisException;
@@ -39,7 +39,7 @@ public interface ServiceManagerRightsExtended {
      * Checking permissions to perform some actions on a certain file object - operation
      * {@link OperationRights#DOWNLOAD}
      * @param fileSystemObject file system object
-     * @throws IOException signals that an I/O exception of some sort has occurred
+     * @throws IOException signals that an I/O exception to some sort has occurred
      * @throws NoRightsRedisException Insufficient rights to perform the operation
      */
     void checkRightByOperationDownloadDirectory(String fileSystemObject) throws IOException, NoRightsRedisException;

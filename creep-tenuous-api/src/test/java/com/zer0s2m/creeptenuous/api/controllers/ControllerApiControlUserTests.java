@@ -7,6 +7,7 @@ import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtUserRequest;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
+import com.zer0s2m.creeptenuous.security.services.GeneratePassword;
 import com.zer0s2m.creeptenuous.services.security.GeneratePasswordImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import org.junit.jupiter.api.Assertions;
@@ -43,8 +44,7 @@ public class ControllerApiControlUserTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private GeneratePasswordImpl generatePassword;
+    private final GeneratePassword generatePassword = new GeneratePasswordImpl();
 
     User RECORD_CREATE_USER = new User(
             "test_admin",

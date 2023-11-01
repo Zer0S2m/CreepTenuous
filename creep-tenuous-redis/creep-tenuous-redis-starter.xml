@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.zer0s2m</groupId>
+    <artifactId>creep-tenuous</artifactId>
+    <version>0.0.11-SNAPSHOT</version>
+  </parent>
+  <artifactId>creep-tenuous-redis-starter</artifactId>
+  <version>0.0.11-SNAPSHOT</version>
+  <name>creep-tenuous-redis-starter</name>
+  <description>Starter package for interacting with Redis</description>
+  <properties>
+    <java.version>21</java.version>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-redis-events</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-redis-models</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-redis-repository</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-redis-services</artifactId>
+    </dependency>
+  </dependencies>
+</project>

@@ -235,7 +235,7 @@ public class BaseServiceFileSystemRedisManagerRightsAccessImpl
     /**
      * Returns whether an entity with the given id exists.
      * @param id id file system object. Must not be {@literal null}.
-     * @return is exists
+     * @return is existing
      */
     @Override
     public boolean existsById(String id) {

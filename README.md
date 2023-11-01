@@ -97,6 +97,7 @@ export CT_IS_INTEGRATION_IMPLANTS=true
 | **`CT_POSTGRES_DB`**             | Database name                                                                                                                     | `my_db`          |
 | **`CT_ROOT_PATH`**               | Primary location of files for distribution                                                                                        | `/path`          |
 | **`CT_DIRECTORY_AVATARS`**       | The main location of uploaded avatars for users. <br/>Default - `/var/www/creep-tenuous/avatars`                                  | `/path`          |
+| **`CT_MODE`**                    | System startup mode. `dev` or `prod`                                                                                              | `dev`            |
 | **`CT_SECRET_ACCESS`**           | Secret key for creating jwt tokens of type - access                                                                               | `secret-key`     |
 | **`CT_SECRET_REFRESH`**          | Secret key for creating jwt tokens of type - refresh                                                                              | `secret-key`     |
 | **`CT_IS_INTEGRATION_IMPLANTS`** | The main parameter for connecting module integration is - [CreepTenuousImplants](https://github.com/Zer0S2m/CreepTenuousImplants) | `true`           |

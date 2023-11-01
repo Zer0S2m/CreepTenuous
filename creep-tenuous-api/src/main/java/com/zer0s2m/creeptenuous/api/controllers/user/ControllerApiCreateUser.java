@@ -8,6 +8,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.UserAlreadyExistException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.UserAlreadyExistMsg;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateDirectoryRedis;
+import com.zer0s2m.creeptenuous.services.system.ServiceCreateDirectory;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateDirectoryImpl;
 import com.zer0s2m.creeptenuous.services.user.ServiceCreateUser;
 import jakarta.annotation.security.RolesAllowed;
@@ -27,16 +28,14 @@ public class ControllerApiCreateUser implements ControllerApiCreateUserDoc {
 
     private final ServiceCreateUser createUser;
 
-    private final ServiceCreateDirectoryImpl serviceCreateDirectory;
+    private final ServiceCreateDirectory serviceCreateDirectory = new ServiceCreateDirectoryImpl();
 
     private final ServiceCreateDirectoryRedis serviceCreateDirectoryRedis;
 
     @Autowired
     public ControllerApiCreateUser(ServiceCreateUser createUser,
-                                   ServiceCreateDirectoryImpl serviceCreateDirectory,
                                    ServiceCreateDirectoryRedis serviceCreateDirectoryRedis) {
         this.createUser = createUser;
-        this.serviceCreateDirectory = serviceCreateDirectory;
         this.serviceCreateDirectoryRedis = serviceCreateDirectoryRedis;
     }
 

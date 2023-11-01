@@ -6,6 +6,7 @@ import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.security.services.GeneratePassword;
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import com.zer0s2m.creeptenuous.common.enums.UserAlready;
+import com.zer0s2m.creeptenuous.services.security.GeneratePasswordImpl;
 import com.zer0s2m.creeptenuous.services.user.ServiceCreateUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,12 +21,11 @@ public class ServiceCreateUserImpl implements ServiceCreateUser {
 
     private final UserRepository userRepository;
 
-    private final GeneratePassword generatePassword;
+    private final GeneratePassword generatePassword = new GeneratePasswordImpl();
 
     @Autowired
-    public ServiceCreateUserImpl(UserRepository userRepository, GeneratePassword generatePassword) {
+    public ServiceCreateUserImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.generatePassword = generatePassword;
     }
 
     /**
