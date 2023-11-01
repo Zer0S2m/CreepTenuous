@@ -11,8 +11,7 @@ import java.util.List;
 /**
  * Interface for downloading a directory as a selection of file objects
  */
-public interface ServiceDownloadDirectorySelect extends ServiceDownloadDirectoryStream,
-        CollectZipDirectory, AtomicServiceFileSystem {
+public interface ServiceDownloadDirectorySelect extends CollectZipDirectory, AtomicServiceFileSystem {
 
     /**
      * Download selectively file objects

@@ -2,12 +2,9 @@ package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataDownloadFile;
 import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -25,7 +22,7 @@ public interface ServiceDownloadFile {
      * @return Container data download file.
      * @throws IOException               signals that an I/O exception to some sort has occurred.
      */
-    ContainerDataDownloadFile<StreamingResponseBody, String> download(
+    ContainerDataDownloadFile<Path, String> download(
             List<String> systemParents, String systemNameFile) throws IOException;
 
     /**
@@ -38,31 +35,7 @@ public interface ServiceDownloadFile {
      * @throws IOException              signals that an I/O exception to some sort has occurred.
      * @throws FileIsDirectoryException The exception indicates that the source file object is a directory.
      */
-    ContainerDataDownloadFile<StreamingResponseBody, String> downloadFragment(
+    ContainerDataDownloadFile<Path, String> downloadFragment(
             List<String> systemParents, String systemNameFile) throws IOException, FileIsDirectoryException;
-
-    /**
-     * Collect headers for request.
-     *
-     * @param data Download file information.
-     * @return Ready-made headers for the request.
-     */
-    default HttpHeaders collectHeaders(
-            @NotNull ContainerDataDownloadFile<StreamingResponseBody, String> data) {
-        final HttpHeaders headers = new HttpHeaders();
-
-        headers.add(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
-        headers.add(HttpHeaders.PRAGMA, "no-cache");
-        headers.add(HttpHeaders.EXPIRES, "0");
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition
-                .attachment()
-                .filename(data.filename())
-                .build()
-                .toString()
-        );
-        headers.add(HttpHeaders.CONTENT_TYPE, data.mimeType());
-
-        return headers;
-    }
 
 }

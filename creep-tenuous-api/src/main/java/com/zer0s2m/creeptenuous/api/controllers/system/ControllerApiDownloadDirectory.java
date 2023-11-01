@@ -22,11 +22,9 @@ import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectoryRe
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDownloadDirectorySelectRedis;
 import com.zer0s2m.creeptenuous.services.system.ServiceDownloadDirectory;
 import com.zer0s2m.creeptenuous.services.system.ServiceDownloadDirectorySelect;
-import com.zer0s2m.creeptenuous.services.system.ServiceDownloadDirectorySetHeaders;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectoryImpl;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectorySelectImpl;
-import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadDirectorySetHeadersImpl;
 import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
@@ -57,9 +55,6 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
     private final ServiceDownloadDirectorySelect serviceDownloadDirectorySelect =
             new ServiceDownloadDirectorySelectImpl();
-
-    private final ServiceDownloadDirectorySetHeaders serviceDownloadDirectorySetHeaders =
-            new ServiceDownloadDirectorySetHeadersImpl();
 
     private final ServiceDownloadDirectoryRedis serviceDownloadDirectoryRedis;
 
@@ -214,11 +209,11 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
             Path sourceZipArchive = serviceDownloadDirectory.download(
                     data.systemParents(), data.systemDirectoryName());
-            StreamingResponseBody responseBody = serviceDownloadDirectory.getZipFileInStream(sourceZipArchive);
+            StreamingResponseBody responseBody = UtilsDataApi.getStreamingResponseBodyFromPath(sourceZipArchive);
 
             return ResponseEntity
                     .ok()
-                    .headers(serviceDownloadDirectorySetHeaders.collectHeaders(sourceZipArchive))
+                    .headers(UtilsDataApi.collectHeadersForZip(sourceZipArchive))
                     .body(responseBody);
         }
 
@@ -289,11 +284,11 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
             serviceDownloadDirectorySelect.setMap(resource);
 
             Path sourceZipArchive = serviceDownloadDirectorySelect.download(data.attached());
-            StreamingResponseBody responseBody = serviceDownloadDirectorySelect.getZipFileInStream(sourceZipArchive);
+            StreamingResponseBody responseBody = UtilsDataApi.getStreamingResponseBodyFromPath(sourceZipArchive);
 
             return ResponseEntity
                     .ok()
-                    .headers(serviceDownloadDirectorySetHeaders.collectHeaders(sourceZipArchive))
+                    .headers(UtilsDataApi.collectHeadersForZip(sourceZipArchive))
                     .body(responseBody);
         }
 

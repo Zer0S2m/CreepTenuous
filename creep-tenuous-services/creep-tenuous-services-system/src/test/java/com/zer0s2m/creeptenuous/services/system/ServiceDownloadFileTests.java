@@ -11,10 +11,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,8 +24,6 @@ public class ServiceDownloadFileTests {
     Logger logger = LogManager.getLogger(ServiceDownloadFileTests.class);
 
     private final ServiceDownloadFile service = new ServiceDownloadFileImpl();
-
-    private final ConfigurableMimeFileTypeMap fileTypeMap = new ConfigurableMimeFileTypeMap();
 
     private final RootPath rootPath = new RootPath();
 
@@ -49,24 +43,15 @@ public class ServiceDownloadFileTests {
 
         logger.info("Copy file: " + targetPath);
 
-        ContainerDataDownloadFile<StreamingResponseBody, String> dataFile = service.download(
+        ContainerDataDownloadFile<Path, String> dataFile = service.download(
                 new ArrayList<>(),
                 nameTestFile1
         );
 
         Assertions.assertEquals(dataFile.filename(), nameTestFile1);
-        Assertions.assertEquals(dataFile.mimeType(), fileTypeMap.getContentType(targetPath.toFile()));
 
         UtilsActionForFiles.deleteFileAndWriteLog(targetPath, logger);
         Assertions.assertFalse(Files.exists(targetPath));
-
-        HttpHeaders headers = service.collectHeaders(dataFile);
-
-        Assertions.assertEquals(Objects.requireNonNull(
-                headers.getContentType()).toString(),
-                MediaType.IMAGE_JPEG_VALUE
-        );
-        Assertions.assertEquals(headers.getContentDisposition().getFilename(), nameTestFile1);
     }
 
     @Test

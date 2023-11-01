@@ -18,16 +18,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -62,15 +61,17 @@ public class ServiceUploadFileImpl implements ServiceUploadFile {
                     )
             }
     )
-    public List<ResponseObjectUploadFileApi> upload(@NotNull List<MultipartFile> files, List<String> systemParents)
+    public List<ResponseObjectUploadFileApi> upload(@NotNull Map<Path, String> files, List<String> systemParents)
             throws IOException {
         Path sourceDir = Paths.get(buildDirectoryPath.build(systemParents));
         return files
+                .entrySet()
                 .stream()
                 .map((file) -> {
                     try {
                         ResponseObjectUploadFileApi data = copyFileAndPushContext(
-                                file.getInputStream(), file.getOriginalFilename(), sourceDir, false);
+                                new FileInputStream(file.getKey().toFile()),
+                                file.getValue(), sourceDir, false);
 
                         writeLogUploadFile(data);
 
@@ -134,9 +135,8 @@ public class ServiceUploadFileImpl implements ServiceUploadFile {
     private @NotNull ResponseObjectUploadFileApi copyFileAndPushContext(
             final InputStream inputStream, final String originFileName, final @NotNull Path sourceDir,
             final boolean isFragment) {
-        String fileName = StringUtils.cleanPath(Objects.requireNonNull(originFileName));
         String newFileName = UtilsFiles.getNewFileName(originFileName);
-        Path targetLocation = sourceDir.resolve(fileName);
+        Path targetLocation = sourceDir.resolve(originFileName);
         Path newTargetLocation = sourceDir.resolve(newFileName);
 
         try {
@@ -152,7 +152,7 @@ public class ServiceUploadFileImpl implements ServiceUploadFile {
         } catch (IOException e) {
             logger.error(e);
             return new ResponseObjectUploadFileApi(
-                    fileName,
+                    originFileName,
                     newFileName,
                     false,
                     targetLocation,
@@ -160,7 +160,7 @@ public class ServiceUploadFileImpl implements ServiceUploadFile {
             );
         }
         return new ResponseObjectUploadFileApi(
-                fileName,
+                originFileName,
                 newFileName,
                 true,
                 targetLocation,

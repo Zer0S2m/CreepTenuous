@@ -7,6 +7,7 @@ import com.zer0s2m.creeptenuous.common.containers.ContainerDataDownloadFile;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
+import com.zer0s2m.creeptenuous.common.utils.UtilsDataApi;
 import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 @V1APIRestController
@@ -105,12 +107,12 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
             return downloadFragment(data.systemParents(), systemFileName);
         }
 
-        final ContainerDataDownloadFile<StreamingResponseBody, String> dataFile = serviceDownloadFile
+        final ContainerDataDownloadFile<Path, String> dataFile = serviceDownloadFile
                 .download(data.systemParents(), systemFileName);
 
         return ResponseEntity.ok()
-                .headers(serviceDownloadFile.collectHeaders(dataFile))
-                .body(dataFile.byteContent());
+                .headers(UtilsDataApi.collectHeadersForFile(dataFile))
+                .body(UtilsDataApi.getStreamingResponseBodyFromPath(dataFile.byteContent()));
     }
 
     /**
@@ -124,11 +126,11 @@ public class ControllerApiDownloadFile implements ControllerApiDownloadFileDoc {
     private @NotNull ResponseEntity<StreamingResponseBody> downloadFragment(
             final List<String> systemParents, final String systemName
     ) throws IOException, FileIsDirectoryException {
-        final ContainerDataDownloadFile<StreamingResponseBody, String> dataFile = serviceDownloadFile
+        final ContainerDataDownloadFile<Path, String> dataFile = serviceDownloadFile
                 .downloadFragment(systemParents, systemName);
 
         return ResponseEntity.ok()
-                .body(dataFile.byteContent());
+                .body(UtilsDataApi.getStreamingResponseBodyFromPath(dataFile.byteContent()));
     }
 
 }

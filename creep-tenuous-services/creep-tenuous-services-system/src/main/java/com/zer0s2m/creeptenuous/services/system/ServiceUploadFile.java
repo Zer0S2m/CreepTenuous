@@ -3,11 +3,12 @@ package com.zer0s2m.creeptenuous.services.system;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFileFragment;
 import com.zer0s2m.creeptenuous.common.http.ResponseObjectUploadFileApi;
 import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An interface for implementing a class that works with downloading files,
@@ -23,7 +24,7 @@ public interface ServiceUploadFile extends AtomicServiceFileSystem {
      * @return Info is upload and info system file object.
      * @throws IOException If an I/O error occurs or the parent directory does not exist.
      */
-    List<ResponseObjectUploadFileApi> upload(List<MultipartFile> files, List<String> systemParents)
+    List<ResponseObjectUploadFileApi> upload(Map<Path, String> files, List<String> systemParents)
             throws IOException;
 
     /**

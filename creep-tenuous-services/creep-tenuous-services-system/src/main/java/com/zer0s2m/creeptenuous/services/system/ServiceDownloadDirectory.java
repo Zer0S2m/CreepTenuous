@@ -10,8 +10,7 @@ import java.util.List;
 /**
  * Service for servicing the download of a catalog in a zip archive
  */
-public interface ServiceDownloadDirectory extends ServiceDownloadDirectoryStream,
-        AtomicServiceFileSystem, CollectZipDirectory {
+public interface ServiceDownloadDirectory extends AtomicServiceFileSystem, CollectZipDirectory {
 
      /**
       * Download directory archive zip

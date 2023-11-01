@@ -13,8 +13,6 @@ import com.zer0s2m.creeptenuous.services.system.ServiceUploadDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
@@ -67,19 +65,6 @@ public class ServiceUploadDirectoryImpl implements ServiceUploadDirectory {
             logger.error(e);
             return new ResponseUploadDirectoryApi(false, null);
         }
-    }
-
-    /**
-      Get path source zip file in file system
-     * @param path parts of the system path - target
-     * @param zipFile zip archive
-     * @return source zip file
-     */
-    @Override
-    public Path getNewPathZipFile(Path path, @NotNull MultipartFile zipFile) throws IOException {
-        Path newPathZipFile = Path.of(String.valueOf(path), zipFile.getOriginalFilename());
-        zipFile.transferTo(newPathZipFile);
-        return newPathZipFile;
     }
 
     /**

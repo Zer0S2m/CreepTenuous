@@ -29,7 +29,8 @@ import java.nio.file.Path;
 import java.util.List;
 
 @V1APIRestController
-public class ControllerApiUploadDirectory implements ControllerApiUploadDirectoryDoc {
+public class ControllerApiUploadDirectory extends BaseControllerApiUploadFileObject
+        implements ControllerApiUploadDirectoryDoc {
 
     static final OperationRights operationRights = OperationRights.UPLOAD;
 
@@ -82,17 +83,9 @@ public class ControllerApiUploadDirectory implements ControllerApiUploadDirector
                 atomicFileSystemControllerApiUploadDirectory,
                 parents,
                 systemParents,
-                transfer(systemParents, zipFile),
+                transfer(zipFile),
                 accessToken
         );
-    }
-
-    private @NotNull Path transfer(
-            final List<String> systemParents, @NotNull MultipartFile zipFile) throws IOException {
-        Path systemPath = serviceUploadDirectory.getPath(systemParents);
-        Path newPathZipFile = Path.of(String.valueOf(systemPath), zipFile.getOriginalFilename());
-        zipFile.transferTo(newPathZipFile);
-        return newPathZipFile;
     }
 
     @CoreServiceFileSystem(method = "upload")

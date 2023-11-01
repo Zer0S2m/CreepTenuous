@@ -10,14 +10,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -47,34 +43,10 @@ public class ServiceUploadDirectoryTests {
 
         logger.info(String.format("Copy test file zip for tests: %s", path));
 
-        InputStream targetStream = new FileInputStream(path.toFile());
-
         Path systemPath = service.getPath(new ArrayList<>());
-        Path pathZipFile = service.getNewPathZipFile(systemPath, new MockMultipartFile(
-                "directory",
-                testFileZip,
-                "application/zip",
-                targetStream
-        ));
-        ResponseUploadDirectoryApi response = service.upload(systemPath, pathZipFile);
-
-        targetStream.close();
+        ResponseUploadDirectoryApi response = service.upload(systemPath, path);
 
         Assertions.assertTrue(response.success());
-    }
-
-    @Test
-    public void uploadDirectory_fail_invalidPathDirectory() {
-        Assertions.assertThrows(
-                NoSuchFileException.class,
-                () -> service.upload(
-                        Path.of("invalid", "path", "directory"),
-                        service.getNewPathZipFile(
-                                Path.of("invalid", "path", "directory"),
-                                new MockMultipartFile("test", "test".getBytes())
-                        )
-                )
-        );
     }
 
 }

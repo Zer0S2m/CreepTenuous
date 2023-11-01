@@ -32,11 +32,15 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @V1APIRestController
-public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
+public class ControllerApiUploadFile extends BaseControllerApiUploadFileObject
+        implements ControllerApiUploadFileDoc {
 
     static final OperationRights operationRights = OperationRights.UPLOAD;
 
@@ -179,8 +183,17 @@ public class ControllerApiUploadFile implements ControllerApiUploadFileDoc {
                 uploadFragment(files, systemParents);
             }
 
+            Map<Path, String> dataFiles = new HashMap<>();
+            files.forEach(file -> {
+                try {
+                    dataFiles.put(transfer(file), file.getOriginalFilename());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
             List<ResponseObjectUploadFileApi> data = serviceUploadFile.upload(
-                    files, systemParents);
+                    dataFiles, systemParents);
 
             serviceUploadFileRedis.upload(data
                     .stream()
