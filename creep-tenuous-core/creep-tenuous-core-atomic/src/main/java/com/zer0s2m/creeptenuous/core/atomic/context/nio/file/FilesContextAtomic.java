@@ -39,7 +39,7 @@ public interface FilesContextAtomic {
      * A directory made available for applications that need a place to create temporary files.
      * <a href="https://refspecs.linuxfoundation.org/FHS_3.0/fhs/ch03s18.html">Documentation <b>tmp</b></a>
      */
-    String tmpDirectory = "/tmp";
+    String tmpDirectory = System.getProperty("java.io.tmpdir");
 
     String rootPathKey = "CT_ROOT_PATH";
 

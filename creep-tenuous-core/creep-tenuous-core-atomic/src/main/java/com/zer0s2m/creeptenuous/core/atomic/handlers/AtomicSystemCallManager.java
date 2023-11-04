@@ -13,11 +13,9 @@ import org.slf4j.LoggerFactory;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -145,6 +143,8 @@ public final class AtomicSystemCallManager {
 
                 T result = (T) targetMethod.invoke(instance, args);
 
+                deleteAtomicFileObjects();
+
                 contextAtomicFileSystem.clearOperationsData();
 
                 return result;
@@ -204,6 +204,19 @@ public final class AtomicSystemCallManager {
             }
         }
         return clazz;
+    }
+
+    private static void deleteAtomicFileObjects() {
+        contextAtomicFileSystem.getOperationsData().forEach((key, operationData) -> {
+            if (ContextAtomicFileSystem.Operations.DELETE.equals(operationData.get("operation"))) {
+                Object path = operationData.get("targetPath");
+                if (path != null) {
+                    try {
+                        Files.deleteIfExists((Path) path);
+                    } catch (Throwable ignored) {}
+                }
+            }
+        });
     }
 
 }
