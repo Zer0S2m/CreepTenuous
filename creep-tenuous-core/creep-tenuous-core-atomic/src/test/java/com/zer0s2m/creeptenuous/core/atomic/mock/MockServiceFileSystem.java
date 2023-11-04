@@ -7,10 +7,12 @@ import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationCreate;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationDelete;
+import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationUpload;
 import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -27,6 +29,7 @@ import java.nio.file.Path;
  *     <li>{@link ContextAtomicFileSystem.Operations#FRAGMENTATION}</li>
  * </ul>
  */
+@SuppressWarnings("unused")
 public final class MockServiceFileSystem {
 
     /**
@@ -458,6 +461,221 @@ public final class MockServiceFileSystem {
 
         @Contract("_ -> fail")
         private Path create_(@NotNull Path source) throws IOException {
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    /**
+     * <p>------------------------------------------------</p>
+     * {@link ContextAtomicFileSystem.Operations#UPLOAD}
+     */
+
+    @CoreServiceFileSystem(method = "upload")
+    public static final class MockServiceFileSystemUploadFileSuccess implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "upload-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationUpload.class,
+                                operation = ContextAtomicFileSystem.Operations.UPLOAD
+                        )
+                }
+        )
+        public long upload(FileInputStream source, Path target) throws IOException {
+            return FilesContextAtomic.copy(source, target);
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "upload")
+    public static final class MockServiceFileSystemUploadDirectorySuccess implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "upload-directory",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationUpload.class,
+                                operation = ContextAtomicFileSystem.Operations.UPLOAD
+                        )
+                }
+        )
+        public Path upload(Path source, Path target) throws IOException {
+            return FilesContextAtomic.upload(source, target);
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "upload")
+    public static final class MockServiceFileSystemUploadFileFailException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "upload-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationUpload.class,
+                                operation = ContextAtomicFileSystem.Operations.UPLOAD
+                        )
+                }
+        )
+        public long upload(FileInputStream source, Path target) throws IOException {
+            FilesContextAtomic.copy(source, target);
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "upload")
+    public static final class MockServiceFileSystemUploadDirectoryFailException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "upload-directory",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationUpload.class,
+                                operation = ContextAtomicFileSystem.Operations.UPLOAD
+                        )
+                }
+        )
+        public Path upload(Path source, Path target) throws IOException {
+            FilesContextAtomic.upload(source, target);
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "upload")
+    public static final class MockServiceFileSystemUploadFileFailOtherException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "upload-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationUpload.class,
+                                operation = ContextAtomicFileSystem.Operations.UPLOAD
+                        )
+                }
+        )
+        public long upload(FileInputStream source, Path target) throws Exception {
+            FilesContextAtomic.copy(source, target);
+            throw new Exception(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "upload")
+    public static final class MockServiceFileSystemUploadDirectoryFailOtherException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "upload-directory",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationUpload.class,
+                                operation = ContextAtomicFileSystem.Operations.UPLOAD
+                        )
+                }
+        )
+        public Path upload(Path source, Path target) throws Exception {
+            FilesContextAtomic.upload(source, target);
+            throw new Exception(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "upload")
+    public static final class MockServiceFileSystemUploadFileFailMultiException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "upload-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                isExceptionMulti = true,
+                                handler = ServiceFileSystemExceptionHandlerOperationUpload.class,
+                                operation = ContextAtomicFileSystem.Operations.UPLOAD
+                        )
+                }
+        )
+        public long upload(FileInputStream source, Path target) throws Exception {
+            FilesContextAtomic.copy(source, target);
+            throw new Exception(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "upload")
+    public static final class MockServiceFileSystemUploadDirectoryFailMultiException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "upload-directory",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                isExceptionMulti = true,
+                                handler = ServiceFileSystemExceptionHandlerOperationUpload.class,
+                                operation = ContextAtomicFileSystem.Operations.UPLOAD
+                        )
+                }
+        )
+        public Path upload(Path source, Path target) throws Exception {
+            FilesContextAtomic.upload(source, target);
+            throw new Exception(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "upload")
+    public static final class MockServiceFileSystemUploadFileFailOtherMethodException
+            implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "upload-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationUpload.class,
+                                operation = ContextAtomicFileSystem.Operations.UPLOAD
+                        )
+                }
+        )
+        public long upload(FileInputStream source, Path target) throws IOException {
+            FilesContextAtomic.copy(source, target);
+            return upload(source);
+        }
+
+        @Contract("_ -> fail")
+        private long upload(@NotNull FileInputStream source) throws IOException {
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "upload")
+    public static final class MockServiceFileSystemUploadDirectoryFailOtherMethodException
+            implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "upload-directory",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationUpload.class,
+                                operation = ContextAtomicFileSystem.Operations.UPLOAD
+                        )
+                }
+        )
+        public Path upload(Path source, Path target) throws IOException {
+            FilesContextAtomic.upload(source, target);
+            return upload(source);
+        }
+
+        @Contract("_ -> fail")
+        private Path upload(@NotNull Path source) throws IOException {
             throw new IOException(source.toString());
         }
 
