@@ -150,14 +150,28 @@ public interface FilesContextAtomic {
 
     static Path upload(Path source, Path target, CopyOption... options) throws IOException {
         try (Stream<Path> stream = Files.walk(source)) {
-            stream.forEach(src -> uploadAndWriteContext(src, target.resolve(source.relativize(src)), options));
+            stream.forEach(src -> uploadOrCopyAndWriteContext(
+                    src, target.resolve(source.relativize(src)), true, options));
         }
         return target;
     }
 
-    static private void uploadAndWriteContext(Path source, Path target, CopyOption... options) {
+    static Path copyDirectory(Path source, Path target, CopyOption... options) throws IOException {
+        try (Stream<Path> stream = Files.walk(source)) {
+            stream.forEach(src -> uploadOrCopyAndWriteContext(
+                    src, target.resolve(source.relativize(src)), false, options));
+        }
+        return target;
+    }
+
+    static private void uploadOrCopyAndWriteContext(
+            Path source, Path target, boolean isUpload, CopyOption... options) {
         try {
-            addOperationDataUpload(target, stackWalker.getCallerClass().getCanonicalName());
+            if (isUpload) {
+                addOperationDataUpload(target, stackWalker.getCallerClass().getCanonicalName());
+            } else {
+                addOperationDataCopy(target, stackWalker.getCallerClass().getCanonicalName());
+            }
             Files.copy(source, target, options);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);

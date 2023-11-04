@@ -5,6 +5,7 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptio
 import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
+import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationCopy;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationCreate;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationDelete;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationUpload;
@@ -676,6 +677,219 @@ public final class MockServiceFileSystem {
 
         @Contract("_ -> fail")
         private Path upload(@NotNull Path source) throws IOException {
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    /**
+     * <p>----------------------------------------------</p>
+     * {@link ContextAtomicFileSystem.Operations#COPY}
+     */
+
+    @CoreServiceFileSystem(method = "copy")
+    public static final class MockServiceFileSystemCopyFileSuccess implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "copy-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationCopy.class,
+                                operation = ContextAtomicFileSystem.Operations.COPY
+                        )
+                }
+        )
+        public Path copy(Path source, Path target) throws IOException {
+            return FilesContextAtomic.copy(source, target);
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "copy")
+    public static final class MockServiceFileSystemCopyDirectorySuccess implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "copy-directory",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationCopy.class,
+                                operation = ContextAtomicFileSystem.Operations.COPY
+                        )
+                }
+        )
+        public Path copy(Path source, Path target) throws IOException {
+            return FilesContextAtomic.copyDirectory(source, target);
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "copy")
+    public static final class MockServiceFileSystemCopyFileFailException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "copy-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationCopy.class,
+                                operation = ContextAtomicFileSystem.Operations.COPY
+                        )
+                }
+        )
+        public Path copy(Path source, Path target) throws IOException {
+            FilesContextAtomic.copy(source, target);
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "copy")
+    public static final class MockServiceFileSystemCopyDirectoryFailException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "copy-directory",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationCopy.class,
+                                operation = ContextAtomicFileSystem.Operations.COPY
+                        )
+                }
+        )
+        public Path copy(Path source, Path target) throws IOException {
+            FilesContextAtomic.copyDirectory(source, target);
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "copy")
+    public static final class MockServiceFileSystemCopyFileFailOtherException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "copy-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationCopy.class,
+                                operation = ContextAtomicFileSystem.Operations.COPY
+                        )
+                }
+        )
+        public Path copy(Path source, Path target) throws Exception {
+            FilesContextAtomic.copy(source, target);
+            throw new Exception(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "copy")
+    public static final class MockServiceFileSystemCopyDirectoryFailOtherException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "copy-directory",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationCopy.class,
+                                operation = ContextAtomicFileSystem.Operations.COPY
+                        )
+                }
+        )
+        public Path copy(Path source, Path target) throws Exception {
+            FilesContextAtomic.copyDirectory(source, target);
+            throw new Exception(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "copy")
+    public static final class MockServiceFileSystemCopyFileFailMultiException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "copy-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                isExceptionMulti = true,
+                                handler = ServiceFileSystemExceptionHandlerOperationCopy.class,
+                                operation = ContextAtomicFileSystem.Operations.COPY
+                        )
+                }
+        )
+        public Path copy(Path source, Path target) throws IOException {
+            FilesContextAtomic.copy(source, target);
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "copy")
+    public static final class MockServiceFileSystemCopyDirectoryFailMultiException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "copy-directory",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                isExceptionMulti = true,
+                                handler = ServiceFileSystemExceptionHandlerOperationCopy.class,
+                                operation = ContextAtomicFileSystem.Operations.COPY
+                        )
+                }
+        )
+        public Path copy(Path source, Path target) throws IOException {
+            FilesContextAtomic.copyDirectory(source, target);
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "copy")
+    public static final class MockServiceFileSystemCopyFileFailOtherMethodException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "copy-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationCopy.class,
+                                operation = ContextAtomicFileSystem.Operations.COPY
+                        )
+                }
+        )
+        public Path copy(Path source, Path target) throws IOException {
+            FilesContextAtomic.copy(source, target);
+            return copy(source);
+        }
+
+        @Contract("_ -> fail")
+        private Path copy(@NotNull Path source) throws IOException {
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "copy")
+    public static final class MockServiceFileSystemCopyDirectoryFailOtherMethodException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "copy-directory",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationCopy.class,
+                                operation = ContextAtomicFileSystem.Operations.COPY
+                        )
+                }
+        )
+        public Path copy(Path source, Path target) throws IOException {
+            FilesContextAtomic.copyDirectory(source, target);
+            return copy(source);
+        }
+
+        @Contract("_ -> fail")
+        private Path copy(@NotNull Path source) throws IOException {
             throw new IOException(source.toString());
         }
 
