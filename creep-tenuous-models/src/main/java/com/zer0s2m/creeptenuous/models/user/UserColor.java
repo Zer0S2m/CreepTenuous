@@ -1,11 +1,14 @@
 package com.zer0s2m.creeptenuous.models.user;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "\"user_colors\"")
 public class UserColor {
 
+    @Getter
     @Id
     @SequenceGenerator(
             name = "UserColorsSequence",
@@ -20,6 +23,8 @@ public class UserColor {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    @Getter
+    @Setter
     @Column(name = "color")
     private String color;
 
@@ -28,18 +33,6 @@ public class UserColor {
 
     public UserColor(User user, String color) {
         this.user = user;
-        this.color = color;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
         this.color = color;
     }
 

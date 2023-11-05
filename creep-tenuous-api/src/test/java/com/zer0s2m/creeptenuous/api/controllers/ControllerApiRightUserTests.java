@@ -44,8 +44,7 @@ public class ControllerApiRightUserTests {
 
     Logger logger = LogManager.getLogger(ControllerApiRightUserTests.class);
 
-    @Autowired
-    private ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     @Autowired
     private MockMvc mockMvc;

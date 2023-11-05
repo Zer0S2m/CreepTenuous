@@ -14,6 +14,7 @@ import com.zer0s2m.creeptenuous.security.jwt.http.JwtRefreshTokenRequest;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtResponse;
 import com.zer0s2m.creeptenuous.security.jwt.http.JwtUserRequest;
 import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
+import com.zer0s2m.creeptenuous.security.services.GeneratePassword;
 import com.zer0s2m.creeptenuous.services.security.GeneratePasswordImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
 import com.zer0s2m.creeptenuous.starter.test.mock.CollectionTokens;
@@ -58,8 +59,7 @@ public class ControllerApiAuthTests {
     @Autowired
     private JwtProvider jwtProvider;
 
-    @Autowired
-    private GeneratePasswordImpl generatePassword;
+    private final GeneratePassword generatePassword = new GeneratePasswordImpl();
 
     final JwtUserRequest RECORD_1 = new JwtUserRequest("test_login", "test_password");
 

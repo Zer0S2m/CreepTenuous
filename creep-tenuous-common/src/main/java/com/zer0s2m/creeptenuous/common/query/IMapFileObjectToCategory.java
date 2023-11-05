@@ -12,7 +12,7 @@ public interface IMapFileObjectToCategory {
      * Get user ID entity
      * @return ID
      */
-    Integer getUserCategoryId();
+    Long getUserCategoryId();
 
     /**
      * Get system names of file objects

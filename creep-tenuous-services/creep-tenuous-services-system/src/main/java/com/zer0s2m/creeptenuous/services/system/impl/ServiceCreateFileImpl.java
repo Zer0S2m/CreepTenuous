@@ -9,11 +9,11 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptio
 import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationCreate;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.ServiceCreateFile;
 import com.zer0s2m.creeptenuous.core.atomic.services.Distribution;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -25,16 +25,13 @@ import java.util.List;
  */
 @ServiceFileSystem("service-create-file")
 @CoreServiceFileSystem(method = "create")
-public class ServiceCreateFileImpl implements ServiceCreateFile, AtomicServiceFileSystem {
+public class ServiceCreateFileImpl implements ServiceCreateFile {
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
+    private final Logger logger = LogManager.getLogger(ServiceCreateFile.class);
+
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     private final ContextAtomicFileSystem contextAtomicFileSystem = ContextAtomicFileSystem.getInstance();
-
-    @Autowired
-    public ServiceCreateFileImpl(ServiceBuildDirectoryPath buildDirectoryPath) {
-        this.buildDirectoryPath = buildDirectoryPath;
-    }
 
     /**
      * Create file with specific format
@@ -67,6 +64,11 @@ public class ServiceCreateFileImpl implements ServiceCreateFile, AtomicServiceFi
         String systemNameFile = newSystemNameFile + "." + TypeFile.getExtension(typeFile);
         Path realPath = Path.of(path.toString(), realNameFile);
         Path systemPath = Path.of(path.toString(), systemNameFile);
+
+        logger.info(String.format(
+                "Creating a file: source [%s] system name [%s]",
+                path, systemNameFile
+        ));
 
         this.buildOperationData(realNameFile, systemNameFile, realPath, systemPath, newSystemNameFile);
 

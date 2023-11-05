@@ -1,6 +1,8 @@
 package com.zer0s2m.creeptenuous.models.user;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "\"user_settings\"")
@@ -16,6 +18,7 @@ public class UserSettings {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    @Getter
     @OneToOne(cascade = { CascadeType.PERSIST })
     @JoinColumn(name = "transferred_user_id", referencedColumnName = "id")
     private User transferredUser;
@@ -46,10 +49,6 @@ public class UserSettings {
 
     public void setTransferredUser(User transferredUser) {
         this.transferredUser = transferredUser;
-    }
-
-    public User getTransferredUser() {
-        return transferredUser;
     }
 
 }

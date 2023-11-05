@@ -1,10 +1,12 @@
 package com.zer0s2m.creeptenuous.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zer0s2m.creeptenuous.common.components.UploadAvatar;
 import com.zer0s2m.creeptenuous.common.data.DataControlFileObjectsExclusionApi;
 import com.zer0s2m.creeptenuous.common.data.DataIsDeletingFileObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataTransferredUserApi;
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
+import com.zer0s2m.creeptenuous.common.http.ResponseUploadAvatarUserApi;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.models.user.UserFileObjectsExclusion;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
@@ -21,12 +23,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -59,6 +67,11 @@ public class ControllerApiProfileUserTests {
     @Autowired
     private UserFileObjectsExclusionRepository userFileObjectsExclusionRepository;
 
+    @Autowired
+    private UploadAvatar uploadAvatar;
+
+    final private String nameTestFile1 = "test_image_1.jpeg";
+
     User RECORD_CREATE_USER = new User(
             "test_login",
             "test_password",
@@ -75,7 +88,15 @@ public class ControllerApiProfileUserTests {
 
     @Test
     public void getProfileUser_success() throws Exception {
-        userRepository.save(RECORD_CREATE_USER);
+        Path pathAvatar = Path.of(uploadAvatar.getUploadAvatarDir(), nameTestFile1);
+        try (InputStream inputAvatar = this.getClass().getResourceAsStream("/" + nameTestFile1)) {
+            RECORD_CREATE_USER.setAvatar(pathAvatar.toString());
+            userRepository.save(RECORD_CREATE_USER);
+
+            assert inputAvatar != null;
+            Files.copy(inputAvatar, pathAvatar);
+        }
+
         String accessToken = jwtProvider.generateAccessToken(new JwtUserRequest(
                 RECORD_CREATE_USER.getLogin(), "test_password"), UserRole.ROLE_USER);
 
@@ -85,6 +106,8 @@ public class ControllerApiProfileUserTests {
                         .header("Authorization", "Bearer " + accessToken)
                 )
                 .andExpect(status().isOk());
+
+        Files.delete(pathAvatar);
     }
 
     @Test
@@ -213,6 +236,77 @@ public class ControllerApiProfileUserTests {
                 .andExpect(status().isNoContent());
 
         Assertions.assertFalse(userFileObjectsExclusionRepository.existsById(userFileObjectsExclusion.getId()));
+    }
+
+    @Test
+    public void uploadAvatar_success() throws Exception {
+        userRepository.save(RECORD_CREATE_USER);
+        String accessToken = jwtProvider.generateAccessToken(new JwtUserRequest(
+                RECORD_CREATE_USER.getLogin(), "test_password"), UserRole.ROLE_USER);
+
+        MvcResult result = this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .multipart(HttpMethod.PUT, "/api/v1/user/profile/settings/avatar")
+                        .file(new MockMultipartFile(
+                                "avatar",
+                                nameTestFile1,
+                                MediaType.IMAGE_JPEG_VALUE,
+                                this.getClass().getResourceAsStream("/" + nameTestFile1))
+                        )
+                        .header("Authorization", "Bearer " + accessToken)
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String json = result.getResponse().getContentAsString();
+        ResponseUploadAvatarUserApi response = objectMapper.readValue(json, ResponseUploadAvatarUserApi.class);
+
+        Path pathAvatar = Path.of(
+                uploadAvatar.getUploadAvatarDir(),
+                response.avatar().split("/")[1]);
+
+        Assertions.assertTrue(Files.exists(pathAvatar));
+
+        Files.delete(pathAvatar);
+    }
+
+    @Test
+    public void deleteAvatar_success_avatarIsNull() throws Exception {
+        userRepository.save(RECORD_CREATE_USER);
+
+        String accessToken = jwtProvider.generateAccessToken(new JwtUserRequest(
+                RECORD_CREATE_USER.getLogin(), "test_password"), UserRole.ROLE_USER);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.delete("/api/v1/user/profile/settings/avatar")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken)
+                )
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void deleteAvatar_success_avatarNotIsNull() throws Exception {
+        String accessToken = jwtProvider.generateAccessToken(new JwtUserRequest(
+                RECORD_CREATE_USER.getLogin(), "test_password"), UserRole.ROLE_USER);
+
+        Path pathAvatar = Path.of(uploadAvatar.getUploadAvatarDir(), nameTestFile1);
+        try (InputStream inputAvatar = this.getClass().getResourceAsStream("/" + nameTestFile1)) {
+            RECORD_CREATE_USER.setAvatar(pathAvatar.toString());
+            userRepository.save(RECORD_CREATE_USER);
+
+            assert inputAvatar != null;
+            Files.copy(inputAvatar, pathAvatar);
+        }
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.delete("/api/v1/user/profile/settings/avatar")
+                        .header("Authorization", "Bearer " + accessToken)
+                )
+                .andExpect(status().isNoContent());
+
+        Assertions.assertFalse(Files.exists(pathAvatar));
     }
 
 }

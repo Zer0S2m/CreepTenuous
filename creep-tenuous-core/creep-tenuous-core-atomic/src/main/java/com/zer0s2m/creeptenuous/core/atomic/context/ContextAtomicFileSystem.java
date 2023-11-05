@@ -8,6 +8,7 @@ import com.zer0s2m.creeptenuous.core.atomic.handlers.ServiceFileSystemExceptionH
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationCopy;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationDelete;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationUpload;
+import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationFragmentation;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -22,7 +23,7 @@ import java.util.HashMap;
  */
 public final class ContextAtomicFileSystem {
 
-    Logger logger = LoggerFactory.getLogger(ContextAtomicFileSystem.class);
+    private final Logger logger = LoggerFactory.getLogger(ContextAtomicFileSystem.class);
 
     private final String keyClassName = "_class";
 
@@ -129,7 +130,7 @@ public final class ContextAtomicFileSystem {
      * }</pre>
      *
      * <p>
-     *     5) Used in handler {@link ServiceFileSystemExceptionHandlerOperationDownload}
+     *     6) Used in handler {@link ServiceFileSystemExceptionHandlerOperationDownload}
      *     Basic key names and value types for operation {@link ContextAtomicFileSystem.Operations#DOWNLOAD}:<br>
      *     <ul>
      *         <li><b>_class</b> - {@link Class#getCanonicalName()} (<b><u>required</u></b>)</li>
@@ -142,7 +143,27 @@ public final class ContextAtomicFileSystem {
      * HashMap<String, Object> operationData = new HashMap<>();
      * operationData.put("_class", Class.class.getCanonicalName());
      * operationData.put("operation", Operations.DOWNLOAD);
-     * operationData.put("targetPath", Path.of(uri));
+     * operationData.put("sourcePath", Path.of(uri));
+     * contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
+     * }</pre>
+     *
+     * <p>
+     *     7) Used in handler {@link ServiceFileSystemExceptionHandlerOperationFragmentation}
+     *     Basic key names and value types for operation {@link ContextAtomicFileSystem.Operations#FRAGMENTATION}:<br>
+     *     <ul>
+     *         <li><b>_class</b> - {@link Class#getCanonicalName()} (<b><u>required</u></b>)</li>
+     *         <li><b>operation</b> - {@link Operations} (<b><u>required</u></b>)</li>
+     *         <li><b>sourcePath</b> - {@link java.nio.file.Path} (<b><u>required</u></b>)</li>
+     *         <li><b>fragments</b> - {@link java.util.Collection} (<b><u>required</u></b>)</li>
+     *     </ul>
+     * </p>
+     * Example:
+     * <pre>{@code
+     * HashMap<String, Object> operationData = new HashMap<>();
+     * operationData.put("_class", Class.class.getCanonicalName());
+     * operationData.put("operation", Operations.FRAGMENTATION);
+     * operationData.put("sourcePath", Path.of(uri));
+     * operationData.put("fragments", List.of(Path.of(uri)));
      * contextAtomicFileSystem.addOperationData(systemNameFile, operationData);
      * }</pre>
      *
@@ -156,12 +177,21 @@ public final class ContextAtomicFileSystem {
     private final HashMap<String, HashMap<String, Object>> operationsData = new HashMap<>();
 
     public enum Operations {
+
         DELETE,
+
         CREATE,
+
         UPLOAD,
+
         DOWNLOAD,
+
         COPY,
-        MOVE
+
+        MOVE,
+
+        FRAGMENTATION
+
     }
 
     private static ContextAtomicFileSystem instance;
@@ -189,6 +219,11 @@ public final class ContextAtomicFileSystem {
                 String.format("Invalid operation (key [%s]) format [%s]", keyOperation, superClsEnumOperation);
 
         this.operationsData.put(key, value);
+
+        logger.info("Writing data to the atomic mode file system context:\n" +
+                "\tSystem file object name [" + key + "]\n" +
+                "\tOperation [" + value.get("operation").toString() + "]\n" +
+                "\tData: " + value);
     }
 
     /**
@@ -197,6 +232,7 @@ public final class ContextAtomicFileSystem {
      * @return operation custom data (copied) {@link #operationsData}
      */
     @Contract("_ -> new")
+    @SuppressWarnings("unused")
     public @NotNull HashMap<String, Object> getOperationData(String key) {
         return new HashMap<>(operationsData.get(key));
     }
@@ -256,6 +292,8 @@ public final class ContextAtomicFileSystem {
             logger.info(String.format(baseLog, "copy", objectOperationData));
         } else if (operation.equals(Operations.MOVE)) {
             logger.info(String.format(baseLog, "move", objectOperationData));
+        } else if (operation.equals(Operations.FRAGMENTATION)) {
+            logger.info(String.format(baseLog, "fragmentation", objectOperationData));
         }
     }
 
@@ -272,11 +310,14 @@ public final class ContextAtomicFileSystem {
      * @param operation operation handle
      */
     public void clearOperationsData(Operations operation) {
-        this.operationsData.forEach((key, operationData) -> {
-            if (operation.equals(operationData.get("operation"))) {
-                this.operationsData.remove(key);
+        HashMap<String, HashMap<String, Object>> newOperationsData = new HashMap<>(operationsData);
+        operationsData.forEach((key, operationData) -> {
+            if (!operation.equals(operationData.get("operation"))) {
+                newOperationsData.put(key, operationData);
             }
         });
+        operationsData.clear();
+        operationsData.putAll(newOperationsData);
     }
 
     /**

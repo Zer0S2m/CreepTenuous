@@ -1,7 +1,5 @@
 #!make
 include .env
-VARS:=$(shell sed -ne 's/ *\#.*$$//; /./ s/=.*$$// p' .env )
-$(foreach v,$(VARS),$(eval $(shell echo export $(v)="$($(v))")))
 
 docker_compose_bin := $(shell command -v docker-compose 2> /dev/null)
 java_bin := $(shell command -v java 2> /dev/null)
@@ -37,7 +35,7 @@ build-scip-tests:
 	mvn clean package spring-boot:repackage -Dmaven.test.skip
 
 run:
-	$(java_bin) -jar creep-tenuous-api/target/creep-tenuous-api-0.0.10-SNAPSHOT.jar
+	$(java_bin) -jar creep-tenuous-api/target/creep-tenuous-api-0.0.12-SNAPSHOT.jar
 
 move-integration-key-implants:
 	mv integration-main-system.pem ./creep-tenuous-integration/creep-tenuous-integration-implants/src/main/resources/keys

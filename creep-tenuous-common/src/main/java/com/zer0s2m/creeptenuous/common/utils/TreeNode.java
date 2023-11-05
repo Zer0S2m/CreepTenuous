@@ -1,5 +1,7 @@
 package com.zer0s2m.creeptenuous.common.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 
 public class TreeNode<T> implements Iterable<TreeNode<T>> {
@@ -31,7 +33,7 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
     }
 
     public boolean isLeaf() {
-        return children.size() == 0;
+        return children.isEmpty();
     }
 
     public TreeNode<T> addChild(T child) {
@@ -73,7 +75,7 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
     }
 
     @Override
-    public Iterator<TreeNode<T>> iterator() {
+    public @NotNull Iterator<TreeNode<T>> iterator() {
         return new TreeNodeIter<>(this);
     }
 

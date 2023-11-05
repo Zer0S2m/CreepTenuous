@@ -9,15 +9,10 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptio
 import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationUpload;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
-import com.zer0s2m.creeptenuous.services.system.ServiceUnpackingDirectory;
 import com.zer0s2m.creeptenuous.services.system.ServiceUploadDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
@@ -29,17 +24,11 @@ import java.util.List;
  */
 @ServiceFileSystem("service-upload-service")
 @CoreServiceFileSystem(method = "upload")
-public class ServiceUploadDirectoryImpl implements ServiceUploadDirectory, ServiceUnpackingDirectory,
-        AtomicServiceFileSystem {
+public class ServiceUploadDirectoryImpl implements ServiceUploadDirectory {
 
     private final Logger logger = LogManager.getLogger(ServiceUploadDirectory.class);
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
-
-    @Autowired
-    public ServiceUploadDirectoryImpl(ServiceBuildDirectoryPath buildDirectoryPath) {
-        this.buildDirectoryPath = buildDirectoryPath;
-    }
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     /**
      * Run thread for unpacking zip archive
@@ -62,6 +51,11 @@ public class ServiceUploadDirectoryImpl implements ServiceUploadDirectory, Servi
     public ResponseUploadDirectoryApi upload(Path systemPath, Path source) throws IOException {
         final ContainerUploadFile container = new ContainerUploadFile();
 
+        logger.info(String.format(
+                "Uploading a directory (zip archive): source [%s] output [%s]",
+                source, systemPath
+        ));
+
         try {
             container.setFile(source);
             final List<ContainerDataUploadFileSystemObject> finalData = unpacking(
@@ -74,23 +68,12 @@ public class ServiceUploadDirectoryImpl implements ServiceUploadDirectory, Servi
     }
 
     /**
-      Get path source zip file in file system
-     * @param path parts of the system path - target
-     * @param zipFile zip archive
-     * @return source zip file
-     */
-    public Path getNewPathZipFile(Path path, @NotNull MultipartFile zipFile) throws IOException {
-        Path newPathZipFile = Path.of(String.valueOf(path), zipFile.getOriginalFilename());
-        zipFile.transferTo(newPathZipFile);
-        return newPathZipFile;
-    }
-
-    /**
      * Get system path from part directories
      * @param systemParents system path part directories
      * @return system path
      * @throws NoSuchFileException no file object in file system
      */
+    @Override
     public Path getPath(List<String> systemParents) throws NoSuchFileException {
         return Path.of(buildDirectoryPath.build(systemParents));
     }

@@ -3,8 +3,6 @@ package com.zer0s2m.creeptenuous.services.system;
 import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataDownloadFile;
 import com.zer0s2m.creeptenuous.services.system.helpers.UtilsActionForFiles;
-import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
-import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDownloadFileImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceFileSystem;
 import org.apache.logging.log4j.LogManager;
@@ -13,12 +11,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,24 +18,14 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.*;
 
-@SpringBootTest(classes = {
-        ServiceDownloadFileImpl.class,
-        ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class,
-        RootPath.class,
-})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceDownloadFileTests {
     Logger logger = LogManager.getLogger(ServiceDownloadFileTests.class);
 
-    @Autowired
-    private ServiceDownloadFileImpl service;
+    private final ServiceDownloadFile service = new ServiceDownloadFileImpl();
 
-    private final ConfigurableMimeFileTypeMap fileTypeMap = new ConfigurableMimeFileTypeMap();
-
-    @Autowired
-    private RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     private final String failNameTestFile = "fail_name_test_file.fail_extension";
 
@@ -61,24 +43,15 @@ public class ServiceDownloadFileTests {
 
         logger.info("Copy file: " + targetPath);
 
-        ContainerDataDownloadFile<StreamingResponseBody, String> dataFile = service.download(
+        ContainerDataDownloadFile<Path, String> dataFile = service.download(
                 new ArrayList<>(),
                 nameTestFile1
         );
 
         Assertions.assertEquals(dataFile.filename(), nameTestFile1);
-        Assertions.assertEquals(dataFile.mimeType(), fileTypeMap.getContentType(targetPath.toFile()));
 
         UtilsActionForFiles.deleteFileAndWriteLog(targetPath, logger);
         Assertions.assertFalse(Files.exists(targetPath));
-
-        HttpHeaders headers = service.collectHeaders(dataFile);
-
-        Assertions.assertEquals(Objects.requireNonNull(
-                headers.getContentType()).toString(),
-                MediaType.IMAGE_JPEG_VALUE
-        );
-        Assertions.assertEquals(headers.getContentDisposition().getFilename(), nameTestFile1);
     }
 
     @Test

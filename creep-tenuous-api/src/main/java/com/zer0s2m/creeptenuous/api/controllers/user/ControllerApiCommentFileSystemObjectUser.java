@@ -2,6 +2,7 @@ package com.zer0s2m.creeptenuous.api.controllers.user;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCommentFileSystemObjectUserDoc;
 import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.common.containers.ContainerCommentFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataCreateCommentFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataControlAnyObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataEditCommentFileSystemObjectApi;
@@ -50,7 +51,7 @@ public class ControllerApiCommentFileSystemObjectUser implements ControllerApiCo
     @Override
     @GetMapping("/common/comment/file-system-object")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<CommentFileSystemObject> list(
+    public List<ContainerCommentFileSystemObject> list(
             final @RequestParam("file") String fileSystemObject,
             final @RequestHeader(name = "Authorization") String accessToken) throws NotFoundException {
         baseServiceFileSystemRedis.setAccessClaims(accessToken);
@@ -61,7 +62,8 @@ public class ControllerApiCommentFileSystemObjectUser implements ControllerApiCo
         }
 
         final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
-        return serviceCommentFileSystemObject.list(fileSystemObject, claims.get("login", String.class));
+        return serviceCommentFileSystemObject.collect(
+                serviceCommentFileSystemObject.list(fileSystemObject, claims.get("login", String.class)));
     }
 
     /**
@@ -86,7 +88,7 @@ public class ControllerApiCommentFileSystemObjectUser implements ControllerApiCo
 
         final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
         return serviceCommentFileSystemObject.create(
-                data.comment(), data.fileSystemObject(), claims.get("login", String.class));
+                data.comment(), data.fileSystemObject(), data.parentId(), claims.get("login", String.class));
     }
 
     /**

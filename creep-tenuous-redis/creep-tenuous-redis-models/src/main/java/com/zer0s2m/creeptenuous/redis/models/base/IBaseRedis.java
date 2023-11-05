@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.index.Indexed;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -37,5 +38,8 @@ public abstract class IBaseRedis implements BaseRedis {
 
     @Column(name = "userLogins")
     private List<String> userLogins;
+
+    @Column(name = "createdAt")
+    private LocalDateTime createdAt;
 
 }

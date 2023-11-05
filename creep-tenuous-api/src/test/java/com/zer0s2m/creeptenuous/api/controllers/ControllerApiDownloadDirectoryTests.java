@@ -33,9 +33,11 @@ import org.springframework.util.FileSystemUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,11 +55,9 @@ public class ControllerApiDownloadDirectoryTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
-    @Autowired
-    private RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     @Autowired
     private DirectoryRedisRepository directoryRedisRepository;
@@ -281,6 +281,86 @@ public class ControllerApiDownloadDirectoryTests {
     }
 
     @Test
+    public void downloadDirectory_fail_isFrozenSource() throws Exception {
+        String systemName1 = UUID.randomUUID().toString();
+        String systemName2 = UUID.randomUUID().toString();
+
+        prepareForIsFrozen(systemName1, systemName2);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/api/v1/directory/download")
+                        .content(objectMapper.writeValueAsString(new DataDownloadDirectoryApi(
+                                List.of(systemName1),
+                                List.of(systemName1),
+                                systemName2,
+                                systemName2
+                        )))
+                        .header("Authorization", accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void downloadSelectDirectory_fail_isFrozenSource() throws Exception {
+        String systemName1 = UUID.randomUUID().toString();
+        String systemName2 = UUID.randomUUID().toString();
+
+        prepareForIsFrozen(systemName1, systemName2);
+
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/api/v1/directory/download/select")
+                        .content(objectMapper.writeValueAsString(new DataDownloadDirectorySelectApi(
+                            List.of(new DataDownloadDirectorySelectPartApi(
+                                    List.of(systemName1),
+                                    List.of(systemName1),
+                                    systemName2,
+                                    systemName2
+                            ))
+                        )))
+                        .header("Authorization", accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    private void prepareForIsFrozen(String systemName1, String systemName2) throws NoSuchFileException {
+        UtilsActionForFiles.createDirectories(
+                List.of(systemName1, systemName2), buildDirectoryPath, logger);
+
+        DirectoryRedis directoryRedis1 = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                systemName1,
+                systemName1,
+                Path.of(rootPath.getRootPath(), systemName1).toString(),
+                List.of(UtilsAuthAction.LOGIN));
+        DirectoryRedis directoryRedis2 = new DirectoryRedis(
+                "login",
+                "ROLE_USER",
+                systemName2,
+                systemName2,
+                Path.of(rootPath.getRootPath(), systemName1, systemName2).toString(),
+                List.of(UtilsAuthAction.LOGIN));
+        RightUserFileSystemObjectRedis rightDirectory1 = new RightUserFileSystemObjectRedis(
+                systemName1 + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW, OperationRights.DOWNLOAD));
+        RightUserFileSystemObjectRedis rightDirectory2 = new RightUserFileSystemObjectRedis(
+                systemName1 + "__" + UtilsAuthAction.LOGIN, UtilsAuthAction.LOGIN,
+                List.of(OperationRights.SHOW, OperationRights.DOWNLOAD));
+        FrozenFileSystemObjectRedis frozenFileSystemObjectRedis = new FrozenFileSystemObjectRedis(
+                systemName1);
+
+        directoryRedisRepository.saveAll(List.of(directoryRedis1, directoryRedis2));
+        rightUserFileSystemObjectRedisRepository.saveAll(List.of(rightDirectory1, rightDirectory2));
+        frozenFileSystemObjectRedisRepository.save(frozenFileSystemObjectRedis);
+    }
+
+    @Test
     public void downloadDirectory_success_forbidden() throws Exception {
         final String testFolder = "testFolder2";
         final String testFile = "testFile1";
@@ -414,6 +494,7 @@ public class ControllerApiDownloadDirectoryTests {
         FileSystemUtils.deleteRecursively(testDirectoryPath);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void prepareDownload(String testFolder, String testFile) throws IOException {
         final Path testDirectoryPath = Path.of(rootPath.getRootPath(), testFolder);
         final Path testFilePath = Path.of(testDirectoryPath.toString(), testFile);

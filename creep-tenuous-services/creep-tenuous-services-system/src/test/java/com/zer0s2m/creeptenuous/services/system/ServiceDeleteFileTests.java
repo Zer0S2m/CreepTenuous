@@ -3,7 +3,7 @@ package com.zer0s2m.creeptenuous.services.system;
 import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteFileApi;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
-import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
+import com.zer0s2m.creeptenuous.common.exceptions.NoSuchFileExistsException;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteFileImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceFileSystem;
@@ -13,8 +13,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,25 +22,16 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-@SpringBootTest(classes = {
-        ServiceDeleteFileImpl.class,
-        ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class,
-        RootPath.class,
-})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceDeleteFileTests {
     Logger logger = LogManager.getLogger(ServiceDeleteFileTests.class);
 
-    @Autowired
-    private ServiceDeleteFileImpl service;
+    private final ServiceDeleteFile service = new ServiceDeleteFileImpl();
 
-    @Autowired
-    private ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
-    @Autowired
-    private RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     private final String testFile1 = "testFile1.txt";
 
@@ -63,7 +52,7 @@ public class ServiceDeleteFileTests {
     );
 
     @Test
-    public void deleteFile_success() throws IOException {
+    public void deleteFile_success() throws IOException, NoSuchFileExistsException {
         Path pathTestFile = Paths.get(
                 buildDirectoryPath.build(RECORD_1.parents()), RECORD_1.fileName()
         );

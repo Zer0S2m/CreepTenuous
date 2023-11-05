@@ -1,19 +1,20 @@
 package com.zer0s2m.creeptenuous.core.balancer;
 
 import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
-import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagCore;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.*;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
-@TestTagCore
+@Tag("core")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class FileBalancerTests {
 
@@ -21,7 +22,7 @@ public class FileBalancerTests {
 
     @BeforeEach
     public void init() {
-        if (pathRoot == null || pathRoot.length() == 0) {
+        if (pathRoot == null || pathRoot.isEmpty()) {
             throw new RuntimeException("Environment variable not set: [CT_ROOT_PATH]");
         }
     }
@@ -44,7 +45,7 @@ public class FileBalancerTests {
         Path file = initFile();
         String systemNameFile = file.getFileName().toString();
 
-        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.split(file));
+        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file));
 
         Assertions.assertEquals(FileBalancer.PART_COUNTER, paths.size());
         Assertions.assertTrue(Files.exists(file));
@@ -66,7 +67,7 @@ public class FileBalancerTests {
         String systemNameFile = file.getFileName().toString();
         int partCounter = 2;
 
-        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.split(file, partCounter));
+        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file, partCounter));
 
         Assertions.assertEquals(partCounter, paths.size());
         Assertions.assertTrue(Files.exists(file));
@@ -83,7 +84,7 @@ public class FileBalancerTests {
 
         Assertions.assertThrows(
                 FileIsDirectoryException.class,
-                () -> FileBalancer.split(directory));
+                () -> FileBalancer.fragment(directory));
 
         Files.delete(directory);
     }
@@ -93,7 +94,7 @@ public class FileBalancerTests {
         Path file = initFile();
         Path systemNameFileInto = Path.of(pathRoot, UUID.randomUUID().toString());
 
-        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.split(file));
+        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file));
 
         Path into = Assertions.assertDoesNotThrow(() -> FileBalancer.merge(paths, systemNameFileInto));
 
@@ -109,6 +110,44 @@ public class FileBalancerTests {
         Assertions.assertThrows(
                 FileIsDirectoryException.class,
                 () -> FileBalancer.merge(List.of(directory), directory));
+
+        Files.delete(directory);
+    }
+
+    @Test
+    public void merge_fail_notFoundFile() throws IOException {
+        Path file = initFile();
+        Path systemNameFileInto = Path.of(pathRoot, UUID.randomUUID().toString());
+
+        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file));
+        paths.add(Path.of("file_not_found"));
+
+        Assertions.assertThrows(
+                FileNotFoundException.class,
+                () -> FileBalancer.merge(paths, systemNameFileInto));
+    }
+
+    @Test
+    public void getAllParts_success() throws IOException {
+        Path file = initFile();
+
+        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file));
+        List<Path> pathList = List.copyOf(paths);
+
+        Set<Path> allParts = Assertions.assertDoesNotThrow(
+                () -> FileBalancer.getAllParts(pathList.get(0)));
+
+        allParts.forEach(part -> Assertions.assertTrue(Files.exists(part)));
+    }
+
+    @Test
+    public void getAllParts_fail_partIsDirectory() throws IOException {
+        Path directory = Path.of(pathRoot, UUID.randomUUID().toString());
+        Files.createDirectory(directory);
+
+        Assertions.assertThrows(
+                FileIsDirectoryException.class,
+                () -> FileBalancer.getAllParts(directory));
 
         Files.delete(directory);
     }

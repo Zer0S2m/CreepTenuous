@@ -36,7 +36,7 @@ public class ActionsStartupIntegrationEventApi implements ActionsStartupIntegrat
     @Value("${integration.implants.port:9191}")
     private String port;
 
-    RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
 
     /**
      * Calling a method while listening for context

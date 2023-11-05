@@ -28,6 +28,7 @@ import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,8 +44,7 @@ public class ControllerApiUploadDirectoryTests {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     @Autowired
     private DirectoryRedisRepository directoryRedisRepository;
@@ -97,14 +97,21 @@ public class ControllerApiUploadDirectoryTests {
 
     @Test
     public void uploadDirectory_fail_forbiddenDirectories() throws Exception {
+        final String testDirectory = UUID.randomUUID().toString();
+
         DirectoryRedis directoryRedis = new DirectoryRedis(
                 "login",
                 "ROLE_USER",
-                "testDirectory",
-                "testDirectory",
-                "testDirectory",
+                testDirectory,
+                testDirectory,
+                testDirectory,
                 new ArrayList<>());
         directoryRedisRepository.save(directoryRedis);
+
+        UtilsActionForFiles.createDirectories(
+                List.of(testDirectory),
+                buildDirectoryPath,
+                logger);
 
         String testFileZip = "test-zip.zip";
         File testFile = new File("src/test/resources/" + testFileZip);
@@ -118,14 +125,15 @@ public class ControllerApiUploadDirectoryTests {
                                 "application/zip",
                                 targetStream
                         ))
-                        .queryParam("parents", "testDirectory")
-                        .queryParam("systemParents", "testDirectory")
+                        .queryParam("parents", testDirectory)
+                        .queryParam("systemParents", testDirectory)
                         .header("Authorization", accessToken)
                 )
                 .andExpect(status().isForbidden());
 
         targetStream.close();
         directoryRedisRepository.delete(directoryRedis);
+        FileSystemUtils.deleteRecursively(Path.of(buildDirectoryPath.build(List.of(testDirectory))));
     }
 
     @Test

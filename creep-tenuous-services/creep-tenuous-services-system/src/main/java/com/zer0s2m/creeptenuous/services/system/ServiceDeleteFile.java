@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.exceptions.NoSuchFileExistsException;
+import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * Maintenance service file deletion
  */
-public interface ServiceDeleteFile {
+public interface ServiceDeleteFile extends AtomicServiceFileSystem {
 
     /**
      * Delete file from file system

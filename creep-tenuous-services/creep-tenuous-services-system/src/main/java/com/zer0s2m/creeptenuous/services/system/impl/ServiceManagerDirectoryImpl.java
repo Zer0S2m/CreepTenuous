@@ -4,10 +4,11 @@ import com.zer0s2m.creeptenuous.common.annotations.ServiceFileSystem;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataBuilderDirectory;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.common.exceptions.NotValidLevelDirectoryException;
+import com.zer0s2m.creeptenuous.services.system.ServiceBuilderDataFileSystemObject;
+import com.zer0s2m.creeptenuous.services.system.ServiceCollectDirectory;
 import com.zer0s2m.creeptenuous.services.system.ServiceManagerDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
@@ -21,20 +22,11 @@ public class ServiceManagerDirectoryImpl implements ServiceManagerDirectory {
 
     private List<String> systemParents;
     
-    private final ServiceCollectDirectoryImpl collectDirectory;
+    private final ServiceCollectDirectory collectDirectory = new ServiceCollectDirectoryImpl();
 
-    private final ServiceBuilderDataFileSystemObjectImpl builderDataFile;
+    private final ServiceBuilderDataFileSystemObject builderDataFile = new ServiceBuilderDataFileSystemObjectImpl();
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
-
-    @Autowired
-    public ServiceManagerDirectoryImpl(ServiceCollectDirectoryImpl collectDirectory,
-                                       ServiceBuilderDataFileSystemObjectImpl builderDataFile,
-                                       ServiceBuildDirectoryPath buildDirectoryPath) {
-        this.collectDirectory = collectDirectory;
-        this.builderDataFile = builderDataFile;
-        this.buildDirectoryPath = buildDirectoryPath;
-    }
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     /**
      * Build data in directory

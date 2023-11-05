@@ -7,10 +7,10 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationDelete;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.services.system.ServiceDeleteDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,14 +25,11 @@ import java.util.stream.Stream;
  */
 @ServiceFileSystem("delete-directory")
 @CoreServiceFileSystem(method = "delete")
-public class ServiceDeleteDirectoryImpl implements ServiceDeleteDirectory, AtomicServiceFileSystem {
+public class ServiceDeleteDirectoryImpl implements ServiceDeleteDirectory {
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
+    private final Logger logger = LogManager.getLogger(ServiceDeleteDirectory.class);
 
-    @Autowired
-    public ServiceDeleteDirectoryImpl(ServiceBuildDirectoryPath buildDirectoryPath) {
-        this.buildDirectoryPath = buildDirectoryPath;
-    }
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     /**
      * Delete directory from system
@@ -53,6 +50,11 @@ public class ServiceDeleteDirectoryImpl implements ServiceDeleteDirectory, Atomi
     )
     public void delete(List<String> systemParents, String systemName) throws IOException {
         Path path = Paths.get(buildDirectoryPath.build(systemParents), systemName);
+
+        logger.info(String.format(
+                "Deleting a directory: source [%s]",
+                path
+        ));
 
         if (Files.isDirectory(path)) {
             try (Stream<Path> pathStream = Files.walk(path)) {
@@ -82,6 +84,11 @@ public class ServiceDeleteDirectoryImpl implements ServiceDeleteDirectory, Atomi
             }
     )
     public void delete(Path source) throws IOException {
+        logger.info(String.format(
+                "Deleting a directory: source [%s]",
+                source
+        ));
+
         if (Files.isDirectory(source)) {
             try (Stream<Path> pathStream = Files.walk(source)) {
                 pathStream

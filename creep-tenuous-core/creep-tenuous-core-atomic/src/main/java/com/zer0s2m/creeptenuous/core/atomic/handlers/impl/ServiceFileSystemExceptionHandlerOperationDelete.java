@@ -55,13 +55,21 @@ public class ServiceFileSystemExceptionHandlerOperationDelete implements Service
 
                         if (!Files.exists(sourcePath) && (boolean) operationData.get("isFile")) {
                             Files.move(targetPath, sourcePath, StandardCopyOption.REPLACE_EXISTING);
+
+                            logger.info(String.format(
+                                    "Moving a deleted file to the previous state: [%s] -> [%s]",
+                                    targetPath, sourcePath
+                            ));
+                        } else if (!Files.exists(sourcePath) && (boolean) operationData.get("isDirectory")) {
+                            Files.move(targetPath, sourcePath, StandardCopyOption.REPLACE_EXISTING);
+
+                            logger.info(String.format(
+                                    "Moving a deleted directory to the previous state: [%s] -> [%s]",
+                                    targetPath, sourcePath
+                            ));
                         }
 
                         contextAtomicFileSystem.handleOperation(typeOperation, uniqueName);
-                        logger.info(String.format(
-                                "Moving a deleted file to the previous state: [%s] -> [%s]",
-                                targetPath, sourcePath
-                        ));
                     } catch (IOException e) {
                         contextAtomicFileSystem.handleOperation(typeOperation, uniqueName);
                         throw new RuntimeException(e);

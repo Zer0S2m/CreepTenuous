@@ -2,8 +2,6 @@ package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadDirectoryApi;
-import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
-import com.zer0s2m.creeptenuous.services.system.impl.ServiceUploadDirectoryImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,33 +12,32 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Path;
 import java.util.List;
 
 public interface ControllerApiUploadDirectoryDoc {
 
     /**
-     * Upload directory (zip archive)
-     * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceUploadDirectoryImpl#upload(Path, Path)}</p>
+     * Uploading a directory (zip archive). Supports atomic file system mode.
      *
-     * @param parents       real names directories
-     * @param systemParents parts of the system path - source
-     * @param zipFile       raw zip archive
-     * @param accessToken   raw JWT access token
-     * @return result upload directory (zip archive)
+     * @param parents       Real names directories.
+     * @param systemParents Parts of the system path - source.
+     * @param zipFile       Raw zip archive.
+     * @param accessToken   Raw JWT access token.
+     * @return Result upload directory (zip archive).
      * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
      * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
      * @throws InstantiationException      Thrown when an application tries to create an instance of a class
      *                                     using the newInstance method in class {@code Class}.
      * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
-     *                                     tries to reflectively create an instance
-     * @throws FileObjectIsFrozenException file object is frozen
+     *                                     tries to reflectively create an instance.
+     * @throws IOException                 Signals that an I/O exception to some sort has occurred.
+     * @throws FileObjectIsFrozenException File object is frozen.
      */
     @Operation(
             method = "POST",
             summary = "Uploading a directory",
             description = "Uploading a directory - archive file",
-            tags = { "Directory" },
+            tags = {"Directory"},
             security = @SecurityRequirement(name = "Bearer Authentication"),
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Data to upload a directory",

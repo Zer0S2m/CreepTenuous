@@ -1,8 +1,6 @@
 package com.zer0s2m.creeptenuous.services.system;
 
-import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.services.system.helpers.UtilsActionForFiles;
-import com.zer0s2m.creeptenuous.services.system.core.CollectRootPathImpl;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteDirectoryImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceFileSystem;
@@ -12,8 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,23 +19,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@SpringBootTest(classes = {
-        ServiceDeleteDirectoryImpl.class,
-        ServiceBuildDirectoryPath.class,
-        CollectRootPathImpl.class,
-        RootPath.class,
-})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagServiceFileSystem
 public class ServiceDeleteDirectoryTests {
 
     Logger logger = LogManager.getLogger(ServiceDeleteDirectoryTests.class);
 
-    @Autowired
-    private ServiceDeleteDirectoryImpl service;
+    private final ServiceDeleteDirectory service = new ServiceDeleteDirectoryImpl();
 
-    @Autowired
-    private ServiceBuildDirectoryPath serviceBuildDirectoryPath;
+    private final ServiceBuildDirectoryPath serviceBuildDirectoryPath = new ServiceBuildDirectoryPath();
 
     List<String> DIRECTORIES_1 = List.of("test_folder1");
 

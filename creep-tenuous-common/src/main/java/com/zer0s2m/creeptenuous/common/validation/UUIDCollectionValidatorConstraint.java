@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class UUIDCollectionValidatorConstraint
         implements ConstraintValidator<UUIDCollectionValidator, Collection<String>> {
 
-    public static Pattern REGEX_UUID = Pattern.compile(
+    public final static Pattern REGEX_UUID = Pattern.compile(
             "^[a-f0-9]{8}(?:-[a-f0-9]{4}){4}[a-f0-9]{8}$");
 
     /**

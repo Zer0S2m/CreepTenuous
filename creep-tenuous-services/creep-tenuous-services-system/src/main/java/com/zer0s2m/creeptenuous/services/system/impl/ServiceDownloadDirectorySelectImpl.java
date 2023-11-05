@@ -7,9 +7,7 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptio
 import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationDownload;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.services.Distribution;
-import com.zer0s2m.creeptenuous.services.system.CollectZipDirectory;
 import com.zer0s2m.creeptenuous.services.system.ServiceDownloadDirectorySelect;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import net.lingala.zip4j.ZipFile;
@@ -18,7 +16,6 @@ import net.lingala.zip4j.model.ZipParameters;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,22 +32,16 @@ import java.util.List;
  */
 @ServiceFileSystem("service-download-directory-select")
 @CoreServiceFileSystem(method = "download")
-public class ServiceDownloadDirectorySelectImpl
-        implements ServiceDownloadDirectorySelect, CollectZipDirectory, AtomicServiceFileSystem {
+public class ServiceDownloadDirectorySelectImpl implements ServiceDownloadDirectorySelect {
 
     private final Logger logger = LogManager.getLogger(ServiceDownloadDirectorySelectImpl.class);
 
-    private final ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     /**
      * info directory
      */
     private HashMap<String, String> map = null;
-
-    @Autowired
-    public ServiceDownloadDirectorySelectImpl(ServiceBuildDirectoryPath buildDirectoryPath) {
-        this.buildDirectoryPath = buildDirectoryPath;
-    }
 
     /**
      * Download selectively file objects
@@ -94,25 +85,28 @@ public class ServiceDownloadDirectorySelectImpl
      * @return merged archive path
      * @throws NoSuchFileException file that does not exist.
      */
-    private @NotNull Path mergeZipArchives(@NotNull List<Path> paths) throws NoSuchFileException {
-        final ZipFile zipFile = new ZipFile(
-                Path.of(buildDirectoryPath.build(), "data-" + Distribution.getUUID() + ".zip").toFile());
-
-        paths.forEach(path -> {
-            ZipFile zipFileToMerge = new ZipFile(new File(path.toString()));
-            try {
-                for (FileHeader fileHeader : zipFileToMerge.getFileHeaders()) {
-                    try (InputStream inputStream = zipFileToMerge.getInputStream(fileHeader)) {
-                        ZipParameters zipParameters = getZipParametersFromFileHeader(fileHeader);
-                        zipFile.addStream(inputStream, zipParameters);
+    private @NotNull Path mergeZipArchives(@NotNull List<Path> paths) throws IOException {
+        try (final ZipFile zipFile = new ZipFile(
+                Path.of(buildDirectoryPath.build(), "data-" + Distribution.getUUID() + ".zip").toFile())) {
+            paths.forEach(path -> {
+                try (final ZipFile zipFileToMerge = new ZipFile(new File(path.toString()))) {
+                    try {
+                        for (FileHeader fileHeader : zipFileToMerge.getFileHeaders()) {
+                            try (InputStream inputStream = zipFileToMerge.getInputStream(fileHeader)) {
+                                ZipParameters zipParameters = getZipParametersFromFileHeader(fileHeader);
+                                zipFile.addStream(inputStream, zipParameters);
+                            }
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+            });
 
-        return zipFile.getFile().toPath();
+            return zipFile.getFile().toPath();
+        }
     }
 
     private @NotNull ZipParameters getZipParametersFromFileHeader(@NotNull FileHeader fileHeader) {

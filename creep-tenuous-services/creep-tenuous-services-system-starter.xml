@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.zer0s2m</groupId>
+    <artifactId>creep-tenuous</artifactId>
+    <version>0.0.12-SNAPSHOT</version>
+  </parent>
+  <artifactId>creep-tenuous-services-system-starter</artifactId>
+  <version>0.0.12-SNAPSHOT</version>
+  <name>creep-tenuous-services-system-starter</name>
+  <description>Starter package for interacting with the file system</description>
+  <properties>
+    <java.version>21</java.version>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-services-system</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-core-atomic</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-core-balancer</artifactId>
+    </dependency>
+  </dependencies>
+</project>

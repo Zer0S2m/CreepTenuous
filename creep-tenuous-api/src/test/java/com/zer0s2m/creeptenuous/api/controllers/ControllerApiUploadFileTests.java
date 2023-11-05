@@ -45,8 +45,7 @@ public class ControllerApiUploadFileTests {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
     @Autowired
     private DirectoryRedisRepository directoryRedisRepository;

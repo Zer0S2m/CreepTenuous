@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.models.user;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.UUID;
 
@@ -8,6 +9,7 @@ import java.util.UUID;
 @Table(name = "\"user_file_objects_exclusions\"")
 public class UserFileObjectsExclusion {
 
+    @Getter
     @Id
     @SequenceGenerator(
             name = "UserFileObjectsExclusionsSequence",
@@ -33,8 +35,4 @@ public class UserFileObjectsExclusion {
         this.user = user;
     }
 
-    public Long getId() {
-        return id;
-    }
-    
 }

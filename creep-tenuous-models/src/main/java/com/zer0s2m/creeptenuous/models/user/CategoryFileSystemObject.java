@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.models.user;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.UUID;
 
@@ -8,6 +9,7 @@ import java.util.UUID;
 @Table(name = "\"category_file_system_objects\"")
 public class CategoryFileSystemObject {
 
+    @Getter
     @Id
     @SequenceGenerator(
             name = "CategoryFileSystemObjectsSequence",
@@ -26,6 +28,7 @@ public class CategoryFileSystemObject {
     @JoinColumn(name = "user_category_id", referencedColumnName = "id")
     private UserCategory userCategory;
 
+    @Getter
     @Column(name = "file_system_object")
     private UUID fileSystemObject;
 
@@ -36,14 +39,6 @@ public class CategoryFileSystemObject {
         this.user = user;
         this.userCategory = userCategory;
         this.fileSystemObject = fileSystemObject;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public UUID getFileSystemObject() {
-        return fileSystemObject;
     }
 
 }

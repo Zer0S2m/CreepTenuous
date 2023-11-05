@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateFile;
 import com.zer0s2m.creeptenuous.common.enums.ExceptionFile;
 import com.zer0s2m.creeptenuous.common.enums.TypeFile;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundTypeFileException;
+import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ import java.util.Objects;
  *     <li>docx format</li>
  * </ul>
  */
-public interface ServiceCreateFile extends ServiceCreateFileExcel, ServiceCreateFileDocx {
+public interface ServiceCreateFile extends ServiceCreateFileExcel, ServiceCreateFileDocx, AtomicServiceFileSystem {
 
     String txt = "txt";
 

@@ -2,8 +2,6 @@ package com.zer0s2m.creeptenuous.services.system.core;
 
 import com.zer0s2m.creeptenuous.common.enums.Directory;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.nio.file.NoSuchFileException;
 import java.util.List;
@@ -11,15 +9,9 @@ import java.util.List;
 /**
  * Service for servicing the paths of file system objects. Use in end endpoints
  */
-@Service("service-build-directory-path")
 public final class ServiceBuildDirectoryPath implements CheckIsExistsDirectoryService {
 
-    private final CollectRootPathImpl collectRootPath;
-
-    @Autowired
-    public ServiceBuildDirectoryPath(CollectRootPathImpl collectRootPath) {
-        this.collectRootPath = collectRootPath;
-    }
+    private final CollectRootPath collectRootPath = new CollectRootPathImpl();
 
     /**
      * Get path

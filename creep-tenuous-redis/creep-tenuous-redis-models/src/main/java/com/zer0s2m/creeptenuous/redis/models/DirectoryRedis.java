@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.redis.core.RedisHash;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -30,6 +31,7 @@ public class DirectoryRedis extends IBaseRedis {
         setUserLogins(userLogins);
         setIsDirectory(true);
         setIsFile(false);
+        setCreatedAt(LocalDateTime.now());
     }
 
 }

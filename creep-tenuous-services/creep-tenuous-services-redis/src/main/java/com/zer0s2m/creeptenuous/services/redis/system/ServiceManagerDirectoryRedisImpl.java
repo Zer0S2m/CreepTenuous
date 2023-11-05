@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.services.redis.system;
 
+import com.zer0s2m.creeptenuous.common.containers.ContainerUserColorDirectoryInfo;
 import com.zer0s2m.creeptenuous.common.query.IMapFileObjectToCategory;
 import com.zer0s2m.creeptenuous.models.user.UserColor;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
@@ -18,6 +19,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -58,35 +60,44 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
 
         Iterable<DirectoryRedis> directoryRedis = directoryRedisRepository.findAllById(systemNamesFileSystemObject);
         Iterable<FileRedis> fileRedis = fileRedisRepository.findAllById(systemNamesFileSystemObject);
-        Map<String, String> mapColors = getUserColorsDirectory(systemNamesFileSystemObject);
+        Map<String, ContainerUserColorDirectoryInfo> mapColors = getUserColorsDirectory(systemNamesFileSystemObject);
 
         List<IMapFileObjectToCategory> fileObjectSettingToCategory = categoryFileSystemObjectRepository
                 .getMapFileObjectSettingToCategory(getLoginUser());
-        HashMap<String, Integer> mapFileObjectToCategories = new HashMap<>();
+        HashMap<String, Long> mapFileObjectToCategories = new HashMap<>();
         fileObjectSettingToCategory.forEach((entity) ->
                 entity.getFileSystemObjects().forEach((fileObject)
                         -> mapFileObjectToCategories.put(fileObject.toString(), entity.getUserCategoryId())));
 
-        directoryRedis.forEach(objRedis -> buildJSON(
-                data,
-                objRedis.getSystemName(),
-                objRedis.getIsFile(),
-                objRedis.getIsDirectory(),
-                objRedis.getRealName(),
-                mapColors.getOrDefault(objRedis.getSystemName(), null),
-                mapFileObjectToCategories.get(objRedis.getSystemName())
-        ));
+        directoryRedis.forEach(objRedis -> {
+            ContainerUserColorDirectoryInfo colorDirectoryInfo = mapColors.getOrDefault(
+                    objRedis.getSystemName(), null);
+
+            buildJSON(
+                    data,
+                    objRedis.getSystemName(),
+                    objRedis.getIsFile(),
+                    objRedis.getIsDirectory(),
+                    objRedis.getRealName(),
+                    objRedis.getCreatedAt(),
+                    colorDirectoryInfo != null ? colorDirectoryInfo.color() : null,
+                    colorDirectoryInfo != null ? colorDirectoryInfo.colorId() : null,
+                    mapFileObjectToCategories.get(objRedis.getSystemName())
+            );
+        });
         fileRedis.forEach(objRedis -> buildJSON(
                 data,
                 objRedis.getSystemName(),
                 objRedis.getIsFile(),
                 objRedis.getIsDirectory(),
                 objRedis.getRealName(),
+                objRedis.getCreatedAt(),
+                null,
                 null,
                 mapFileObjectToCategories.get(objRedis.getSystemName())
         ));
 
-        if (data.length() > 0) {
+        if (!data.isEmpty()) {
             return data.toList();
         } else {
             return new ArrayList<>();
@@ -100,7 +111,9 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
      * @param isFile is file
      * @param isDirectory is directory
      * @param realName real name file system object
+     * @param createdAt File object creation date
      * @param color color directory
+     * @param colorId color ID
      * @param categoryId custom category
      */
     private void buildJSON(
@@ -109,8 +122,10 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
             Boolean isFile,
             Boolean isDirectory,
             String realName,
+            LocalDateTime createdAt,
             String color,
-            Integer categoryId
+            Long colorId,
+            Long categoryId
     ) {
         JSONObject obj = new JSONObject();
 
@@ -118,7 +133,9 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
         obj.put("realName", realName);
         obj.put("isFile", isFile);
         obj.put("isDirectory", isDirectory);
+        obj.put("createdAt", createdAt != null ? createdAt.toString() : null);
         obj.put("color", color);
+        obj.put("colorId", colorId);
         obj.put("categoryId", categoryId);
 
         data.put(obj);
@@ -129,8 +146,8 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
      * @param ids names directories. Must not be {@literal null}.
      * @return map of installed colors for user directory
      */
-    private @NotNull Map<String, String> getUserColorsDirectory(@NotNull List<String> ids) {
-        Map<String, String> mapColors = new HashMap<>();
+    private @NotNull Map<String, ContainerUserColorDirectoryInfo> getUserColorsDirectory(@NotNull List<String> ids) {
+        Map<String, ContainerUserColorDirectoryInfo> mapColors = new HashMap<>();
 
         userColorDirectoryRepository.findAllByDirectoryIn(ids
                         .stream()
@@ -140,7 +157,10 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
                     UserColor userColor = userColorDirectory.getColor();
                     mapColors.put(
                             userColorDirectory.getDirectory().toString(),
-                            userColor == null ? null : userColor.getColor()
+                            new ContainerUserColorDirectoryInfo(
+                                    userColor == null ? null : userColor.getColor(),
+                                    userColor == null ? null : userColor.getId()
+                            )
                     );
                 });
 

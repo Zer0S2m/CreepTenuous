@@ -2,6 +2,7 @@ package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateDirectory;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
+import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * Service to serve the creation of directories
  */
-public interface ServiceCreateDirectory {
+public interface ServiceCreateDirectory extends AtomicServiceFileSystem {
 
     /**
      * Create directory in system

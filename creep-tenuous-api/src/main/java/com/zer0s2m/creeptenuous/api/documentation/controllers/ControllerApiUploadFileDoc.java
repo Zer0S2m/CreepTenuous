@@ -2,8 +2,6 @@ package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadFileApi;
-import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
-import com.zer0s2m.creeptenuous.services.system.impl.ServiceUploadFileImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,27 +10,28 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public interface ControllerApiUploadFileDoc {
 
     /**
-     * Upload file
-     * <p>Called method via {@link AtomicSystemCallManager} - {@link ServiceUploadFileImpl#upload(List, List)}</p>
+     * Uploading a file. Supports atomic file system mode.
      *
-     * @param files         raw files
-     * @param parents       real names directories
-     * @param systemParents parts of the system path - source
-     * @param accessToken   raw JWT access token
-     * @return result upload file
+     * @param files         Raw files.
+     * @param parents       Real names directories.
+     * @param systemParents Parts of the system path - source.
+     * @param accessToken   Raw JWT access token.
+     * @return Result upload file.
      * @throws InvocationTargetException   Exception thrown by an invoked method or constructor.
      * @throws NoSuchMethodException       Thrown when a particular method cannot be found.
      * @throws InstantiationException      Thrown when an application tries to create an instance of a class
      *                                     using the newInstance method in class {@code Class}.
      * @throws IllegalAccessException      An IllegalAccessException is thrown when an application
-     *                                     tries to reflectively create an instance
-     * @throws FileObjectIsFrozenException file object is frozen
+     *                                     tries to reflectively create an instance.
+     * @throws FileObjectIsFrozenException File object is frozen.
+     * @throws IOException                 Signals that an I/O exception to some sort has occurred.
      */
     @Operation(
             method = "POST",
@@ -73,5 +72,5 @@ public interface ControllerApiUploadFileDoc {
             ) List<String> systemParents,
             @Parameter(hidden = true) String accessToken
     ) throws InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException, FileObjectIsFrozenException;
+            InstantiationException, IllegalAccessException, FileObjectIsFrozenException, IOException;
 }

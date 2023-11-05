@@ -56,11 +56,9 @@ public class ControllerApiDeleteFileTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private ServiceBuildDirectoryPath buildDirectoryPath;
+    private final ServiceBuildDirectoryPath buildDirectoryPath = new ServiceBuildDirectoryPath();
 
-    @Autowired
-    private RootPath rootPath;
+    private final RootPath rootPath = new RootPath();
 
     @Autowired
     private DirectoryRedisRepository directoryRedisRepository;

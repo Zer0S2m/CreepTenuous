@@ -24,6 +24,8 @@ public record ResponseManagerDirectoryApi(
                         "\"isFile\": false," +
                         "\"isDirectory\": true," +
                         "\"color\": \"#fff\"," +
+                        "\"colorId\": 1," +
+                        "\"createdAt\": \"2023-10-14T13:37:46.859674169\"," +
                         "\"categoryId\": 1" +
                         "}" +
                         "]"
