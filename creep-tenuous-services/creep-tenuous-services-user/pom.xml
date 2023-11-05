@@ -5,10 +5,10 @@
   <parent>
     <groupId>com.zer0s2m</groupId>
     <artifactId>creep-tenuous-services</artifactId>
-    <version>0.0.11-SNAPSHOT</version>
+    <version>0.0.12-SNAPSHOT</version>
   </parent>
   <artifactId>creep-tenuous-services-user</artifactId>
-  <version>0.0.11-SNAPSHOT</version>
+  <version>0.0.12-SNAPSHOT</version>
   <name>creep-tenuous-services-user</name>
   <description>creep-tenuous-services-user</description>
   <properties>

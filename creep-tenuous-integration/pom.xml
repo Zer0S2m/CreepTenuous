@@ -5,10 +5,10 @@
   <parent>
     <groupId>com.zer0s2m</groupId>
     <artifactId>creep-tenuous</artifactId>
-    <version>0.0.11-SNAPSHOT</version>
+    <version>0.0.12-SNAPSHOT</version>
   </parent>
   <artifactId>creep-tenuous-integration</artifactId>
-  <version>0.0.11-SNAPSHOT</version>
+  <version>0.0.12-SNAPSHOT</version>
   <name>creep-tenuous-integration</name>
   <description>creep-tenuous-integration</description>
   <properties>
@@ -24,7 +24,7 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-integration-implants</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
         <exclusions>
           <exclusion>
             <groupId>org.springdoc</groupId>
@@ -35,7 +35,7 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-integration-core</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.zer0s2m</groupId>
   <artifactId>creep-tenuous</artifactId>
-  <version>0.0.11-SNAPSHOT</version>
+  <version>0.0.12-SNAPSHOT</version>
   <name>creep-tenuous</name>
   <description>Distributed file storage</description>
   <packaging>pom</packaging>
@@ -81,48 +81,48 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-system-starter</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-starter</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
 
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-jwt</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-redis</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-security</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-system</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-user</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-starter-test</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-common</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
         <exclusions>
           <exclusion>
             <groupId>org.springframework</groupId>
@@ -153,42 +153,42 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-integration-core</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-integration-implants</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-security</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-services</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-repository</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-models</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-events</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-repository</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
         <exclusions>
           <exclusion>
             <groupId>org.flywaydb</groupId>
@@ -203,12 +203,12 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-models</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-events</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
         <exclusions>
           <exclusion>
             <groupId>com.zer0s2m</groupId>
@@ -219,12 +219,12 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-core-atomic</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-core-balancer</artifactId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
       </dependency>
 
       <dependency>

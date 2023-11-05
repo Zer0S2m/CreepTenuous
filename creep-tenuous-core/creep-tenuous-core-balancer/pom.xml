@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.zer0s2m</groupId>
     <artifactId>creep-tenuous-core</artifactId>
-    <version>0.0.11-SNAPSHOT</version>
+    <version>0.0.12-SNAPSHOT</version>
   </parent>
   <artifactId>creep-tenuous-core-balancer</artifactId>
   <properties>

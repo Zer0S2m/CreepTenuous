@@ -5,10 +5,10 @@
 	<parent>
 		<groupId>com.zer0s2m</groupId>
 		<artifactId>creep-tenuous-integration</artifactId>
-		<version>0.0.11-SNAPSHOT</version>
+		<version>0.0.12-SNAPSHOT</version>
 	</parent>
 	<artifactId>creep-tenuous-integration-core</artifactId>
-	<version>0.0.11-SNAPSHOT</version>
+	<version>0.0.12-SNAPSHOT</version>
 	<name>creep-tenuous-integration-core</name>
 	<description>creep-tenuous-integration-core</description>
 	<properties>
