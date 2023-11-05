@@ -7,12 +7,15 @@ import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.*;
 import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 
 /**
  * Test class for testing atomic mode in different positions.
@@ -1100,6 +1103,115 @@ public final class MockServiceFileSystem {
 
         @Contract("_ -> fail")
         private Path move(@NotNull Path source) throws IOException {
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    /**
+     * <p>--------------------------------------------------------</p>
+     * {@link ContextAtomicFileSystem.Operations#FRAGMENTATION}
+     */
+
+    @CoreServiceFileSystem(method = "fragmentation")
+    public static final class MockServiceFileSystemFragmentationFileSuccess implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "fragmentation-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationFragmentation.class,
+                                operation = ContextAtomicFileSystem.Operations.FRAGMENTATION
+                        )
+                }
+        )
+        public @NotNull Collection<Path> fragmentation(Path source) throws IOException, FileIsDirectoryException {
+            return FilesContextAtomic.fragment(source);
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "fragmentation")
+    public static final class MockServiceFileSystemFragmentationFileFailException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "fragmentation-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationFragmentation.class,
+                                operation = ContextAtomicFileSystem.Operations.FRAGMENTATION
+                        )
+                }
+        )
+        public @NotNull Collection<Path> fragmentation(Path source) throws IOException, FileIsDirectoryException {
+            FilesContextAtomic.fragment(source);
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "fragmentation")
+    public static final class MockServiceFileSystemFragmentationFileFailOtherException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "fragmentation-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationFragmentation.class,
+                                operation = ContextAtomicFileSystem.Operations.FRAGMENTATION
+                        )
+                }
+        )
+        public @NotNull Collection<Path> fragmentation(Path source) throws Exception {
+            FilesContextAtomic.fragment(source);
+            throw new Exception(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "fragmentation")
+    public static final class MockServiceFileSystemFragmentationFileFailMultiException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "fragmentation-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                isExceptionMulti = true,
+                                handler = ServiceFileSystemExceptionHandlerOperationFragmentation.class,
+                                operation = ContextAtomicFileSystem.Operations.FRAGMENTATION
+                        )
+                }
+        )
+        public @NotNull Collection<Path> fragmentation(Path source) throws IOException, FileIsDirectoryException {
+            FilesContextAtomic.fragment(source);
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "fragmentation")
+    public static final class MockServiceFileSystemFragmentationFileFailOtherMethodException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "fragmentation-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationFragmentation.class,
+                                operation = ContextAtomicFileSystem.Operations.FRAGMENTATION
+                        )
+                }
+        )
+        public @NotNull Collection<Path> fragmentation(Path source) throws IOException, FileIsDirectoryException {
+            FilesContextAtomic.fragment(source);
+            return fragmentation_(source);
+        }
+
+        @Contract("_ -> fail")
+        private Collection<Path> fragmentation_(@NotNull Path source) throws IOException {
             throw new IOException(source.toString());
         }
 

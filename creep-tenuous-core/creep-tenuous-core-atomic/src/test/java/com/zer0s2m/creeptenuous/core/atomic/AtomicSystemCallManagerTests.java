@@ -7,14 +7,17 @@ import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static com.zer0s2m.creeptenuous.core.balancer.FileBalancer.FORMAT_OUTPUT_FILE;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @Tag("core")
@@ -37,6 +40,18 @@ public class AtomicSystemCallManagerTests {
                     .map(Path::toFile)
                     .forEach(File::delete);
         }
+    }
+
+    private @NotNull Path initFileForFragmentation(String systemNameFile) throws IOException {
+        String str = "test".repeat(100);
+
+        Path source = Path.of(System.getProperty("java.io.tmpdir"), systemNameFile);
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream(source.toFile())) {
+            fileOutputStream.write(str.getBytes(), 0, str.length());
+        }
+
+        return source;
     }
 
     @Nested
@@ -75,7 +90,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void deleteFileFail_directoryThrownExactException_handlerAtomicSuccess() throws IOException {
+        public void deleteFileFail_thrownExactException_handlerAtomicSuccess() throws IOException {
             final String title = UUID.randomUUID() + ".txt";
             Path path = Path.of(tmpDirectory().toString(), title);
             Files.createFile(path);
@@ -92,7 +107,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void deleteDirectoryFail_directoryThrownExactException_handlerAtomicSuccess() throws IOException {
+        public void deleteDirectoryFail_thrownExactException_handlerAtomicSuccess() throws IOException {
             final String title = UUID.randomUUID().toString();
             Path path = Path.of(tmpDirectory().toString(), title);
             Files.createDirectory(path);
@@ -109,7 +124,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void deleteFileFail_directoryThrownOtherException_handlerAtomicFail() throws IOException {
+        public void deleteFileFail_thrownOtherException_handlerAtomicFail() throws IOException {
             final String title = UUID.randomUUID() + ".txt";
             Path path = Path.of(tmpDirectory().toString(), title);
             Files.createFile(path);
@@ -125,7 +140,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void deleteDirectoryFail_directoryThrownOtherException_handlerAtomicFail() throws IOException {
+        public void deleteDirectoryFail_thrownOtherException_handlerAtomicFail() throws IOException {
             final String title = UUID.randomUUID().toString();
             Path path = Path.of(tmpDirectory().toString(), title);
             Files.createDirectory(path);
@@ -141,7 +156,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void deleteFileFail_directoryThrownMultiException_handlerAtomicSuccess() throws IOException {
+        public void deleteFileFail_thrownMultiException_handlerAtomicSuccess() throws IOException {
             final String title = UUID.randomUUID() + ".txt";
             Path path = Path.of(tmpDirectory().toString(), title);
             Files.createFile(path);
@@ -158,7 +173,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void deleteDirectoryFail_directoryThrownMultiException_handlerAtomicSuccess() throws IOException {
+        public void deleteDirectoryFail_thrownMultiException_handlerAtomicSuccess() throws IOException {
             final String title = UUID.randomUUID().toString();
             Path path = Path.of(tmpDirectory().toString(), title);
             Files.createDirectory(path);
@@ -175,7 +190,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void deleteFileFail_directoryThrownOtherMethodException_handlerAtomicSuccess() throws IOException {
+        public void deleteFileFail_thrownOtherMethodException_handlerAtomicSuccess() throws IOException {
             final String title = UUID.randomUUID() + ".txt";
             Path path = Path.of(tmpDirectory().toString(), title);
             Files.createFile(path);
@@ -192,7 +207,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void deleteDirectoryFail_directoryThrownOtherMethodException_handlerAtomicSuccess() throws IOException {
+        public void deleteDirectoryFail_thrownOtherMethodException_handlerAtomicSuccess() throws IOException {
             final String title = UUID.randomUUID().toString();
             Path path = Path.of(tmpDirectory().toString(), title);
             Files.createDirectory(path);
@@ -246,7 +261,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void createFileFail_directoryThrownExactException_handlerAtomicSuccess() {
+        public void createFileFail_thrownExactException_handlerAtomicSuccess() {
             final String title = UUID.randomUUID().toString();
             Path path = Path.of(System.getProperty("java.io.tmpdir"), title);
 
@@ -261,7 +276,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void createDirectoryFail_directoryThrownExactException_handlerAtomicSuccess() {
+        public void createDirectoryFail_thrownExactException_handlerAtomicSuccess() {
             final String title = UUID.randomUUID().toString();
             Path path = Path.of(System.getProperty("java.io.tmpdir"), title);
 
@@ -276,7 +291,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void createFileFail_directoryThrownOtherException_handlerAtomicFail() throws IOException {
+        public void createFileFail_thrownOtherException_handlerAtomicFail() throws IOException {
             final String title = UUID.randomUUID().toString();
             Path path = Path.of(System.getProperty("java.io.tmpdir"), title);
 
@@ -292,7 +307,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void createDirectoryFail_directoryThrownOtherException_handlerAtomicFail() throws IOException {
+        public void createDirectoryFail_thrownOtherException_handlerAtomicFail() throws IOException {
             final String title = UUID.randomUUID().toString();
             Path path = Path.of(System.getProperty("java.io.tmpdir"), title);
 
@@ -308,7 +323,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void createFileFail_directoryThrownMultiException_handlerAtomicSuccess() {
+        public void createFileFail_thrownMultiException_handlerAtomicSuccess() {
             final String title = UUID.randomUUID().toString();
             Path path = Path.of(System.getProperty("java.io.tmpdir"), title);
 
@@ -323,7 +338,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void createDirectoryFail_directoryThrownMultiException_handlerAtomicSuccess() {
+        public void createDirectoryFail_thrownMultiException_handlerAtomicSuccess() {
             final String title = UUID.randomUUID().toString();
             Path path = Path.of(System.getProperty("java.io.tmpdir"), title);
 
@@ -338,7 +353,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void createFileFail_directoryThrownOtherMethodException_handlerAtomicSuccess() {
+        public void createFileFail_thrownOtherMethodException_handlerAtomicSuccess() {
             final MockServiceFileSystem.MockServiceFileSystemCreateFileFailOtherMethodException
                     service = new MockServiceFileSystem.MockServiceFileSystemCreateFileFailOtherMethodException();
 
@@ -356,7 +371,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void createDirectoryFail_directoryThrownOtherMethodException_handlerAtomicSuccess() {
+        public void createDirectoryFail_thrownOtherMethodException_handlerAtomicSuccess() {
             final MockServiceFileSystem.MockServiceFileSystemCreateDirectoryFailOtherMethodException
                     service = new MockServiceFileSystem.MockServiceFileSystemCreateDirectoryFailOtherMethodException();
 
@@ -426,7 +441,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void uploadFileFail_directoryThrownExactException_handlerAtomicSuccess() throws IOException {
+        public void uploadFileFail_thrownExactException_handlerAtomicSuccess() throws IOException {
             final String title = UUID.randomUUID() + ".txt";
             Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
             Path target = Path.of(tmpDirectory().toString(), title);
@@ -446,7 +461,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void uploadDirectoryFail_directoryThrownExactException_handlerAtomicSuccess() throws IOException {
+        public void uploadDirectoryFail_thrownExactException_handlerAtomicSuccess() throws IOException {
             final String titleDirectory = UUID.randomUUID().toString();
             final String titleFile = UUID.randomUUID() + ".txt";
             Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
@@ -471,7 +486,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void uploadFileFail_directoryThrownOtherException_handlerAtomicFail() throws IOException {
+        public void uploadFileFail_thrownOtherException_handlerAtomicFail() throws IOException {
             final String title = UUID.randomUUID() + ".txt";
             Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
             Path target = Path.of(tmpDirectory().toString(), title);
@@ -492,7 +507,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void uploadDirectoryFail_directoryThrownOtherException_handlerAtomicFail() throws IOException {
+        public void uploadDirectoryFail_thrownOtherException_handlerAtomicFail() throws IOException {
             final String titleDirectory = UUID.randomUUID().toString();
             final String titleFile = UUID.randomUUID() + ".txt";
             Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
@@ -518,7 +533,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void uploadFileFail_directoryThrownMultiException_handlerAtomicSuccess() throws IOException {
+        public void uploadFileFail_thrownMultiException_handlerAtomicSuccess() throws IOException {
             final String title = UUID.randomUUID() + ".txt";
             Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
             Path target = Path.of(tmpDirectory().toString(), title);
@@ -538,7 +553,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void uploadDirectoryFail_directoryThrownMultiException_handlerAtomicSuccess() throws IOException {
+        public void uploadDirectoryFail_thrownMultiException_handlerAtomicSuccess() throws IOException {
             final String titleDirectory = UUID.randomUUID().toString();
             final String titleFile = UUID.randomUUID() + ".txt";
             Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
@@ -563,7 +578,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void uploadFileFail_directoryThrownOtherMethodException_handlerAtomicSuccess() throws Exception {
+        public void uploadFileFail_thrownOtherMethodException_handlerAtomicSuccess() throws Exception {
             final String title = UUID.randomUUID() + ".txt";
             Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
             Path target = Path.of(tmpDirectory().toString(), title);
@@ -583,7 +598,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void uploadDirectoryFail_directoryThrownOtherMethodException_handlerAtomicSuccess() throws Exception {
+        public void uploadDirectoryFail_thrownOtherMethodException_handlerAtomicSuccess() throws Exception {
             final String titleDirectory = UUID.randomUUID().toString();
             final String titleFile = UUID.randomUUID() + ".txt";
             Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
@@ -660,7 +675,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void copyFileFail_directoryThrownExactException_handlerAtomicSuccess() throws IOException {
+        public void copyFileFail_thrownExactException_handlerAtomicSuccess() throws IOException {
             final String title = UUID.randomUUID() + ".txt";
             Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
             Path target = Path.of(tmpDirectory().toString(), title);
@@ -680,7 +695,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void copyDirectoryFail_directoryThrownExactException_handlerAtomicSuccess() throws IOException {
+        public void copyDirectoryFail_thrownExactException_handlerAtomicSuccess() throws IOException {
             final String titleDirectory = UUID.randomUUID().toString();
             final String titleFile = UUID.randomUUID() + ".txt";
             Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
@@ -705,7 +720,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void copyFileFail_directoryThrownOtherException_handlerAtomicFail() throws IOException {
+        public void copyFileFail_thrownOtherException_handlerAtomicFail() throws IOException {
             final String title = UUID.randomUUID() + ".txt";
             Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
             Path target = Path.of(tmpDirectory().toString(), title);
@@ -726,7 +741,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void copyDirectoryFail_directoryThrownOtherException_handlerAtomicFail() throws IOException {
+        public void copyDirectoryFail_thrownOtherException_handlerAtomicFail() throws IOException {
             final String titleDirectory = UUID.randomUUID().toString();
             final String titleFile = UUID.randomUUID() + ".txt";
             Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
@@ -752,7 +767,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void copyFileFail_directoryThrownMultiException_handlerAtomicSuccess() throws IOException {
+        public void copyFileFail_thrownMultiException_handlerAtomicSuccess() throws IOException {
             final String title = UUID.randomUUID() + ".txt";
             Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
             Path target = Path.of(tmpDirectory().toString(), title);
@@ -772,7 +787,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void copyDirectoryFail_directoryThrownMultiException_handlerAtomicSuccess() throws IOException {
+        public void copyDirectoryFail_thrownMultiException_handlerAtomicSuccess() throws IOException {
             final String titleDirectory = UUID.randomUUID().toString();
             final String titleFile = UUID.randomUUID() + ".txt";
             Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
@@ -797,7 +812,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void copyFileFail_directoryThrownOtherMethodException_handlerAtomicSuccess() throws IOException {
+        public void copyFileFail_thrownOtherMethodException_handlerAtomicSuccess() throws IOException {
             final String title = UUID.randomUUID() + ".txt";
             Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
             Path target = Path.of(tmpDirectory().toString(), title);
@@ -817,7 +832,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void copyDirectoryFail_directoryThrownOtherMethodException_handlerAtomicSuccess() throws IOException {
+        public void copyDirectoryFail_thrownOtherMethodException_handlerAtomicSuccess() throws IOException {
             final String titleDirectory = UUID.randomUUID().toString();
             final String titleFile = UUID.randomUUID() + ".txt";
             Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
@@ -894,7 +909,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void moveFileFail_directoryThrownExactException_handlerAtomicSuccess() throws IOException {
+        public void moveFileFail_thrownExactException_handlerAtomicSuccess() throws IOException {
             final String title = UUID.randomUUID() + ".txt";
             Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
             Path target = Path.of(tmpDirectory().toString(), title);
@@ -914,7 +929,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void moveDirectoryFail_directoryThrownExactException_handlerAtomicSuccess() throws IOException {
+        public void moveDirectoryFail_thrownExactException_handlerAtomicSuccess() throws IOException {
             final String titleDirectory = UUID.randomUUID().toString();
             final String titleFile = UUID.randomUUID() + ".txt";
             Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
@@ -941,7 +956,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void moveFileFail_directoryThrownOtherException_handlerAtomicFail() throws Exception {
+        public void moveFileFail_thrownOtherException_handlerAtomicFail() throws Exception {
             final String title = UUID.randomUUID() + ".txt";
             Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
             Path target = Path.of(tmpDirectory().toString(), title);
@@ -961,7 +976,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void moveDirectoryFail_directoryThrownOtherException_handlerAtomicFail() throws Exception {
+        public void moveDirectoryFail_thrownOtherException_handlerAtomicFail() throws Exception {
             final String titleDirectory = UUID.randomUUID().toString();
             final String titleFile = UUID.randomUUID() + ".txt";
             Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
@@ -988,7 +1003,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void moveFileFail_directoryThrownMultiException_handlerAtomicSuccess() throws IOException {
+        public void moveFileFail_thrownMultiException_handlerAtomicSuccess() throws IOException {
             final String title = UUID.randomUUID() + ".txt";
             Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
             Path target = Path.of(tmpDirectory().toString(), title);
@@ -1008,7 +1023,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void moveDirectoryFail_directoryThrownMultiException_handlerAtomicSuccess() throws IOException {
+        public void moveDirectoryFail_thrownMultiException_handlerAtomicSuccess() throws IOException {
             final String titleDirectory = UUID.randomUUID().toString();
             final String titleFile = UUID.randomUUID() + ".txt";
             Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
@@ -1035,7 +1050,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void moveFileFail_directoryThrownOtherMethodException_handlerAtomicSuccess() throws IOException {
+        public void moveFileFail_thrownOtherMethodException_handlerAtomicSuccess() throws IOException {
             final String title = UUID.randomUUID() + ".txt";
             Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
             Path target = Path.of(tmpDirectory().toString(), title);
@@ -1055,7 +1070,7 @@ public class AtomicSystemCallManagerTests {
         }
 
         @RepeatedTest(10)
-        public void moveDirectoryFail_directoryThrownOtherMethodException_handlerAtomicSuccess() throws IOException {
+        public void moveDirectoryFail_thrownOtherMethodException_handlerAtomicSuccess() throws IOException {
             final String titleDirectory = UUID.randomUUID().toString();
             final String titleFile = UUID.randomUUID() + ".txt";
             Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
@@ -1079,6 +1094,128 @@ public class AtomicSystemCallManagerTests {
             Assertions.assertFalse(Files.exists(Path.of(tmpDirectory().toString(), titleDirectory, titleFile)));
 
             deleteDirectory(directory);
+        }
+
+    }
+
+    @Nested
+    class AtomicSystemCallManagerTestsOperationFragmentation {
+
+        @RepeatedTest(10)
+        public void fragmentationFileSuccess() throws IOException {
+            String systemNameFile = UUID.randomUUID() + ".txt";
+            Path source = initFileForFragmentation(systemNameFile);
+
+            Collection<Path> fragmentsSource = Assertions.assertDoesNotThrow(
+                    () -> AtomicSystemCallManager.call(
+                            new MockServiceFileSystem.MockServiceFileSystemFragmentationFileSuccess(),
+                            source
+                    )
+            );
+
+            Assertions.assertAll("Fragment existence",
+                    () -> fragmentsSource
+                            .forEach(fragmentSource ->
+                                    Assertions.assertTrue(Files.exists(fragmentSource))));
+
+            for (Path fragmentSpurce : fragmentsSource) {
+                Files.delete(fragmentSpurce);
+            }
+
+            Files.delete(source);
+        }
+
+        @RepeatedTest(10)
+        public void fragmentationFileFail_thrownExactException_handlerAtomicSuccess()
+                throws IOException {
+            String systemNameFile = UUID.randomUUID() + ".txt";
+            Path source = initFileForFragmentation(systemNameFile);
+
+            assertThatExceptionOfType(InvocationTargetException.class)
+                    .isThrownBy(() -> AtomicSystemCallManager.call(
+                            new MockServiceFileSystem.MockServiceFileSystemFragmentationFileFailException(),
+                            source
+                    ))
+                    .withRootCauseInstanceOf(IOException.class);
+
+            for (int i = 1; i < 6; i++) {
+                Assertions.assertFalse(
+                        Files.exists(Path.of(System.getProperty("java.io.tmpdir"),
+                                String.format(FORMAT_OUTPUT_FILE, systemNameFile, i))));
+            }
+
+            Assertions.assertTrue(Files.exists(source));
+            Files.delete(source);
+        }
+
+        @RepeatedTest(10)
+        public void fragmentationFileFail_thrownOtherException_handlerAtomicFail()
+                throws IOException {
+            String systemNameFile = UUID.randomUUID() + ".txt";
+            Path source = initFileForFragmentation(systemNameFile);
+
+            assertThatExceptionOfType(InvocationTargetException.class)
+                    .isThrownBy(() -> AtomicSystemCallManager.call(
+                            new MockServiceFileSystem.MockServiceFileSystemFragmentationFileFailOtherException(),
+                            source
+                    ))
+                    .withRootCauseInstanceOf(Exception.class);
+
+            for (int i = 1; i < 6; i++) {
+                Path sourceFragment = Path.of(System.getProperty("java.io.tmpdir"),
+                        String.format(FORMAT_OUTPUT_FILE, systemNameFile, i));
+                Assertions.assertTrue(Files.exists(sourceFragment));
+                Files.delete(sourceFragment);
+            }
+
+            Assertions.assertTrue(Files.exists(source));
+            Files.delete(source);
+        }
+
+        @RepeatedTest(10)
+        public void fragmentationFileFail_thrownMultiException_handlerAtomicSuccess()
+                throws IOException {
+            String systemNameFile = UUID.randomUUID() + ".txt";
+            Path source = initFileForFragmentation(systemNameFile);
+
+            assertThatExceptionOfType(InvocationTargetException.class)
+                    .isThrownBy(() -> AtomicSystemCallManager.call(
+                            new MockServiceFileSystem.MockServiceFileSystemFragmentationFileFailMultiException(),
+                            source
+                    ))
+                    .withRootCauseInstanceOf(IOException.class);
+
+            for (int i = 1; i < 6; i++) {
+                Assertions.assertFalse(
+                        Files.exists(Path.of(System.getProperty("java.io.tmpdir"),
+                                String.format(FORMAT_OUTPUT_FILE, systemNameFile, i))));
+            }
+
+            Assertions.assertTrue(Files.exists(source));
+            Files.delete(source);
+        }
+
+        @RepeatedTest(10)
+        public void fragmentationFileFail_thrownOtherMethodException_handlerAtomicSuccess()
+                throws IOException {
+            String systemNameFile = UUID.randomUUID() + ".txt";
+            Path source = initFileForFragmentation(systemNameFile);
+
+            assertThatExceptionOfType(InvocationTargetException.class)
+                    .isThrownBy(() -> AtomicSystemCallManager.call(
+                            new MockServiceFileSystem.MockServiceFileSystemFragmentationFileFailOtherMethodException(),
+                            source
+                    ))
+                    .withRootCauseInstanceOf(IOException.class);
+
+            for (int i = 1; i < 6; i++) {
+                Assertions.assertFalse(
+                        Files.exists(Path.of(System.getProperty("java.io.tmpdir"),
+                                String.format(FORMAT_OUTPUT_FILE, systemNameFile, i))));
+            }
+
+            Assertions.assertTrue(Files.exists(source));
+            Files.delete(source);
         }
 
     }
