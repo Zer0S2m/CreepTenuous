@@ -843,4 +843,244 @@ public class AtomicSystemCallManagerTests {
 
     }
 
+    @Nested
+    class AtomicSystemCallManagerTestsOperationMove {
+
+        @RepeatedTest(10)
+        public void moveFileSuccess() throws IOException {
+            final String title = UUID.randomUUID() + ".txt";
+            Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
+            Path target = Path.of(tmpDirectory().toString(), title);
+            Files.createFile(source);
+
+            Assertions.assertDoesNotThrow(
+                    () -> AtomicSystemCallManager.call(
+                            new MockServiceFileSystem.MockServiceFileSystemMoveFileSuccess(),
+                            source,
+                            target
+                    )
+            );
+
+            Assertions.assertFalse(Files.exists(source));
+            Assertions.assertTrue(Files.exists(target));
+            Files.delete(target);
+        }
+
+        @RepeatedTest(10)
+        public void moveDirectorySuccess() throws IOException {
+            final String titleDirectory = UUID.randomUUID().toString();
+            final String titleFile = UUID.randomUUID() + ".txt";
+            Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
+            Path fileInDirectory = Path.of(directory.toString(), titleFile);
+            Path target = Path.of(tmpDirectory().toString(), titleDirectory);
+
+            Files.createDirectory(directory);
+            Files.createFile(fileInDirectory);
+
+            Assertions.assertDoesNotThrow(
+                    () -> AtomicSystemCallManager.call(
+                            new MockServiceFileSystem.MockServiceFileSystemMoveDirectorySuccess(),
+                            directory,
+                            target
+                    )
+            );
+
+            Assertions.assertFalse(Files.exists(directory));
+            Assertions.assertFalse(Files.exists(fileInDirectory));
+            Assertions.assertTrue(Files.exists(target));
+            Assertions.assertTrue(Files.exists(Path.of(tmpDirectory().toString(), titleDirectory, titleFile)));
+
+            deleteDirectory(target);
+        }
+
+        @RepeatedTest(10)
+        public void moveFileFail_directoryThrownExactException_handlerAtomicSuccess() throws IOException {
+            final String title = UUID.randomUUID() + ".txt";
+            Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
+            Path target = Path.of(tmpDirectory().toString(), title);
+            Files.createFile(source);
+
+            assertThatExceptionOfType(InvocationTargetException.class)
+                    .isThrownBy(() -> AtomicSystemCallManager.call(
+                            new MockServiceFileSystem.MockServiceFileSystemMoveFileFailException(),
+                            source,
+                            target
+                    ))
+                    .withRootCauseInstanceOf(IOException.class);
+
+            Assertions.assertTrue(Files.exists(source));
+            Assertions.assertFalse(Files.exists(target));
+            Files.delete(source);
+        }
+
+        @RepeatedTest(10)
+        public void moveDirectoryFail_directoryThrownExactException_handlerAtomicSuccess() throws IOException {
+            final String titleDirectory = UUID.randomUUID().toString();
+            final String titleFile = UUID.randomUUID() + ".txt";
+            Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
+            Path fileInDirectory = Path.of(directory.toString(), titleFile);
+            Path target = Path.of(tmpDirectory().toString(), titleDirectory);
+
+            Files.createDirectory(directory);
+            Files.createFile(fileInDirectory);
+
+            assertThatExceptionOfType(InvocationTargetException.class)
+                    .isThrownBy(() -> AtomicSystemCallManager.call(
+                            new MockServiceFileSystem.MockServiceFileSystemMoveDirectoryFailException(),
+                            directory,
+                            target
+                    ))
+                    .withRootCauseInstanceOf(IOException.class);
+
+            Assertions.assertTrue(Files.exists(directory));
+            Assertions.assertTrue(Files.exists(fileInDirectory));
+            Assertions.assertFalse(Files.exists(target));
+            Assertions.assertFalse(Files.exists(Path.of(tmpDirectory().toString(), titleDirectory, titleFile)));
+
+            deleteDirectory(directory);
+        }
+
+        @RepeatedTest(10)
+        public void moveFileFail_directoryThrownOtherException_handlerAtomicFail() throws Exception {
+            final String title = UUID.randomUUID() + ".txt";
+            Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
+            Path target = Path.of(tmpDirectory().toString(), title);
+            Files.createFile(source);
+
+            assertThatExceptionOfType(InvocationTargetException.class)
+                    .isThrownBy(() -> AtomicSystemCallManager.call(
+                            new MockServiceFileSystem.MockServiceFileSystemMoveFileFailOtherException(),
+                            source,
+                            target
+                    ))
+                    .withRootCauseInstanceOf(Exception.class);
+
+            Assertions.assertFalse(Files.exists(source));
+            Assertions.assertTrue(Files.exists(target));
+            Files.delete(target);
+        }
+
+        @RepeatedTest(10)
+        public void moveDirectoryFail_directoryThrownOtherException_handlerAtomicFail() throws Exception {
+            final String titleDirectory = UUID.randomUUID().toString();
+            final String titleFile = UUID.randomUUID() + ".txt";
+            Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
+            Path fileInDirectory = Path.of(directory.toString(), titleFile);
+            Path target = Path.of(tmpDirectory().toString(), titleDirectory);
+
+            Files.createDirectory(directory);
+            Files.createFile(fileInDirectory);
+
+            assertThatExceptionOfType(InvocationTargetException.class)
+                    .isThrownBy(() -> AtomicSystemCallManager.call(
+                            new MockServiceFileSystem.MockServiceFileSystemMoveDirectoryFailOtherException(),
+                            directory,
+                            target
+                    ))
+                    .withRootCauseInstanceOf(Exception.class);
+
+            Assertions.assertFalse(Files.exists(directory));
+            Assertions.assertFalse(Files.exists(fileInDirectory));
+            Assertions.assertTrue(Files.exists(target));
+            Assertions.assertTrue(Files.exists(Path.of(tmpDirectory().toString(), titleDirectory, titleFile)));
+
+            deleteDirectory(target);
+        }
+
+        @RepeatedTest(10)
+        public void moveFileFail_directoryThrownMultiException_handlerAtomicSuccess() throws IOException {
+            final String title = UUID.randomUUID() + ".txt";
+            Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
+            Path target = Path.of(tmpDirectory().toString(), title);
+            Files.createFile(source);
+
+            assertThatExceptionOfType(InvocationTargetException.class)
+                    .isThrownBy(() -> AtomicSystemCallManager.call(
+                            new MockServiceFileSystem.MockServiceFileSystemMoveFileFailMultiException(),
+                            source,
+                            target
+                    ))
+                    .withRootCauseInstanceOf(IOException.class);
+
+            Assertions.assertTrue(Files.exists(source));
+            Assertions.assertFalse(Files.exists(target));
+            Files.delete(source);
+        }
+
+        @RepeatedTest(10)
+        public void moveDirectoryFail_directoryThrownMultiException_handlerAtomicSuccess() throws IOException {
+            final String titleDirectory = UUID.randomUUID().toString();
+            final String titleFile = UUID.randomUUID() + ".txt";
+            Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
+            Path fileInDirectory = Path.of(directory.toString(), titleFile);
+            Path target = Path.of(tmpDirectory().toString(), titleDirectory);
+
+            Files.createDirectory(directory);
+            Files.createFile(fileInDirectory);
+
+            assertThatExceptionOfType(InvocationTargetException.class)
+                    .isThrownBy(() -> AtomicSystemCallManager.call(
+                            new MockServiceFileSystem.MockServiceFileSystemMoveDirectoryFailMultiException(),
+                            directory,
+                            target
+                    ))
+                    .withRootCauseInstanceOf(IOException.class);
+
+            Assertions.assertTrue(Files.exists(directory));
+            Assertions.assertTrue(Files.exists(fileInDirectory));
+            Assertions.assertFalse(Files.exists(target));
+            Assertions.assertFalse(Files.exists(Path.of(tmpDirectory().toString(), titleDirectory, titleFile)));
+
+            deleteDirectory(directory);
+        }
+
+        @RepeatedTest(10)
+        public void moveFileFail_directoryThrownOtherMethodException_handlerAtomicSuccess() throws IOException {
+            final String title = UUID.randomUUID() + ".txt";
+            Path source = Path.of(System.getProperty("java.io.tmpdir"), title);
+            Path target = Path.of(tmpDirectory().toString(), title);
+            Files.createFile(source);
+
+            assertThatExceptionOfType(InvocationTargetException.class)
+                    .isThrownBy(() -> AtomicSystemCallManager.call(
+                            new MockServiceFileSystem.MockServiceFileSystemMoveFileFailOtherMethodException(),
+                            source,
+                            target
+                    ))
+                    .withRootCauseInstanceOf(IOException.class);
+
+            Assertions.assertTrue(Files.exists(source));
+            Assertions.assertFalse(Files.exists(target));
+            Files.delete(source);
+        }
+
+        @RepeatedTest(10)
+        public void moveDirectoryFail_directoryThrownOtherMethodException_handlerAtomicSuccess() throws IOException {
+            final String titleDirectory = UUID.randomUUID().toString();
+            final String titleFile = UUID.randomUUID() + ".txt";
+            Path directory = Path.of(System.getProperty("java.io.tmpdir"), titleDirectory);
+            Path fileInDirectory = Path.of(directory.toString(), titleFile);
+            Path target = Path.of(tmpDirectory().toString(), titleDirectory);
+
+            Files.createDirectory(directory);
+            Files.createFile(fileInDirectory);
+
+            assertThatExceptionOfType(InvocationTargetException.class)
+                    .isThrownBy(() -> AtomicSystemCallManager.call(
+                            new MockServiceFileSystem.MockServiceFileSystemMoveDirectoryFailOtherMethodException(),
+                            directory,
+                            target
+                    ))
+                    .withRootCauseInstanceOf(IOException.class);
+
+            Assertions.assertTrue(Files.exists(directory));
+            Assertions.assertTrue(Files.exists(fileInDirectory));
+            Assertions.assertFalse(Files.exists(target));
+            Assertions.assertFalse(Files.exists(Path.of(tmpDirectory().toString(), titleDirectory, titleFile)));
+
+            deleteDirectory(directory);
+        }
+
+    }
+
 }

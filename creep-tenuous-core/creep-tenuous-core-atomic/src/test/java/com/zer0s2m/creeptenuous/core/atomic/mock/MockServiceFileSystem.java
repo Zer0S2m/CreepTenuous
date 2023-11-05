@@ -5,10 +5,7 @@ import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptio
 import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
-import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationCopy;
-import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationCreate;
-import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationDelete;
-import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationUpload;
+import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.*;
 import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -890,6 +887,219 @@ public final class MockServiceFileSystem {
 
         @Contract("_ -> fail")
         private Path copy(@NotNull Path source) throws IOException {
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    /**
+     * <p>----------------------------------------------</p>
+     * {@link ContextAtomicFileSystem.Operations#MOVE}
+     */
+
+    @CoreServiceFileSystem(method = "move")
+    public static final class MockServiceFileSystemMoveFileSuccess implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "move-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationMove.class,
+                                operation = ContextAtomicFileSystem.Operations.MOVE
+                        )
+                }
+        )
+        public Path move(Path source, Path target) throws IOException {
+            return FilesContextAtomic.move(source, target);
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "move")
+    public static final class MockServiceFileSystemMoveDirectorySuccess implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "move-directory",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationMove.class,
+                                operation = ContextAtomicFileSystem.Operations.MOVE
+                        )
+                }
+        )
+        public Path move(Path source, Path target) throws IOException {
+            return FilesContextAtomic.move(source, target);
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "move")
+    public static final class MockServiceFileSystemMoveFileFailException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "move-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationMove.class,
+                                operation = ContextAtomicFileSystem.Operations.MOVE
+                        )
+                }
+        )
+        public Path move(Path source, Path target) throws IOException {
+            FilesContextAtomic.move(source, target);
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "move")
+    public static final class MockServiceFileSystemMoveDirectoryFailException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "move-directory",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationMove.class,
+                                operation = ContextAtomicFileSystem.Operations.MOVE
+                        )
+                }
+        )
+        public Path move(Path source, Path target) throws IOException {
+            FilesContextAtomic.move(source, target);
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "move")
+    public static final class MockServiceFileSystemMoveFileFailOtherException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "move-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationMove.class,
+                                operation = ContextAtomicFileSystem.Operations.MOVE
+                        )
+                }
+        )
+        public Path move(Path source, Path target) throws Exception {
+            FilesContextAtomic.move(source, target);
+            throw new Exception(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "move")
+    public static final class MockServiceFileSystemMoveDirectoryFailOtherException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "move-directory",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                exception = IOException.class,
+                                handler = ServiceFileSystemExceptionHandlerOperationMove.class,
+                                operation = ContextAtomicFileSystem.Operations.MOVE
+                        )
+                }
+        )
+        public Path move(Path source, Path target) throws Exception {
+            FilesContextAtomic.move(source, target);
+            throw new Exception(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "move")
+    public static final class MockServiceFileSystemMoveFileFailMultiException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "move-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                isExceptionMulti = true,
+                                handler = ServiceFileSystemExceptionHandlerOperationMove.class,
+                                operation = ContextAtomicFileSystem.Operations.MOVE
+                        )
+                }
+        )
+        public Path move(Path source, Path target) throws IOException {
+            FilesContextAtomic.move(source, target);
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "move")
+    public static final class MockServiceFileSystemMoveDirectoryFailMultiException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "move-directory",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                isExceptionMulti = true,
+                                handler = ServiceFileSystemExceptionHandlerOperationMove.class,
+                                operation = ContextAtomicFileSystem.Operations.MOVE
+                        )
+                }
+        )
+        public Path move(Path source, Path target) throws IOException {
+            FilesContextAtomic.move(source, target);
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "move")
+    public static final class MockServiceFileSystemMoveFileFailOtherMethodException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "move-file",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                isExceptionMulti = true,
+                                handler = ServiceFileSystemExceptionHandlerOperationMove.class,
+                                operation = ContextAtomicFileSystem.Operations.MOVE
+                        )
+                }
+        )
+        public Path move(Path source, Path target) throws IOException {
+            FilesContextAtomic.move(source, target);
+            return move(source);
+        }
+
+        @Contract("_ -> fail")
+        private Path move(@NotNull Path source) throws IOException {
+            throw new IOException(source.toString());
+        }
+
+    }
+
+    @CoreServiceFileSystem(method = "move")
+    public static final class MockServiceFileSystemMoveDirectoryFailOtherMethodException implements AtomicServiceFileSystem {
+
+        @AtomicFileSystem(
+                name = "move-directory",
+                handlers = {
+                        @AtomicFileSystemExceptionHandler(
+                                isExceptionMulti = true,
+                                handler = ServiceFileSystemExceptionHandlerOperationMove.class,
+                                operation = ContextAtomicFileSystem.Operations.MOVE
+                        )
+                }
+        )
+        public Path move(Path source, Path target) throws IOException {
+            FilesContextAtomic.move(source, target);
+            return move(source);
+        }
+
+        @Contract("_ -> fail")
+        private Path move(@NotNull Path source) throws IOException {
             throw new IOException(source.toString());
         }
 
