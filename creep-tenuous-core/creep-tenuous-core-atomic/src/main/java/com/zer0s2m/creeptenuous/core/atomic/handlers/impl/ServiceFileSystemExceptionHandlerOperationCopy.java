@@ -8,10 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
 
 /**
  * The base interface for handling exceptions that interact with the file system.
@@ -47,16 +50,33 @@ public class ServiceFileSystemExceptionHandlerOperationCopy implements ServiceFi
             if (typeOperation.equals(ContextAtomicFileSystem.Operations.COPY)) {
                 Path targetPath = (Path) operationData.get("targetPath");
                 try {
-                    logger.info(String.format(
-                            "Delete file atomic mode [%s]: [%s]",
-                            targetPath, Files.deleteIfExists(targetPath)
-                    ));
+                    if (Files.isDirectory(targetPath)) {
+                        try (Stream<Path> pathStream = Files.walk(targetPath)) {
+                            pathStream
+                                    .sorted(Comparator.reverseOrder())
+                                    .forEach(path -> {
+                                        try {
+                                            logger.info(String.format(
+                                                    "Delete a file atomic mode [%s]: [%s]",
+                                                    targetPath, Files.deleteIfExists(path)
+                                            ));
+                                        } catch (IOException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    });
+                        }
+                    } else {
+                        logger.info(String.format(
+                                "Delete a file atomic mode [%s]: [%s]",
+                                targetPath, Files.deleteIfExists(targetPath)
+                        ));
+                    }
                     contextAtomicFileSystem.handleOperation(typeOperation, uniqueName);
                     isEmpty.set(true);
+                } catch (DirectoryNotEmptyException e) {
+                    logger.warn(e.toString());
                 } catch (IOException e) {
-                    contextAtomicFileSystem.handleOperation(typeOperation, uniqueName);
-                    logger.info(e.toString());
-                    isEmpty.set(false);
+                    logger.error(e.toString());
                 }
             }
         });

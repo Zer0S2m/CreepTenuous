@@ -11,10 +11,12 @@ import java.io.InputStream;
 import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileAttribute;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.stream.Stream;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * Atomic Mode Context Management with File System Operations. Interlayer between {@link Files}
@@ -39,7 +41,7 @@ public interface FilesContextAtomic {
      * A directory made available for applications that need a place to create temporary files.
      * <a href="https://refspecs.linuxfoundation.org/FHS_3.0/fhs/ch03s18.html">Documentation <b>tmp</b></a>
      */
-    String tmpDirectory = "/tmp";
+    String tmpDirectory = System.getProperty("java.io.tmpdir");
 
     String rootPathKey = "CT_ROOT_PATH";
 
@@ -146,6 +148,36 @@ public interface FilesContextAtomic {
         return fragmetns;
     }
 
+    static Path upload(Path source, Path target, CopyOption... options) throws IOException {
+        try (Stream<Path> stream = Files.walk(source)) {
+            stream.forEach(src -> uploadOrCopyAndWriteContext(
+                    src, target.resolve(source.relativize(src)), true, options));
+        }
+        return target;
+    }
+
+    static Path copyDirectory(Path source, Path target, CopyOption... options) throws IOException {
+        try (Stream<Path> stream = Files.walk(source)) {
+            stream.forEach(src -> uploadOrCopyAndWriteContext(
+                    src, target.resolve(source.relativize(src)), false, options));
+        }
+        return target;
+    }
+
+    static private void uploadOrCopyAndWriteContext(
+            Path source, Path target, boolean isUpload, CopyOption... options) {
+        try {
+            if (isUpload) {
+                addOperationDataUpload(target, stackWalker.getCallerClass().getCanonicalName());
+            } else {
+                addOperationDataCopy(target, stackWalker.getCallerClass().getCanonicalName());
+            }
+            Files.copy(source, target, options);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
     /**
      * Deletes a file. Add data in context {@link ContextAtomicFileSystem} of <b>atomic mode</b>
      *
@@ -168,7 +200,7 @@ public interface FilesContextAtomic {
      */
     static private Path transferToTmp(@NotNull Path source) throws IOException {
         Path directoryInTmp = Path.of(tmpDirectory, source.getFileName().toString());
-        return Files.move(source, directoryInTmp, StandardCopyOption.REPLACE_EXISTING);
+        return Files.move(source, directoryInTmp, REPLACE_EXISTING);
     }
 
     /**
