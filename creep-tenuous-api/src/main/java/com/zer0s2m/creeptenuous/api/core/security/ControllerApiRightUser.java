@@ -162,7 +162,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
 
         serviceManagerRights.deleteRight(
                 serviceManagerRights.getObj(data.systemName(), data.loginUser()),
-                OperationRights.valueOf(data.right()));
+                convertStrToEnumOperationRight(data.right()));
     }
 
     /**
@@ -191,7 +191,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.isExistsUser(data.loginUser());
         serviceManagerRights.isExistsFileSystemObject(data.systemName());
-        OperationRights operation = OperationRights.valueOf(data.right());
+        List<OperationRights> operations = convertStrToEnumOperationRight(data.right());
 
         DirectoryRedis directoryRedis = serviceRedisManagerResources.getResourceDirectoryRedis(data.systemName());
         if (directoryRedis == null) {
@@ -209,7 +209,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
         serviceFileSystemRedis.checkRights(namesFileSystemObject);
 
         serviceManagerRights.deleteRight(
-                serviceManagerRights.getObj(namesFileSystemObject, data.loginUser()), operation);
+                serviceManagerRights.getObj(namesFileSystemObject, data.loginUser()), operations);
     }
 
     /**

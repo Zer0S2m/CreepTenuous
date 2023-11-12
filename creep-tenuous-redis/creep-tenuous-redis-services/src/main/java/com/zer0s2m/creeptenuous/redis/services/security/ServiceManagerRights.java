@@ -90,7 +90,20 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
      * @throws NoExistsRightException The right was not found in the database.
      *                                Or is {@literal null} {@link NullPointerException}
      */
-    void deleteRight(RightUserFileSystemObjectRedis right, OperationRights operationRights)
+    default void deleteRight(RightUserFileSystemObjectRedis right, OperationRights operationRights)
+            throws ChangeRightsYourselfException, NoExistsRightException {
+        deleteRight(right, List.of(operationRights));
+    }
+
+    /**
+     * Delete a user right a file system object
+     * @param right data right. Must not be {@literal null}.
+     * @param operationRights type of transaction. Must not be {@literal null}.
+     * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
+     * @throws NoExistsRightException The right was not found in the database.
+     *                                Or is {@literal null} {@link NullPointerException}
+     */
+    void deleteRight(RightUserFileSystemObjectRedis right, List<OperationRights> operationRights)
             throws ChangeRightsYourselfException, NoExistsRightException;
 
     /**
@@ -101,7 +114,20 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
      * @throws NoExistsRightException The right was not found in the database.
      *                                Or is {@literal null} {@link NullPointerException}
      */
-    void deleteRight(List<RightUserFileSystemObjectRedis> right, OperationRights operationRights)
+    default void deleteRight(List<RightUserFileSystemObjectRedis> right, OperationRights operationRights)
+            throws ChangeRightsYourselfException, NoExistsRightException {
+        deleteRight(right, List.of(operationRights));
+    }
+
+    /**
+     * Delete a user rights a file system object
+     * @param right data right. must not be {@literal null} nor must it contain {@literal null}.
+     * @param operationRights type of transaction. Must not be null.
+     * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
+     * @throws NoExistsRightException The right was not found in the database.
+     *                                Or is {@literal null} {@link NullPointerException}
+     */
+    void deleteRight(List<RightUserFileSystemObjectRedis> right, List<OperationRights> operationRights)
             throws ChangeRightsYourselfException, NoExistsRightException;
 
     /**

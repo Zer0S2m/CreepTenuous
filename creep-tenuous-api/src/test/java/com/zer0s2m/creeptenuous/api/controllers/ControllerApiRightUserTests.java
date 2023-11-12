@@ -83,13 +83,13 @@ public class ControllerApiRightUserTests {
     DataDeleteRightUserApi RECORD_DELETE = new DataDeleteRightUserApi(
             "testFolder_1",
             "test_login_2",
-            OperationRights.SHOW.name()
+            List.of(OperationRights.SHOW.name())
     );
 
     DataDeleteRightUserApi RECORD_FAIL_NOT_RIGHTS = new DataDeleteRightUserApi(
             "testFolder_1",
             UtilsAuthAction.LOGIN,
-            OperationRights.MOVE.name()
+            List.of(OperationRights.MOVE.name())
     );
 
     @Test
@@ -221,7 +221,7 @@ public class ControllerApiRightUserTests {
         rightUserFileSystemObjectRedisRepository.save(new RightUserFileSystemObjectRedis(
                 RECORD_DELETE.systemName() + "__" + RECORD_DELETE.loginUser(),
                 RECORD_DELETE.loginUser(),
-                List.of(OperationRights.valueOf(RECORD_DELETE.right()))
+                List.of(OperationRights.valueOf(RECORD_DELETE.right().get(0)))
         ));
 
         this.mockMvc.perform(

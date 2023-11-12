@@ -375,12 +375,12 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
      *                                Or is {@literal null} {@link NullPointerException}
      */
     @Override
-    public void deleteRight(RightUserFileSystemObjectRedis right, OperationRights operationRights)
+    public void deleteRight(RightUserFileSystemObjectRedis right, final List<OperationRights> operationRights)
             throws ChangeRightsYourselfException, NoExistsRightException {
         checkDeletingRightsYourself(right);
 
         List<OperationRights> operationRightsList = right.getRight();
-        if (operationRightsList != null && operationRightsList.remove(operationRights)) {
+        if (operationRightsList != null && operationRightsList.removeAll(operationRights)) {
             if (operationRightsList.isEmpty()) {
                 deleteUserLoginsToRedisObj(unpackingUniqueKey(right.getFileSystemObject()), right.getLogin());
                 rightUserFileSystemObjectRedisRepository.delete(right);
@@ -400,7 +400,8 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
      *                                Or is {@literal null} {@link NullPointerException}
      */
     @Override
-    public void deleteRight(@NotNull List<RightUserFileSystemObjectRedis> right, OperationRights operationRights)
+    public void deleteRight(
+            @NotNull List<RightUserFileSystemObjectRedis> right, final List<OperationRights> operationRights)
             throws ChangeRightsYourselfException, NoExistsRightException {
         for (RightUserFileSystemObjectRedis obj : right) {
             checkDeletingRightsYourself(obj);
@@ -410,7 +411,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
         List<RightUserFileSystemObjectRedis> cleanRights = right
                 .stream()
-                .filter(obj -> obj.getRight() != null && obj.getRight().contains(operationRights))
+                .filter(obj -> obj.getRight() != null && new HashSet<>(obj.getRight()).containsAll(operationRights))
                 .toList();
 
         cleanRights.forEach(obj -> {
@@ -418,7 +419,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
             if (operationRightsList.size() == 1) {
                 idsToDelete.add(obj.getFileSystemObject());
             } else {
-                operationRightsList.remove(operationRights);
+                operationRightsList.removeAll(operationRights);
                 obj.setRight(operationRightsList);
             }
         });
