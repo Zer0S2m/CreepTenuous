@@ -65,19 +65,19 @@ public class ControllerApiRightUserTests {
     DataCreateRightUserApi RECORD_ADD = new DataCreateRightUserApi(
             "testFolder_1",
             "test_user_2",
-            OperationRights.SHOW.name()
+            List.of(OperationRights.SHOW.name())
     );
 
     DataCreateRightUserApi RECORD_ADD_RIGHTS_YOURSELF = new DataCreateRightUserApi(
             "testFolder_1",
             UtilsAuthAction.LOGIN,
-            OperationRights.SHOW.name()
+            List.of(OperationRights.SHOW.name())
     );
 
     DataCreateRightUserApi RECORD_FAIL_NOT_FOUND_USER = new DataCreateRightUserApi(
             "testFolder_1",
             "test_user_not_found_fail_test",
-            OperationRights.SHOW.name()
+            List.of(OperationRights.SHOW.name())
     );
 
     DataDeleteRightUserApi RECORD_DELETE = new DataDeleteRightUserApi(

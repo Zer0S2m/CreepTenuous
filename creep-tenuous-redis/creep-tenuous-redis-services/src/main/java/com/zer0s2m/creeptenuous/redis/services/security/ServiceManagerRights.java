@@ -60,7 +60,18 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
      * @param operationRights type of transaction. Must not be null.
      * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
      */
-    void addRight(List<RightUserFileSystemObjectRedis> right, OperationRights operationRights)
+    default void addRight(List<RightUserFileSystemObjectRedis> right, OperationRights operationRights)
+            throws ChangeRightsYourselfException {
+        addRight(right, List.of(operationRights));
+    }
+
+    /**
+     * Create a user right on a file system object
+     * @param right data right. must not be {@literal null} nor must it contain {@literal null}.
+     * @param operationRights type of transaction. Must not be null.
+     * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
+     */
+    void addRight(List<RightUserFileSystemObjectRedis> right, List<OperationRights> operationRights)
             throws ChangeRightsYourselfException;
 
     /**
@@ -230,14 +241,26 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
         List<RightUserFileSystemObjectRedis> redisList = new ArrayList<>();
 
         if (right.equals(OperationRights.ALL)) {
-            fileSystemObject.forEach(obj -> redisList.add(
-                    buildObj(obj, login, OperationRights.baseOperations())));
+            fileSystemObject.forEach(obj -> redisList.add(buildObj(obj, login, OperationRights.baseOperations())));
             return redisList;
         }
 
-        fileSystemObject.forEach(obj -> redisList.add(
-                buildObj(obj, login, List.of(right))));
+        fileSystemObject.forEach(obj -> redisList.add(buildObj(obj, login, List.of(right))));
 
+        return redisList;
+    }
+
+    /**
+     * Get right objects to persist in {@literal Redis}
+     * @param fileSystemObject names file system objects. Must not be {@literal null}.
+     * @param login login user. Must not be {@literal null}.
+     * @param right list of rights
+     * @return {@literal Redis} object
+     */
+    default List<RightUserFileSystemObjectRedis> buildObj(@NotNull List<String> fileSystemObject, String login,
+                                                          @NotNull List<OperationRights> right) {
+        List<RightUserFileSystemObjectRedis> redisList = new ArrayList<>();
+        fileSystemObject.forEach(obj -> redisList.add(buildObj(obj, login, right)));
         return redisList;
     }
 

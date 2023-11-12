@@ -237,7 +237,8 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
      * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
      */
     @Override
-    public void addRight(final @NotNull List<RightUserFileSystemObjectRedis> right, OperationRights operationRights)
+    public void addRight(
+            @NotNull List<RightUserFileSystemObjectRedis> right, final List<OperationRights> operationRights)
             throws ChangeRightsYourselfException {
         List<String> ids = new ArrayList<>();
         List<String> idsFileSystemObject = new ArrayList<>();
@@ -274,7 +275,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
                 operationRightsExists = new ArrayList<>();
             }
 
-            operationRightsExists.add(operationRights);
+            operationRightsExists.addAll(operationRights);
             obj.setRight(operationRightsExists
                     .stream()
                     .distinct()

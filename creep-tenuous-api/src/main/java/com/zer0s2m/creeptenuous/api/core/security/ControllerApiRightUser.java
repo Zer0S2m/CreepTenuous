@@ -53,6 +53,12 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
         this.serviceRedisManagerResources = serviceRedisManagerResources;
     }
 
+    private @NotNull List<OperationRights> convertStrToEnumOperationRight(@NotNull List<String> rights) {
+        List<OperationRights> operations = new ArrayList<>();
+        rights.forEach(right -> operations.add(OperationRights.valueOf(right)));
+        return operations;
+    }
+
     /**
      * Add rights for a user on a file system target
      * @param data Data to add
@@ -75,13 +81,13 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.isExistsUser(data.loginUser());
         serviceManagerRights.isExistsFileSystemObject(data.systemName());
-        OperationRights operation = OperationRights.valueOf(data.right());
+        List<OperationRights> operations = convertStrToEnumOperationRight(data.right());
 
         serviceManagerRights.addRight(
-                serviceManagerRights.buildObj(data.systemName(), data.loginUser(), operation));
+                serviceManagerRights.buildObj(data.systemName(), data.loginUser(), operations));
         serviceManagerRights.setDirectoryPassAccess(data.systemName(), data.loginUser());
 
-        return new ResponseCreateRightUserApi(data.systemName(), data.loginUser(), operation);
+        return new ResponseCreateRightUserApi(data.systemName(), data.loginUser(), operations);
     }
 
     /**
@@ -106,7 +112,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
         serviceManagerRights.setAccessClaims(accessToken);
         serviceManagerRights.isExistsUser(data.loginUser());
         serviceManagerRights.isExistsFileSystemObject(data.systemName());
-        OperationRights operation = OperationRights.valueOf(data.right());
+        List<OperationRights> operations = convertStrToEnumOperationRight(data.right());
 
         DirectoryRedis directoryRedis = serviceRedisManagerResources.getResourceDirectoryRedis(data.systemName());
         if (directoryRedis == null) {
@@ -124,7 +130,7 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
         serviceFileSystemRedis.checkRights(namesFileSystemObject);
 
         serviceManagerRights.addRight(
-                serviceManagerRights.buildObj(namesFileSystemObject, data.loginUser(), operation), operation);
+                serviceManagerRights.buildObj(namesFileSystemObject, data.loginUser(), operations), operations);
         serviceManagerRights.setDirectoryPassAccess(data.systemName(), data.loginUser());
     }
 
