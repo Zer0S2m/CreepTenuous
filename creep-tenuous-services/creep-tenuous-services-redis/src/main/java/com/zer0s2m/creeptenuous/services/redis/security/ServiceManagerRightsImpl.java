@@ -561,6 +561,11 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
                 userLogin);
         List<FileRedis> fileRedisList = serviceRedisManagerResources.getResourceFileRedisByLoginUser(
                 userLogin);
+        HashMap<String, String> realNameAsSystemName = new HashMap<>();
+        realNameAsSystemName.putAll(
+                serviceRedisManagerResources.collectRealNamesFileObjectsClassifyAsSystem(directoryRedisList));
+        realNameAsSystemName.putAll(
+                serviceRedisManagerResources.collectRealNamesFileObjectsClassifyAsSystem(fileRedisList));
 
         Set<String> idsRights = new HashSet<>();
         directoryRedisList.forEach(directoryRedis ->
@@ -575,15 +580,16 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
             final String systemName = unpackingUniqueKey(right.getFileSystemObject());
             if (!mapRights.containsKey(systemName)) {
                 mapRights.put(systemName, new ResponseGrantedRightsApi(
-                        systemName, List.of(new ContainerGrantedRight(
-                        right.getLogin(), right.getRight()
-                ))
+                        systemName,
+                        realNameAsSystemName.get(systemName),
+                        List.of(new ContainerGrantedRight(right.getLogin(), right.getRight()
+                        ))
                 ));
             } else {
                 final List<ContainerGrantedRight> lastRights = new ArrayList<>(mapRights.get(systemName).rights());
                 lastRights.add(new ContainerGrantedRight(right.getLogin(), right.getRight()));
                 mapRights.put(systemName, new ResponseGrantedRightsApi(
-                        systemName, lastRights));
+                        systemName, realNameAsSystemName.get(systemName), lastRights));
             }
         });
 

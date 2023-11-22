@@ -234,6 +234,9 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
 
         return new ResponseGrantedRightsApi(
                 data.systemName(),
+                serviceRedisManagerResources
+                        .getRealNameFileObject(data.systemName())
+                        .orElse(null),
                 serviceManagerRights.getGrantedRight(data.systemName()));
     }
 
