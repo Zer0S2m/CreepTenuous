@@ -7,12 +7,11 @@ import com.zer0s2m.creeptenuous.common.data.DataCreateRightUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteRightUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataViewGrantedRightsApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
-import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
+import com.zer0s2m.creeptenuous.common.exceptions.*;
+import com.zer0s2m.creeptenuous.common.exceptions.messages.BadRequestMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseAllGrantedRightsApi;
+import com.zer0s2m.creeptenuous.common.containers.ContainerAssignedRights;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateRightUserApi;
-import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
-import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
-import com.zer0s2m.creeptenuous.common.exceptions.NoExistsRightException;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionAddRightsYourselfMsg;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNoExistsFileSystemObjectRedisMsg;
 import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNoExistsRightMsg;
@@ -33,6 +32,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @V1APIRestController
 public class ControllerApiRightUser implements ControllerApiRightUserDoc {
@@ -257,6 +257,41 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
     }
 
     /**
+     * Get information about assigned rights.
+     *
+     * @param systemName  System name of the file object.
+     * @param accessToken Raw JWT access token.
+     * @return Information about assigned rights.
+     * @throws NoExistsFileSystemObjectRedisException The file system object was not found in the database.
+     * @throws NoRightsRedisException                 Insufficient rights to perform the operation.
+     * @throws ViewAssignedRightsYourselfException    Unable to view assigned rights to your file object.
+     */
+    @Override
+    @GetMapping("/user/global/right/assigned")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ContainerAssignedRights viewAssignedRights(
+            final @RequestParam("file") @NotNull UUID systemName,
+            @RequestHeader(name = "Authorization") String accessToken)
+            throws NoExistsFileSystemObjectRedisException, NoRightsRedisException,
+            ViewAssignedRightsYourselfException {
+        serviceFileSystemRedis.setAccessToken(accessToken);
+        serviceFileSystemRedis.setIsException(false);
+
+        serviceManagerRights.setIsWillBeCreated(false);
+        serviceManagerRights.setAccessClaims(accessToken);
+        serviceManagerRights.isExistsFileSystemObject(systemName.toString());
+
+        if (!serviceFileSystemRedis.checkRights(systemName.toString())) {
+            serviceManagerRights.checkRightsByOperation(
+                    OperationRights.ANALYSIS, systemName.toString());
+        } else {
+            throw new ViewAssignedRightsYourselfException("Unable to view assigned rights to your file object.");
+        }
+
+        return serviceManagerRights.getAssignedRight(systemName.toString());
+    }
+
+    /**
      * Error andler
      * @param error the file system object was not found in the database
      * @return error message for user
@@ -300,6 +335,18 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
     public ExceptionAddRightsYourselfMsg handleExceptionAddRightsYourself(
             @NotNull ChangeRightsYourselfException error) {
         return new ExceptionAddRightsYourselfMsg(error.getMessage());
+    }
+
+    /**
+     * Error handler.
+     * @param error Unable to view assigned rights to your file object.
+     * @return Error message for user.
+     */
+    @ExceptionHandler(ViewAssignedRightsYourselfException.class)
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    public BadRequestMsg handleExceptionViewAssignedRightsYourself(
+            @NotNull ViewAssignedRightsYourselfException error) {
+        return new BadRequestMsg(HttpStatus.BAD_REQUEST.value(), error.getMessage());
     }
 
 }

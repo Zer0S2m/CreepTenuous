@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.services.redis.security;
 
 import com.zer0s2m.creeptenuous.common.components.RootPath;
+import com.zer0s2m.creeptenuous.common.containers.ContainerAssignedRights;
 import com.zer0s2m.creeptenuous.common.containers.ContainerGrantedRight;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.enums.Directory;
@@ -49,6 +50,8 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
      * Basic operation in the system to manage user rights
      */
     static final OperationRights baseOperationRights = OperationRights.SHOW;
+
+    static final OperationRights operationAnalysisRights = OperationRights.ANALYSIS;
 
     protected final JwtProvider jwtProvider;
 
@@ -99,7 +102,6 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     @Override
     public void checkRightsByOperation(OperationRights operation, List<String> fileSystemObjects)
             throws NoRightsRedisException {
-
         List<FileRedis> fileRedis = serviceRedisManagerResources.getResourceFileRedis(fileSystemObjects);
         List<DirectoryRedis> directoryRedis = serviceRedisManagerResources.getResourceDirectoryRedis(
                 fileSystemObjects);
@@ -361,7 +363,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
             List<String> systemParents = new ArrayList<>(List.of(sourceStr.split(Directory.SEPARATOR.get())));
             if (!systemParents.isEmpty()) {
                 addRight(buildObj(systemParents, loginUser, baseOperationRights),
-                        baseOperationRights);
+                        List.of(baseOperationRights, operationAnalysisRights));
             }
         }
     }
@@ -612,6 +614,37 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
         }
 
         return idsRights;
+    }
+
+    /**
+     * Get information about assigned rights for a file object by its system name.
+     * @param systemName System name of the file object.
+     * @return Information about assigned rights.
+     */
+    @Override
+    public ContainerAssignedRights getAssignedRight(final String systemName) {
+        DirectoryRedis directoryRedis = serviceRedisManagerResources.getResourceDirectoryRedis(systemName);
+        FileRedis fileRedis = serviceRedisManagerResources.getResourceFileRedis(systemName);
+
+        if (directoryRedis != null && fileRedis == null) {
+            RightUserFileSystemObjectRedis rightUserFileSystemObjectRedis = getObj(
+                    systemName, getLoginUser());
+            return new ContainerAssignedRights(
+                    directoryRedis.getRealName(),
+                    directoryRedis.getSystemName(),
+                    rightUserFileSystemObjectRedis.getRight()
+            );
+        } else if (fileRedis != null && directoryRedis == null) {
+            RightUserFileSystemObjectRedis rightUserFileSystemObjectRedis = getObj(
+                    systemName, getLoginUser());
+            return new ContainerAssignedRights(
+                    fileRedis.getRealName(),
+                    fileRedis.getSystemName(),
+                    rightUserFileSystemObjectRedis.getRight()
+            );
+        }
+
+        return null;
     }
 
     /**

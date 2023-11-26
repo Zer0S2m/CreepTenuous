@@ -8,6 +8,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsRightException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
+import com.zer0s2m.creeptenuous.common.containers.ContainerAssignedRights;
 import com.zer0s2m.creeptenuous.common.http.ResponseGrantedRightsApi;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.base.BaseRedis;
@@ -142,6 +143,13 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
      * @return granted all rights
      */
     Collection<ResponseGrantedRightsApi> getGrantedRight();
+
+    /**
+     * Get information about assigned rights for a file object by its system name.
+     * @param systemName System name of the file object.
+     * @return Information about assigned rights.
+     */
+    ContainerAssignedRights getAssignedRight(final String systemName);
 
     /**
      * Checking for the existence of a file system object in the database
