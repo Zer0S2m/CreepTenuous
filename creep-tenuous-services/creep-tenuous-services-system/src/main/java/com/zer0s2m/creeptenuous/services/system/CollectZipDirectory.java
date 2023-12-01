@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -42,12 +43,14 @@ public interface CollectZipDirectory {
         String realPathToZip;
 
         if (map != null && !map.isEmpty()) {
-            realPathToZip = Paths.get(
-                    pathToZip, map.get(source.getFileName().toString()) + Directory.EXTENSION_FILE_ZIP.get()
+            final String nameFile = map.containsKey(source.getFileName().toString()) ?
+                    map.get(source.getFileName().toString()) : UUID.randomUUID().toString();
+
+            realPathToZip = Paths.get(pathToZip, nameFile + Directory.EXTENSION_FILE_ZIP.get()
             ).toString();
         } else {
             realPathToZip = Paths.get(
-                    pathToZip, source.getFileName().toString() + Directory.EXTENSION_FILE_ZIP.get()
+                    pathToZip, UUID.randomUUID() + Directory.EXTENSION_FILE_ZIP.get()
             ).toString();
         }
 
