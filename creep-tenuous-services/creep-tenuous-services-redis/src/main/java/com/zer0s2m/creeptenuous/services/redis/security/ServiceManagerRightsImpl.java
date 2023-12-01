@@ -319,8 +319,8 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
 
         for (RightUserFileSystemObjectRedis obj : right) {
             checkAddingRightsYourself(obj);
-            final String key = buildUniqueKey(obj.getFileSystemObject(), obj.getLogin());
-            idsFileSystemObject.add(obj.getFileSystemObject());
+            final String key = buildUniqueKey(cleaningSystemPath(obj.getFileSystemObject()), obj.getLogin());
+            idsFileSystemObject.add(cleaningSystemPath(obj.getFileSystemObject()));
             obj.setFileSystemObject(key);
             ids.add(key);
         }
