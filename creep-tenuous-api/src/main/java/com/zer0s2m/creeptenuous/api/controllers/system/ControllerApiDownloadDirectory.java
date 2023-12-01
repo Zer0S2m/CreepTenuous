@@ -8,6 +8,7 @@ import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectoryApi;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
+import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
 import com.zer0s2m.creeptenuous.common.utils.UtilsDataApi;
 import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystem;
@@ -66,6 +67,11 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
 
     private final AtomicFileSystemControllerApiDownloadDirectory atomicFileSystemControllerApiDownloadDirectory =
             new AtomicFileSystemControllerApiDownloadDirectory();
+
+    /**
+     * TODO: A temporary crutch - for downloading file objects to which rights are assigned
+     */
+    private final boolean forceDownloadingFileObjects = true;
 
     @Autowired
     public ControllerApiDownloadDirectory(
@@ -176,6 +182,13 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
             boolean isRightTarget = serviceDownloadDirectoryRedis.checkRights(data.systemDirectoryName());
 
             List<String> cloneSystemParents = CloneList.cloneOneLevel(data.systemParents());
+            HashMap<String, String> resource = serviceDownloadDirectoryRedis.getResource(
+                    WalkDirectoryInfo.walkDirectory(Path.of(buildDirectoryPath.build(cloneSystemParents)))
+                            .stream()
+                            .map(ContainerInfoFileSystemObject::nameFileSystemObject)
+                            .collect(Collectors.toList())
+            );
+
 
             if (!isRightsSource || !isRightTarget) {
                 if (!isRightsSource) {
@@ -187,23 +200,35 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
                     }
                 }
                 if (!isRightTarget) {
-                    serviceManagerRights.checkRightByOperationDownloadDirectory(data.systemDirectoryName());
+                    try {
+                        serviceManagerRights.checkRightByOperationDownloadDirectory(data.systemDirectoryName());
 
-                    boolean isFrozen = serviceDownloadDirectoryRedis.isFrozenFileSystemObject(data.systemDirectoryName());
-                    if (isFrozen) {
-                        throw new FileObjectIsFrozenException();
+                        boolean isFrozen = serviceDownloadDirectoryRedis.isFrozenFileSystemObject(data.systemDirectoryName());
+                        if (isFrozen) {
+                            throw new FileObjectIsFrozenException();
+                        }
+                    } catch (NoRightsRedisException exception) {
+                        if (forceDownloadingFileObjects) {
+                            List<ContainerInfoFileSystemObject> allowedFileObjectsDownloading = serviceManagerRights
+                                    .getAvailableFileObjectsForDownloading(data.systemDirectoryName());
+
+                            serviceDownloadDirectorySelect.setMap(resource);
+                            Path sourceZipArchive = serviceDownloadDirectorySelect
+                                    .downloadFromContainers(allowedFileObjectsDownloading);
+
+                            StreamingResponseBody responseBody = UtilsDataApi
+                                    .getStreamingResponseBodyFromPath(sourceZipArchive);
+
+                            return ResponseEntity
+                                    .ok()
+                                    .headers(UtilsDataApi.collectHeadersForZip(sourceZipArchive))
+                                    .body(responseBody);
+                        }
                     }
                 }
             }
 
             cloneSystemParents.add(data.systemDirectoryName());
-
-            HashMap<String, String> resource = serviceDownloadDirectoryRedis.getResource(
-                    WalkDirectoryInfo.walkDirectory(Path.of(buildDirectoryPath.build(cloneSystemParents)))
-                            .stream()
-                            .map(ContainerInfoFileSystemObject::nameFileSystemObject)
-                            .collect(Collectors.toList())
-            );
 
             serviceDownloadDirectory.setMap(resource);
 

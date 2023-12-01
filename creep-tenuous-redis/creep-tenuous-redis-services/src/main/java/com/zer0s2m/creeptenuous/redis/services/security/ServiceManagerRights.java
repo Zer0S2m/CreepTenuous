@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 /**
  * Service for managing user rights for interacting with a target file system object
@@ -275,11 +276,17 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
         List<RightUserFileSystemObjectRedis> redisList = new ArrayList<>();
 
         if (right.equals(OperationRights.ALL)) {
-            fileSystemObject.forEach(obj -> redisList.add(buildObj(obj, login, OperationRights.baseOperations())));
+            fileSystemObject.forEach((obj) -> {
+                String[] systemNameSplit = obj.split("\\.");
+                redisList.add(buildObj(systemNameSplit[0], login, OperationRights.baseOperations()));
+            });
             return redisList;
         }
 
-        fileSystemObject.forEach(obj -> redisList.add(buildObj(obj, login, List.of(right))));
+        fileSystemObject.forEach((obj) -> {
+            String[] systemNameSplit = obj.split("\\.");
+            redisList.add(buildObj(systemNameSplit[0], login, List.of(right)));
+        });
 
         return redisList;
     }
@@ -315,6 +322,30 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
      */
     default String unpackingUniqueKey(@NotNull String uniqueName) {
         return uniqueName.split(SEPARATOR_UNIQUE_KEY)[0];
+    }
+
+    /**
+     * Cleaning the system path from extensions and so on.
+     * @param systemName System name of the file object.
+     * @return The cleared system name of the file object.
+     */
+    default String cleaningSystemPath(String systemName) {
+        return cleaningSystemPath(List.of(systemName)).get(0);
+    }
+
+    /**
+     * Cleaning the system path from extensions and so on.
+     * @param systemName System names of file objects.
+     * @return Cleaned up system names of file objects.
+     */
+    default List<String> cleaningSystemPath(@NotNull Iterable<String> systemName) {
+        return StreamSupport
+                .stream(systemName.spliterator(), false)
+                .map(name -> {
+                    String[] nameSplit = name.split("\\.");
+                    return nameSplit[0];
+                })
+                .toList();
     }
 
 }

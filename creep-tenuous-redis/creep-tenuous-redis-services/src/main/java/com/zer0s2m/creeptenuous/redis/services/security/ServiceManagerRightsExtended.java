@@ -1,9 +1,11 @@
 package com.zer0s2m.creeptenuous.redis.services.security;
 
+import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Extended service for managing user rights to interact with the target file system object.
@@ -43,6 +45,16 @@ public interface ServiceManagerRightsExtended {
      * @throws NoRightsRedisException Insufficient rights to perform the operation
      */
     void checkRightByOperationDownloadDirectory(String fileSystemObject) throws IOException, NoRightsRedisException;
+
+    /**
+     * Get available file objects for downloading for a user who has rights.
+     *
+     * @param fileSystemObject System name of a directory type file object.
+     * @return Information about each file object available for downloading.
+     * @throws IOException Signals that an I/O exception to some sort has occurred.
+     */
+    List<ContainerInfoFileSystemObject> getAvailableFileObjectsForDownloading(String fileSystemObject)
+            throws IOException;
 
     /**
      * Set the parameter responsible for the type of file system object, file or directory
