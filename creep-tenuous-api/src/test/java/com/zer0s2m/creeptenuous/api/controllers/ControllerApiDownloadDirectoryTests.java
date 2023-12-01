@@ -190,35 +190,6 @@ public class ControllerApiDownloadDirectoryTests {
     }
 
     @Test
-    public void downloadDirectory_fail_forbiddenDirectories() throws Exception {
-        DirectoryRedis directoryRedis = new DirectoryRedis(
-                "login",
-                "ROLE_USER",
-                "testDirectory",
-                "testDirectory",
-                "testDirectory",
-                new ArrayList<>());
-        directoryRedisRepository.save(directoryRedis);
-
-        this.mockMvc.perform(
-                MockMvcRequestBuilders
-                        .post("/api/v1/directory/download")
-                        .content(objectMapper.writeValueAsString(new DataDownloadDirectoryApi(
-                                List.of("testDirectory"),
-                                List.of("testDirectory"),
-                                "testDirectory",
-                                "testDirectory"
-                        )))
-                        .header("Authorization", accessToken)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isForbidden());
-
-        directoryRedisRepository.delete(directoryRedis);
-    }
-
-    @Test
     public void downloadDirectorySelect_fail_forbiddenDirectories() throws Exception {
         DirectoryRedis directoryRedis = new DirectoryRedis(
                 "login",

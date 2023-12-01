@@ -1,5 +1,6 @@
 package com.zer0s2m.creeptenuous.services.system;
 
+import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectPartApi;
 import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
 
@@ -20,6 +21,15 @@ public interface ServiceDownloadDirectorySelect extends CollectZipDirectory, Ato
      * @throws IOException if an I/O error occurs or the parent directory does not exist
      */
     Path download(List<DataDownloadDirectorySelectPartApi> data) throws IOException;
+
+    /**
+     * Download selectively file objects.
+     *
+     * @param data Object file system information.
+     * @return archive zip (source).
+     * @throws IOException Signals that an I/O exception to some sort has occurred.
+     */
+    Path downloadFromContainers(Iterable<ContainerInfoFileSystemObject> data) throws IOException;
 
     /**
      * Set resource for archiving directory

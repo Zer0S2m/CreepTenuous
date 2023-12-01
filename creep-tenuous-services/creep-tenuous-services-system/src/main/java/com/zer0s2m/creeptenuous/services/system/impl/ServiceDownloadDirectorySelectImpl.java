@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.services.system.impl;
 
 import com.zer0s2m.creeptenuous.common.annotations.ServiceFileSystem;
+import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectorySelectPartApi;
 import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptionHandler;
@@ -70,6 +71,29 @@ public class ServiceDownloadDirectorySelectImpl implements ServiceDownloadDirect
             } catch (NoSuchFileException e) {
                 throw new RuntimeException(e);
             }
+        });
+
+        Path collectZip = mergeZipArchives(paths);
+
+        paths.forEach(this::deleteFileZip);
+
+        return collectZip;
+    }
+
+    /**
+     * Download selectively file objects.
+     *
+     * @param data Object file system information.
+     * @return archive zip (source).
+     * @throws IOException Signals that an I/O exception to some sort has occurred.
+     */
+    @Override
+    public Path downloadFromContainers(@NotNull Iterable<ContainerInfoFileSystemObject> data)
+            throws IOException {
+        List<Path> paths = new ArrayList<>();
+        data.forEach(obj -> {
+            Path pathToZip = collectZip(obj.source(), this.map, this.getClass().getCanonicalName());
+            paths.add(pathToZip);
         });
 
         Path collectZip = mergeZipArchives(paths);

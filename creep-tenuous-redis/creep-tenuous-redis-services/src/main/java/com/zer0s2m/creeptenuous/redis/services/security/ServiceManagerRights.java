@@ -8,6 +8,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsRightException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
+import com.zer0s2m.creeptenuous.common.containers.ContainerAssignedRights;
 import com.zer0s2m.creeptenuous.common.http.ResponseGrantedRightsApi;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.base.BaseRedis;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 /**
  * Service for managing user rights for interacting with a target file system object
@@ -60,7 +62,18 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
      * @param operationRights type of transaction. Must not be null.
      * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
      */
-    void addRight(List<RightUserFileSystemObjectRedis> right, OperationRights operationRights)
+    default void addRight(List<RightUserFileSystemObjectRedis> right, OperationRights operationRights)
+            throws ChangeRightsYourselfException {
+        addRight(right, List.of(operationRights));
+    }
+
+    /**
+     * Create a user right on a file system object
+     * @param right data right. must not be {@literal null} nor must it contain {@literal null}.
+     * @param operationRights type of transaction. Must not be null.
+     * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
+     */
+    void addRight(List<RightUserFileSystemObjectRedis> right, List<OperationRights> operationRights)
             throws ChangeRightsYourselfException;
 
     /**
@@ -79,7 +92,20 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
      * @throws NoExistsRightException The right was not found in the database.
      *                                Or is {@literal null} {@link NullPointerException}
      */
-    void deleteRight(RightUserFileSystemObjectRedis right, OperationRights operationRights)
+    default void deleteRight(RightUserFileSystemObjectRedis right, OperationRights operationRights)
+            throws ChangeRightsYourselfException, NoExistsRightException {
+        deleteRight(right, List.of(operationRights));
+    }
+
+    /**
+     * Delete a user right a file system object
+     * @param right data right. Must not be {@literal null}.
+     * @param operationRights type of transaction. Must not be {@literal null}.
+     * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
+     * @throws NoExistsRightException The right was not found in the database.
+     *                                Or is {@literal null} {@link NullPointerException}
+     */
+    void deleteRight(RightUserFileSystemObjectRedis right, List<OperationRights> operationRights)
             throws ChangeRightsYourselfException, NoExistsRightException;
 
     /**
@@ -90,7 +116,20 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
      * @throws NoExistsRightException The right was not found in the database.
      *                                Or is {@literal null} {@link NullPointerException}
      */
-    void deleteRight(List<RightUserFileSystemObjectRedis> right, OperationRights operationRights)
+    default void deleteRight(List<RightUserFileSystemObjectRedis> right, OperationRights operationRights)
+            throws ChangeRightsYourselfException, NoExistsRightException {
+        deleteRight(right, List.of(operationRights));
+    }
+
+    /**
+     * Delete a user rights a file system object
+     * @param right data right. must not be {@literal null} nor must it contain {@literal null}.
+     * @param operationRights type of transaction. Must not be null.
+     * @throws ChangeRightsYourselfException Change rights over the interaction of file system objects to itself
+     * @throws NoExistsRightException The right was not found in the database.
+     *                                Or is {@literal null} {@link NullPointerException}
+     */
+    void deleteRight(List<RightUserFileSystemObjectRedis> right, List<OperationRights> operationRights)
             throws ChangeRightsYourselfException, NoExistsRightException;
 
     /**
@@ -105,6 +144,13 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
      * @return granted all rights
      */
     Collection<ResponseGrantedRightsApi> getGrantedRight();
+
+    /**
+     * Get information about assigned rights for a file object by its system name.
+     * @param systemName System name of the file object.
+     * @return Information about assigned rights.
+     */
+    ContainerAssignedRights getAssignedRight(final String systemName);
 
     /**
      * Checking for the existence of a file system object in the database
@@ -230,14 +276,32 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
         List<RightUserFileSystemObjectRedis> redisList = new ArrayList<>();
 
         if (right.equals(OperationRights.ALL)) {
-            fileSystemObject.forEach(obj -> redisList.add(
-                    buildObj(obj, login, OperationRights.baseOperations())));
+            fileSystemObject.forEach((obj) -> {
+                String[] systemNameSplit = obj.split("\\.");
+                redisList.add(buildObj(systemNameSplit[0], login, OperationRights.baseOperations()));
+            });
             return redisList;
         }
 
-        fileSystemObject.forEach(obj -> redisList.add(
-                buildObj(obj, login, List.of(right))));
+        fileSystemObject.forEach((obj) -> {
+            String[] systemNameSplit = obj.split("\\.");
+            redisList.add(buildObj(systemNameSplit[0], login, List.of(right)));
+        });
 
+        return redisList;
+    }
+
+    /**
+     * Get right objects to persist in {@literal Redis}
+     * @param fileSystemObject names file system objects. Must not be {@literal null}.
+     * @param login login user. Must not be {@literal null}.
+     * @param right list of rights
+     * @return {@literal Redis} object
+     */
+    default List<RightUserFileSystemObjectRedis> buildObj(@NotNull List<String> fileSystemObject, String login,
+                                                          @NotNull List<OperationRights> right) {
+        List<RightUserFileSystemObjectRedis> redisList = new ArrayList<>();
+        fileSystemObject.forEach(obj -> redisList.add(buildObj(obj, login, right)));
         return redisList;
     }
 
@@ -258,6 +322,30 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
      */
     default String unpackingUniqueKey(@NotNull String uniqueName) {
         return uniqueName.split(SEPARATOR_UNIQUE_KEY)[0];
+    }
+
+    /**
+     * Cleaning the system path from extensions and so on.
+     * @param systemName System name of the file object.
+     * @return The cleared system name of the file object.
+     */
+    default String cleaningSystemPath(String systemName) {
+        return cleaningSystemPath(List.of(systemName)).get(0);
+    }
+
+    /**
+     * Cleaning the system path from extensions and so on.
+     * @param systemName System names of file objects.
+     * @return Cleaned up system names of file objects.
+     */
+    default List<String> cleaningSystemPath(@NotNull Iterable<String> systemName) {
+        return StreamSupport
+                .stream(systemName.spliterator(), false)
+                .map(name -> {
+                    String[] nameSplit = name.split("\\.");
+                    return nameSplit[0];
+                })
+                .toList();
     }
 
 }

@@ -2,6 +2,7 @@ package com.zer0s2m.creeptenuous.services.redis.resources;
 
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.base.IBaseRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
@@ -245,6 +246,42 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
     @Override
     public boolean checkFileObjectDirectoryType(final String id) {
         return directoryRedisRepository.existsById(id);
+    }
+
+    /**
+     * Get the real name of a file object.
+     * @param id id must not be {@literal null}.
+     * @return Real name.
+     */
+    @Override
+    public Optional<String> getRealNameFileObject(final String id) {
+        DirectoryRedis directoryRedis = getResourceDirectoryRedis(id);
+        FileRedis fileRedis = getResourceFileRedis(id);
+
+        if (directoryRedis != null && fileRedis == null) {
+            return Optional.of(directoryRedis.getRealName());
+        } else if (fileRedis != null && directoryRedis == null) {
+            return Optional.of(fileRedis.getRealName());
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * collect real names of file objects and assign them to system names.
+     *
+     * @param objects File objects.
+     * @return Real names related to system names.
+     */
+    @Override
+    public HashMap<String, String> collectRealNamesFileObjectsClassifyAsSystem(
+            final @NotNull Iterable<? extends IBaseRedis> objects) {
+        final HashMap<String, String> realNameAsSystem = new HashMap<>();
+
+        objects.forEach(object -> realNameAsSystem
+                .put(object.getSystemName(), object.getRealName()));
+
+        return realNameAsSystem;
     }
 
 }

@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestTagValidationApi
@@ -19,7 +21,7 @@ public class DataDeleteRightUserApiValidationTests extends BaseValidationDataApi
         DataDeleteRightUserApi invalidDataDeleteRight = new DataDeleteRightUserApi(
                 null,
                 "login",
-                "MOVE"
+                List.of("MOVE")
         );
         setErrorInvalidData(getValidator(), invalidDataDeleteRight);
     }
@@ -29,7 +31,7 @@ public class DataDeleteRightUserApiValidationTests extends BaseValidationDataApi
         DataDeleteRightUserApi invalidDataDeleteRight = new DataDeleteRightUserApi(
                 "systemName",
                 null,
-                "MOVE"
+                List.of("MOVE")
         );
         setErrorInvalidData(getValidator(), invalidDataDeleteRight);
     }
@@ -39,7 +41,7 @@ public class DataDeleteRightUserApiValidationTests extends BaseValidationDataApi
         DataDeleteRightUserApi invalidDataDeleteRight = new DataDeleteRightUserApi(
                 "systemName",
                 "login",
-                "invalid_type_format_enum"
+                List.of("invalid_type_format_enum")
         );
         setErrorInvalidData(getValidator(), invalidDataDeleteRight);
     }
