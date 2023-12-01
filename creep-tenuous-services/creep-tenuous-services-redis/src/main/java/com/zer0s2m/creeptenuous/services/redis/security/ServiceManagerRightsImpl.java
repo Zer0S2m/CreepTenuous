@@ -350,6 +350,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
             }
 
             operationRightsExists.addAll(operationRights);
+            operationRightsExists.addAll(List.of(baseOperationRights, operationAnalysisRights));
             obj.setRight(operationRightsExists
                     .stream()
                     .distinct()
