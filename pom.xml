@@ -36,6 +36,7 @@
     <module>creep-tenuous-models</module>
     <module>creep-tenuous-integration</module>
     <module>creep-tenuous-core</module>
+    <module>creep-tenuous-module</module>
   </modules>
   <scm>
     <url>https://github.com/Zer0S2m/CreepTenuous</url>
