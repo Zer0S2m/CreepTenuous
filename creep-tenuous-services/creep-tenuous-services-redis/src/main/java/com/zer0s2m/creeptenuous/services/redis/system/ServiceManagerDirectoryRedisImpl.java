@@ -82,7 +82,8 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
                     objRedis.getCreatedAt(),
                     colorDirectoryInfo != null ? colorDirectoryInfo.color() : null,
                     colorDirectoryInfo != null ? colorDirectoryInfo.colorId() : null,
-                    mapFileObjectToCategories.get(objRedis.getSystemName())
+                    mapFileObjectToCategories.get(objRedis.getSystemName()),
+                    objRedis.getLogin()
             );
         });
         fileRedis.forEach(objRedis -> buildJSON(
@@ -94,7 +95,8 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
                 objRedis.getCreatedAt(),
                 null,
                 null,
-                mapFileObjectToCategories.get(objRedis.getSystemName())
+                mapFileObjectToCategories.get(objRedis.getSystemName()),
+                objRedis.getLogin()
         ));
 
         if (!data.isEmpty()) {
@@ -125,7 +127,8 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
             LocalDateTime createdAt,
             String color,
             Long colorId,
-            Long categoryId
+            Long categoryId,
+            String owner
     ) {
         JSONObject obj = new JSONObject();
 
@@ -137,6 +140,7 @@ public class ServiceManagerDirectoryRedisImpl extends BaseServiceFileSystemRedis
         obj.put("color", color);
         obj.put("colorId", colorId);
         obj.put("categoryId", categoryId);
+        obj.put("owner", owner);
 
         data.put(obj);
     }
