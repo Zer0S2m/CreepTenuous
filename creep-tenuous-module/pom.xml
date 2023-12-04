@@ -9,7 +9,6 @@
     <version>0.0.12-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.zer0s2m.creeptenuous</groupId>
   <artifactId>creep-tenuous-module</artifactId>
   <packaging>pom</packaging>
   <modules>
@@ -21,5 +20,15 @@
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.zer0s2m.creeptenuous</groupId>
+        <artifactId>creep-tenuous-module-search</artifactId>
+        <version>0.0.12-SNAPSHOT</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
 </project>

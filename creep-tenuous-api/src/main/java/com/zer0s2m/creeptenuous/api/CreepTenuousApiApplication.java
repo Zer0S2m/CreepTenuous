@@ -29,6 +29,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
         "com.zer0s2m.creeptenuous.core.atomic",
         "com.zer0s2m.creeptenuous.events",
         "com.zer0s2m.creeptenuous.integration.implants",
+        "com.zer0s2m.creeptenuous.module.search"
 })
 @EntityScan({
         "com.zer0s2m.creeptenuous.models",

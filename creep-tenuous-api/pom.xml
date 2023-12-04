@@ -74,6 +74,10 @@
       <groupId>com.zer0s2m</groupId>
       <artifactId>creep-tenuous-integration-implants</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.zer0s2m</groupId>
+      <artifactId>creep-tenuous-module-search</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.skyscreamer</groupId>
