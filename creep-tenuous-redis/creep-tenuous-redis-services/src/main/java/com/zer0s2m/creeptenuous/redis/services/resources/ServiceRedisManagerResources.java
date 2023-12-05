@@ -2,6 +2,7 @@ package com.zer0s2m.creeptenuous.redis.services.resources;
 
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.base.IBaseRedis;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 
@@ -178,5 +179,13 @@ public interface ServiceRedisManagerResources {
      */
     HashMap<String, String> collectRealNamesFileObjectsClassifyAsSystem(
             final Iterable<? extends IBaseRedis> objects);
+
+    /**
+     * Obtain rights to interact with file objects using the user login.
+     * @param userLogin User login. Must not be {@literal null}.
+     * @return Rights.
+     */
+    List<RightUserFileSystemObjectRedis> getRightUserFileSystemObjectByLogin(
+            final String userLogin);
 
 }

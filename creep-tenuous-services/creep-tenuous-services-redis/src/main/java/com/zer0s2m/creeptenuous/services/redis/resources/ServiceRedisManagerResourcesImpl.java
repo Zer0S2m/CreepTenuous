@@ -2,9 +2,11 @@ package com.zer0s2m.creeptenuous.services.redis.resources;
 
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.base.IBaseRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import org.jetbrains.annotations.NotNull;
@@ -27,11 +29,16 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
 
     private final FileRedisRepository fileRedisRepository;
 
+    private final RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
+
     @Autowired
     public ServiceRedisManagerResourcesImpl(
-            DirectoryRedisRepository directoryRedisRepository, FileRedisRepository fileRedisRepository) {
+            DirectoryRedisRepository directoryRedisRepository,
+            FileRedisRepository fileRedisRepository,
+            RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository) {
         this.directoryRedisRepository = directoryRedisRepository;
         this.fileRedisRepository = fileRedisRepository;
+        this.rightUserFileSystemObjectRedisRepository = rightUserFileSystemObjectRedisRepository;
     }
 
     /**
@@ -282,6 +289,22 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
                 .put(object.getSystemName(), object.getRealName()));
 
         return realNameAsSystem;
+    }
+
+    /**
+     * Obtain rights to interact with file objects using the user login.
+     * @param userLogin User login. Must not be {@literal null}.
+     * @return Rights.
+     */
+    @Override
+    public List<RightUserFileSystemObjectRedis> getRightUserFileSystemObjectByLogin(
+            final String userLogin) {
+        RightUserFileSystemObjectRedis rightUserFileSystemObjectRedisExample =
+                new RightUserFileSystemObjectRedis();
+        rightUserFileSystemObjectRedisExample.setLogin(userLogin);
+
+        return getResources(rightUserFileSystemObjectRedisRepository
+                .findAll(Example.of(rightUserFileSystemObjectRedisExample)));
     }
 
 }

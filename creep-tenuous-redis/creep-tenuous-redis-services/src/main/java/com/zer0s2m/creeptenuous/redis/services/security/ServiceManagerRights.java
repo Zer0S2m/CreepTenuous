@@ -1,7 +1,6 @@
 package com.zer0s2m.creeptenuous.redis.services.security;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerGrantedRight;
-import com.zer0s2m.creeptenuous.common.enums.ManagerRights;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
@@ -22,12 +21,8 @@ import java.util.stream.StreamSupport;
 /**
  * Service for managing user rights for interacting with a target file system object
  */
-public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, ServiceManagerRightsExtended {
-
-    /**
-     * Separator for creating a unique key (from the system name of the file system object and user login)
-     */
-    String SEPARATOR_UNIQUE_KEY = ManagerRights.SEPARATOR_UNIQUE_KEY.get();
+public interface ServiceManagerRights extends BaseServiceManagerRightsAccess,
+        ServiceManagerRightsExtended, CollectUniqueKeyRightUserFileObject {
 
     /**
      * Checking permissions to perform some action on a specific file object
@@ -303,25 +298,6 @@ public interface ServiceManagerRights extends BaseServiceManagerRightsAccess, Se
         List<RightUserFileSystemObjectRedis> redisList = new ArrayList<>();
         fileSystemObject.forEach(obj -> redisList.add(buildObj(obj, login, right)));
         return redisList;
-    }
-
-    /**
-     * Creating a unique key from the system name of the file system object and the user login
-     * @param systemName the system name of the file system object
-     * @param loginUser user login
-     * @return generated unique key
-     */
-    default String buildUniqueKey(String systemName, String loginUser) {
-        return systemName + SEPARATOR_UNIQUE_KEY + loginUser;
-    }
-
-    /**
-     * Unpack a unique name using a delimiter {@link ServiceManagerRights#SEPARATOR_UNIQUE_KEY}
-     * @param uniqueName a unique name that was created using a delimiter
-     * @return the system name of the file system object
-     */
-    default String unpackingUniqueKey(@NotNull String uniqueName) {
-        return uniqueName.split(SEPARATOR_UNIQUE_KEY)[0];
     }
 
     /**
