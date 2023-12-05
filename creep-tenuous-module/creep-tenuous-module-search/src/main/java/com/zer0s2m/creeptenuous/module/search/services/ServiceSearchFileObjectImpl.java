@@ -7,9 +7,11 @@ import com.zer0s2m.creeptenuous.module.search.SearchFileObject;
 import com.zer0s2m.creeptenuous.module.search.ServiceSearchFileObject;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.base.IBaseRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,13 +33,18 @@ public class ServiceSearchFileObjectImpl implements ServiceSearchFileObject {
 
     private final FileRedisRepository fileRedisRepository;
 
+    private final ServiceRedisManagerResources serviceRedisManagerResources;
+
     private final String rootPath = new RootPath().getRootPath();
 
     @Autowired
     public ServiceSearchFileObjectImpl(
-            DirectoryRedisRepository directoryRedisRepository, FileRedisRepository fileRedisRepository) {
+            DirectoryRedisRepository directoryRedisRepository,
+            FileRedisRepository fileRedisRepository,
+            ServiceRedisManagerResources serviceRedisManagerResources) {
         this.directoryRedisRepository = directoryRedisRepository;
         this.fileRedisRepository = fileRedisRepository;
+        this.serviceRedisManagerResources = serviceRedisManagerResources;
     }
 
     /**
@@ -133,14 +140,24 @@ public class ServiceSearchFileObjectImpl implements ServiceSearchFileObject {
     public List<ContainerInfoSearchFileObject> search() {
         List<DirectoryRedis> directoryRedisList = new ArrayList<>();
         List<FileRedis> fileRedisList = new ArrayList<>();
+        List<String> idsFileObjectFromRightUser = getFileSystemObjectSystemNameFrmoRightUser(
+                serviceRedisManagerResources.getRightUserFileSystemObjectByLogin(getUserLogin()));
 
         if (getTypeSearchFileObject() == SearchFileObject.FILE) {
             fileRedisList.addAll(fileRedisRepository.getFileRedisByLogin(getUserLogin()));
+            fileRedisList.addAll(serviceRedisManagerResources
+                    .getResourceFileRedis(idsFileObjectFromRightUser));
         } else if (getTypeSearchFileObject() == SearchFileObject.DIRECTORY) {
             directoryRedisList.addAll(directoryRedisRepository.getDirectoryRedisByLogin(getUserLogin()));
+            directoryRedisList.addAll(serviceRedisManagerResources
+                    .getResourceDirectoryRedis(idsFileObjectFromRightUser));
         } else {
             fileRedisList.addAll(fileRedisRepository.getFileRedisByLogin(getUserLogin()));
+            fileRedisList.addAll(serviceRedisManagerResources
+                    .getResourceFileRedis(idsFileObjectFromRightUser));
             directoryRedisList.addAll(directoryRedisRepository.getDirectoryRedisByLogin(getUserLogin()));
+            directoryRedisList.addAll(serviceRedisManagerResources
+                    .getResourceDirectoryRedis(idsFileObjectFromRightUser));
         }
 
         directoryRedisList = (List<DirectoryRedis>) filterFileObjectsByNestingLevel(directoryRedisList);
@@ -208,6 +225,18 @@ public class ServiceSearchFileObjectImpl implements ServiceSearchFileObject {
                     fileObject.getIsFile(),
                     fileObject.getIsDirectory())));
         return collectedResult;
+    }
+
+    /**
+     * Unpack the unique permission key and get the system name of the file object.
+     * @param rightUserFileSystemObjectRedis Rights to interact with file objects.
+     * @return System names of file objects.
+     */
+    private @NotNull List<String> getFileSystemObjectSystemNameFrmoRightUser(
+            final @NotNull List<RightUserFileSystemObjectRedis> rightUserFileSystemObjectRedis) {
+        final List<String> systemNames = new ArrayList<>();
+        rightUserFileSystemObjectRedis.forEach(obj -> systemNames.add(unpackingUniqueKey(obj.getFileSystemObject())));
+        return systemNames;
     }
 
 }

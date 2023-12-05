@@ -1,5 +1,7 @@
 package com.zer0s2m.creeptenuous.module.search;
 
+import com.zer0s2m.creeptenuous.redis.services.security.CollectUniqueKeyRightUserFileObject;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -14,7 +16,7 @@ import java.util.List;
  *     <li>File object type {@link SearchFileObject}.</li>
  * </ul>
  */
-public interface ServiceSearchFileObject {
+public interface ServiceSearchFileObject extends CollectUniqueKeyRightUserFileObject {
 
     /**
      * Set system file object names to set the directory nesting level.
