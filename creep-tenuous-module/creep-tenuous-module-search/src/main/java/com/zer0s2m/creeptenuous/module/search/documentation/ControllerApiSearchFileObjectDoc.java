@@ -20,6 +20,7 @@ public interface ControllerApiSearchFileObjectDoc {
      *     <li>File object type.</li>
      *     <li>Directory nesting level.</li>
      *     <li>Part of the real name of the file object.</li>
+     *     <li>Rights to interact with the file object are assigned.</li>
      * </ul>
      *
      * @param data        Search data.
@@ -31,7 +32,8 @@ public interface ControllerApiSearchFileObjectDoc {
             summary = "Search file object",
             description = "Search for file objects using the following criteria: 1) File object type; " +
                     "2) Directory nesting level; " +
-                    "3) Part of the real name of the file object.",
+                    "3) Part of the real name of the file object; " +
+                    "4) Rights to interact with the file object are assigned.",
             tags = {"Module-Search"},
             security = @SecurityRequirement(name = "Bearer Authentication"),
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(

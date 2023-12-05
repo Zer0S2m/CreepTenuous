@@ -1,17 +1,20 @@
 package com.zer0s2m.creeptenuous.module.search.services;
 
+import com.zer0s2m.creeptenuous.common.components.RootPath;
+import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.module.search.ContainerInfoSearchFileObject;
 import com.zer0s2m.creeptenuous.module.search.SearchFileObject;
 import com.zer0s2m.creeptenuous.module.search.ServiceSearchFileObject;
+import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
+import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.base.IBaseRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Service("service-search-file-object")
 public class ServiceSearchFileObjectImpl implements ServiceSearchFileObject {
@@ -27,6 +30,8 @@ public class ServiceSearchFileObjectImpl implements ServiceSearchFileObject {
     private final DirectoryRedisRepository directoryRedisRepository;
 
     private final FileRedisRepository fileRedisRepository;
+
+    private final String rootPath = new RootPath().getRootPath();
 
     @Autowired
     public ServiceSearchFileObjectImpl(
@@ -124,8 +129,85 @@ public class ServiceSearchFileObjectImpl implements ServiceSearchFileObject {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<ContainerInfoSearchFileObject> search() {
-        return new ArrayList<>();
+        List<DirectoryRedis> directoryRedisList = new ArrayList<>();
+        List<FileRedis> fileRedisList = new ArrayList<>();
+
+        if (getTypeSearchFileObject() == SearchFileObject.FILE) {
+            fileRedisList.addAll(fileRedisRepository.getFileRedisByLogin(getUserLogin()));
+        } else if (getTypeSearchFileObject() == SearchFileObject.DIRECTORY) {
+            directoryRedisList.addAll(directoryRedisRepository.getDirectoryRedisByLogin(getUserLogin()));
+        } else {
+            fileRedisList.addAll(fileRedisRepository.getFileRedisByLogin(getUserLogin()));
+            directoryRedisList.addAll(directoryRedisRepository.getDirectoryRedisByLogin(getUserLogin()));
+        }
+
+        directoryRedisList = (List<DirectoryRedis>) filterFileObjectsByNestingLevel(directoryRedisList);
+        fileRedisList = (List<FileRedis>) filterFileObjectsByNestingLevel(fileRedisList);
+        directoryRedisList = (List<DirectoryRedis>) filterFileObjectByPartRealName(directoryRedisList);
+        fileRedisList = (List<FileRedis>) filterFileObjectByPartRealName(fileRedisList);
+
+        final List<ContainerInfoSearchFileObject> result = new ArrayList<>();
+        result.addAll(collectSearchResult(directoryRedisList));
+        result.addAll(collectSearchResult(fileRedisList));
+
+        return result;
+    }
+
+    /**
+     * Filter file objects by directory nesting level.
+     * @param fileObjects File objects.
+     * @return Filtered file objects.
+     */
+    private List<? extends IBaseRedis> filterFileObjectsByNestingLevel(
+            final @NotNull List<? extends IBaseRedis> fileObjects) {
+        if (getSystemParents().isEmpty()) {
+            return fileObjects;
+        }
+
+        return fileObjects
+                .stream()
+                .filter(fileObject -> {
+                    List<String> pathSplit = Arrays.asList(
+                            fileObject
+                                    .getPath()
+                                    .replace(rootPath + Directory.SEPARATOR.get(), "")
+                                    .split(Directory.SEPARATOR.get()));
+                    return new HashSet<>(pathSplit).containsAll(getSystemParents());
+                })
+                .toList();
+    }
+
+    /**
+     * Filtering file objects by part of the real name.
+     * @param fileObjects File objects.
+     * @return Filtered file objects.
+     */
+    private List<? extends IBaseRedis> filterFileObjectByPartRealName(
+            final @NotNull List<? extends IBaseRedis> fileObjects) {
+        return fileObjects
+                .stream()
+                .filter(fileObject -> fileObject.getRealName().contains(getPartRealName()))
+                .toList();
+    }
+
+    /**
+     * Collect the final search result.
+     * @param fileObjects File objects.
+     * @return Search results.
+     */
+    private @NotNull List<ContainerInfoSearchFileObject> collectSearchResult(
+            final @NotNull List<? extends IBaseRedis> fileObjects) {
+        final List<ContainerInfoSearchFileObject> collectedResult = new ArrayList<>();
+        fileObjects.forEach(fileObject -> collectedResult.add(new ContainerInfoSearchFileObject(
+                    getSystemParents(),
+                    UUID.fromString(fileObject.getSystemName()),
+                    fileObject.getRealName(),
+                    fileObject.getLogin(),
+                    fileObject.getIsFile(),
+                    fileObject.getIsDirectory())));
+        return collectedResult;
     }
 
 }

@@ -1,11 +1,11 @@
 package com.zer0s2m.creeptenuous.module.search;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.UUID;
 
 public record ContainerInfoSearchFileObject(
 
-        List<UUID> systemParents,
+        Collection<String> systemParents,
 
         UUID systemName,
 

@@ -37,9 +37,10 @@ public class ControllerApiSearchFileObject implements ControllerApiSearchFileObj
      *     <li>File object type.</li>
      *     <li>Directory nesting level.</li>
      *     <li>Part of the real name of the file object.</li>
+     *     <li>Rights to interact with the file object are assigned.</li>
      * </ul>
      *
-     * @param data        Search dataю
+     * @param data        Search data.
      * @param accessToken Raw JWT access token.
      * @return File objects found.
      */
