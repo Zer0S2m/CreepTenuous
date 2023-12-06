@@ -23,6 +23,7 @@
     <maven.compiler.target>21</maven.compiler.target>
     <spring.boot.main>com.zer0s2m.creeptenuous.api.CreepTenuousApiApplication</spring.boot.main>
     <trimStackTrace>true</trimStackTrace>
+    <snakeyaml.version>2.2</snakeyaml.version>
   </properties>
   <modules>
     <module>creep-tenuous-starter-test</module>
