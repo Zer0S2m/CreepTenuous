@@ -3,6 +3,7 @@ package com.zer0s2m.creeptenuous.services.system;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateFile;
 import com.zer0s2m.creeptenuous.common.data.DataCreateFileApi;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundTypeFileException;
+import com.zer0s2m.creeptenuous.common.utils.UtilsFileSystem;
 import com.zer0s2m.creeptenuous.services.system.helpers.UtilsActionForFiles;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateFileImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceFileSystem;
@@ -60,7 +61,8 @@ public class ServiceCreateFileTests {
                 RECORD_1.typeFile()
         );
 
-        Assertions.assertTrue(Files.exists(container.systemPathFile()));
+        Assertions.assertTrue(Files.exists(Path.of(UtilsFileSystem.clearSystemPathFile(
+                container.systemPathFile()))));
 
         UtilsActionForFiles.deleteFileAndWriteLog(container.systemPathFile(), logger);
     }
@@ -73,7 +75,8 @@ public class ServiceCreateFileTests {
                 RECORD_2.typeFile()
         );
 
-        Assertions.assertTrue(Files.exists(container.systemPathFile()));
+        Assertions.assertTrue(Files.exists(Path.of(UtilsFileSystem.clearSystemPathFile(
+                container.systemPathFile()))));
 
         UtilsActionForFiles.deleteFileAndWriteLog(container.systemPathFile(), logger);
     }
@@ -86,7 +89,8 @@ public class ServiceCreateFileTests {
                 RECORD_3.typeFile()
         );
 
-        Assertions.assertTrue(Files.exists(container.systemPathFile()));
+        Assertions.assertTrue(Files.exists(Path.of(UtilsFileSystem.clearSystemPathFile(
+                container.systemPathFile()))));
 
         UtilsActionForFiles.deleteFileAndWriteLog(container.systemPathFile(), logger);
     }
