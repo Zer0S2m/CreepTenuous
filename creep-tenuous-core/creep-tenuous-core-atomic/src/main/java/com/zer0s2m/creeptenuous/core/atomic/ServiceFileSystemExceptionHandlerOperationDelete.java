@@ -1,9 +1,5 @@
-package com.zer0s2m.creeptenuous.core.atomic.handlers.impl;
+package com.zer0s2m.creeptenuous.core.atomic;
 
-import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptionHandler;
-import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
-import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
-import com.zer0s2m.creeptenuous.core.atomic.handlers.ServiceFileSystemExceptionHandler;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

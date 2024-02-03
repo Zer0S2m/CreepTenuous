@@ -1,6 +1,5 @@
 package com.zer0s2m.creeptenuous.core.balancer;
 
-import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.*;
 

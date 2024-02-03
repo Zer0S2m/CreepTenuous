@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.enums.Directory;
-import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.ContextAtomicFileSystem;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

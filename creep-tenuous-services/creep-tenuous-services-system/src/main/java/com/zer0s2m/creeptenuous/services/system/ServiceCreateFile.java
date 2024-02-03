@@ -5,7 +5,7 @@ import com.zer0s2m.creeptenuous.common.enums.ExceptionFile;
 import com.zer0s2m.creeptenuous.common.enums.TypeFile;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundTypeFileException;
 import com.zer0s2m.creeptenuous.common.utils.UtilsFileSystem;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.AtomicServiceFileSystem;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

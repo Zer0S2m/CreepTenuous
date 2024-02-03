@@ -2,7 +2,7 @@ package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFileFragment;
 import com.zer0s2m.creeptenuous.common.http.ResponseObjectUploadFileApi;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.AtomicServiceFileSystem;
 
 import java.io.IOException;
 import java.io.InputStream;

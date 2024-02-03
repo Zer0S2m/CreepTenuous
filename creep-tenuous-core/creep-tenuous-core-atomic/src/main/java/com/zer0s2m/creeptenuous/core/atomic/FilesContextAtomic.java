@@ -1,8 +1,7 @@
-package com.zer0s2m.creeptenuous.core.atomic.context.nio.file;
+package com.zer0s2m.creeptenuous.core.atomic;
 
-import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.balancer.FileBalancer;
-import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
+import com.zer0s2m.creeptenuous.core.balancer.FileIsDirectoryException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

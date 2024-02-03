@@ -1,7 +1,4 @@
-package com.zer0s2m.creeptenuous.core.atomic.handlers;
-
-import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptionHandler;
-import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
+package com.zer0s2m.creeptenuous.core.atomic;
 
 import java.util.HashMap;
 

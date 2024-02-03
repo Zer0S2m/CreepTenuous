@@ -8,7 +8,7 @@ import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.utils.UtilsDataApi;
-import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
+import com.zer0s2m.creeptenuous.core.balancer.FileIsDirectoryException;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;

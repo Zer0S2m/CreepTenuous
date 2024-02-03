@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.services.system;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataDownloadFile;
-import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
+import com.zer0s2m.creeptenuous.core.balancer.FileIsDirectoryException;
 
 import java.io.IOException;
 import java.nio.file.Path;

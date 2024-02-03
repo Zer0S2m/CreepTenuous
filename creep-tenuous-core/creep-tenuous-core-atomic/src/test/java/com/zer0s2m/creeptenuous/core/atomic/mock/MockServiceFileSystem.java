@@ -1,19 +1,12 @@
 package com.zer0s2m.creeptenuous.core.atomic.mock;
 
-import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystem;
-import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptionHandler;
-import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
-import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
-import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
-import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.*;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
-import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
+import com.zer0s2m.creeptenuous.core.atomic.*;
+import com.zer0s2m.creeptenuous.core.balancer.FileIsDirectoryException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 

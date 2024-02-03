@@ -1,4 +1,4 @@
-package com.zer0s2m.creeptenuous.core.atomic.services;
+package com.zer0s2m.creeptenuous.core.atomic;
 
 import java.util.UUID;
 
