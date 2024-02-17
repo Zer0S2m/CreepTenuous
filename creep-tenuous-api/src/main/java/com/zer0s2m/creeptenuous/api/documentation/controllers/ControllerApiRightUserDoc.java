@@ -76,12 +76,12 @@ public interface ControllerApiRightUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                     ),
                             })
@@ -146,12 +146,12 @@ public interface ControllerApiRightUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                     })
@@ -213,17 +213,17 @@ public interface ControllerApiRightUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found right", value = "{" +
                                                     "\"message\": \"Not found right.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -288,17 +288,17 @@ public interface ControllerApiRightUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found right", value = "{" +
                                                     "\"message\": \"Not found right.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -353,7 +353,7 @@ public interface ControllerApiRightUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })

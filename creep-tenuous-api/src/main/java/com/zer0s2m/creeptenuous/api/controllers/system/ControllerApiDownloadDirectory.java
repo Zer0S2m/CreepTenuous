@@ -189,7 +189,6 @@ public class ControllerApiDownloadDirectory implements ControllerApiDownloadDire
                             .collect(Collectors.toList())
             );
 
-
             if (!isRightsSource || !isRightTarget) {
                 if (!isRightsSource) {
                     serviceManagerRights.checkRightsByOperation(operationRightsShow, cloneSystemParents);

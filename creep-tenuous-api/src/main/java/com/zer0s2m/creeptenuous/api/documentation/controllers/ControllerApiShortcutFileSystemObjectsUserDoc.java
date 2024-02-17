@@ -53,12 +53,12 @@ public interface ControllerApiShortcutFileSystemObjectsUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user", value ="{" +
                                                     "\"message\": \"Not found user\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -105,12 +105,12 @@ public interface ControllerApiShortcutFileSystemObjectsUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user", value ="{" +
                                                     "\"message\": \"Not found user\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -161,12 +161,12 @@ public interface ControllerApiShortcutFileSystemObjectsUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user", value ="{" +
                                                     "\"message\": \"Not found user\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
