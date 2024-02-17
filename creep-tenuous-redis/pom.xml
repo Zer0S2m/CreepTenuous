@@ -5,10 +5,10 @@
   <parent>
     <groupId>com.zer0s2m</groupId>
     <artifactId>creep-tenuous</artifactId>
-    <version>0.0.12-SNAPSHOT</version>
+    <version>0.0.13-SNAPSHOT</version>
   </parent>
   <artifactId>creep-tenuous-redis</artifactId>
-  <version>0.0.12-SNAPSHOT</version>
+  <version>0.0.13-SNAPSHOT</version>
   <name>creep-tenuous-redis</name>
   <description>creep-tenuous-redis</description>
   <properties>
@@ -27,17 +27,17 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-models</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>0.0.13-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-repository</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>0.0.13-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-events</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>0.0.13-SNAPSHOT</version>
         <exclusions>
           <exclusion>
             <groupId>com.zer0s2m</groupId>
@@ -48,7 +48,7 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-services</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>0.0.13-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

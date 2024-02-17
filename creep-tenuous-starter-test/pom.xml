@@ -5,10 +5,10 @@
   <parent>
     <groupId>com.zer0s2m</groupId>
     <artifactId>creep-tenuous</artifactId>
-    <version>0.0.12-SNAPSHOT</version>
+    <version>0.0.13-SNAPSHOT</version>
   </parent>
   <artifactId>creep-tenuous-starter-test</artifactId>
-  <version>0.0.12-SNAPSHOT</version>
+  <version>0.0.13-SNAPSHOT</version>
   <name>creep-tenuous-starter-test</name>
   <description>creep-tenuous-starter-test</description>
   <properties>

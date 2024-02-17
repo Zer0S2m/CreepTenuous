@@ -6,11 +6,11 @@
   <parent>
     <groupId>com.zer0s2m</groupId>
     <artifactId>creep-tenuous</artifactId>
-    <version>0.0.12-SNAPSHOT</version>
+    <version>0.0.13-SNAPSHOT</version>
   </parent>
 
   <artifactId>creep-tenuous-validation</artifactId>
-  <version>0.0.12-SNAPSHOT</version>
+  <version>0.0.13-SNAPSHOT</version>
   <name>creep-tenuous-validation</name>
   <description>Validation for incoming API requests</description>
 

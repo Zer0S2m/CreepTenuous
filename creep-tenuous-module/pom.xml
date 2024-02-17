@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.zer0s2m</groupId>
     <artifactId>creep-tenuous</artifactId>
-    <version>0.0.12-SNAPSHOT</version>
+    <version>0.0.13-SNAPSHOT</version>
   </parent>
 
   <artifactId>creep-tenuous-module</artifactId>
@@ -26,7 +26,7 @@
       <dependency>
         <groupId>com.zer0s2m.creeptenuous</groupId>
         <artifactId>creep-tenuous-module-search</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>0.0.13-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

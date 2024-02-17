@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.zer0s2m</groupId>
   <artifactId>creep-tenuous</artifactId>
-  <version>0.0.12-SNAPSHOT</version>
+  <version>0.0.13-SNAPSHOT</version>
   <name>creep-tenuous</name>
   <description>Distributed file storage</description>
   <packaging>pom</packaging>
@@ -37,29 +37,29 @@
     <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
 
     <!--  Ecosystem  -->
-    <creep-tenuous-services-system-starter.version>0.0.12-SNAPSHOT</creep-tenuous-services-system-starter.version>
-    <creep-tenuous-redis-starter.version>0.0.12-SNAPSHOT</creep-tenuous-redis-starter.version>
-    <creep-tenuous-services-jwt.version>0.0.12-SNAPSHOT</creep-tenuous-services-jwt.version>
-    <creep-tenuous-services-redis.version>0.0.12-SNAPSHOT</creep-tenuous-services-redis.version>
-    <creep-tenuous-services-security.version>0.0.12-SNAPSHOT</creep-tenuous-services-security.version>
-    <creep-tenuous-services-system.version>0.0.12-SNAPSHOT</creep-tenuous-services-system.version>
-    <creep-tenuous-services-user.version>0.0.12-SNAPSHOT</creep-tenuous-services-user.version>
-    <creep-tenuous-starter-test.version>0.0.12-SNAPSHOT</creep-tenuous-starter-test.version>
-    <creep-tenuous-common.version>0.0.12-SNAPSHOT</creep-tenuous-common.version>
-    <creep-tenuous-integration-core.version>0.0.12-SNAPSHOT</creep-tenuous-integration-core.version>
-    <creep-tenuous-integration-implants.version>0.0.12-SNAPSHOT</creep-tenuous-integration-implants.version>
-    <creep-tenuous-security.version>0.0.12-SNAPSHOT</creep-tenuous-security.version>
-    <creep-tenuous-redis-services.version>0.0.12-SNAPSHOT</creep-tenuous-redis-services.version>
-    <creep-tenuous-redis-repository.version>0.0.12-SNAPSHOT</creep-tenuous-redis-repository.version>
-    <creep-tenuous-redis-models.version>0.0.12-SNAPSHOT</creep-tenuous-redis-models.version>
-    <creep-tenuous-redis-events.version>0.0.12-SNAPSHOT</creep-tenuous-redis-events.version>
-    <creep-tenuous-repository.version>0.0.12-SNAPSHOT</creep-tenuous-repository.version>
-    <creep-tenuous-models.version>0.0.12-SNAPSHOT</creep-tenuous-models.version>
-    <creep-tenuous-events.version>0.0.12-SNAPSHOT</creep-tenuous-events.version>
-    <creep-tenuous-core-atomic.version>0.0.12-SNAPSHOT</creep-tenuous-core-atomic.version>
-    <creep-tenuous-core-balancer.version>0.0.12-SNAPSHOT</creep-tenuous-core-balancer.version>
-    <creep-tenuous-module-search.version>0.0.12-SNAPSHOT</creep-tenuous-module-search.version>
-    <creep-tenuous-validation.version>0.0.12-SNAPSHOT</creep-tenuous-validation.version>
+    <creep-tenuous-services-system-starter.version>0.0.13-SNAPSHOT</creep-tenuous-services-system-starter.version>
+    <creep-tenuous-redis-starter.version>0.0.13-SNAPSHOT</creep-tenuous-redis-starter.version>
+    <creep-tenuous-services-jwt.version>0.0.13-SNAPSHOT</creep-tenuous-services-jwt.version>
+    <creep-tenuous-services-redis.version>0.0.13-SNAPSHOT</creep-tenuous-services-redis.version>
+    <creep-tenuous-services-security.version>0.0.13-SNAPSHOT</creep-tenuous-services-security.version>
+    <creep-tenuous-services-system.version>0.0.13-SNAPSHOT</creep-tenuous-services-system.version>
+    <creep-tenuous-services-user.version>0.0.13-SNAPSHOT</creep-tenuous-services-user.version>
+    <creep-tenuous-starter-test.version>0.0.13-SNAPSHOT</creep-tenuous-starter-test.version>
+    <creep-tenuous-common.version>0.0.13-SNAPSHOT</creep-tenuous-common.version>
+    <creep-tenuous-integration-core.version>0.0.13-SNAPSHOT</creep-tenuous-integration-core.version>
+    <creep-tenuous-integration-implants.version>0.0.13-SNAPSHOT</creep-tenuous-integration-implants.version>
+    <creep-tenuous-security.version>0.0.13-SNAPSHOT</creep-tenuous-security.version>
+    <creep-tenuous-redis-services.version>0.0.13-SNAPSHOT</creep-tenuous-redis-services.version>
+    <creep-tenuous-redis-repository.version>0.0.13-SNAPSHOT</creep-tenuous-redis-repository.version>
+    <creep-tenuous-redis-models.version>0.0.13-SNAPSHOT</creep-tenuous-redis-models.version>
+    <creep-tenuous-redis-events.version>0.0.13-SNAPSHOT</creep-tenuous-redis-events.version>
+    <creep-tenuous-repository.version>0.0.13-SNAPSHOT</creep-tenuous-repository.version>
+    <creep-tenuous-models.version>0.0.13-SNAPSHOT</creep-tenuous-models.version>
+    <creep-tenuous-events.version>0.0.13-SNAPSHOT</creep-tenuous-events.version>
+    <creep-tenuous-core-atomic.version>0.0.13-SNAPSHOT</creep-tenuous-core-atomic.version>
+    <creep-tenuous-core-balancer.version>0.0.13-SNAPSHOT</creep-tenuous-core-balancer.version>
+    <creep-tenuous-module-search.version>0.0.13-SNAPSHOT</creep-tenuous-module-search.version>
+    <creep-tenuous-validation.version>0.0.13-SNAPSHOT</creep-tenuous-validation.version>
   </properties>
   <modules>
     <module>creep-tenuous-starter-test</module>
