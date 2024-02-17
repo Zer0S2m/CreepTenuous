@@ -1,7 +1,8 @@
 package com.zer0s2m.creeptenuous.security.jwt.providers;
 
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
-import com.zer0s2m.creeptenuous.security.jwt.http.JwtUserRequest;
+import com.zer0s2m.creeptenuous.security.jwt.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.JwtUserRequest;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;

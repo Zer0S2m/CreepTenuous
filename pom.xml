@@ -38,6 +38,7 @@
     <module>creep-tenuous-integration</module>
     <module>creep-tenuous-core</module>
     <module>creep-tenuous-module</module>
+    <module>creep-tenuous-validation</module>
   </modules>
   <scm>
     <url>https://github.com/Zer0S2m/CreepTenuous</url>
@@ -231,6 +232,11 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-module-search</artifactId>
+        <version>0.0.12-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.zer0s2m</groupId>
+        <artifactId>creep-tenuous-validation</artifactId>
         <version>0.0.12-SNAPSHOT</version>
       </dependency>
 

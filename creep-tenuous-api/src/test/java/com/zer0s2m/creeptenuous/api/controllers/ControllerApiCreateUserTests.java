@@ -3,7 +3,7 @@ package com.zer0s2m.creeptenuous.api.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.common.enums.UserAlready;
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.UserAlreadyExistMsg;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
@@ -106,11 +107,12 @@ public class ControllerApiCreateUserTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().json(
                         objectMapper.writeValueAsString(
-                                new UserAlreadyExistMsg(
+                                new ResponseError(
                                         String.format(
                                                 UserAlready.USER_ALREADY_EXISTS.get(),
                                                 UserAlready.USER_LOGIN_EXISTS.get()
-                                        )
+                                        ),
+                                        HttpStatus.BAD_REQUEST.value()
                                 )
                         )
                 ));
@@ -130,11 +132,12 @@ public class ControllerApiCreateUserTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().json(
                         objectMapper.writeValueAsString(
-                                new UserAlreadyExistMsg(
+                                new ResponseError(
                                         String.format(
                                                 UserAlready.USER_ALREADY_EXISTS.get(),
                                                 UserAlready.USER_EMAIL_EXISTS.get()
-                                        )
+                                        ),
+                                        HttpStatus.BAD_REQUEST.value()
                                 )
                         )
                 ));

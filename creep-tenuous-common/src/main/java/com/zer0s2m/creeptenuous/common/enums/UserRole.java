@@ -6,7 +6,6 @@ public enum UserRole implements GrantedAuthority {
 
     ROLE_ADMIN("ROLE_ADMIN"),
 
-
     ROLE_USER("ROLE_USER");
 
     private final String role;
@@ -15,7 +14,6 @@ public enum UserRole implements GrantedAuthority {
         this.role = role;
     }
 
-    @Override
     public String getAuthority() {
         return role;
     }

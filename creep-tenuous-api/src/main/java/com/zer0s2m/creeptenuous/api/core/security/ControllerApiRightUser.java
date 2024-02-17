@@ -1,26 +1,22 @@
 package com.zer0s2m.creeptenuous.api.core.security;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiRightUserDoc;
-import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.api.annotation.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataCreateRightUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteRightUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataViewGrantedRightsApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.*;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.BadRequestMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseAllGrantedRightsApi;
 import com.zer0s2m.creeptenuous.common.containers.ContainerAssignedRights;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateRightUserApi;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionAddRightsYourselfMsg;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNoExistsFileSystemObjectRedisMsg;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNoExistsRightMsg;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import com.zer0s2m.creeptenuous.common.http.ResponseGrantedRightsApi;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
-import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotFoundMsg;
 import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
@@ -298,9 +294,9 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      */
     @ExceptionHandler({NoExistsFileSystemObjectRedisException.class})
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ExceptionNoExistsFileSystemObjectRedisMsg handleExceptionNoExistsFileSystemObjectRedis(
+    public ResponseError handleExceptionNoExistsFileSystemObjectRedis(
             @NotNull NoExistsFileSystemObjectRedisException error) {
-        return new ExceptionNoExistsFileSystemObjectRedisMsg(error.getMessage());
+        return new ResponseError(error.getMessage(), HttpStatus.NOT_FOUND.value());
     }
 
     /**
@@ -310,8 +306,8 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      */
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public UserNotFoundMsg handleExceptionNotIsExistsUser(@NotNull UserNotFoundException error) {
-        return new UserNotFoundMsg(error.getMessage(), HttpStatus.NOT_FOUND.value());
+    public ResponseError handleExceptionNotIsExistsUser(@NotNull UserNotFoundException error) {
+        return new ResponseError(error.getMessage(), HttpStatus.NOT_FOUND.value());
     }
 
     /**
@@ -321,8 +317,8 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      */
     @ExceptionHandler(NoExistsRightException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ExceptionNoExistsRightMsg handleExceptionNoExistsRight(@NotNull NoExistsRightException error) {
-        return new ExceptionNoExistsRightMsg(error.getMessage());
+    public ResponseError handleExceptionNoExistsRight(@NotNull NoExistsRightException error) {
+        return new ResponseError(error.getMessage(), HttpStatus.NOT_FOUND.value());
     }
 
     /**
@@ -332,9 +328,9 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      */
     @ExceptionHandler(ChangeRightsYourselfException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ExceptionAddRightsYourselfMsg handleExceptionAddRightsYourself(
+    public ResponseError handleExceptionAddRightsYourself(
             @NotNull ChangeRightsYourselfException error) {
-        return new ExceptionAddRightsYourselfMsg(error.getMessage());
+        return new ResponseError(error.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
     /**
@@ -344,9 +340,9 @@ public class ControllerApiRightUser implements ControllerApiRightUserDoc {
      */
     @ExceptionHandler(ViewAssignedRightsYourselfException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public BadRequestMsg handleExceptionViewAssignedRightsYourself(
+    public ResponseError handleExceptionViewAssignedRightsYourself(
             @NotNull ViewAssignedRightsYourselfException error) {
-        return new BadRequestMsg(HttpStatus.BAD_REQUEST.value(), error.getMessage());
+        return new ResponseError(error.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
 }

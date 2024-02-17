@@ -4,16 +4,11 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zer0s2m.creeptenuous.common.enums.UserException;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionAccountIsBlockedMsg;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.redis.repository.JwtRedisRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
-import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotFoundMsg;
-import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotValidPasswordMsg;
-import com.zer0s2m.creeptenuous.security.jwt.http.JwtRefreshTokenRequest;
-import com.zer0s2m.creeptenuous.security.jwt.http.JwtResponse;
-import com.zer0s2m.creeptenuous.security.jwt.http.JwtUserRequest;
-import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.*;
 import com.zer0s2m.creeptenuous.security.services.GeneratePassword;
 import com.zer0s2m.creeptenuous.services.security.GeneratePasswordImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagControllerApi;
@@ -25,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
@@ -109,7 +105,8 @@ public class ControllerApiAuthTests {
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().json(
                         objectMapper.writeValueAsString(
-                                new UserNotFoundMsg(UserException.USER_NOT_IS_EXISTS.get())
+                                new ResponseError(UserException.USER_NOT_IS_EXISTS.get(),
+                                        HttpStatus.UNAUTHORIZED.value())
                         )
                 ));
     }
@@ -128,7 +125,8 @@ public class ControllerApiAuthTests {
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().json(
                         objectMapper.writeValueAsString(
-                                new UserNotValidPasswordMsg(UserException.USER_NOT_VALID_PASSWORD.get())
+                                new ResponseError(UserException.USER_NOT_VALID_PASSWORD.get(),
+                                        HttpStatus.UNAUTHORIZED.value())
                         )
                 ));
     }
@@ -150,7 +148,7 @@ public class ControllerApiAuthTests {
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().json(
                         objectMapper.writeValueAsString(
-                                new ExceptionAccountIsBlockedMsg(UserException.BLOCK_USER.get())
+                                new ResponseError(UserException.BLOCK_USER.get(), HttpStatus.UNAUTHORIZED.value())
                         )
                 ));
     }

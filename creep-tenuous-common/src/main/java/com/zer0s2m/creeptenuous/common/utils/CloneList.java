@@ -1,11 +1,16 @@
 package com.zer0s2m.creeptenuous.common.utils;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 public interface CloneList {
-    static <E> List<E> cloneOneLevel(List<E> list) {
+
+    @Contract(value = "_ -> new", pure = true)
+    static <E> @NotNull List<E> cloneOneLevel(List<E> list) {
         return new ArrayList<>(list);
     }
 
@@ -24,9 +29,9 @@ public interface CloneList {
         }
 
         return Stream.concat(
-                newList1.stream(),
-                newList2.stream()
-        )
+                        newList1.stream(),
+                        newList2.stream()
+                )
                 .toList();
     }
 

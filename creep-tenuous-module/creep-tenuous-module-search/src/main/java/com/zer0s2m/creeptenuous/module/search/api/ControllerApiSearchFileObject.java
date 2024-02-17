@@ -1,25 +1,22 @@
 package com.zer0s2m.creeptenuous.module.search.api;
 
-import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
 import com.zer0s2m.creeptenuous.module.search.ContainerInfoSearchFileObject;
 import com.zer0s2m.creeptenuous.module.search.DataSearchFileObject;
 import com.zer0s2m.creeptenuous.module.search.SearchFileObject;
 import com.zer0s2m.creeptenuous.module.search.ServiceSearchFileObject;
 import com.zer0s2m.creeptenuous.module.search.documentation.ControllerApiSearchFileObjectDoc;
-import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
-import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
+import com.zer0s2m.creeptenuous.security.jwt.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.JwtUtils;
 import io.jsonwebtoken.Claims;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@V1APIRestController
+@RestController
+@RequestMapping("/api/v1")
 public class ControllerApiSearchFileObject implements ControllerApiSearchFileObjectDoc {
 
     private final JwtProvider jwtProvider;

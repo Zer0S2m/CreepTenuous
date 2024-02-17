@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.api.controllers.user;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCategoryUserDoc;
-import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.api.annotation.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerCategoryFileSystemObject;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUserCategory;
 import com.zer0s2m.creeptenuous.common.data.DataControlFileSystemObjectInCategoryApi;
@@ -12,8 +12,8 @@ import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisE
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
-import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
-import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
+import com.zer0s2m.creeptenuous.security.jwt.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.JwtUtils;
 import com.zer0s2m.creeptenuous.services.user.ServiceCategoryUser;
 import io.jsonwebtoken.Claims;
 import jakarta.validation.Valid;

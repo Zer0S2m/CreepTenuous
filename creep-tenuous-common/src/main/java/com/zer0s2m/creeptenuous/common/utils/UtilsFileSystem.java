@@ -22,4 +22,31 @@ public interface UtilsFileSystem {
         return String.join("/", pathSplit);
     }
 
+    /**
+     * Clear file extensions.
+     * @param fileSystemObjects File system objects.
+     * @return Stripped file object names from extension.
+     */
+    static List<String> clearFileExtensions(@NotNull List<String> fileSystemObjects) {
+        return fileSystemObjects
+                .stream()
+                .map(systemName -> {
+                    if (systemName.contains(".")) {
+                        String[] splitSystemName = systemName.split("\\.");
+                        return splitSystemName[0];
+                    }
+                    return systemName;
+                })
+                .toList();
+    }
+
+    /**
+     * Clear file extensions.
+     * @param fileSystemObjects File system object.
+     * @return Stripped file object names from extension.
+     */
+    static String clearFileExtensions(String fileSystemObjects) {
+        return clearFileExtensions(List.of(fileSystemObjects)).get(0);
+    }
+
 }

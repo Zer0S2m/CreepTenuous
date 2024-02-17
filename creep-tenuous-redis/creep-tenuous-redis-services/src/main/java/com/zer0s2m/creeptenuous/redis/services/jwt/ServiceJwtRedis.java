@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.redis.services.jwt;
 
 import com.zer0s2m.creeptenuous.redis.models.JwtRedis;
-import com.zer0s2m.creeptenuous.security.jwt.domain.JwtRedisData;
+import com.zer0s2m.creeptenuous.security.jwt.JwtRedisData;
 
 import java.util.Optional;
 

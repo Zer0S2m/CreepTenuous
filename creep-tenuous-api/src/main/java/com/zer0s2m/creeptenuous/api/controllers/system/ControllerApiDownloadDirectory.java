@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiDownloadDirectoryDoc;
-import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.api.annotation.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.components.RootPath;
 import com.zer0s2m.creeptenuous.common.containers.ContainerInfoFileSystemObject;
 import com.zer0s2m.creeptenuous.common.data.DataDownloadDirectoryApi;
@@ -10,7 +10,7 @@ import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.common.utils.CloneList;
-import com.zer0s2m.creeptenuous.common.utils.UtilsDataApi;
+import com.zer0s2m.creeptenuous.api.utils.UtilsDataApi;
 import com.zer0s2m.creeptenuous.core.atomic.AtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.AtomicFileSystemExceptionHandler;
 import com.zer0s2m.creeptenuous.core.atomic.CoreServiceFileSystem;

@@ -1,11 +1,12 @@
 package com.zer0s2m.creeptenuous.api.controllers.user;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiProfileUserDoc;
-import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.api.annotation.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataControlFileObjectsExclusionApi;
 import com.zer0s2m.creeptenuous.common.data.DataIsDeletingFileObjectApi;
 import com.zer0s2m.creeptenuous.common.data.DataTransferredUserApi;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
+import com.zer0s2m.creeptenuous.common.exceptions.NotFoundFileSystemObjectException;
 import com.zer0s2m.creeptenuous.common.exceptions.UploadAvatarForUserException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadAvatarUserApi;
@@ -13,9 +14,9 @@ import com.zer0s2m.creeptenuous.common.http.ResponseUserApi;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.models.user.UserSettings;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
-import com.zer0s2m.creeptenuous.security.jwt.domain.JwtAuthentication;
-import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
-import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
+import com.zer0s2m.creeptenuous.security.jwt.JwtAuthentication;
+import com.zer0s2m.creeptenuous.security.jwt.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.JwtUtils;
 import com.zer0s2m.creeptenuous.services.user.ServiceProfileUser;
 import io.jsonwebtoken.Claims;
 import jakarta.validation.Valid;
@@ -149,7 +150,7 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
                 systemNames, userInfo.getLogin());
 
         if (countFileRedis + countDirectoryRedis < systemNames.size()) {
-            throw new NotFoundException("Not found file objects");
+            throw new NotFoundFileSystemObjectException("Not found file objects");
         }
 
         serviceProfileUser.setFileObjectsExclusion(

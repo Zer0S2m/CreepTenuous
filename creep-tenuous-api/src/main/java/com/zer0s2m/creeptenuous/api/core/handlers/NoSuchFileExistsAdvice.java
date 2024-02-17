@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.api.core.handlers;
 
 import com.zer0s2m.creeptenuous.common.exceptions.NoSuchFileExistsException;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.NoSuchFileExists;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,14 +16,14 @@ public class NoSuchFileExistsAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NoSuchFileException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public NoSuchFileExists handleNoSuchFileException(@NotNull NoSuchFileException error) {
-        return new NoSuchFileExists(error.getMessage());
+    public ResponseError handleNoSuchFileException(@NotNull NoSuchFileException error) {
+        return new ResponseError(error.getMessage(), HttpStatus.NOT_FOUND.value());
     }
 
     @ExceptionHandler(NoSuchFileExistsException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public NoSuchFileExists handleNoSuchFileExistsException(@NotNull NoSuchFileExistsException error) {
-        return new NoSuchFileExists(error.getMessage());
+    public ResponseError handleNoSuchFileExistsException(@NotNull NoSuchFileExistsException error) {
+        return new ResponseError(error.getMessage(), HttpStatus.NOT_FOUND.value());
     }
 
 }

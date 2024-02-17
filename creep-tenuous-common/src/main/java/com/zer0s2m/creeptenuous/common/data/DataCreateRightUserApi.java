@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.common.data;
 
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
-import com.zer0s2m.creeptenuous.common.validation.constraints.EnumListValidator;
+import com.zer0s2m.creeptenuous.validation.constraints.EnumListValidator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

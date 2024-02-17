@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCopyFileDoc;
-import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.api.annotation.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCopyFile;
 import com.zer0s2m.creeptenuous.common.data.DataCopyFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;

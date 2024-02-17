@@ -1,21 +1,13 @@
 package com.zer0s2m.creeptenuous.api.core.security.jwt;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiAuthDoc;
-import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.api.annotation.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.exceptions.AccountIsBlockedException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotValidPasswordException;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionAccountIsBlockedMsg;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import com.zer0s2m.creeptenuous.redis.services.user.ServiceBlockUserRedis;
-import com.zer0s2m.creeptenuous.security.jwt.exceptions.NoValidJwtRefreshTokenException;
-import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.NoValidJwtRefreshTokenMsg;
-import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotFoundMsg;
-import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotValidPasswordMsg;
-import com.zer0s2m.creeptenuous.security.jwt.http.JwtRefreshTokenRequest;
-import com.zer0s2m.creeptenuous.security.jwt.http.JwtResponse;
-import com.zer0s2m.creeptenuous.security.jwt.http.JwtUserRequest;
-import com.zer0s2m.creeptenuous.security.jwt.services.JwtService;
-import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
+import com.zer0s2m.creeptenuous.security.jwt.*;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,27 +86,27 @@ public class ControllerApiAuth implements ControllerApiAuthDoc {
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-    public UserNotFoundMsg handleExceptionNotIsExistsUser(@NotNull UserNotFoundException error) {
-        return new UserNotFoundMsg(error.getMessage());
+    public ResponseError handleExceptionNotIsExistsUser(@NotNull UserNotFoundException error) {
+        return new ResponseError(error.getMessage(), HttpStatus.UNAUTHORIZED.value());
     }
 
     @ExceptionHandler(UserNotValidPasswordException.class)
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-    public UserNotValidPasswordMsg handleExceptionNotValidPasswordUser(@NotNull UserNotValidPasswordException error) {
-        return new UserNotValidPasswordMsg(error.getMessage());
+    public ResponseError handleExceptionNotValidPasswordUser(@NotNull UserNotValidPasswordException error) {
+        return new ResponseError(error.getMessage(), HttpStatus.UNAUTHORIZED.value());
     }
 
     @ExceptionHandler(NoValidJwtRefreshTokenException.class)
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-    public NoValidJwtRefreshTokenMsg handleExceptionNotValidPasswordUser(
+    public ResponseError handleExceptionNotValidPasswordUser(
             @NotNull NoValidJwtRefreshTokenException error) {
-        return new NoValidJwtRefreshTokenMsg(error.getMessage());
+        return new ResponseError(error.getMessage(), HttpStatus.UNAUTHORIZED.value());
     }
 
     @ExceptionHandler(AccountIsBlockedException.class)
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-    public ExceptionAccountIsBlockedMsg handleExceptionAccountIsBlocked(@NotNull AccountIsBlockedException error) {
-        return new ExceptionAccountIsBlockedMsg(error.getMessage());
+    public ResponseError handleExceptionAccountIsBlocked(@NotNull AccountIsBlockedException error) {
+        return new ResponseError(error.getMessage(), HttpStatus.UNAUTHORIZED.value());
     }
 
 }

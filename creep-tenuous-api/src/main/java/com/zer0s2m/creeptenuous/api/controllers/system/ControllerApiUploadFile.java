@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiUploadFileDoc;
-import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.api.annotation.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.components.SystemMode;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFile;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUploadFileFragment;
@@ -9,7 +9,7 @@ import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.http.ResponseObjectUploadFileApi;
 import com.zer0s2m.creeptenuous.common.http.ResponseUploadFileApi;
-import com.zer0s2m.creeptenuous.common.utils.UtilsDataApi;
+import com.zer0s2m.creeptenuous.common.utils.UtilsFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.AtomicFileSystem;
 import com.zer0s2m.creeptenuous.core.atomic.AtomicFileSystemExceptionHandler;
 import com.zer0s2m.creeptenuous.core.atomic.CoreServiceFileSystem;
@@ -201,7 +201,7 @@ public class ControllerApiUploadFile extends BaseControllerApiUploadFileObject
                         if (obj.success()) {
                             return new ContainerDataUploadFile(
                                     obj.realFileName(),
-                                    UtilsDataApi.clearFileExtensions(obj.systemFileName()),
+                                    UtilsFileSystem.clearFileExtensions(obj.systemFileName()),
                                     obj.realPath(),
                                     obj.systemPath()
                             );
@@ -214,7 +214,7 @@ public class ControllerApiUploadFile extends BaseControllerApiUploadFileObject
                     .stream()
                     .map(response -> new ResponseObjectUploadFileApi(
                             response.realFileName(),
-                            UtilsDataApi.clearFileExtensions(response.systemFileName()),
+                            UtilsFileSystem.clearFileExtensions(response.systemFileName()),
                             response.success(),
                             response.realPath(),
                             response.systemPath()

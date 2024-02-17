@@ -11,7 +11,7 @@ import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepo
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceManagerDirectoryRedis;
 import com.zer0s2m.creeptenuous.repository.user.CategoryFileSystemObjectRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserColorDirectoryRepository;
-import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.JwtProvider;
 import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisManagerRightsAccessImpl;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;

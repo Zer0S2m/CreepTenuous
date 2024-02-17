@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.api.core.handlers;
 
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionFileObjectIsFrozenMsg;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +15,10 @@ public class FileObjectIsFrozenExceptionAdvice extends ResponseEntityExceptionHa
 
     @ExceptionHandler(FileObjectIsFrozenException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ExceptionFileObjectIsFrozenMsg> handleFileObjectIsFrozenException(
+    public ResponseEntity<ResponseError> handleFileObjectIsFrozenException(
             @NotNull FileObjectIsFrozenException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                new ExceptionFileObjectIsFrozenMsg(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
+                new ResponseError(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
     }
 
 }

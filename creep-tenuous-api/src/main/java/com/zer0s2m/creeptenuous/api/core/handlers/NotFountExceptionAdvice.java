@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.api.core.handlers;
 
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNotFoundMsg;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,8 +14,8 @@ public class NotFountExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ExceptionNotFoundMsg handleNotFoundException(@NotNull NotFoundException error) {
-        return new ExceptionNotFoundMsg(HttpStatus.NOT_FOUND.value(), error.getMessage());
+    public ResponseError handleNotFoundException(@NotNull NotFoundException error) {
+        return new ResponseError(error.getMessage(), HttpStatus.NOT_FOUND.value());
     }
 
 }

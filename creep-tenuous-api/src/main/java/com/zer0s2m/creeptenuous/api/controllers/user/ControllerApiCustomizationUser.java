@@ -1,15 +1,15 @@
 package com.zer0s2m.creeptenuous.api.controllers.user;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCustomizationUserDoc;
-import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.api.annotation.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerCustomColorApi;
 import com.zer0s2m.creeptenuous.common.data.*;
 import com.zer0s2m.creeptenuous.common.exceptions.*;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.BadRequestMsg;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.system.base.BaseServiceFileSystemRedisManagerRightsAccess;
-import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
-import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
+import com.zer0s2m.creeptenuous.security.jwt.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.JwtUtils;
 import com.zer0s2m.creeptenuous.services.user.ServiceCustomizationUser;
 import io.jsonwebtoken.Claims;
 import jakarta.validation.Valid;
@@ -210,9 +210,9 @@ public class ControllerApiCustomizationUser implements ControllerApiCustomizatio
 
     @ExceptionHandler(FileObjectIsNotDirectoryTypeException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public BadRequestMsg handleExceptionFileObjectIsNotDirectoryType(
+    public ResponseError handleExceptionFileObjectIsNotDirectoryType(
             @NotNull FileObjectIsNotDirectoryTypeException error) {
-        return new BadRequestMsg(HttpStatus.BAD_REQUEST.value(), error.getMessage());
+        return new ResponseError(error.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
 }

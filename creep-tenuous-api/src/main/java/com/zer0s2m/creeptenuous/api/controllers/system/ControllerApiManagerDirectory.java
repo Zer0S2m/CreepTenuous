@@ -1,13 +1,13 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiManagerDirectoryDoc;
-import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.api.annotation.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataBuilderDirectory;
 import com.zer0s2m.creeptenuous.common.data.DataManagerDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.exceptions.NotValidLevelDirectoryException;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionBadLevelDirectoryMsg;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import com.zer0s2m.creeptenuous.common.http.ResponseManagerDirectoryApi;
 import com.zer0s2m.creeptenuous.common.utils.OptionalMutable;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
@@ -93,8 +93,8 @@ public class ControllerApiManagerDirectory implements ControllerApiManagerDirect
 
     @ExceptionHandler(NotValidLevelDirectoryException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ExceptionBadLevelDirectoryMsg handleExceptionBadLevel(@NotNull NotValidLevelDirectoryException error) {
-        return new ExceptionBadLevelDirectoryMsg(error.getMessage());
+    public ResponseError handleExceptionBadLevel(@NotNull NotValidLevelDirectoryException error) {
+        return new ResponseError(error.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
 }

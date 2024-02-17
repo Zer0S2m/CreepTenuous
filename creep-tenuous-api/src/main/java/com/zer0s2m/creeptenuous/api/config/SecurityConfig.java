@@ -2,8 +2,8 @@ package com.zer0s2m.creeptenuous.api.config;
 
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
-import com.zer0s2m.creeptenuous.security.jwt.filters.JwtFilter;
-import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.JwtFilter;
+import com.zer0s2m.creeptenuous.security.jwt.JwtProvider;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;

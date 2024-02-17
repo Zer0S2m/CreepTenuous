@@ -12,7 +12,7 @@ import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisE
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsRightException;
 import com.zer0s2m.creeptenuous.common.exceptions.NoRightsRedisException;
 import com.zer0s2m.creeptenuous.common.http.ResponseGrantedRightsApi;
-import com.zer0s2m.creeptenuous.common.utils.UtilsDataApi;
+import com.zer0s2m.creeptenuous.common.utils.UtilsFileSystem;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
@@ -25,8 +25,8 @@ import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisR
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
-import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
-import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
+import com.zer0s2m.creeptenuous.security.jwt.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.JwtUtils;
 import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
 import io.jsonwebtoken.Claims;
 import org.jetbrains.annotations.Contract;
@@ -904,7 +904,7 @@ public class ServiceManagerRightsImpl implements ServiceManagerRights {
     public List<String> permissionFiltering(List<String> fileSystemObjects, OperationRights right) {
         List<String> readyFileSystemObjects = new ArrayList<>();
 
-        final List<String> clearFileSystemObjects = UtilsDataApi.clearFileExtensions(fileSystemObjects);
+        final List<String> clearFileSystemObjects = UtilsFileSystem.clearFileExtensions(fileSystemObjects);
 
         Iterable<FileRedis> fileRedis = serviceRedisManagerResources.getResourceFileRedis(clearFileSystemObjects);
         Iterable<DirectoryRedis> directoryRedis = serviceRedisManagerResources.getResourceDirectoryRedis(

@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.module.search;
 
-import com.zer0s2m.creeptenuous.common.validation.constraints.EnumValidator;
-import com.zer0s2m.creeptenuous.common.validation.constraints.UUIDCollectionValidator;
+import com.zer0s2m.creeptenuous.validation.constraints.EnumValidator;
+import com.zer0s2m.creeptenuous.validation.constraints.UUIDCollectionValidator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
