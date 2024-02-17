@@ -102,7 +102,7 @@ public interface ControllerApiControlUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                     })
@@ -157,7 +157,7 @@ public interface ControllerApiControlUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                     })
@@ -211,7 +211,7 @@ public interface ControllerApiControlUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                     })
@@ -266,7 +266,7 @@ public interface ControllerApiControlUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                     })

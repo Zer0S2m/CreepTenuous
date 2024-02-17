@@ -2,8 +2,11 @@ package com.zer0s2m.creeptenuous.services.redis.resources;
 
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
+import com.zer0s2m.creeptenuous.redis.models.base.IBaseRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
+import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import org.jetbrains.annotations.NotNull;
@@ -26,11 +29,16 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
 
     private final FileRedisRepository fileRedisRepository;
 
+    private final RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
+
     @Autowired
     public ServiceRedisManagerResourcesImpl(
-            DirectoryRedisRepository directoryRedisRepository, FileRedisRepository fileRedisRepository) {
+            DirectoryRedisRepository directoryRedisRepository,
+            FileRedisRepository fileRedisRepository,
+            RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository) {
         this.directoryRedisRepository = directoryRedisRepository;
         this.fileRedisRepository = fileRedisRepository;
+        this.rightUserFileSystemObjectRedisRepository = rightUserFileSystemObjectRedisRepository;
     }
 
     /**
@@ -245,6 +253,58 @@ public class ServiceRedisManagerResourcesImpl implements ServiceRedisManagerReso
     @Override
     public boolean checkFileObjectDirectoryType(final String id) {
         return directoryRedisRepository.existsById(id);
+    }
+
+    /**
+     * Get the real name of a file object.
+     * @param id id must not be {@literal null}.
+     * @return Real name.
+     */
+    @Override
+    public Optional<String> getRealNameFileObject(final String id) {
+        DirectoryRedis directoryRedis = getResourceDirectoryRedis(id);
+        FileRedis fileRedis = getResourceFileRedis(id);
+
+        if (directoryRedis != null && fileRedis == null) {
+            return Optional.of(directoryRedis.getRealName());
+        } else if (fileRedis != null && directoryRedis == null) {
+            return Optional.of(fileRedis.getRealName());
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * collect real names of file objects and assign them to system names.
+     *
+     * @param objects File objects.
+     * @return Real names related to system names.
+     */
+    @Override
+    public HashMap<String, String> collectRealNamesFileObjectsClassifyAsSystem(
+            final @NotNull Iterable<? extends IBaseRedis> objects) {
+        final HashMap<String, String> realNameAsSystem = new HashMap<>();
+
+        objects.forEach(object -> realNameAsSystem
+                .put(object.getSystemName(), object.getRealName()));
+
+        return realNameAsSystem;
+    }
+
+    /**
+     * Obtain rights to interact with file objects using the user login.
+     * @param userLogin User login. Must not be {@literal null}.
+     * @return Rights.
+     */
+    @Override
+    public List<RightUserFileSystemObjectRedis> getRightUserFileSystemObjectByLogin(
+            final String userLogin) {
+        RightUserFileSystemObjectRedis rightUserFileSystemObjectRedisExample =
+                new RightUserFileSystemObjectRedis();
+        rightUserFileSystemObjectRedisExample.setLogin(userLogin);
+
+        return getResources(rightUserFileSystemObjectRedisRepository
+                .findAll(Example.of(rightUserFileSystemObjectRedisExample)));
     }
 
 }

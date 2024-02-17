@@ -93,7 +93,7 @@ public interface ControllerApiProfileUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                     })
@@ -144,7 +144,7 @@ public interface ControllerApiProfileUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                     })
@@ -189,12 +189,12 @@ public interface ControllerApiProfileUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found objects", value = "{" +
                                                     "\"message\": \"Not found file objects.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                     })
@@ -238,7 +238,7 @@ public interface ControllerApiProfileUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -304,7 +304,7 @@ public interface ControllerApiProfileUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -347,7 +347,7 @@ public interface ControllerApiProfileUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })

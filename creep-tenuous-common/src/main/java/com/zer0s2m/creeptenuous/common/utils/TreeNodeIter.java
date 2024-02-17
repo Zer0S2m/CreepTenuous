@@ -2,11 +2,16 @@ package com.zer0s2m.creeptenuous.common.utils;
 
 import java.util.Iterator;
 
-public class TreeNodeIter <T> implements Iterator<TreeNode<T>> {
+public class TreeNodeIter<T> implements Iterator<TreeNode<T>> {
+
     enum ProcessStages {
+
         PROCESS_PARENT,
+
         PROCESS_CHILD_CUR_NODE,
+
         PROCESS_CHILD_SUB_NODE
+
     }
 
     private final TreeNode<T> treeNode;
@@ -40,9 +45,7 @@ public class TreeNodeIter <T> implements Iterator<TreeNode<T>> {
                 childrenSubNodeIter = childDirect.iterator();
                 this.doNext = ProcessStages.PROCESS_CHILD_SUB_NODE;
                 return hasNext();
-            }
-
-            else {
+            } else {
                 this.doNext = null;
                 return false;
             }
@@ -52,8 +55,7 @@ public class TreeNodeIter <T> implements Iterator<TreeNode<T>> {
             if (childrenSubNodeIter.hasNext()) {
                 this.next = childrenSubNodeIter.next();
                 return true;
-            }
-            else {
+            } else {
                 this.next = null;
                 this.doNext = ProcessStages.PROCESS_CHILD_CUR_NODE;
                 return hasNext();

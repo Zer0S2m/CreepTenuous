@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.exceptions.UserAlreadyExistException;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.UserAlreadyExistMsg;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import com.zer0s2m.creeptenuous.models.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -52,7 +52,7 @@ public interface ControllerApiCreateUserDoc {
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(
-                                            implementation = UserAlreadyExistMsg.class
+                                            implementation = ResponseError.class
                                     ),
                                     examples = {
                                             @ExampleObject(
@@ -60,7 +60,7 @@ public interface ControllerApiCreateUserDoc {
                                                     description = "User with this email already exists.",
                                                     value = "{" +
                                                             "  \"message\": \"User with this email already exists.\"," +
-                                                            "  \"statusCode\": 400" +
+                                                            "  \"status\": 400" +
                                                             "}"
                                             ),
                                             @ExampleObject(
@@ -68,7 +68,7 @@ public interface ControllerApiCreateUserDoc {
                                                     description = "User with this login already exists.",
                                                     value = "{" +
                                                             "  \"message\": \"User with this login already exists.\"," +
-                                                            "  \"statusCode\": 400" +
+                                                            "  \"status\": 400" +
                                                             "}"
                                             )
                                     }

@@ -52,17 +52,17 @@ public interface ControllerApiCustomizationUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user", value ="{" +
                                                     "\"message\": \"Not found user\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found user color", value ="{" +
                                                     "\"message\": \"Color scheme not found for user\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -104,12 +104,12 @@ public interface ControllerApiCustomizationUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found color in directory", value ="{" +
                                                     "\"message\": \"Color scheme not found for user directory\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -151,17 +151,17 @@ public interface ControllerApiCustomizationUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user category", value ="{" +
                                                     "\"message\": \"Not found category\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found user color", value ="{" +
                                                     "\"message\": \"Color scheme not found for user\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found user", value ="{" +
                                                     "\"message\": \"Not found user\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                     })
@@ -201,7 +201,7 @@ public interface ControllerApiCustomizationUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found color in category", value ="{" +
                                                     "\"message\": \"Custom category color scheme binding not found\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -265,7 +265,7 @@ public interface ControllerApiCustomizationUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user", value ="{" +
                                                     "\"message\": \"Not found user\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -311,7 +311,7 @@ public interface ControllerApiCustomizationUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user color", value ="{" +
                                                     "\"message\": \"Color scheme not found for user\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -350,7 +350,7 @@ public interface ControllerApiCustomizationUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user color", value ="{" +
                                                     "\"message\": \"Color scheme not found for user\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })

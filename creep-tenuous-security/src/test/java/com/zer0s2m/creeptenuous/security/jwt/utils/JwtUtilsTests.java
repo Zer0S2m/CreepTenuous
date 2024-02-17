@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.security.jwt.utils;
 
 import com.zer0s2m.creeptenuous.common.enums.UserRole;
+import com.zer0s2m.creeptenuous.security.jwt.JwtUtils;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagService;
 import com.zer0s2m.creeptenuous.starter.test.helpers.UtilsAuthAction;
 import io.jsonwebtoken.Claims;

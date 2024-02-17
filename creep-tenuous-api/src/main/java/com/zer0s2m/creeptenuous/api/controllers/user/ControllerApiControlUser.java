@@ -1,18 +1,18 @@
 package com.zer0s2m.creeptenuous.api.controllers.user;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiControlUserDoc;
-import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.api.annotation.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataControlUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataBlockUserTemporarilyApi;
 import com.zer0s2m.creeptenuous.common.exceptions.BlockingSelfUserException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionBlockingSelfUserMsg;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import com.zer0s2m.creeptenuous.common.http.ResponseUserApi;
 import com.zer0s2m.creeptenuous.events.UserEventPublisher;
 import com.zer0s2m.creeptenuous.redis.services.user.ServiceBlockUserRedis;
-import com.zer0s2m.creeptenuous.security.jwt.domain.JwtAuthentication;
-import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
-import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
+import com.zer0s2m.creeptenuous.security.jwt.JwtAuthentication;
+import com.zer0s2m.creeptenuous.security.jwt.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.JwtUtils;
 import com.zer0s2m.creeptenuous.services.user.ServiceControlUser;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.security.RolesAllowed;
@@ -149,8 +149,8 @@ public class ControllerApiControlUser implements ControllerApiControlUserDoc {
 
     @ExceptionHandler(BlockingSelfUserException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ExceptionBlockingSelfUserMsg handleExceptionBlockingSelfUser(@NotNull BlockingSelfUserException error) {
-        return new ExceptionBlockingSelfUserMsg(error.getMessage());
+    public ResponseError handleExceptionBlockingSelfUser(@NotNull BlockingSelfUserException error) {
+        return new ResponseError(error.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
     /**

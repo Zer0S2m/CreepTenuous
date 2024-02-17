@@ -2,11 +2,11 @@ package com.zer0s2m.creeptenuous.redis.services.resources;
 
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
+import com.zer0s2m.creeptenuous.redis.models.base.IBaseRedis;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Gathers resources to modify data in Redis.
@@ -163,5 +163,29 @@ public interface ServiceRedisManagerResources {
      * @return verified
      */
     boolean checkFileObjectDirectoryType(final String id);
+
+    /**
+     * Get the real name of a file object.
+     * @param id id must not be {@literal null}.
+     * @return Real name.
+     */
+    Optional<String> getRealNameFileObject(final String id);
+
+    /**
+     * collect real names of file objects and assign them to system names.
+     *
+     * @param objects File objects.
+     * @return Real names related to system names.
+     */
+    HashMap<String, String> collectRealNamesFileObjectsClassifyAsSystem(
+            final Iterable<? extends IBaseRedis> objects);
+
+    /**
+     * Obtain rights to interact with file objects using the user login.
+     * @param userLogin User login. Must not be {@literal null}.
+     * @return Rights.
+     */
+    List<RightUserFileSystemObjectRedis> getRightUserFileSystemObjectByLogin(
+            final String userLogin);
 
 }

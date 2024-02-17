@@ -1,10 +1,12 @@
 package com.zer0s2m.creeptenuous.common.data;
 
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
-import com.zer0s2m.creeptenuous.common.validation.constraints.EnumValidator;
+import com.zer0s2m.creeptenuous.validation.constraints.EnumListValidator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
+import java.util.List;
 
 public record DataDeleteRightUserApi(
 
@@ -18,11 +20,12 @@ public record DataDeleteRightUserApi(
         @Schema(description = "Login of the user for which the right will be created")
         String loginUser,
 
-        @EnumValidator(enumClass = OperationRights.class, message = "Please enter right")
+        @EnumListValidator(enumClass = OperationRights.class, message = "Please enter right")
+        @NotNull(message = "Please enter right")
         @Schema(
                 description = "The name of the operation to resolve the interaction",
                 allowableValues = { "MOVE", "COPY", "UPLOAD", "DOWNLOAD", "CREATE", "DELETE", "SHOW", "RENAME", "ALL" }
         )
-        String right
+        List<String> right
 
 ) { }

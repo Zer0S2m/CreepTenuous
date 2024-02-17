@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class TreeNode<T> implements Iterable<TreeNode<T>> {
+
     private T data;
 
     private TreeNode<T> parent;

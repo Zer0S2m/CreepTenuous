@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.api.core.handlers;
 
 import com.zer0s2m.creeptenuous.common.exceptions.ExistsFileSystemObjectRedisException;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionExistsFileSystemObjectRedisMsg;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +15,10 @@ public class ExceptionExistsFileSystemObjectRedisAdvice extends ResponseEntityEx
 
     @ExceptionHandler(ExistsFileSystemObjectRedisException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ExceptionExistsFileSystemObjectRedisMsg> handleExistsFileSystemObjectRedisException(
+    public ResponseEntity<ResponseError> handleExistsFileSystemObjectRedisException(
             @NotNull ExistsFileSystemObjectRedisException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                new ExceptionExistsFileSystemObjectRedisMsg(e.getMessage()));
+                new ResponseError(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
     }
 
 }

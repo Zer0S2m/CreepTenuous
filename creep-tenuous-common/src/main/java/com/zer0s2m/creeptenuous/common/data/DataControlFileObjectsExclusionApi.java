@@ -1,6 +1,6 @@
 package com.zer0s2m.creeptenuous.common.data;
 
-import com.zer0s2m.creeptenuous.common.validation.constraints.UUIDCollectionValidator;
+import com.zer0s2m.creeptenuous.validation.constraints.UUIDCollectionValidator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

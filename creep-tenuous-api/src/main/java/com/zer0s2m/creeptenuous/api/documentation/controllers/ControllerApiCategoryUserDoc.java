@@ -72,7 +72,7 @@ public interface ControllerApiCategoryUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                     })
@@ -118,7 +118,7 @@ public interface ControllerApiCategoryUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found category", value ="{" +
                                                     "\"message\": \"Not found category\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -163,7 +163,7 @@ public interface ControllerApiCategoryUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found category", value ="{" +
                                                     "\"message\": \"Not found category\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -208,17 +208,17 @@ public interface ControllerApiCategoryUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found category", value ="{" +
                                                     "\"message\": \"Not found category\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                     })
@@ -264,12 +264,12 @@ public interface ControllerApiCategoryUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found category", value ="{" +
                                                     "\"message\": \"Not found category\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -318,7 +318,7 @@ public interface ControllerApiCategoryUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found category", value ="{" +
                                                     "\"message\": \"Not found category\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })

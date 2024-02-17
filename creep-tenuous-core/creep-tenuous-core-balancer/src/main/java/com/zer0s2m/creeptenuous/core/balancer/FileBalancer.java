@@ -1,6 +1,5 @@
 package com.zer0s2m.creeptenuous.core.balancer;
 
-import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

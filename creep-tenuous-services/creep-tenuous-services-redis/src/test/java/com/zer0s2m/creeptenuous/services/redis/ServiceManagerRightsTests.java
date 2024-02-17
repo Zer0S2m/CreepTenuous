@@ -11,7 +11,7 @@ import com.zer0s2m.creeptenuous.redis.models.JwtRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.repository.*;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
-import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.JwtProvider;
 import com.zer0s2m.creeptenuous.services.redis.resources.ServiceRedisManagerResourcesImpl;
 import com.zer0s2m.creeptenuous.services.redis.security.ServiceManagerRightsImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceRedis;
@@ -411,8 +411,8 @@ public class ServiceManagerRightsTests {
                 () -> serviceManagerRights.addRight(rightUserFileSystemObjectRedis),
                 "Exceptions");
 
-        Assertions.assertTrue(serviceManagerRights.permissionFiltering(
-                List.of(systemName), OperationRights.SHOW).size() >= 1);
+        Assertions.assertFalse(serviceManagerRights.permissionFiltering(
+                List.of(systemName), OperationRights.SHOW).isEmpty());
 
         rightUserFileSystemObjectRedisRepository.delete(rightUserFileSystemObjectRedis);
         jwtRedisRepository.deleteById(otherUserLogin);
@@ -432,8 +432,8 @@ public class ServiceManagerRightsTests {
                 () -> serviceManagerRights.addRight(rightUserFileSystemObjectRedis),
                 "Exceptions");
 
-        Assertions.assertTrue(serviceManagerRights.permissionFiltering(
-                List.of(systemName), OperationRights.SHOW).size() >= 1);
+        Assertions.assertFalse(serviceManagerRights.permissionFiltering(
+                List.of(systemName), OperationRights.SHOW).isEmpty());
 
         rightUserFileSystemObjectRedisRepository.delete(rightUserFileSystemObjectRedis);
         jwtRedisRepository.deleteById(otherUserLogin);

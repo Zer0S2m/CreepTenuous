@@ -2,7 +2,7 @@ package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.data.DataDownloadFileApi;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
-import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
+import com.zer0s2m.creeptenuous.core.balancer.FileIsDirectoryException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

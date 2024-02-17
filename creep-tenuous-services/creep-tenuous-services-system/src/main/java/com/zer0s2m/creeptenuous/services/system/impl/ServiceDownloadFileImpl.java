@@ -3,7 +3,7 @@ package com.zer0s2m.creeptenuous.services.system.impl;
 import com.zer0s2m.creeptenuous.common.annotations.ServiceFileSystem;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataDownloadFile;
 import com.zer0s2m.creeptenuous.core.balancer.FileBalancer;
-import com.zer0s2m.creeptenuous.core.balancer.exceptions.FileIsDirectoryException;
+import com.zer0s2m.creeptenuous.core.balancer.FileIsDirectoryException;
 import com.zer0s2m.creeptenuous.services.system.ServiceDownloadFile;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 

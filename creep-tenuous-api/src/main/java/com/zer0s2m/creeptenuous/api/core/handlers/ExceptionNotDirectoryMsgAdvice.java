@@ -1,6 +1,6 @@
 package com.zer0s2m.creeptenuous.api.core.handlers;
 
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNotDirectoryMsg;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,8 +15,8 @@ public class ExceptionNotDirectoryMsgAdvice extends ResponseEntityExceptionHandl
 
     @ExceptionHandler(NoSuchFileException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ExceptionNotDirectoryMsg handleNoSuchFileException(@NotNull NoSuchFileException error) {
-        return new ExceptionNotDirectoryMsg(error.getMessage());
+    public ResponseError handleNoSuchFileException(@NotNull NoSuchFileException error) {
+        return new ResponseError(error.getMessage(), HttpStatus.NOT_FOUND.value());
     }
 
 }

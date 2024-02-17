@@ -53,6 +53,11 @@ public enum OperationRights {
     RENAME,
 
     /**
+     * Analyzing a file object - viewing granted rights, etc.
+     */
+    ANALYSIS,
+
+    /**
      * Rights to all basic operations
      */
     ALL;
@@ -63,7 +68,7 @@ public enum OperationRights {
      */
     @Contract(pure = true)
     static public @Unmodifiable List<OperationRights> baseOperations() {
-        return List.of(MOVE, COPY, UPLOAD, DOWNLOAD, CREATE, DELETE, SHOW, RENAME);
+        return List.of(MOVE, COPY, UPLOAD, DOWNLOAD, CREATE, DELETE, SHOW, RENAME, ANALYSIS);
     }
 
 }

@@ -39,7 +39,7 @@ public interface ControllerApiControlFileSystemObjectDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -78,7 +78,7 @@ public interface ControllerApiControlFileSystemObjectDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })

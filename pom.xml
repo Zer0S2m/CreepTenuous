@@ -18,11 +18,48 @@
     <java.version>21</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <spring-cloud.version>2022.0.0-RC2</spring-cloud.version>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <spring.boot.main>com.zer0s2m.creeptenuous.api.CreepTenuousApiApplication</spring.boot.main>
     <trimStackTrace>true</trimStackTrace>
+
+    <!--  versions  -->
+    <spring-cloud.version>2022.0.0-RC2</spring-cloud.version>
+    <snakeyaml.version>2.2</snakeyaml.version>
+    <annotations.version>24.0.1</annotations.version>
+    <lombok.version>1.18.30</lombok.version>
+    <slf4j-api.version>2.0.9</slf4j-api.version>
+    <slf4j-simple.version>2.0.9</slf4j-simple.version>
+    <json.version>20230227</json.version>
+    <springdoc-openapi-starter-webmvc-api.version>2.2.0</springdoc-openapi-starter-webmvc-api.version>
+    <springdoc-openapi-starter-webmvc-ui.version>2.2.0</springdoc-openapi-starter-webmvc-ui.version>
+    <jjwt-api.version>0.11.5</jjwt-api.version>
+    <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
+
+    <!--  Ecosystem  -->
+    <creep-tenuous-services-system-starter.version>0.0.12-SNAPSHOT</creep-tenuous-services-system-starter.version>
+    <creep-tenuous-redis-starter.version>0.0.12-SNAPSHOT</creep-tenuous-redis-starter.version>
+    <creep-tenuous-services-jwt.version>0.0.12-SNAPSHOT</creep-tenuous-services-jwt.version>
+    <creep-tenuous-services-redis.version>0.0.12-SNAPSHOT</creep-tenuous-services-redis.version>
+    <creep-tenuous-services-security.version>0.0.12-SNAPSHOT</creep-tenuous-services-security.version>
+    <creep-tenuous-services-system.version>0.0.12-SNAPSHOT</creep-tenuous-services-system.version>
+    <creep-tenuous-services-user.version>0.0.12-SNAPSHOT</creep-tenuous-services-user.version>
+    <creep-tenuous-starter-test.version>0.0.12-SNAPSHOT</creep-tenuous-starter-test.version>
+    <creep-tenuous-common.version>0.0.12-SNAPSHOT</creep-tenuous-common.version>
+    <creep-tenuous-integration-core.version>0.0.12-SNAPSHOT</creep-tenuous-integration-core.version>
+    <creep-tenuous-integration-implants.version>0.0.12-SNAPSHOT</creep-tenuous-integration-implants.version>
+    <creep-tenuous-security.version>0.0.12-SNAPSHOT</creep-tenuous-security.version>
+    <creep-tenuous-redis-services.version>0.0.12-SNAPSHOT</creep-tenuous-redis-services.version>
+    <creep-tenuous-redis-repository.version>0.0.12-SNAPSHOT</creep-tenuous-redis-repository.version>
+    <creep-tenuous-redis-models.version>0.0.12-SNAPSHOT</creep-tenuous-redis-models.version>
+    <creep-tenuous-redis-events.version>0.0.12-SNAPSHOT</creep-tenuous-redis-events.version>
+    <creep-tenuous-repository.version>0.0.12-SNAPSHOT</creep-tenuous-repository.version>
+    <creep-tenuous-models.version>0.0.12-SNAPSHOT</creep-tenuous-models.version>
+    <creep-tenuous-events.version>0.0.12-SNAPSHOT</creep-tenuous-events.version>
+    <creep-tenuous-core-atomic.version>0.0.12-SNAPSHOT</creep-tenuous-core-atomic.version>
+    <creep-tenuous-core-balancer.version>0.0.12-SNAPSHOT</creep-tenuous-core-balancer.version>
+    <creep-tenuous-module-search.version>0.0.12-SNAPSHOT</creep-tenuous-module-search.version>
+    <creep-tenuous-validation.version>0.0.12-SNAPSHOT</creep-tenuous-validation.version>
   </properties>
   <modules>
     <module>creep-tenuous-starter-test</module>
@@ -36,6 +73,8 @@
     <module>creep-tenuous-models</module>
     <module>creep-tenuous-integration</module>
     <module>creep-tenuous-core</module>
+    <module>creep-tenuous-module</module>
+    <module>creep-tenuous-validation</module>
   </modules>
   <scm>
     <url>https://github.com/Zer0S2m/CreepTenuous</url>
@@ -44,13 +83,13 @@
     <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>
-      <version>24.0.1</version>
+      <version>${annotations.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.30</version>
+      <version>${lombok.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -77,52 +116,52 @@
   </dependencies>
   <dependencyManagement>
     <dependencies>
-<!--  Starter packages-->
+      <!--  Starter packages-->
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-system-starter</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-services-system-starter.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-starter</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-redis-starter.version}</version>
       </dependency>
 
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-jwt</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-services-jwt.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-redis</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-services-redis.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-security</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-services-security.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-system</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-services-system.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-user</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-services-user.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-starter-test</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-starter-test.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-common</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-common.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.springframework</groupId>
@@ -153,42 +192,42 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-integration-core</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-integration-core.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-integration-implants</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-integration-implants.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-security</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-security.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-services</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-redis-services.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-repository</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-redis-repository.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-models</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-redis-models.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-redis-events</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-redis-events.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-repository</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-repository.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.flywaydb</groupId>
@@ -203,12 +242,12 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-models</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-models.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-events</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-events.version}</version>
         <exclusions>
           <exclusion>
             <groupId>com.zer0s2m</groupId>
@@ -219,44 +258,54 @@
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-core-atomic</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-core-atomic.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-core-balancer</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>${creep-tenuous-core-balancer.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.zer0s2m</groupId>
+        <artifactId>creep-tenuous-module-search</artifactId>
+        <version>${creep-tenuous-module-search.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.zer0s2m</groupId>
+        <artifactId>creep-tenuous-validation</artifactId>
+        <version>${creep-tenuous-validation.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>2.0.9</version>
+        <version>${slf4j-api.version}</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
-        <version>2.0.9</version>
+        <version>${slf4j-simple.version}</version>
       </dependency>
       <dependency>
         <groupId>org.json</groupId>
         <artifactId>json</artifactId>
-        <version>20230227</version>
+        <version>${json.version}</version>
       </dependency>
       <dependency>
         <groupId>io.jsonwebtoken</groupId>
         <artifactId>jjwt-api</artifactId>
-        <version>0.11.5</version>
+        <version>${jjwt-api.version}</version>
         <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>org.springdoc</groupId>
         <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
-        <version>2.2.0</version>
+        <version>${springdoc-openapi-starter-webmvc-api.version}</version>
       </dependency>
       <dependency>
         <groupId>org.springdoc</groupId>
         <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-        <version>2.2.0</version>
+        <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -274,7 +323,7 @@
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.10</version>
+          <version>${jacoco-maven-plugin.version}</version>
           <configuration>
             <dataFile>${basedir}/target/site/jacoco/jacoco.xml</dataFile>
             <destFile>${basedir}/target/site/jacoco/jacoco.xml</destFile>

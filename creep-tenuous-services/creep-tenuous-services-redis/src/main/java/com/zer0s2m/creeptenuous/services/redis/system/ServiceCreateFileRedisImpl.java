@@ -1,12 +1,13 @@
 package com.zer0s2m.creeptenuous.services.redis.system;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateFile;
+import com.zer0s2m.creeptenuous.common.utils.UtilsFileSystem;
 import com.zer0s2m.creeptenuous.redis.models.FileRedis;
 import com.zer0s2m.creeptenuous.redis.repository.DirectoryRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FileRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.FrozenFileSystemObjectRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateFileRedis;
-import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.JwtProvider;
 import com.zer0s2m.creeptenuous.services.redis.system.base.BaseServiceFileSystemRedisManagerRightsAccessImpl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +45,8 @@ public class ServiceCreateFileRedisImpl extends BaseServiceFileSystemRedisManage
                 loginUser,
                 roleUser,
                 dataCreatedFile.realNameFile(),
-                dataCreatedFile.systemNameFile(),
-                dataCreatedFile.systemPathFile().toString(),
+                dataCreatedFile.systemNameFile().split("\\.")[0],
+                UtilsFileSystem.clearSystemPathFile(dataCreatedFile.systemPathFile()),
                 new ArrayList<>()
         );
 

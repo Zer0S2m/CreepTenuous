@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.services.system.utils;
 
 import com.zer0s2m.creeptenuous.common.enums.Directory;
-import com.zer0s2m.creeptenuous.core.atomic.services.Distribution;
+import com.zer0s2m.creeptenuous.core.atomic.Distribution;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

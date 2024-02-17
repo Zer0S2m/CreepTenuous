@@ -1,12 +1,12 @@
 package com.zer0s2m.creeptenuous.services.system.impl;
 
 import com.zer0s2m.creeptenuous.common.annotations.ServiceFileSystem;
-import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystem;
-import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptionHandler;
-import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
-import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
-import com.zer0s2m.creeptenuous.core.atomic.context.nio.file.FilesContextAtomic;
-import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationMove;
+import com.zer0s2m.creeptenuous.core.atomic.AtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.AtomicFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.atomic.CoreServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.ContextAtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.FilesContextAtomic;
+import com.zer0s2m.creeptenuous.core.atomic.ServiceFileSystemExceptionHandlerOperationMove;
 import com.zer0s2m.creeptenuous.services.system.ServiceMoveFile;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import org.apache.logging.log4j.LogManager;

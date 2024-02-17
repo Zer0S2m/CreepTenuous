@@ -46,7 +46,7 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found comment", value ="{" +
                                                     "\"message\": \"Not found comment\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -102,7 +102,7 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -148,7 +148,7 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found comment", value ="{" +
                                                     "\"message\": \"Not found comment\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -203,7 +203,7 @@ public interface ControllerApiCommentFileSystemObjectUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found comment", value ="{" +
                                                     "\"message\": \"Not found comment\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                     })

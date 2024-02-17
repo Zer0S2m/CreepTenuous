@@ -10,6 +10,9 @@ public record ResponseGrantedRightsApi(
         @Schema(description = "The system name of the object in the file system")
         String systemName,
 
+        @Schema(description = "The real name of the object in the file system")
+        String realName,
+
         @Schema(description = "Rights granted to users")
         List<ContainerGrantedRight> rights
 

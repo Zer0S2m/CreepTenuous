@@ -11,7 +11,7 @@ import com.zer0s2m.creeptenuous.repository.user.CategoryFileSystemObjectReposito
 import com.zer0s2m.creeptenuous.repository.user.UserColorDirectoryRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserColorRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserRepository;
-import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.JwtProvider;
 import com.zer0s2m.creeptenuous.starter.test.mock.User;
 import com.zer0s2m.creeptenuous.services.redis.system.ServiceManagerDirectoryRedisImpl;
 import com.zer0s2m.creeptenuous.starter.test.annotations.TestTagServiceRedis;

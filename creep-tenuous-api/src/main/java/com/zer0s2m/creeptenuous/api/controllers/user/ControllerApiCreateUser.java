@@ -1,11 +1,11 @@
 package com.zer0s2m.creeptenuous.api.controllers.user;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCreateUserDoc;
-import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.api.annotation.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateDirectory;
 import com.zer0s2m.creeptenuous.common.enums.BaseCatalog;
 import com.zer0s2m.creeptenuous.common.exceptions.UserAlreadyExistException;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.UserAlreadyExistMsg;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import com.zer0s2m.creeptenuous.models.user.User;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateDirectoryRedis;
 import com.zer0s2m.creeptenuous.services.system.ServiceCreateDirectory;
@@ -69,8 +69,8 @@ public class ControllerApiCreateUser implements ControllerApiCreateUserDoc {
 
     @ExceptionHandler(UserAlreadyExistException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public UserAlreadyExistMsg handleExceptionAlready(@NotNull UserAlreadyExistException error) {
-        return new UserAlreadyExistMsg(error.getMessage());
+    public ResponseError handleExceptionAlready(@NotNull UserAlreadyExistException error) {
+        return new ResponseError(error.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
 }

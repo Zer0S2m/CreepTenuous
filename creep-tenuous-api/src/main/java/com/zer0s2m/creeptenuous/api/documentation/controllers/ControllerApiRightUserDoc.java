@@ -3,12 +3,10 @@ package com.zer0s2m.creeptenuous.api.documentation.controllers;
 import com.zer0s2m.creeptenuous.common.data.DataCreateRightUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataDeleteRightUserApi;
 import com.zer0s2m.creeptenuous.common.data.DataViewGrantedRightsApi;
-import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
+import com.zer0s2m.creeptenuous.common.exceptions.*;
 import com.zer0s2m.creeptenuous.common.http.ResponseAllGrantedRightsApi;
+import com.zer0s2m.creeptenuous.common.containers.ContainerAssignedRights;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateRightUserApi;
-import com.zer0s2m.creeptenuous.common.exceptions.ChangeRightsYourselfException;
-import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
-import com.zer0s2m.creeptenuous.common.exceptions.NoExistsRightException;
 import com.zer0s2m.creeptenuous.common.http.ResponseGrantedRightsApi;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,6 +18,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public interface ControllerApiRightUserDoc {
 
@@ -77,12 +76,12 @@ public interface ControllerApiRightUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                     ),
                             })
@@ -147,12 +146,12 @@ public interface ControllerApiRightUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                     })
@@ -214,17 +213,17 @@ public interface ControllerApiRightUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found right", value = "{" +
                                                     "\"message\": \"Not found right.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -289,17 +288,17 @@ public interface ControllerApiRightUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found user", value = "{" +
                                                     "\"message\": \"User is not found.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             ),
                                             @ExampleObject(name = "Not found right", value = "{" +
                                                     "\"message\": \"Not found right.\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -354,7 +353,7 @@ public interface ControllerApiRightUserDoc {
                                     examples = {
                                             @ExampleObject(name = "Not found system object", value ="{" +
                                                     "\"message\": \"Not found file system object\"," +
-                                                    "\"statusCode\": 404" +
+                                                    "\"status\": 404" +
                                                     "}"
                                             )
                                     })
@@ -395,5 +394,43 @@ public interface ControllerApiRightUserDoc {
             }
     )
     ResponseAllGrantedRightsApi viewAllGrantedRights(@Parameter(hidden = true) String accessToken);
+
+    /**
+     * Get information about assigned rights.
+     *
+     * @param systemName  System name of the file object.
+     * @param accessToken Raw JWT access token.
+     * @return Information about assigned rights.
+     * @throws NoExistsFileSystemObjectRedisException The file system object was not found in the database.
+     * @throws NoRightsRedisException                 Insufficient rights to perform the operation.
+     * @throws ViewAssignedRightsYourselfException    Unable to view assigned rights to your file object.
+     */
+    @Operation(
+            method = "GET",
+            summary = "Get information about assigned rights",
+            description = "Get information about assigned rights for a file object by its system name",
+            tags = { "User", "Right" },
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful getting",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ContainerAssignedRights.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad request",
+                            content = @Content
+                    ),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+                    @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden")
+            }
+    )
+    ContainerAssignedRights viewAssignedRights(
+            UUID systemName, @Parameter(hidden = true) String accessToken)
+            throws NoExistsFileSystemObjectRedisException, NoRightsRedisException, ViewAssignedRightsYourselfException;
 
 }

@@ -7,7 +7,8 @@ public final class OptionalMutable<T> {
         this.value = value;
     }
 
-    public OptionalMutable() { }
+    public OptionalMutable() {
+    }
 
     public void setValue(T value) {
         this.value = value;

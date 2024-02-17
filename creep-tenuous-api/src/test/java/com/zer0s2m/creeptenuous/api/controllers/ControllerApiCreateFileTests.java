@@ -7,9 +7,7 @@ import com.zer0s2m.creeptenuous.common.enums.Directory;
 import com.zer0s2m.creeptenuous.common.enums.ExceptionFile;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.enums.TypeFile;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionNotDirectoryMsg;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.FileAlreadyExistsMsg;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.NotFoundTypeFileMsg;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import com.zer0s2m.creeptenuous.redis.models.DirectoryRedis;
 import com.zer0s2m.creeptenuous.redis.models.FrozenFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
@@ -27,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -106,9 +105,8 @@ public class ControllerApiCreateFileTests {
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().json(
-                        objectMapper.writeValueAsString(
-                                new NotFoundTypeFileMsg(ExceptionFile.NOT_FOUND_TYPE_FILE.get())
-                        )
+                        objectMapper.writeValueAsString(new ResponseError(
+                                ExceptionFile.NOT_FOUND_TYPE_FILE.get(), HttpStatus.BAD_REQUEST.value()))
                 ));
     }
 
@@ -128,9 +126,8 @@ public class ControllerApiCreateFileTests {
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(content().json(
-                        objectMapper.writeValueAsString(
-                                new ExceptionNotDirectoryMsg(Directory.NOT_FOUND_DIRECTORY.get())
-                        )
+                        objectMapper.writeValueAsString(new ResponseError(
+                                Directory.NOT_FOUND_DIRECTORY.get(), HttpStatus.NOT_FOUND.value()))
                 ));
     }
 
@@ -156,9 +153,8 @@ public class ControllerApiCreateFileTests {
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().json(
-                        objectMapper.writeValueAsString(
-                                new FileAlreadyExistsMsg(ExceptionFile.FILE_ALREADY_EXISTS.get())
-                        )
+                        objectMapper.writeValueAsString(new ResponseError(
+                                ExceptionFile.FILE_ALREADY_EXISTS.get(), HttpStatus.BAD_REQUEST.value()))
                 ));
 
         logger.info("Is deleted file for tests: " + Files.deleteIfExists(testFile) + " (" + testFile + ")");

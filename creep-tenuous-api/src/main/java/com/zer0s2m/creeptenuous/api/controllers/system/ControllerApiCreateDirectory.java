@@ -1,28 +1,28 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCreateDirectoryDoc;
-import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.api.annotation.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateDirectory;
 import com.zer0s2m.creeptenuous.common.data.DataCreateDirectoryApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
 import com.zer0s2m.creeptenuous.common.exceptions.ExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.common.exceptions.FileAlreadyExistsException;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.ExceptionDirectoryExistsMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateDirectoryApi;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
-import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystem;
-import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptionHandler;
-import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
-import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
-import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
-import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationCreate;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.AtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.AtomicFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.atomic.CoreServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.ContextAtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.core.atomic.ServiceFileSystemExceptionHandlerOperationCreate;
+import com.zer0s2m.creeptenuous.core.atomic.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCheckUniqueNameFileSystemObject;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateDirectoryRedis;
-import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
-import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
+import com.zer0s2m.creeptenuous.security.jwt.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.JwtUtils;
 import com.zer0s2m.creeptenuous.services.system.ServiceCreateDirectory;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateDirectoryImpl;
@@ -104,8 +104,8 @@ public class ControllerApiCreateDirectory implements ControllerApiCreateDirector
 
     @ExceptionHandler({FileAlreadyExistsException.class, java.nio.file.FileAlreadyExistsException.class})
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ExceptionDirectoryExistsMsg handleExceptionDirectoryExists(@NotNull FileAlreadyExistsException error) {
-        return new ExceptionDirectoryExistsMsg(error.getMessage());
+    public ResponseError handleExceptionDirectoryExists(@NotNull FileAlreadyExistsException error) {
+        return new ResponseError(error.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
     @CoreServiceFileSystem(method = "create")

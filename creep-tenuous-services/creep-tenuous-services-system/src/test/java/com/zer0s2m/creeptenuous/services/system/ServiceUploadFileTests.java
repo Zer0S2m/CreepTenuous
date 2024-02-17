@@ -38,6 +38,8 @@ public class ServiceUploadFileTests {
         assert targetStream != null;
 
         Path source = Path.of(System.getProperty("java.io.tmpdir"), nameTestFile1);
+        Files.deleteIfExists(source); // Past test
+
         Files.copy(targetStream, source);
 
         Map<Path, String> dataFiles = new HashMap<>();
@@ -63,6 +65,9 @@ public class ServiceUploadFileTests {
 
         Path source1 = Path.of(System.getProperty("java.io.tmpdir"), nameTestFile1);
         Path source2 = Path.of(System.getProperty("java.io.tmpdir"), nameTestFile2);
+        Files.deleteIfExists(source1); // Past test
+        Files.deleteIfExists(source2); // Past test
+
         Files.copy(targetStream1, source1);
         Files.copy(targetStream2, source2);
 

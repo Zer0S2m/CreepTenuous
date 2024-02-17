@@ -4,7 +4,8 @@ import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateFile;
 import com.zer0s2m.creeptenuous.common.enums.ExceptionFile;
 import com.zer0s2m.creeptenuous.common.enums.TypeFile;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundTypeFileException;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
+import com.zer0s2m.creeptenuous.common.utils.UtilsFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.AtomicServiceFileSystem;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -64,7 +65,8 @@ public interface ServiceCreateFile extends ServiceCreateFileExcel, ServiceCreate
     default void conductor(@NotNull Path path, String nameFile, Integer typeFile) throws IOException {
         String typeFileStr = TypeFile.getExtension(typeFile);
         String newNameFile = nameFile + "." + typeFileStr;
-        Path newPathFile = Path.of(path.toString(), newNameFile);
+        Path newPathFile = Path.of(UtilsFileSystem.clearSystemPathFile(
+                Path.of(path.toString(), newNameFile)));
 
         if (Files.exists(newPathFile)) {
             throw new FileAlreadyExistsException(ExceptionFile.FILE_ALREADY_EXISTS.get());

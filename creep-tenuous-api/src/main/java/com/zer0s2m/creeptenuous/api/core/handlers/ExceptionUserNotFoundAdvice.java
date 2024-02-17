@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.api.core.handlers;
 
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
-import com.zer0s2m.creeptenuous.security.jwt.exceptions.messages.UserNotFoundMsg;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,8 +14,8 @@ public class ExceptionUserNotFoundAdvice extends ResponseEntityExceptionHandler 
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public UserNotFoundMsg handleExceptionNotIsExistsUser(@NotNull UserNotFoundException error) {
-        return new UserNotFoundMsg(error.getMessage());
+    public ResponseError handleExceptionNotIsExistsUser(@NotNull UserNotFoundException error) {
+        return new ResponseError(error.getMessage(), HttpStatus.NOT_FOUND.value());
     }
 
 }

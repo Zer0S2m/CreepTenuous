@@ -3,7 +3,7 @@ package com.zer0s2m.creeptenuous.services.redis.jwt;
 import com.zer0s2m.creeptenuous.redis.models.JwtRedis;
 import com.zer0s2m.creeptenuous.redis.repository.JwtRedisRepository;
 import com.zer0s2m.creeptenuous.redis.services.jwt.ServiceJwtRedis;
-import com.zer0s2m.creeptenuous.security.jwt.domain.JwtRedisData;
+import com.zer0s2m.creeptenuous.security.jwt.JwtRedisData;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;

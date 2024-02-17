@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.api.controllers.system;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCreateFileDoc;
-import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.api.annotation.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataCreateFile;
 import com.zer0s2m.creeptenuous.common.data.DataCreateFileApi;
 import com.zer0s2m.creeptenuous.common.enums.OperationRights;
@@ -9,22 +9,21 @@ import com.zer0s2m.creeptenuous.common.enums.TypeFile;
 import com.zer0s2m.creeptenuous.common.exceptions.ExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.common.exceptions.FileObjectIsFrozenException;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundTypeFileException;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.FileAlreadyExistsMsg;
-import com.zer0s2m.creeptenuous.common.exceptions.messages.NotFoundTypeFileMsg;
 import com.zer0s2m.creeptenuous.common.http.ResponseCreateFileApi;
+import com.zer0s2m.creeptenuous.common.http.ResponseError;
 import com.zer0s2m.creeptenuous.common.utils.WalkDirectoryInfo;
-import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystem;
-import com.zer0s2m.creeptenuous.core.atomic.annotations.AtomicFileSystemExceptionHandler;
-import com.zer0s2m.creeptenuous.core.atomic.annotations.CoreServiceFileSystem;
-import com.zer0s2m.creeptenuous.core.atomic.context.ContextAtomicFileSystem;
-import com.zer0s2m.creeptenuous.core.atomic.handlers.AtomicSystemCallManager;
-import com.zer0s2m.creeptenuous.core.atomic.handlers.impl.ServiceFileSystemExceptionHandlerOperationCreate;
-import com.zer0s2m.creeptenuous.core.atomic.services.AtomicServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.AtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.AtomicFileSystemExceptionHandler;
+import com.zer0s2m.creeptenuous.core.atomic.CoreServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.ContextAtomicFileSystem;
+import com.zer0s2m.creeptenuous.core.atomic.AtomicSystemCallManager;
+import com.zer0s2m.creeptenuous.core.atomic.ServiceFileSystemExceptionHandlerOperationCreate;
+import com.zer0s2m.creeptenuous.core.atomic.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCheckUniqueNameFileSystemObject;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCreateFileRedis;
-import com.zer0s2m.creeptenuous.security.jwt.providers.JwtProvider;
-import com.zer0s2m.creeptenuous.security.jwt.utils.JwtUtils;
+import com.zer0s2m.creeptenuous.security.jwt.JwtProvider;
+import com.zer0s2m.creeptenuous.security.jwt.JwtUtils;
 import com.zer0s2m.creeptenuous.services.system.ServiceCreateFile;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.impl.ServiceCreateFileImpl;
@@ -107,14 +106,14 @@ public class ControllerApiCreateFile implements ControllerApiCreateFileDoc {
 
     @ExceptionHandler(NotFoundTypeFileException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public NotFoundTypeFileMsg handleExceptionNotFoundTypeFile(@NotNull NotFoundTypeFileException error) {
-        return new NotFoundTypeFileMsg(error.getMessage());
+    public ResponseError handleExceptionNotFoundTypeFile(@NotNull NotFoundTypeFileException error) {
+        return new ResponseError(error.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
     @ExceptionHandler(FileAlreadyExistsException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public FileAlreadyExistsMsg handleExceptionFileExists(@NotNull FileAlreadyExistsException error) {
-        return new FileAlreadyExistsMsg(error.getMessage());
+    public ResponseError handleExceptionFileExists(@NotNull FileAlreadyExistsException error) {
+        return new ResponseError(error.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
     @CoreServiceFileSystem(method = "create")

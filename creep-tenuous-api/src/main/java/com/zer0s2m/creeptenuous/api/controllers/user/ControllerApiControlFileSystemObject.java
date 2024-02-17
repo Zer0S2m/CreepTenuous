@@ -1,7 +1,7 @@
 package com.zer0s2m.creeptenuous.api.controllers.user;
 
 import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiControlFileSystemObjectDoc;
-import com.zer0s2m.creeptenuous.common.annotations.V1APIRestController;
+import com.zer0s2m.creeptenuous.api.annotation.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.data.DataControlFileSystemObjectApi;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundFileSystemObjectException;
