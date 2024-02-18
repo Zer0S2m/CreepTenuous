@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -44,9 +43,9 @@ public class FileBalancerTests {
         Path file = initFile();
         String systemNameFile = file.getFileName().toString();
 
-        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file));
+        FileSplit fileSplit = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file));
 
-        Assertions.assertEquals(FileBalancer.PART_COUNTER, paths.size());
+        Assertions.assertEquals(FileBalancer.PART_COUNTER, fileSplit.getPathFiles().size());
         Assertions.assertTrue(Files.exists(file));
         Assertions.assertTrue(Files.exists(Path.of(
                 pathRoot, String.format(FileBalancer.FORMAT_OUTPUT_FILE, systemNameFile, 1))));
@@ -66,9 +65,9 @@ public class FileBalancerTests {
         String systemNameFile = file.getFileName().toString();
         int partCounter = 2;
 
-        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file, partCounter));
+        FileSplit fileSplit = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file, partCounter));
 
-        Assertions.assertEquals(partCounter, paths.size());
+        Assertions.assertEquals(partCounter, fileSplit.getPathFiles().size());
         Assertions.assertTrue(Files.exists(file));
         Assertions.assertTrue(Files.exists(Path.of(
                 pathRoot, String.format(FileBalancer.FORMAT_OUTPUT_FILE, systemNameFile, 1))));
@@ -93,9 +92,9 @@ public class FileBalancerTests {
         Path file = initFile();
         Path systemNameFileInto = Path.of(pathRoot, UUID.randomUUID().toString());
 
-        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file));
+        FileSplit fileSplit = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file));
 
-        Path into = Assertions.assertDoesNotThrow(() -> FileBalancer.merge(paths, systemNameFileInto));
+        Path into = Assertions.assertDoesNotThrow(() -> FileBalancer.merge(fileSplit, systemNameFileInto));
 
         Assertions.assertTrue(Files.exists(into));
         Assertions.assertFalse(Files.isDirectory(into));
@@ -108,7 +107,7 @@ public class FileBalancerTests {
 
         Assertions.assertThrows(
                 FileIsDirectoryException.class,
-                () -> FileBalancer.merge(List.of(directory), directory));
+                () -> FileBalancer.merge(new FileSplit(List.of(directory)), directory));
 
         Files.delete(directory);
     }
@@ -118,20 +117,20 @@ public class FileBalancerTests {
         Path file = initFile();
         Path systemNameFileInto = Path.of(pathRoot, UUID.randomUUID().toString());
 
-        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file));
-        paths.add(Path.of("file_not_found"));
+        FileSplit fileSplit = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file));
+        fileSplit.addPathFiles(Path.of("file_not_found"));
 
         Assertions.assertThrows(
                 FileNotFoundException.class,
-                () -> FileBalancer.merge(paths, systemNameFileInto));
+                () -> FileBalancer.merge(fileSplit, systemNameFileInto));
     }
 
     @Test
     public void getAllParts_success() throws IOException {
         Path file = initFile();
 
-        Collection<Path> paths = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file));
-        List<Path> pathList = List.copyOf(paths);
+        FileSplit fileSplit = Assertions.assertDoesNotThrow(() -> FileBalancer.fragment(file));
+        List<Path> pathList = List.copyOf(fileSplit.getPathFiles());
 
         Set<Path> allParts = Assertions.assertDoesNotThrow(
                 () -> FileBalancer.getAllParts(pathList.get(0)));

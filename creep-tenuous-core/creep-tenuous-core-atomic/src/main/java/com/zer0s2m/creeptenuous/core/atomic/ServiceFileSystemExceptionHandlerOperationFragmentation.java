@@ -2,6 +2,7 @@ package com.zer0s2m.creeptenuous.core.atomic;
 
 import com.zer0s2m.creeptenuous.core.balancer.FileBalancer;
 import com.zer0s2m.creeptenuous.core.balancer.FileIsDirectoryException;
+import com.zer0s2m.creeptenuous.core.balancer.FileSplit;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +112,7 @@ public class ServiceFileSystemExceptionHandlerOperationFragmentation implements 
 
                         try {
                             Collection<Path> orderedFragments = FileBalancer.getAllParts(fragmentsList.get(0));
-                            Path recoveredFile = FileBalancer.merge(orderedFragments, source);
+                            Path recoveredFile = FileBalancer.merge(new FileSplit(orderedFragments), source);
 
                             logger.info(String.format(
                                     "Recovered file from fragments [%s]",

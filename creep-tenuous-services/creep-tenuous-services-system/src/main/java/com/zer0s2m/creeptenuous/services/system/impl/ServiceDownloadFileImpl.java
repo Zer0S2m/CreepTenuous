@@ -4,6 +4,7 @@ import com.zer0s2m.creeptenuous.common.annotations.ServiceFileSystem;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataDownloadFile;
 import com.zer0s2m.creeptenuous.core.balancer.FileBalancer;
 import com.zer0s2m.creeptenuous.core.balancer.FileIsDirectoryException;
+import com.zer0s2m.creeptenuous.core.balancer.FileSplit;
 import com.zer0s2m.creeptenuous.services.system.ServiceDownloadFile;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 
@@ -64,7 +65,7 @@ public class ServiceDownloadFileImpl implements ServiceDownloadFile {
             List<String> systemParents, String systemNameFile) throws IOException, FileIsDirectoryException {
         Path pathFile = Paths.get(buildDirectoryPath.build(systemParents), systemNameFile);
         Set<Path> partsFragments = FileBalancer.getAllParts(pathFile);
-        Path outputFile = FileBalancer.merge(partsFragments.stream().toList(), pathFile);
+        Path outputFile = FileBalancer.merge(new FileSplit(partsFragments), pathFile);
 
         return new ContainerDataDownloadFile<>(
                 outputFile,

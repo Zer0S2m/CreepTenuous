@@ -37,7 +37,7 @@ public interface FileBalancer {
      * @throws IOException signals that an I/O exception to some sort has occurred
      * @throws FileIsDirectoryException the exception indicates that the source file object is a directory
      */
-    static @NotNull Collection<Path> fragment(Path source) throws IOException, FileIsDirectoryException {
+    static @NotNull FileSplit fragment(Path source) throws IOException, FileIsDirectoryException {
         return fragment(source, PART_COUNTER);
     }
 
@@ -49,7 +49,7 @@ public interface FileBalancer {
      * @throws IOException signals that an I/O exception to some sort has occurred
      * @throws FileIsDirectoryException the exception indicates that the source file object is a directory
      */
-    static @NotNull Collection<Path> fragment(Path source, int partCounter) throws IOException, FileIsDirectoryException {
+    static @NotNull FileSplit fragment(Path source, int partCounter) throws IOException, FileIsDirectoryException {
         if (Files.isDirectory(source)) {
             throw new FileIsDirectoryException();
         }
@@ -88,7 +88,7 @@ public interface FileBalancer {
             logger.info(msg[0].trim());
         }
 
-        return paths;
+        return new FileSplit(paths);
     }
 
     /**
@@ -101,8 +101,8 @@ public interface FileBalancer {
      * @throws FileIsDirectoryException the exception indicates that the source file object is a directory
      */
     @Contract("_, _ -> param2")
-    static Path merge(@NotNull Collection<Path> sourceFiles, Path into) throws IOException, FileIsDirectoryException {
-        for (Path sourceFile : sourceFiles) {
+    static Path merge(@NotNull FileSplit sourceFiles, Path into) throws IOException, FileIsDirectoryException {
+        for (Path sourceFile : sourceFiles.getPathFiles()) {
             if (Files.isDirectory(sourceFile)) {
                 throw new FileIsDirectoryException();
             }
@@ -113,7 +113,7 @@ public interface FileBalancer {
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(into.toFile());
              BufferedOutputStream mergingStream = new BufferedOutputStream(fileOutputStream)) {
-            for (Path sourceFile : sourceFiles) {
+            for (Path sourceFile : sourceFiles.getPathFiles()) {
                 Files.copy(sourceFile, mergingStream);
             }
         }

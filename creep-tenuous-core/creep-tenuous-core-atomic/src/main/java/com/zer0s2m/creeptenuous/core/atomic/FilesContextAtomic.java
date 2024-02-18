@@ -2,6 +2,7 @@ package com.zer0s2m.creeptenuous.core.atomic;
 
 import com.zer0s2m.creeptenuous.core.balancer.FileBalancer;
 import com.zer0s2m.creeptenuous.core.balancer.FileIsDirectoryException;
+import com.zer0s2m.creeptenuous.core.balancer.FileSplit;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -141,10 +142,10 @@ public interface FilesContextAtomic {
      * @throws IOException              If an I/O error occurs.
      * @throws FileIsDirectoryException The exception indicates that the source file object is a directory.
      */
-    static @NotNull Collection<Path> fragment(Path path) throws IOException, FileIsDirectoryException {
-        Collection<Path> fragmetns = FileBalancer.fragment(path);
-        addOperationDataFragment(path, fragmetns, stackWalker.getCallerClass().getCanonicalName());
-        return fragmetns;
+    static @NotNull FileSplit fragment(Path path) throws IOException, FileIsDirectoryException {
+        FileSplit fileSplit = FileBalancer.fragment(path);
+        addOperationDataFragment(path, fileSplit.getPathFiles(), stackWalker.getCallerClass().getCanonicalName());
+        return fileSplit;
     }
 
     static Path upload(Path source, Path target, CopyOption... options) throws IOException {

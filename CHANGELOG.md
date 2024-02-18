@@ -1,5 +1,11 @@
 # Change Log
 
+## [Unreleased]
+
+### Changed
+
+- Use the new split file format
+
 ## [0.0.13] 2024-02-17
 
 ### Added

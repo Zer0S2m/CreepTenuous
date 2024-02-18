@@ -11,6 +11,7 @@ import com.zer0s2m.creeptenuous.core.atomic.FilesContextAtomic;
 import com.zer0s2m.creeptenuous.core.atomic.ServiceFileSystemExceptionHandlerOperationUpload;
 import com.zer0s2m.creeptenuous.core.atomic.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.core.balancer.FileIsDirectoryException;
+import com.zer0s2m.creeptenuous.core.balancer.FileSplit;
 import com.zer0s2m.creeptenuous.services.system.ServiceUploadFile;
 import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
 import com.zer0s2m.creeptenuous.services.system.utils.UtilsFiles;
@@ -24,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -109,12 +109,12 @@ public class ServiceUploadFileImpl implements ServiceUploadFile {
                     writeLogUploadFile(uploadFileApi);
 
                     try {
-                        Collection<Path> fragmentedPartsFile = FilesContextAtomic.fragment(uploadFileApi.systemPath());
+                        FileSplit fileSplit = FilesContextAtomic.fragment(uploadFileApi.systemPath());
 
                         dataUploadFileFragments.add(new ContainerDataUploadFileFragment(
                                 originalName,
                                 uploadFileApi.systemFileName(),
-                                fragmentedPartsFile,
+                                fileSplit.getPathFiles(),
                                 uploadFileApi.systemPath()));
                     } catch (IOException | FileIsDirectoryException e) {
                         throw new RuntimeException(e);

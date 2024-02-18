@@ -1,6 +1,7 @@
 package com.zer0s2m.creeptenuous.core.atomic;
 
 import com.zer0s2m.creeptenuous.core.atomic.mock.MockServiceFileSystem;
+import com.zer0s2m.creeptenuous.core.balancer.FileSplit;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.*;
 
@@ -11,7 +12,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -1105,7 +1105,7 @@ public class AtomicSystemCallManagerTests {
             String systemNameFile = UUID.randomUUID() + ".txt";
             Path source = initFileForFragmentation(systemNameFile);
 
-            Collection<Path> fragmentsSource = Assertions.assertDoesNotThrow(
+            FileSplit fileSplit = Assertions.assertDoesNotThrow(
                     () -> AtomicSystemCallManager.call(
                             new MockServiceFileSystem.MockServiceFileSystemFragmentationFileSuccess(),
                             source
@@ -1113,11 +1113,11 @@ public class AtomicSystemCallManagerTests {
             );
 
             Assertions.assertAll("Fragment existence",
-                    () -> fragmentsSource
+                    () -> fileSplit.getPathFiles()
                             .forEach(fragmentSource ->
                                     Assertions.assertTrue(Files.exists(fragmentSource))));
 
-            for (Path fragmentSpurce : fragmentsSource) {
+            for (Path fragmentSpurce : fileSplit.getPathFiles()) {
                 Files.delete(fragmentSpurce);
             }
 

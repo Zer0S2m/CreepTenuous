@@ -2,6 +2,7 @@ package com.zer0s2m.creeptenuous.core.atomic.mock;
 
 import com.zer0s2m.creeptenuous.core.atomic.*;
 import com.zer0s2m.creeptenuous.core.balancer.FileIsDirectoryException;
+import com.zer0s2m.creeptenuous.core.balancer.FileSplit;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -1119,7 +1120,7 @@ public final class MockServiceFileSystem {
                         )
                 }
         )
-        public @NotNull Collection<Path> fragmentation(Path source) throws IOException, FileIsDirectoryException {
+        public @NotNull FileSplit fragmentation(Path source) throws IOException, FileIsDirectoryException {
             return FilesContextAtomic.fragment(source);
         }
 
