@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Processing static files - avatars for users.
+
 ### Changed
 
 - Use the new split file format
