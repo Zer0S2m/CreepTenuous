@@ -105,8 +105,12 @@ public class ServiceCustomizationUserImpl implements ServiceCustomizationUser {
      * @throws UserNotFoundException         not found user color
      */
     @Override
+    @Transactional
     public void setColorInCategory(final String userLogin, final Long userColorId, final Long userCategoryId)
             throws NotFoundException {
+        userColorCategoryRepository
+                .deleteByUserCategoryIdAndUserLogin(userCategoryId, userLogin);
+
         userColorCategoryRepository.save(new UserColorCategory(
                 getUserByLogin(userLogin),
                 getUserColorByIdAndUserLogin(userColorId, userLogin),

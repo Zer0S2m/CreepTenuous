@@ -6,6 +6,10 @@
 
 - Use the new split file format
 
+### Fixed 
+
+- Fix the creation of an additional line in the database when installing a new color palette for a custom category.
+
 ## [0.0.13] 2024-02-17
 
 ### Added
