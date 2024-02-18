@@ -38,7 +38,7 @@ public interface CategoryFileSystemObjectRepository
      * Removes all instances with the given file object system names.
      * @param fileSystemObject must not be {@literal null}. Must not contain {@literal null} elements.
      */
-    void deleteAllByFileSystemObjectIn(Collection<UUID> fileSystemObject);
+    long deleteAllByFileSystemObjectIn(Collection<UUID> fileSystemObject);
 
     /**
      * Get all file objects that are associated with any user categories by user login.

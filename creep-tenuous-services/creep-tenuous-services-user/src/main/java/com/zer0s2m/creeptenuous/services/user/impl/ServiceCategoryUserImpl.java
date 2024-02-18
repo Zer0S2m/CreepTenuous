@@ -17,6 +17,7 @@ import com.zer0s2m.creeptenuous.services.user.ServiceCategoryUser;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,7 @@ public class ServiceCategoryUserImpl implements ServiceCategoryUser {
 
     /**
      * Get all custom categories
+     *
      * @param userLogin user login
      * @return entities
      */
@@ -68,7 +70,8 @@ public class ServiceCategoryUserImpl implements ServiceCategoryUser {
 
     /**
      * Creating a category for file objects
-     * @param title Category name
+     *
+     * @param title     Category name
      * @param userLogin login user
      * @return entity data
      * @throws UserNotFoundException user not exists
@@ -83,8 +86,9 @@ public class ServiceCategoryUserImpl implements ServiceCategoryUser {
 
     /**
      * Update custom category by id
-     * @param id ID entity
-     * @param title new title user category
+     *
+     * @param id        ID entity
+     * @param title     new title user category
      * @param userLogin user login
      * @throws NotFoundException not found user category
      */
@@ -102,7 +106,8 @@ public class ServiceCategoryUserImpl implements ServiceCategoryUser {
 
     /**
      * Delete comment file system object
-     * @param id id comment. Must not be {@literal null}.
+     *
+     * @param id        id comment. Must not be {@literal null}.
      * @param userLogin user login. Must not be {@literal null}.
      * @throws NotFoundException not found user category
      */
@@ -116,6 +121,7 @@ public class ServiceCategoryUserImpl implements ServiceCategoryUser {
 
     /**
      * Find a user by his login
+     *
      * @param loginUser login user
      * @return user
      * @throws UserNotFoundException user not exists
@@ -127,14 +133,17 @@ public class ServiceCategoryUserImpl implements ServiceCategoryUser {
         }
         return user;
     }
+
     /**
      * Bind a file object to a custom category
-     * @param categoryId id category. Must not be {@literal null}.
+     *
+     * @param categoryId       id category. Must not be {@literal null}.
      * @param fileSystemObject file object name
-     * @param userLogin user login. Must not be {@literal null}.
+     * @param userLogin        user login. Must not be {@literal null}.
      * @throws NotFoundException not found category or user
      */
     @Override
+    @Transactional
     public void setFileSystemObjectInCategory(
             final Long categoryId, final String fileSystemObject, final String userLogin)
             throws NotFoundException {
@@ -151,39 +160,36 @@ public class ServiceCategoryUserImpl implements ServiceCategoryUser {
 
         CategoryFileSystemObject categoryFileSystemObject = new CategoryFileSystemObject(
                 user, userCategoryOptional.get(), UUID.fromString(fileSystemObject));
+
+        categoryFileSystemObjectRepository.deleteAllByFileSystemObjectIn(
+                List.of(UUID.fromString(fileSystemObject)));
+
         categoryFileSystemObjectRepository.save(categoryFileSystemObject);
     }
 
     /**
      * Link a file object to a custom category
-     * @param categoryId id category. Must not be {@literal null}.
+     *
      * @param fileSystemObject file object name
-     * @param userLogin user login. Must not be {@literal null}.
+     * @param userLogin        user login. Must not be {@literal null}.
      * @throws NotFoundException not found category or linked file category objects to user category
      */
     @Override
-    public void unsetFileSystemObjectInCategory(
-            final Long categoryId, final String fileSystemObject, final String userLogin)
+    @Transactional
+    public void unsetFileSystemObjectInCategory(final String fileSystemObject, final String userLogin)
             throws NotFoundException {
-        Optional<UserCategory> userCategoryOptional = userCategoryRepository.findByIdAndUser_Login(
-                categoryId, userLogin);
-        if (userCategoryOptional.isEmpty()) {
-            throw new NotFoundUserCategoryException();
-        }
-
-        Optional<CategoryFileSystemObject> categoryFileSystemObject = categoryFileSystemObjectRepository
-                .findByUserCategory_IdAndUserLoginAndFileSystemObject(categoryId, userLogin, UUID.fromString(fileSystemObject));
-        if (categoryFileSystemObject.isEmpty()) {
+        long categoryFileSystemObject = categoryFileSystemObjectRepository
+                .deleteAllByFileSystemObjectIn(List.of(UUID.fromString(fileSystemObject)));
+        if (categoryFileSystemObject == 0) {
             throw new NotFoundCategoryFileSystemObjectException();
         }
-
-        categoryFileSystemObjectRepository.delete(categoryFileSystemObject.get());
     }
 
     /**
      * Get all objects of the file category associated with the user category by ID
+     *
      * @param categoryId id category. Must not be {@literal null}.
-     * @param userLogin user login. Must not be {@literal null}.
+     * @param userLogin  user login. Must not be {@literal null}.
      * @return linked file category objects to user category
      * @throws NotFoundException not found category
      */

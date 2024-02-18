@@ -6,10 +6,12 @@
 
 - Use the new split file format
 - Removing a color category from a custom category without a unique palette key.
+- Removing a custom category from a file object without specifying a category.
 
-### Fixed 
+### Fixed
 
 - Fix the creation of an additional line in the database when installing a new color palette for a custom category.
+- Fix the creation of an additional line in the database when setting a new category for a file object.
 
 ## [0.0.13] 2024-02-17
 

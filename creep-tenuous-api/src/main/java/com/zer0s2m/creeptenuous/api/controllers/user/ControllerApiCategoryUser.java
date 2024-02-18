@@ -4,10 +4,7 @@ import com.zer0s2m.creeptenuous.api.documentation.controllers.ControllerApiCateg
 import com.zer0s2m.creeptenuous.api.annotation.V1APIRestController;
 import com.zer0s2m.creeptenuous.common.containers.ContainerCategoryFileSystemObject;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUserCategory;
-import com.zer0s2m.creeptenuous.common.data.DataControlFileSystemObjectInCategoryApi;
-import com.zer0s2m.creeptenuous.common.data.DataCreateUserCategoryApi;
-import com.zer0s2m.creeptenuous.common.data.DataControlAnyObjectApi;
-import com.zer0s2m.creeptenuous.common.data.DataEditUserCategoryApi;
+import com.zer0s2m.creeptenuous.common.data.*;
 import com.zer0s2m.creeptenuous.common.exceptions.NoExistsFileSystemObjectRedisException;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
@@ -132,15 +129,20 @@ public class ControllerApiCategoryUser implements ControllerApiCategoryUserDoc {
     @DeleteMapping("/user/category/file-system-object")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void unsetFileSystemObjectInCategory(
-            final @Valid @RequestBody @NotNull DataControlFileSystemObjectInCategoryApi data,
+            final @Valid @RequestBody @NotNull DataDeleteFileSystemObjectInCategoryApi data,
             @RequestHeader(name = "Authorization") String accessToken
     ) throws NotFoundException {
-        prepareSetOrUnsetCategory(data, accessToken);
+        baseServiceFileSystemRedis.setAccessClaims(accessToken);
+        baseServiceFileSystemRedis.setIsException(true);
+        baseServiceFileSystemRedis.checkRights(data.fileSystemObject());
+        if (!baseServiceFileSystemRedis.existsById(data.fileSystemObject())) {
+            throw new NoExistsFileSystemObjectRedisException();
+        }
 
         final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
 
         serviceCategoryUser.unsetFileSystemObjectInCategory(
-                data.categoryId(), data.fileSystemObject(), claims.get("login", String.class));
+                data.fileSystemObject(), claims.get("login", String.class));
     }
 
     /**

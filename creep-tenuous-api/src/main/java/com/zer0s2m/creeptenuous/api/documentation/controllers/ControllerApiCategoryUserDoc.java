@@ -2,10 +2,7 @@ package com.zer0s2m.creeptenuous.api.documentation.controllers;
 
 import com.zer0s2m.creeptenuous.common.containers.ContainerCategoryFileSystemObject;
 import com.zer0s2m.creeptenuous.common.containers.ContainerDataUserCategory;
-import com.zer0s2m.creeptenuous.common.data.DataControlFileSystemObjectInCategoryApi;
-import com.zer0s2m.creeptenuous.common.data.DataCreateUserCategoryApi;
-import com.zer0s2m.creeptenuous.common.data.DataControlAnyObjectApi;
-import com.zer0s2m.creeptenuous.common.data.DataEditUserCategoryApi;
+import com.zer0s2m.creeptenuous.common.data.*;
 import com.zer0s2m.creeptenuous.common.exceptions.NotFoundException;
 import com.zer0s2m.creeptenuous.common.exceptions.UserNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -245,7 +242,7 @@ public interface ControllerApiCategoryUserDoc {
                     description = "Data to unset",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = DataControlFileSystemObjectInCategoryApi.class)
+                            schema = @Schema(implementation = DataDeleteFileSystemObjectInCategoryApi.class)
                     )
             ),
             responses = {
@@ -277,7 +274,7 @@ public interface ControllerApiCategoryUserDoc {
             }
     )
     void unsetFileSystemObjectInCategory(
-            final DataControlFileSystemObjectInCategoryApi data,
+            final DataDeleteFileSystemObjectInCategoryApi data,
             @Parameter(hidden = true) String accessToken) throws NotFoundException;
 
     /**

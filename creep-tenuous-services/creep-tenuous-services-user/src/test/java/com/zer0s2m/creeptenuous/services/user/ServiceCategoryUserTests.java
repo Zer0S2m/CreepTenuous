@@ -173,19 +173,10 @@ public class ServiceCategoryUserTests {
 
         Assertions.assertDoesNotThrow(
                 () -> serviceCategoryUser.unsetFileSystemObjectInCategory(
-                        userCategory.getId(), categoryFileSystemObject.getFileSystemObject().toString(),
+                        categoryFileSystemObject.getFileSystemObject().toString(),
                         user.getLogin())
         );
         Assertions.assertFalse(categoryFileSystemObjectRepository.existsById(categoryFileSystemObject.getId()));
-    }
-
-    @Test
-    public void unsetFileSystemObjectInCategory_fail_notFoundCategory() {
-        Assertions.assertThrows(
-                NotFoundUserCategoryException.class,
-                () -> serviceCategoryUser.unsetFileSystemObjectInCategory(
-                        123322L, "systemName", "login")
-        );
     }
 
     @Test
@@ -198,7 +189,7 @@ public class ServiceCategoryUserTests {
         Assertions.assertThrows(
                 NotFoundCategoryFileSystemObjectException.class,
                 () -> serviceCategoryUser.unsetFileSystemObjectInCategory(
-                        userCategory.getId(), UUID.randomUUID().toString(), user.getLogin())
+                        UUID.randomUUID().toString(), user.getLogin())
         );
     }
 
