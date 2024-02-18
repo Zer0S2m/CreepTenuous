@@ -1,6 +1,6 @@
 package com.zer0s2m.creeptenuous.api.helpers;
 
-import com.zer0s2m.creeptenuous.services.system.core.ServiceBuildDirectoryPath;
+import com.zer0s2m.creeptenuous.core.services.ServiceBuildDirectoryPath;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;

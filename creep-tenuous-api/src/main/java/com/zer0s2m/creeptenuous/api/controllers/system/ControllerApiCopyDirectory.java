@@ -17,8 +17,8 @@ import com.zer0s2m.creeptenuous.core.atomic.ServiceFileSystemExceptionHandlerOpe
 import com.zer0s2m.creeptenuous.core.atomic.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceCopyDirectoryRedis;
-import com.zer0s2m.creeptenuous.services.system.ServiceCopyDirectory;
-import com.zer0s2m.creeptenuous.services.system.impl.ServiceCopyDirectoryImpl;
+import com.zer0s2m.creeptenuous.core.services.ServiceCopyDirectory;
+import com.zer0s2m.creeptenuous.core.services.impl.ServiceCopyDirectoryImpl;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

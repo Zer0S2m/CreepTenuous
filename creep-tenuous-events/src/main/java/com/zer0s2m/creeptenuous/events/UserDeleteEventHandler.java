@@ -10,10 +10,10 @@ import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerReso
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceControlUserRights;
 import com.zer0s2m.creeptenuous.repository.user.UserFileObjectsExclusionRepository;
 import com.zer0s2m.creeptenuous.repository.user.UserSettingsRepository;
-import com.zer0s2m.creeptenuous.services.system.ServiceDeleteDirectory;
-import com.zer0s2m.creeptenuous.services.system.ServiceDeleteFile;
-import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteDirectoryImpl;
-import com.zer0s2m.creeptenuous.services.system.impl.ServiceDeleteFileImpl;
+import com.zer0s2m.creeptenuous.core.services.ServiceDeleteDirectory;
+import com.zer0s2m.creeptenuous.core.services.ServiceDeleteFile;
+import com.zer0s2m.creeptenuous.core.services.impl.ServiceDeleteDirectoryImpl;
+import com.zer0s2m.creeptenuous.core.services.impl.ServiceDeleteFileImpl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;

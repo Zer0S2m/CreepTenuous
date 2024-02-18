@@ -25,7 +25,7 @@
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>
-      <artifactId>creep-tenuous-services-system</artifactId>
+      <artifactId>creep-tenuous-core-services</artifactId>
     </dependency>
     <dependency>
       <groupId>com.zer0s2m</groupId>

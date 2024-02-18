@@ -19,7 +19,6 @@
     <module>creep-tenuous-services-jwt</module>
     <module>creep-tenuous-services-redis</module>
     <module>creep-tenuous-services-security</module>
-    <module>creep-tenuous-services-system</module>
     <module>creep-tenuous-services-user</module>
     <module>creep-tenuous-services-system-starter.xml</module>
   </modules>
@@ -37,7 +36,7 @@
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
-        <artifactId>creep-tenuous-services-system</artifactId>
+        <artifactId>creep-tenuous-core-services</artifactId>
         <version>0.0.13-SNAPSHOT</version>
       </dependency>
       <dependency>

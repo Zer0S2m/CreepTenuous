@@ -14,8 +14,8 @@ import com.zer0s2m.creeptenuous.core.atomic.ServiceFileSystemExceptionHandlerOpe
 import com.zer0s2m.creeptenuous.core.atomic.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceUploadDirectoryRedis;
-import com.zer0s2m.creeptenuous.services.system.ServiceUploadDirectory;
-import com.zer0s2m.creeptenuous.services.system.impl.ServiceUploadDirectoryImpl;
+import com.zer0s2m.creeptenuous.core.services.ServiceUploadDirectory;
+import com.zer0s2m.creeptenuous.core.services.impl.ServiceUploadDirectoryImpl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

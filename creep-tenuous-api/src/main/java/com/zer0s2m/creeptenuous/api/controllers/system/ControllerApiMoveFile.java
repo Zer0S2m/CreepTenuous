@@ -15,8 +15,8 @@ import com.zer0s2m.creeptenuous.core.atomic.ServiceFileSystemExceptionHandlerOpe
 import com.zer0s2m.creeptenuous.core.atomic.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceMoveFileRedis;
-import com.zer0s2m.creeptenuous.services.system.ServiceMoveFile;
-import com.zer0s2m.creeptenuous.services.system.impl.ServiceMoveFileImpl;
+import com.zer0s2m.creeptenuous.core.services.ServiceMoveFile;
+import com.zer0s2m.creeptenuous.core.services.impl.ServiceMoveFileImpl;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;

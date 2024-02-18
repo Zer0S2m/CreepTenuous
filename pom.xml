@@ -42,7 +42,6 @@
     <creep-tenuous-services-jwt.version>0.0.13-SNAPSHOT</creep-tenuous-services-jwt.version>
     <creep-tenuous-services-redis.version>0.0.13-SNAPSHOT</creep-tenuous-services-redis.version>
     <creep-tenuous-services-security.version>0.0.13-SNAPSHOT</creep-tenuous-services-security.version>
-    <creep-tenuous-services-system.version>0.0.13-SNAPSHOT</creep-tenuous-services-system.version>
     <creep-tenuous-services-user.version>0.0.13-SNAPSHOT</creep-tenuous-services-user.version>
     <creep-tenuous-starter-test.version>0.0.13-SNAPSHOT</creep-tenuous-starter-test.version>
     <creep-tenuous-common.version>0.0.13-SNAPSHOT</creep-tenuous-common.version>
@@ -58,6 +57,7 @@
     <creep-tenuous-events.version>0.0.13-SNAPSHOT</creep-tenuous-events.version>
     <creep-tenuous-core-atomic.version>0.0.13-SNAPSHOT</creep-tenuous-core-atomic.version>
     <creep-tenuous-core-balancer.version>0.0.13-SNAPSHOT</creep-tenuous-core-balancer.version>
+    <creep-tenuous-core-services.version>0.0.13-SNAPSHOT</creep-tenuous-core-services.version>
     <creep-tenuous-module-search.version>0.0.13-SNAPSHOT</creep-tenuous-module-search.version>
     <creep-tenuous-validation.version>0.0.13-SNAPSHOT</creep-tenuous-validation.version>
   </properties>
@@ -142,11 +142,6 @@
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-services-security</artifactId>
         <version>${creep-tenuous-services-security.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.zer0s2m</groupId>
-        <artifactId>creep-tenuous-services-system</artifactId>
-        <version>${creep-tenuous-services-system.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
@@ -264,6 +259,11 @@
         <groupId>com.zer0s2m</groupId>
         <artifactId>creep-tenuous-core-balancer</artifactId>
         <version>${creep-tenuous-core-balancer.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.zer0s2m</groupId>
+        <artifactId>creep-tenuous-core-services</artifactId>
+        <version>${creep-tenuous-core-services.version}</version>
       </dependency>
       <dependency>
         <groupId>com.zer0s2m</groupId>
