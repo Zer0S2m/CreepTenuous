@@ -264,7 +264,7 @@ public class ServiceCustomizationUserTests {
 
         Assertions.assertDoesNotThrow(
                 () -> serviceCustomizationUser.deleteColorInCategory(
-                        user.getLogin(), userColor.getId(), userCategory.getId()
+                        user.getLogin(), userCategory.getId()
                 )
         );
         Assertions.assertEquals(
@@ -278,7 +278,7 @@ public class ServiceCustomizationUserTests {
         Assertions.assertThrows(
                 NotFoundUserColorCategoryException.class,
                 () -> serviceCustomizationUser.deleteColorInCategory(
-                        "user_login_not_found", 1L, 1L
+                        "user_login_not_found", 1L
                 )
         );
     }

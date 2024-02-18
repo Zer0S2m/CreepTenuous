@@ -48,13 +48,11 @@ public interface ServiceCustomizationUser {
      * Delete color scheme binding to custom category
      *
      * @param userLogin      user login. Must not be {@literal null}
-     * @param userColorId    ID entity {@link com.zer0s2m.creeptenuous.models.user.UserColor}.
-     *                       Must not be {@literal null}
      * @param userCategoryId ID entity {@link com.zer0s2m.creeptenuous.models.user.UserCategory}.
      *                       Must not be {@literal null}
      * @throws NotFoundUserColorCategoryException custom category color scheme binding not found
      */
-    void deleteColorInCategory(final String userLogin, final Long userColorId, final Long userCategoryId)
+    void deleteColorInCategory(final String userLogin, final Long userCategoryId)
             throws NotFoundException;
 
     /**

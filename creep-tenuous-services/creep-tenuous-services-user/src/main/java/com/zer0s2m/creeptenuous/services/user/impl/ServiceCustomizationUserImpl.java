@@ -136,18 +136,16 @@ public class ServiceCustomizationUserImpl implements ServiceCustomizationUser {
      * Delete color scheme binding to custom category
      *
      * @param userLogin      user login. Must not be {@literal null}
-     * @param userColorId    ID entity {@link com.zer0s2m.creeptenuous.models.user.UserColor}.
-     *                       Must not be {@literal null}
      * @param userCategoryId ID entity {@link com.zer0s2m.creeptenuous.models.user.UserCategory}.
      *                       Must not be {@literal null}
      * @throws NotFoundUserColorCategoryException custom category color scheme binding not found
      */
     @Override
     @Transactional
-    public void deleteColorInCategory(final String userLogin, final Long userColorId, final Long userCategoryId)
+    public void deleteColorInCategory(final String userLogin, final Long userCategoryId)
             throws NotFoundException {
-        long countDeletedObjects = userColorCategoryRepository.deleteByUserColorIdAndUserCategoryIdAndUserLogin(
-                userColorId, userCategoryId, userLogin);
+        long countDeletedObjects = userColorCategoryRepository.deleteByUserCategoryIdAndUserLogin(
+                userCategoryId, userLogin);
         if (countDeletedObjects == 0) {
             throw new NotFoundUserColorCategoryException();
         }

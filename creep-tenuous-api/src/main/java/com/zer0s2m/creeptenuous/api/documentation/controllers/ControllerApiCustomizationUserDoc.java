@@ -209,7 +209,7 @@ public interface ControllerApiCustomizationUserDoc {
             }
     )
     void deleteColorInCustomCategory(
-            final DataControlUserColorCategoryApi data, @Parameter(hidden = true) String accessToken)
+            final DataDeleteUserColorCategoryApi data, @Parameter(hidden = true) String accessToken)
             throws NotFoundException;
 
     /**

@@ -116,11 +116,11 @@ public class ControllerApiCustomizationUser implements ControllerApiCustomizatio
     @DeleteMapping("/user/customization/category/color")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteColorInCustomCategory(
-            final @Valid @RequestBody @NotNull DataControlUserColorCategoryApi data,
+            final @Valid @RequestBody @NotNull DataDeleteUserColorCategoryApi data,
             @RequestHeader(name = "Authorization") String accessToken) throws NotFoundException {
         final Claims claims = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
         serviceCustomizationUser.deleteColorInCategory(
-                claims.get("login", String.class), data.userColorId(), data.userCategoryId());
+                claims.get("login", String.class), data.userCategoryId());
     }
 
     /**
