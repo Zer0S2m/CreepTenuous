@@ -11,6 +11,7 @@
 - Use the new split file format
 - Removing a color category from a custom category without a unique palette key.
 - Removing a custom category from a file object without specifying a category.
+- Access to view all users for regular roles.
 
 ### Fixed
 
