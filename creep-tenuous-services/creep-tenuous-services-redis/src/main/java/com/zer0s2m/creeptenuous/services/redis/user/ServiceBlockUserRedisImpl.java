@@ -49,6 +49,7 @@ public class ServiceBlockUserRedisImpl implements ServiceBlockUserRedis {
     @Override
     public void unblock(String login) {
         blockUserRedisRepository.deleteById(login);
+        blockUserDelayedRedisRepository.deleteById(login);
     }
 
     /**
@@ -58,10 +59,7 @@ public class ServiceBlockUserRedisImpl implements ServiceBlockUserRedis {
      */
     @Override
     public boolean check(String login) {
-        if (blockUserDelayedRedisRepository.existsById(login)) {
-            return false;
-        }
-        return blockUserRedisRepository.existsById(login);
+        return blockUserDelayedRedisRepository.existsById(login) || blockUserRedisRepository.existsById(login);
     }
 
 }

@@ -18,6 +18,7 @@
 - Fix the creation of an additional line in the database when installing a new color palette for a custom category.
 - Fix the creation of an additional line in the database when setting a new category for a file object.
 - Fix getting the date from the comment
+- Fix user unlocks.
 
 ## [0.0.13] 2024-02-17
 
