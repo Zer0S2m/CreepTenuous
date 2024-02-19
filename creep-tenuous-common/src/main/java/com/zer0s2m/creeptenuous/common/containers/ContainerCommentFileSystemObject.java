@@ -3,7 +3,6 @@ package com.zer0s2m.creeptenuous.common.containers;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -22,7 +21,7 @@ public record ContainerCommentFileSystemObject(
         UUID fileSystemObject,
 
         @Schema(description = "Date the comment was created", example = "2023-10-14T14:34:06.545122")
-        LocalDateTime createdAt,
+        String createdAt,
 
         @Schema(description = "Unique ID of the parent comment", example = "1", format = "int64")
         Long parentId,

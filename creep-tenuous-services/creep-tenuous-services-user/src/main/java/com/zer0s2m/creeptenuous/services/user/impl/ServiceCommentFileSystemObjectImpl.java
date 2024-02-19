@@ -79,7 +79,7 @@ public class ServiceCommentFileSystemObjectImpl implements ServiceCommentFileSys
                         comment.getId(),
                         comment.getComment(),
                         comment.getFileSystemObject(),
-                        comment.getCreatedAt(),
+                        comment.getCreatedAt().toString(),
                         null,
                         new ArrayList<>()
                 ));
@@ -100,7 +100,7 @@ public class ServiceCommentFileSystemObjectImpl implements ServiceCommentFileSys
                 currentComment.getId(),
                 currentComment.getComment(),
                 currentComment.getFileSystemObject(),
-                currentComment.getCreatedAt(),
+                currentComment.getCreatedAt().toString(),
                 parentId,
                 new ArrayList<>()
         );
@@ -120,7 +120,7 @@ public class ServiceCommentFileSystemObjectImpl implements ServiceCommentFileSys
                         comment.getId(),
                         comment.getComment(),
                         comment.getFileSystemObject(),
-                        comment.getCreatedAt(),
+                        comment.getCreatedAt().toString(),
                         comment.getParentId(),
                         new ArrayList<>()
                 ));
