@@ -79,12 +79,14 @@ public class ControllerApiManagerDirectory implements ControllerApiManagerDirect
                 data.systemParents(),
                 data.level()
         ));
+        System.out.println(rawDataOptional.getValue());
         rawDataOptional.setValue(new ContainerDataBuilderDirectory(
                 data.systemParents(),
                 data.level(),
                 serviceManagerRights.permissionFiltering(
                         rawDataOptional.getValue().namesSystemFileObject(), operationRights)
         ));
+        System.out.println(rawDataOptional.getValue());
 
         List<Object> result = serviceManagerDirectoryRedis.build(rawDataOptional.getValue().namesSystemFileObject());
 

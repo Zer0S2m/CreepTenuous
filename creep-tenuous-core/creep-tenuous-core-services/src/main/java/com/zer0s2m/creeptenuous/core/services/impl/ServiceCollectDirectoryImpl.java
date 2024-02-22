@@ -43,6 +43,13 @@ public class ServiceCollectDirectoryImpl implements ServiceCollectDirectory {
         List<List<Path>> paths = new ArrayList<>();
         paths.add(stream.get().filter(Files::isRegularFile).toList());
         paths.add(stream.get().filter(Files::isDirectory).toList());
+        paths = paths
+                .stream()
+                .map(path1 -> path1
+                        .stream()
+                        .filter(path2 -> !path2.getFileName().toString().equals(source.getFileName().toString()))
+                        .toList())
+                .toList();
         return paths;
     }
 

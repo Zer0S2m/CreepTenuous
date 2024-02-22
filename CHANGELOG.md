@@ -19,6 +19,7 @@
 - Fix the creation of an additional line in the database when setting a new category for a file object.
 - Fix getting the date from the comment
 - Fix user unlocks.
+- Fix Getting the parent directory when navigating to it.
 
 ## [0.0.13] 2024-02-17
 
