@@ -14,6 +14,8 @@ import com.zer0s2m.creeptenuous.core.atomic.AtomicSystemCallManager;
 import com.zer0s2m.creeptenuous.core.atomic.ServiceFileSystemExceptionHandlerOperationDelete;
 import com.zer0s2m.creeptenuous.core.atomic.AtomicServiceFileSystem;
 import com.zer0s2m.creeptenuous.redis.events.FileRedisEventPublisher;
+import com.zer0s2m.creeptenuous.redis.models.FileRedis;
+import com.zer0s2m.creeptenuous.redis.services.resources.ServiceRedisManagerResources;
 import com.zer0s2m.creeptenuous.redis.services.security.ServiceManagerRights;
 import com.zer0s2m.creeptenuous.redis.services.system.ServiceDeleteFileRedis;
 import com.zer0s2m.creeptenuous.core.services.ServiceDeleteFile;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.List;
 import java.nio.file.Path;
 
@@ -42,6 +45,8 @@ public class ControllerApiDeleteFile implements ControllerApiDeleteFileDoc {
 
     private final ServiceManagerRights serviceManagerRights;
 
+    private final ServiceRedisManagerResources serviceRedisManagerResources;
+
     private final FileRedisEventPublisher fileRedisEventPublisher;
 
     private final AtomicFileSystemControllerApiDeleteFile atomicFileSystemControllerApiDeleteFile =
@@ -51,9 +56,11 @@ public class ControllerApiDeleteFile implements ControllerApiDeleteFileDoc {
     public ControllerApiDeleteFile(
             ServiceDeleteFileRedis serviceDeleteFileRedis,
             ServiceManagerRights serviceManagerRights,
+            ServiceRedisManagerResources serviceRedisManagerResources,
             FileRedisEventPublisher fileRedisEventPublisher) {
         this.serviceDeleteFileRedis = serviceDeleteFileRedis;
         this.serviceManagerRights = serviceManagerRights;
+        this.serviceRedisManagerResources = serviceRedisManagerResources;
         this.fileRedisEventPublisher = fileRedisEventPublisher;
     }
 
@@ -138,9 +145,16 @@ public class ControllerApiDeleteFile implements ControllerApiDeleteFileDoc {
                 }
             }
 
-            Path source = serviceDeleteFile.delete(file.systemFileName(), file.systemParents());
-            serviceDeleteFileRedis.delete(source, file.systemFileName());
-            fileRedisEventPublisher.publishDelete(file.systemFileName());
+            FileRedis fileRedis = serviceRedisManagerResources.getResourceFileRedis(
+                    file.systemFileName());
+            if (fileRedis != null) {
+                List<String> fileSplit = Arrays.asList(fileRedis.getPath().split("/"));
+                final String systemName = fileSplit.get(fileSplit.size() - 1);
+
+                Path source = serviceDeleteFile.delete(systemName, file.systemParents());
+                serviceDeleteFileRedis.delete(source, file.systemFileName());
+                fileRedisEventPublisher.publishDelete(file.systemFileName());
+            }
         }
 
     }

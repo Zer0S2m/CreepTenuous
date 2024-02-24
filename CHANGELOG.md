@@ -21,6 +21,7 @@
 - Fix getting the date from the comment
 - Fix user unlocks.
 - Fix Getting the parent directory when navigating to it.
+- Fix deleting a file without extension.
 
 ## [0.0.13] 2024-02-17
 
