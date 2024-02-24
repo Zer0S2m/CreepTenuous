@@ -126,7 +126,7 @@ public class ServiceProfileUserTests {
         User user2 = userRepository.save(RECORD_USER_2);
 
         Assertions.assertDoesNotThrow(
-                () -> serviceProfileUser.setTransferredUserSettings(RECORD_USER.getLogin(), user2.getId()));
+                () -> serviceProfileUser.setTransferredUserSettings(RECORD_USER.getLogin(), user2.getLogin()));
 
         Optional<UserSettings> userSettings = userSettingsRepository.findByUser_Login(RECORD_USER.getLogin());
 
@@ -141,7 +141,7 @@ public class ServiceProfileUserTests {
         userSettingsRepository.save(new UserSettings(userSaved, user2));
 
         Assertions.assertDoesNotThrow(
-                () -> serviceProfileUser.setTransferredUserSettings(RECORD_USER.getLogin(), user2.getId()));
+                () -> serviceProfileUser.setTransferredUserSettings(RECORD_USER.getLogin(), user2.getLogin()));
 
         Optional<UserSettings> userSettings = userSettingsRepository.findByUser_Login(RECORD_USER.getLogin());
 
@@ -166,7 +166,7 @@ public class ServiceProfileUserTests {
     public void setTransferredUserSettings_fail_userNotFound() {
         Assertions.assertThrows(
                 UserNotFoundException.class,
-                () -> serviceProfileUser.setTransferredUserSettings("user_not_found", 1L));
+                () -> serviceProfileUser.setTransferredUserSettings("user_not_found", "login_not_found_user"));
     }
 
     @Test
@@ -175,7 +175,7 @@ public class ServiceProfileUserTests {
 
         Assertions.assertThrows(
                 UserNotFoundException.class,
-                () -> serviceProfileUser.setTransferredUserSettings(RECORD_USER.getLogin(), 123123L));
+                () -> serviceProfileUser.setTransferredUserSettings(RECORD_USER.getLogin(), "login_not_found_user"));
     }
 
     @Test

@@ -141,7 +141,7 @@ public class ControllerApiProfileUserTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + accessToken)
                         .content(objectMapper.writeValueAsString(new DataTransferredUserApi(
-                                user2.getId()
+                                user2.getLogin()
                         )))
                 )
                 .andExpect(status().isNoContent());
@@ -159,7 +159,7 @@ public class ControllerApiProfileUserTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + accessToken)
                         .content(objectMapper.writeValueAsString(new DataTransferredUserApi(
-                                123123L
+                                "login_user_not_found"
                         )))
                 )
                 .andExpect(status().isNotFound());

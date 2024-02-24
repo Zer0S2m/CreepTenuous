@@ -85,23 +85,23 @@ public class ServiceProfileUserImpl implements ServiceProfileUser {
     /**
      * Set setting - transfer file objects to designated user
      * @param login owner user
-     * @param transferUserId designated user for migration
+     * @param transferUserLogin designated user for migration
      * @throws UserNotFoundException not exists user
      */
     @Override
-    public void setTransferredUserSettings(String login, Long transferUserId) throws UserNotFoundException {
+    public void setTransferredUserSettings(String login, String transferUserLogin) throws UserNotFoundException {
         User currentUser = userRepository.findByLogin(login);
         if (currentUser == null) {
             throw new UserNotFoundException();
         }
 
         User transferredUser;
-        if (transferUserId != null) {
-            Optional<User> cleanTransferredUser = userRepository.findById(transferUserId);
-            if (cleanTransferredUser.isEmpty()) {
+        if (transferUserLogin != null) {
+            User cleanTransferredUser = userRepository.findByLogin(transferUserLogin);
+            if (cleanTransferredUser == null) {
                 throw new UserNotFoundException();
             }
-            transferredUser = cleanTransferredUser.get();
+            transferredUser = cleanTransferredUser;
         } else {
             transferredUser = null;
         }

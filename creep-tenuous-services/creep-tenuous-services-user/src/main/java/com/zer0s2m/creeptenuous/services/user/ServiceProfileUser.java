@@ -32,10 +32,10 @@ public interface ServiceProfileUser {
     /**
      * Set Setting - Transfer File Objects to Designated User
      * @param login owner user
-     * @param transferUserId designated user for migration
+     * @param transferUserLogin designated user for migration
      * @throws UserNotFoundException not exists user
      */
-    void setTransferredUserSettings(String login, Long transferUserId) throws UserNotFoundException;
+    void setTransferredUserSettings(String login, String transferUserLogin) throws UserNotFoundException;
 
     /**
      * Set file objects to exclusions when deleting a user and then allocating them

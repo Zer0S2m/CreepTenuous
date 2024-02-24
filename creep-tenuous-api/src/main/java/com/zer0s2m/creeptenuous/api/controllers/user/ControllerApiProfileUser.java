@@ -118,7 +118,7 @@ public class ControllerApiProfileUser implements ControllerApiProfileUserDoc {
         Claims claimsAccess = jwtProvider.getAccessClaims(JwtUtils.getPureAccessToken(accessToken));
         JwtAuthentication userInfo = JwtUtils.generate(claimsAccess);
 
-        serviceProfileUser.setTransferredUserSettings(userInfo.getLogin(), data.userId());
+        serviceProfileUser.setTransferredUserSettings(userInfo.getLogin(), data.login());
     }
 
     /**
