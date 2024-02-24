@@ -4,7 +4,6 @@ import com.zer0s2m.creeptenuous.common.enums.ManagerRights;
 import com.zer0s2m.creeptenuous.redis.models.RightUserFileSystemObjectRedis;
 import com.zer0s2m.creeptenuous.redis.repository.JwtRedisRepository;
 import com.zer0s2m.creeptenuous.redis.repository.RightUserFileSystemObjectRedisRepository;
-import com.zer0s2m.creeptenuous.repository.user.CategoryFileSystemObjectRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Redis Delete File Object Handler
@@ -26,15 +24,15 @@ class FileRedisDeleteEventHandler implements ApplicationListener<FileRedisDelete
 
     private final RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository;
 
-    private final CategoryFileSystemObjectRepository categoryFileSystemObjectRepository;
+    private final ServiceFileRedisDeleteEventHandler serviceFileRedisDeleteEventHandler;
 
     @Autowired
     FileRedisDeleteEventHandler(JwtRedisRepository jwtRedisRepository,
                                 RightUserFileSystemObjectRedisRepository rightUserFileSystemObjectRedisRepository,
-                                CategoryFileSystemObjectRepository categoryFileSystemObjectRepository) {
+                                ServiceFileRedisDeleteEventHandler serviceFileRedisDeleteEventHandler) {
         this.jwtRedisRepository = jwtRedisRepository;
         this.rightUserFileSystemObjectRedisRepository = rightUserFileSystemObjectRedisRepository;
-        this.categoryFileSystemObjectRepository = categoryFileSystemObjectRepository;
+        this.serviceFileRedisDeleteEventHandler = serviceFileRedisDeleteEventHandler;
     }
 
     /**
@@ -46,7 +44,7 @@ class FileRedisDeleteEventHandler implements ApplicationListener<FileRedisDelete
         Iterable<RightUserFileSystemObjectRedis> rightsUser = getRightUserFileSystemObjectRedis(
                 userLogins, event.getIdFileRedis());
         deleteRightUserFileSystemObjectRedis(rightsUser);
-        deleteFileObjectCustomCategories(event.getIdFileRedis());
+        serviceFileRedisDeleteEventHandler.deleteFileObjectCustomCategories(event.getIdFileRedis());
     }
 
     /**
@@ -68,17 +66,6 @@ class FileRedisDeleteEventHandler implements ApplicationListener<FileRedisDelete
      */
     private void deleteRightUserFileSystemObjectRedis(Iterable<RightUserFileSystemObjectRedis> rightsUser) {
         rightUserFileSystemObjectRedisRepository.deleteAll(rightsUser);
-    }
-
-    /**
-     * Deleting file objects associated witt custom categories
-     * @param nameFileSystemObject system name of the file system object
-     */
-    private void deleteFileObjectCustomCategories(final @NotNull String nameFileSystemObject) {
-        if (nameFileSystemObject.length() == 36) {
-            categoryFileSystemObjectRepository.deleteAllByFileSystemObjectIn(
-                    List.of(UUID.fromString(nameFileSystemObject)));
-        }
     }
 
 }

@@ -23,6 +23,7 @@
 - Fix user unlocks.
 - Fix Getting the parent directory when navigating to it.
 - Fix deleting a file without extension.
+- Setting up a transaction when deleting a category. Delete directory or file.
 
 ## [0.0.13] 2024-02-17
 
