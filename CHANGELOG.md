@@ -5,6 +5,7 @@
 ### Added
 
 - Processing static files - avatars for users.
+- Exception handling - request body limit exceeded.
 
 ### Changed
 
